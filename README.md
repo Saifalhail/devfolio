@@ -1,70 +1,91 @@
-# Getting Started with Create React App
+# DevFolio - Software Service Company Website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, responsive website for a solo developer offering software services including web development, mobile apps, QR codes, and more tech-related applications.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Modern UI/UX Design**: Clean, professional interface with a modern aesthetic
+- **Responsive Design**: Fully responsive for desktop and mobile devices
+- **Localization**: Support for both English and Arabic languages
+- **Service Showcase**: Highlighting various tech services offered
+- **Contact Form**: Easy way for potential clients to reach out
+- **Tech Stack**: Built with React and styled-components
 
-### `npm start`
+## Color Palette
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The website uses the following color scheme:
+- Primary Background: #feefc4
+- Accent Color 1: #faaa93
+- Accent Color 2: #82a1bf
+- Dark Color: #513a52
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tech Stack
 
-### `npm test`
+- **Frontend**: React.js, styled-components
+- **Routing**: React Router
+- **Internationalization**: i18next, react-i18next
+- **Minimal Backend**: For contact form submissions and signup functionality
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+### Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Node.js (v14.0.0 or later)
+- npm (v6.0.0 or later)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Clone the repository
+   ```bash
+   git clone [repository-url]
+   ```
 
-### `npm run eject`
+2. Navigate to the project directory
+   ```bash
+   cd devfolio
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. Install dependencies
+   ```bash
+   npm install
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. Start the development server
+   ```bash
+   npm start
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+5. Open [http://localhost:3000](http://localhost:3000) to view it in your browser
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Building for Production
 
-## Learn More
+```bash
+npm run build
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+This will create an optimized production build in the `build` folder.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Project Structure
 
-### Code Splitting
+```
+devfolio/
+├── public/
+│   ├── index.html
+│   └── ...
+├── src/
+│   ├── assets/        # Images and other static assets
+│   ├── components/    # React components
+│   │   ├── Common/    # Reusable components
+│   │   ├── Home/      # Home page components
+│   │   └── Layout/    # Layout components
+│   ├── locales/       # Internationalization files
+│   ├── styles/        # Global styles and theme
+│   ├── App.js         # Main App component
+│   └── index.js       # Entry point
+└── README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## License
 
-### Analyzing the Bundle Size
+MIT © [Your Name]
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

@@ -1,0 +1,119 @@
+{
+  "navbar": {
+    "home": "Home",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "about": "About",
+    "contact": "Contact",
+    "language": "Arabic"
+  },
+  "hero": {
+    "title": "Bring your tech idea to life",
+    "highlight": "with expertise",
+    "subtitle": "Professional software development services for websites, mobile apps, and custom solutions",
+    "buttons": {
+      "getStarted": "Get Started",
+      "viewProjects": "View Projects"
+    }
+  },
+  "services": {
+    "title": "Services",
+    "subtitle": "What I Can Do For You",
+    "cta": {
+      "question": "Need something specific?",
+      "button": "Get in touch"
+    },
+    "items": [
+      {
+        "title": "Web Development",
+        "description": "Custom websites tailored to your needs with responsive design and modern technologies."
+      },
+      {
+        "title": "Mobile Apps",
+        "description": "Native and cross-platform mobile applications for iOS and Android."
+      },
+      {
+        "title": "QR Code Solutions",
+        "description": "Custom QR code generation and integration for your business needs."
+      },
+      {
+        "title": "UI/UX Design",
+        "description": "Beautiful and intuitive designs that enhance user experience and engagement."
+      },
+      {
+        "title": "E-commerce Solutions",
+        "description": "Complete online store setup with payment integration and inventory management."
+      },
+      {
+        "title": "Custom Software",
+        "description": "Tailored software solutions to address your specific business challenges."
+      }
+    ]
+  },
+  "process": {
+    "title": "My Process",
+    "subtitle": "How We'll Work Together",
+    "steps": [
+      {
+        "title": "Discovery Call",
+        "description": "We start with understanding your requirements and project goals."
+      },
+      {
+        "title": "Planning & Design",
+        "description": "Creating a detailed plan and mockups for your approval."
+      },
+      {
+        "title": "Development",
+        "description": "Transforming designs into functional code and features."
+      },
+      {
+        "title": "Testing & Review",
+        "description": "Thorough quality assurance to ensure everything works perfectly."
+      },
+      {
+        "title": "Deployment",
+        "description": "Launching your project to the world and ensuring smooth operation."
+      },
+      {
+        "title": "Support & Maintenance",
+        "description": "Ongoing assistance and updates to keep your project running smoothly."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Get In Touch",
+    "description": "Have a project in mind or want to discuss your tech needs? I'm just a message away!",
+    "info": {
+      "heading": "Let's talk about your project",
+      "text": "Feel free to reach out if you have any questions or ideas. I'm always open to discussing new projects and opportunities."
+    },
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "button": "Send Message",
+      "sending": "Sending...",
+      "success": "Thank you for your message! I'll get back to you soon."
+    }
+  },
+  "footer": {
+    "description": "Professional software development services for websites, mobile apps, QR codes and all tech-related applications.",
+    "links": {
+      "title": "Quick Links"
+    },
+    "services": {
+      "title": "Services",
+      "webDev": "Web Development",
+      "mobileApps": "Mobile Apps",
+      "qrCodes": "QR Codes",
+      "uiUxDesign": "UI/UX Design",
+      "customSolutions": "Custom Solutions"
+    },
+    "contact": {
+      "title": "Contact"
+    },
+    "copyright": "All rights reserved."
+  }
+}
