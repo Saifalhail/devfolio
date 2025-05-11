@@ -8,6 +8,8 @@
     "language": "Arabic"
   },
   "hero": {
+    "welcome": "Hello there!",
+    "techBubble": "Tech Magic Happens Here",
     "title": "Bring your tech idea to life",
     "highlight": "with expertise",
     "subtitle": "Professional software development services for websites, mobile apps, and custom solutions",

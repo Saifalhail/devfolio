@@ -37,7 +37,7 @@ const HeroSection = styled.section`
   padding: 7rem 0 5rem;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(120deg, var(--primary-bg) 0%, rgba(254, 239, 196, 0.7) 100%);
+  background: var(--primary-gradient);
   
   &:before {
     content: '';
@@ -46,9 +46,22 @@ const HeroSection = styled.section`
     left: 0;
     right: 0;
     height: 100%;
-    background-image: radial-gradient(var(--accent-2) 1px, transparent 1px);
-    background-size: 20px 20px;
-    opacity: 0.3;
+    background-image: radial-gradient(var(--accent-1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: 0.1;
+  }
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    right: -100px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-3) 0%, var(--accent-4) 100%);
+    opacity: 0.15;
+    filter: blur(70px);
   }
   
   @media (max-width: 768px) {
@@ -90,19 +103,26 @@ const HeroContent = styled.div`
 `;
 
 const HeroHeading = styled.h1`
-  font-size: 3.2rem;
-  font-weight: 700;
+  font-size: 3.5rem;
+  font-weight: 800;
   margin-bottom: 1.2rem;
-  color: var(--dark);
   line-height: 1.2;
+  background: linear-gradient(to right, var(--accent-2), var(--accent-1));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 5px 25px rgba(66, 165, 245, 0.15);
   
   @media (max-width: 768px) {
-    font-size: 2.3rem;
+    font-size: 2.5rem;
   }
 `;
 
 const HeroHighlight = styled.span`
-  color: var(--accent-1);
+  background: linear-gradient(to right, var(--accent-3), var(--accent-4));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   position: relative;
   display: inline-block;
   
@@ -111,20 +131,25 @@ const HeroHighlight = styled.span`
     position: absolute;
     width: 100%;
     height: 8px;
-    background-color: rgba(250, 170, 147, 0.3);
+    background: linear-gradient(to right, var(--accent-3), var(--accent-4));
     bottom: 5px;
     left: 0;
     z-index: -1;
     border-radius: 4px;
+    opacity: 0.3;
   }
 `;
 
 const HeroSubHeading = styled.p`
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-  color: var(--dark);
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+  color: var(--light-gray);
   line-height: 1.6;
-  opacity: 0.9;
+  max-width: 90%;
+  
+  @media (max-width: 992px) {
+    max-width: 100%;
+  }
 `;
 
 const HeroButtons = styled.div`
@@ -162,23 +187,68 @@ const PrimaryButton = styled(Link)`
   ${ButtonStyles}
   background: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(250, 170, 147, 0.4);
+  box-shadow: var(--shadows-neon);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
   
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 7px 20px rgba(250, 170, 147, 0.5);
+    box-shadow: 0 7px 25px rgba(66, 165, 245, 0.5);
+    
+    &::before {
+      transform: translateX(100%);
+    }
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+    z-index: -1;
   }
 `;
 
 const SecondaryButton = styled(Link)`
   ${ButtonStyles}
   background-color: transparent;
-  color: var(--dark);
+  color: var(--white);
   border: 2px solid var(--accent-2);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
   
   &:hover {
-    background-color: rgba(254, 239, 196, 0.2);
+    color: var(--white);
+    border-color: var(--accent-1);
     transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    
+    &::before {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(66, 165, 245, 0.2), rgba(0, 212, 255, 0.2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: -1;
+    opacity: 0;
   }
 `;
 
@@ -192,13 +262,17 @@ const HeroImageContainer = styled.div`
 
 const HeroSVGContainer = styled.div`
   position: relative;
-  background: #fff;
+  background: var(--card-gradient);
   border-radius: 24px;
-  box-shadow: 0 6px 32px 0 rgba(81, 58, 82, 0.12);
+  box-shadow: var(--shadows-card);
   padding: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transform-style: preserve-3d;
+  perspective: 1000px;
   min-width: 400px;
   min-height: 400px;
   max-width: 550px;
@@ -256,8 +330,15 @@ const Hero = () => {
   return (
     <HeroSection>
       <GlobalAnimations />
+      {/* Decorative blobs for background */}
+      <div className="blob" style={{ top: '10%', left: '5%', width: '300px', height: '300px', background: 'linear-gradient(45deg, var(--accent-4), var(--accent-2))', opacity: '0.05' }}></div>
+      <div className="blob" style={{ bottom: '15%', right: '10%', width: '250px', height: '250px', background: 'linear-gradient(45deg, var(--accent-3), var(--accent-1))', opacity: '0.05' }}></div>
+      
       <HeroContainer isRTL={isRTL}>
         <HeroContent isRTL={isRTL}>
+          <div className="bubble" style={{ display: 'inline-block', marginBottom: '1.5rem', transform: 'rotate(-2deg)', fontSize: '1rem' }}>
+            👋 {t('hero.welcome')}
+          </div>
           <HeroHeading>
             {t('hero.title')} <HeroHighlight>{t('hero.highlight')}</HeroHighlight>
           </HeroHeading>
@@ -265,12 +346,13 @@ const Hero = () => {
             {t('hero.subtitle')}
           </HeroSubHeading>
           <HeroButtons>
-            <PrimaryButton to="/contact">{t('hero.buttons.getStarted')}</PrimaryButton>
+            <PrimaryButton to="/contact" className="glow">{t('hero.buttons.getStarted')}</PrimaryButton>
             <SecondaryButton to="/portfolio">{t('hero.buttons.viewProjects')}</SecondaryButton>
           </HeroButtons>
         </HeroContent>
         <HeroImageContainer>
-          <HeroSVGContainer>
+          <div className="float-element">
+            <HeroSVGContainer>
             <svg viewBox="0 0 800 600" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
               {/* Gradients and patterns */}
               <defs>
@@ -387,11 +469,31 @@ const Hero = () => {
             </svg>
             
             {/* Floating bubbles */}
-            <FloatingBubble style={{ top: '-30px', left: isRTL ? 'auto' : '-30px', right: isRTL ? '-30px' : 'auto', background: 'var(--accent-2)', opacity: 0.25, width: '60px', height: '60px' }} />
-            <FloatingBubble style={{ top: '10%', right: isRTL ? 'auto' : '-35px', left: isRTL ? '-35px' : 'auto', background: 'var(--accent-1)', opacity: 0.15, width: '50px', height: '50px' }} />
-            <FloatingBubble style={{ bottom: '-35px', left: isRTL ? 'auto' : '20%', right: isRTL ? '20%' : 'auto', background: 'var(--primary-bg)', opacity: 0.18, width: '70px', height: '70px' }} />
-            <FloatingBubble style={{ bottom: '-25px', right: isRTL ? 'auto' : '-25px', left: isRTL ? '-25px' : 'auto', background: 'var(--accent-1)', opacity: 0.12, width: '40px', height: '40px' }} />
+            <FloatingBubble style={{ top: '-30px', left: isRTL ? 'auto' : '-30px', right: isRTL ? '-30px' : 'auto', background: 'var(--accent-2)', opacity: 0.25, width: '60px', height: '60px', filter: 'blur(8px)' }} />
+            <FloatingBubble style={{ top: '10%', right: isRTL ? 'auto' : '-35px', left: isRTL ? '-35px' : 'auto', background: 'var(--accent-1)', opacity: 0.15, width: '50px', height: '50px', filter: 'blur(5px)' }} />
+            <FloatingBubble style={{ bottom: '-35px', left: isRTL ? 'auto' : '20%', right: isRTL ? '20%' : 'auto', background: 'var(--accent-3)', opacity: 0.18, width: '70px', height: '70px', filter: 'blur(10px)' }} />
+            <FloatingBubble style={{ bottom: '-25px', right: isRTL ? 'auto' : '-25px', left: isRTL ? '-25px' : 'auto', background: 'var(--accent-4)', opacity: 0.12, width: '40px', height: '40px', filter: 'blur(6px)' }} />
           </HeroSVGContainer>
+          </div>
+          
+          {/* Cartoon-style floating elements */}
+          <div className="bubble" style={{ position: 'absolute', top: '-20px', right: isRTL ? 'auto' : '10%', left: isRTL ? '10%' : 'auto', transform: 'rotate(5deg)', zIndex: 5, padding: '10px 15px', fontSize: '0.9rem' }}>
+            ✨ {t('hero.techBubble')}
+          </div>
+          <img 
+            src="https://cdn3d.iconscout.com/3d/premium/thumb/rocket-launch-5349008-4461442.png" 
+            alt="Rocket illustration" 
+            style={{ 
+              position: 'absolute', 
+              width: '80px', 
+              bottom: '-20px', 
+              right: isRTL ? 'auto' : '-25px', 
+              left: isRTL ? '-25px' : 'auto',
+              transform: 'rotate(15deg)',
+              filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))'
+            }} 
+            className="float-element"
+          />
         </HeroImageContainer>
       </HeroContainer>
     </HeroSection>
