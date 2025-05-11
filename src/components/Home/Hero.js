@@ -404,14 +404,16 @@ const GlowingBadge = styled.div`
 const IconBox = styled.div`
   width: ${props => props.size || '50px'};
   height: ${props => props.size || '50px'};
-  background: ${props => props.background || 'rgba(66, 165, 245, 0.2)'};
+  background: ${props => props.background || 'rgba(205, 62, 253, 0.15)'}; /* Updated to use purple brand color */
   border-radius: ${props => props.borderRadius || '12px'};
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  backdrop-filter: blur(5px);
+  box-shadow: 0 5px 15px rgba(205, 62, 253, 0.1); /* Updated shadow color */
+  backdrop-filter: blur(8px); /* Increased blur effect */
   transform: ${props => props.transform || 'none'};
+  opacity: 0.7; /* Added consistent opacity */
+  filter: blur(1px); /* Added subtle blur to the icons themselves */
 `;
 
 const FloatingBubble = styled.div`
@@ -432,43 +434,71 @@ const Hero = () => {
       <div className="blob" style={{ top: '10%', left: isRTL ? 'auto' : '5%', right: isRTL ? '5%' : 'auto', width: '300px', height: '300px', background: 'linear-gradient(45deg, var(--accent-4), var(--accent-2))', opacity: '0.05' }}></div>
       <div className="blob" style={{ bottom: '15%', right: isRTL ? 'auto' : '10%', left: isRTL ? '10%' : 'auto', width: '250px', height: '250px', background: 'linear-gradient(45deg, var(--accent-3), var(--accent-1))', opacity: '0.05' }}></div>
       
-      {/* Additional decorative elements that won't interfere with text - with RTL support */}
-      <div style={{ position: 'absolute', top: '5%', right: isRTL ? 'auto' : '5%', left: isRTL ? '5%' : 'auto', width: '150px', height: '150px', background: 'radial-gradient(circle, rgba(66, 165, 245, 0.05) 0%, rgba(66, 165, 245, 0) 70%)', borderRadius: '50%' }}></div>
-      <div style={{ position: 'absolute', bottom: '5%', left: isRTL ? 'auto' : '5%', right: isRTL ? '5%' : 'auto', width: '120px', height: '120px', background: 'radial-gradient(circle, rgba(255, 64, 129, 0.05) 0%, rgba(255, 64, 129, 0) 70%)', borderRadius: '50%' }}></div>
+      {/* Enhanced decorative elements that won't interfere with text - with RTL support */}
+      <div style={{ position: 'absolute', top: '5%', right: isRTL ? 'auto' : '5%', left: isRTL ? '5%' : 'auto', width: '180px', height: '180px', background: 'radial-gradient(circle, rgba(205, 62, 253, 0.08) 0%, rgba(205, 62, 253, 0) 70%)', borderRadius: '50%', filter: 'blur(15px)' }}></div>
+      <div style={{ position: 'absolute', bottom: '5%', left: isRTL ? 'auto' : '5%', right: isRTL ? '5%' : 'auto', width: '150px', height: '150px', background: 'radial-gradient(circle, rgba(180, 41, 227, 0.07) 0%, rgba(180, 41, 227, 0) 70%)', borderRadius: '50%', filter: 'blur(12px)' }}></div>
+      
+      {/* Additional glow effects */}
+      <div style={{ position: 'absolute', top: '30%', left: isRTL ? 'auto' : '30%', right: isRTL ? '30%' : 'auto', width: '200px', height: '200px', background: 'radial-gradient(circle, rgba(205, 62, 253, 0.03) 0%, rgba(205, 62, 253, 0) 80%)', borderRadius: '50%', filter: 'blur(20px)' }}></div>
+      <div style={{ position: 'absolute', bottom: '20%', right: isRTL ? 'auto' : '25%', left: isRTL ? '25%' : 'auto', width: '120px', height: '120px', background: 'radial-gradient(circle, rgba(180, 41, 227, 0.05) 0%, rgba(180, 41, 227, 0) 70%)', borderRadius: '50%', filter: 'blur(10px)' }}></div>
 
       {/* Floating decorative elements positioned to not interfere with text */}
       <FloatingIcon top="65%" left={isRTL ? "auto" : "8%"} right={isRTL ? "8%" : "auto"} animationDelay="0s" duration="6s">
-        <IconBox background="rgba(66, 165, 245, 0.2)" borderRadius="12px">
+        <IconBox background="rgba(205, 62, 253, 0.15)" borderRadius="12px">
           <span style={{ fontSize: '24px' }}>💻</span>
         </IconBox>
       </FloatingIcon>
       
       <FloatingIcon top="40%" left={isRTL ? "10%" : "auto"} right={isRTL ? "auto" : "10%"} animationDelay="1s" duration="7s">
-        <IconBox background="rgba(255, 91, 146, 0.2)" borderRadius="50%" size="45px">
+        <IconBox background="rgba(205, 62, 253, 0.12)" borderRadius="50%" size="45px">
           <span style={{ fontSize: '22px' }}>🚀</span>
         </IconBox>
       </FloatingIcon>
       
       <FloatingIcon bottom="25%" left={isRTL ? "auto" : "20%"} right={isRTL ? "20%" : "auto"} animationDelay="0.5s" duration="5s">
-        <IconBox background="rgba(0, 229, 189, 0.2)" borderRadius="10px" size="40px" transform="rotate(45deg)">
+        <IconBox background="rgba(205, 62, 253, 0.18)" borderRadius="10px" size="40px" transform="rotate(45deg)">
           <span style={{ fontSize: '20px', transform: 'rotate(-45deg)' }}>⚡</span>
         </IconBox>
       </FloatingIcon>
       
       <PulsingIcon bottom="15%" left={isRTL ? "15%" : "auto"} right={isRTL ? "auto" : "15%"}>
-        <IconBox background="rgba(0, 212, 255, 0.15)" borderRadius="15px" size="60px">
+        <IconBox background="rgba(205, 62, 253, 0.15)" borderRadius="15px" size="60px">
           <span style={{ fontSize: '30px' }}>✨</span>
         </IconBox>
       </PulsingIcon>
       
-      {/* Percentage badge positioned away from text - only visible in English */}
-      {!isRTL && (
-        <GlowingBadge top="75%" left="5%" right="auto">
-          <div style={{ width: '70px', height: '70px', background: 'linear-gradient(135deg, #FF6B6B, #FF4081)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 5px 15px rgba(255, 91, 146, 0.3)' }}>
-            <span style={{ fontSize: '20px', color: 'white', fontWeight: 'bold' }}>100%</span>
-          </div>
-        </GlowingBadge>
-      )}
+      {/* Code quality badge positioned away from text - visible in both English and Arabic modes */}
+      <FloatingIcon bottom="30%" left={isRTL ? "auto" : "12%"} right={isRTL ? "12%" : "auto"} animationDelay="1.2s" duration="6.5s">
+        <IconBox 
+          background="rgba(205, 62, 253, 0.2)" 
+          borderRadius="15px" 
+          size="65px"
+        >
+          <span style={{ fontSize: '18px' }}>⭐️</span>
+        </IconBox>
+      </FloatingIcon>
+      
+      {/* Additional background decorative elements */}
+      <FloatingIcon top="20%" left={isRTL ? "auto" : "25%"} right={isRTL ? "25%" : "auto"} animationDelay="2s" duration="8s">
+        <IconBox 
+          background="rgba(205, 62, 253, 0.1)" 
+          borderRadius="12px" 
+          size="35px"
+          transform="rotate(15deg)"
+        >
+          <span style={{ fontSize: '16px', transform: 'rotate(-15deg)' }}>🔍</span>
+        </IconBox>
+      </FloatingIcon>
+      
+      <FloatingIcon top="60%" left={isRTL ? "22%" : "auto"} right={isRTL ? "auto" : "22%"} animationDelay="0.8s" duration="7.2s">
+        <IconBox 
+          background="rgba(205, 62, 253, 0.13)" 
+          borderRadius="50%" 
+          size="40px"
+        >
+          <span style={{ fontSize: '18px' }}>🔮</span>
+        </IconBox>
+      </FloatingIcon>
 
       <HeroContainer isRTL={isRTL}>
         <HeroContent isRTL={isRTL}>

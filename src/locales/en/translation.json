@@ -21,6 +21,7 @@
   "services": {
     "title": "Services",
     "subtitle": "What I Can Do For You",
+    "learnMore": "Learn more",
     "cta": {
       "question": "Need something specific?",
       "button": "Get in touch"

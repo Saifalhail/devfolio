@@ -2,9 +2,8 @@ import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
   /* Import fonts for both English and Arabic */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
   @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
 
   :root {
@@ -38,8 +37,12 @@ const GlobalStyles = createGlobalStyle`
   }
 
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+  }
+  
+  .pulse-animation {
+    animation: pulse 3s infinite ease-in-out;
   }
 
   @keyframes fadeIn {
@@ -53,12 +56,13 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: 'Inter', 'Roboto', sans-serif;
+    font-family: 'Nunito', sans-serif;
     background: var(--primary-gradient);
     background-attachment: fixed;
     color: var(--white);
     line-height: 1.6;
     overflow-x: hidden;
+    font-weight: 400;
     
     /* Apply Arabic font for RTL */
     html[dir='rtl'] & {
@@ -67,7 +71,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', 'Inter', sans-serif;
+    font-family: 'Fredoka', sans-serif;
     margin-bottom: 1.5rem;
     font-weight: 700;
     letter-spacing: 0.5px;

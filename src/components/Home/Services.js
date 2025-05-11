@@ -9,43 +9,31 @@ const Services = () => {
   const services = [
     {
       id: 1,
-      title: 'Web Development',
-      description: 'Custom websites tailored to your needs with responsive design and modern technologies.',
       icon: '🌐',
       link: '/services/web-development'
     },
     {
       id: 2,
-      title: 'Mobile Apps',
-      description: 'Native and cross-platform mobile applications for iOS and Android.',
       icon: '📱',
       link: '/services/mobile-apps'
     },
     {
       id: 3,
-      title: 'QR Code Solutions',
-      description: 'Custom QR code generation and integration for your business needs.',
       icon: '📲',
       link: '/services/qr-codes'
     },
     {
       id: 4,
-      title: 'UI/UX Design',
-      description: 'Beautiful and intuitive designs that enhance user experience and engagement.',
       icon: '🎨',
       link: '/services/ui-ux-design'
     },
     {
       id: 5,
-      title: 'E-commerce Solutions',
-      description: 'Complete online store setup with payment integration and inventory management.',
       icon: '🛒',
       link: '/services/ecommerce'
     },
     {
       id: 6,
-      title: 'Custom Software',
-      description: 'Tailored software solutions to address your specific business challenges.',
       icon: '💻',
       link: '/services/custom-software'
     }
@@ -65,12 +53,12 @@ const Services = () => {
         </SectionHeader>
         
         <ServicesGrid>
-          {services.map(service => (
+          {services.map((service, index) => (
             <ServiceCard key={service.id} to={service.link} className="service-card">
               <ServiceIcon>{service.icon}</ServiceIcon>
-              <ServiceTitle>{service.title}</ServiceTitle>
-              <ServiceDescription>{service.description}</ServiceDescription>
-              <LearnMore className="learn-more">Learn more</LearnMore>
+              <ServiceTitle>{t(`services.items.${index}.title`)}</ServiceTitle>
+              <ServiceDescription>{t(`services.items.${index}.description`)}</ServiceDescription>
+              <LearnMore className="learn-more">{t('services.learnMore')}</LearnMore>
             </ServiceCard>
           ))}
         </ServicesGrid>

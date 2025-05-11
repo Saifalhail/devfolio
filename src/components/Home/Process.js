@@ -4,6 +4,37 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { floatAnimation } from './HeroAnimations';
 
+// Section decorative element
+const SectionDecor = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.5;
+`;
+
+// Detail list and item components
+const DetailsList = styled.div`
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const DetailItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateX(5px);
+  }
+`;
+
 const Process = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
@@ -135,7 +166,8 @@ const Process = () => {
   ];
 
   return (
-    <ProcessSection ref={sectionRef}>
+    <ProcessSection>
+      <SectionDecor />
       {/* Decorative elements */}
       <DecorCircle className="circle1" />
       <DecorCircle className="circle2" />
@@ -145,7 +177,7 @@ const Process = () => {
       <DecorDot className="dot2" />
       <DecorDot className="dot3" />
       
-      <Container isRTL={isRTL}>
+      <Container style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
         <SectionHeader>
           <SectionTitleWrapper>
             <SectionTitle>{t('process.title')}</SectionTitle>
@@ -154,53 +186,119 @@ const Process = () => {
         </SectionHeader>
         
         <motion.div
+          ref={sectionRef}
+          variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={containerVariants}
+          viewport={{ once: true, margin: "-100px" }}
         >
-          <ProcessSteps isRTL={isRTL}>
+          <ProcessSteps>
             {steps.map((step, index) => (
               <motion.div key={step.id} variants={itemVariants}>
-                <ProcessStep isRTL={isRTL}>
-                  <StepIconContainer bgColor={step.color}>
-                    <StepNumber>{step.number}</StepNumber>
-                    <StepIcon>{step.icon}</StepIcon>
-                    <IconGlow bgColor={step.color} />
+                <ProcessStep style={{ 
+                  flexDirection: 'row', // Always keep the same direction
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  position: 'relative',
+                  zIndex: 2,
+                  marginBottom: '2rem'
+                }}>
+                  <StepIconContainer 
+                    style={{ 
+                      background: step.color,
+                      marginRight: '2rem', // Always keep the same margin
+                      marginLeft: '0',
+                      boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                      zIndex: 5, // Increased z-index to ensure it's above the connector
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    {/* Add glow effect around icon */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '-5px',
+                      left: '-5px',
+                      right: '-5px',
+                      bottom: '-5px',
+                      background: step.color,
+                      opacity: 0.3,
+                      borderRadius: '50%',
+                      zIndex: -1
+                    }}></div>
+                    <StepNumber style={{
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      position: 'absolute',
+                      top: '0',
+                      left: '0',
+                      right: '0',
+                      textAlign: 'center',
+                      transform: 'translateY(-50%)'
+                    }}>{step.number}</StepNumber>
+                    <StepIcon style={{
+                      fontSize: '2rem',
+                      color: 'white',
+                      marginTop: '0.5rem'
+                    }} className="pulse-animation">{step.icon}</StepIcon>
                   </StepIconContainer>
-                  <StepContent isRTL={isRTL} bgPattern={step.bgPattern}>
-                    <StepTitle color={step.color}>{step.title}</StepTitle>
-                    <StepDescription>{step.description}</StepDescription>
+                  
+                  <StepContent 
+                    style={{ 
+                      textAlign: isRTL ? 'right' : 'left', // Keep text alignment based on language
+                      backgroundImage: step.bgPattern,
+                      transformOrigin: 'left center', // Keep consistent origin
+                      flex: 1
+                    }}
+                  >
+                    <StepTitle style={{ 
+                      background: step.color,
+                      WebkitBackgroundClip: 'text',
+                      backgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      color: 'white' // Fallback
+                    }}>{step.title}</StepTitle>
+                    <StepDescription style={{ color: 'white' }}>{step.description}</StepDescription>
                     
-                    <StepDetailsList isRTL={isRTL}>
-                      {step.details.map((detail, index) => {
-                        // Get the translated text from the translation file or use the default
-                        const detailText = t(`process.steps.${step.id - 1}.details.${index}`, detail.text);
-                        
-                        return (
-                          <motion.div
-                            key={index}
-                            initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ 
-                              duration: 0.4, 
-                              delay: 0.2 * index,
-                              ease: [0.175, 0.885, 0.32, 1.275] // Elastic ease for more dynamic animation
-                            }}
-                            viewport={{ once: true, margin: "-50px" }}
-                          >
-                            <StepDetailItem isRTL={isRTL}>
-                              <DetailIcon bgColor={step.color}>{detail.icon}</DetailIcon>
-                              <DetailText>{detailText}</DetailText>
-                            </StepDetailItem>
-                          </motion.div>
-                        );
-                      })}
-                    </StepDetailsList>
+                    <DetailsList>
+                      {step.details.map((detail, i) => (
+                        <motion.div 
+                          key={i}
+                          variants={detailVariants}
+                          initial="hidden"
+                          whileInView="visible"
+                          viewport={{ once: true }}
+                          custom={i}
+                        >
+                          <DetailItem>
+                            <DetailIcon style={{ background: step.color }}>{detail.icon}</DetailIcon>
+                            <DetailText style={{ color: 'white' }}>{detail.text}</DetailText>
+                          </DetailItem>
+                        </motion.div>
+                      ))}
+                    </DetailsList>
                     
-                    <StepProgressBar bgColor={step.color} />
+                    <StepProgressBar style={{ background: step.color }} />
                   </StepContent>
-                  {index !== steps.length - 1 && <StepConnector isRTL={isRTL} />}
+                  {index !== steps.length - 1 && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '60px',
+                      [isRTL ? 'right' : 'left']: '40px', // Move to right side in Arabic mode
+                      width: '2px',
+                      height: 'calc(100% + 2rem)',
+                      background: 'linear-gradient(to bottom, rgba(205, 62, 253, 0.3), rgba(205, 62, 253, 0.1))',
+                      zIndex: 1
+                    }} />
+                  )}
                 </ProcessStep>
               </motion.div>
             ))}
@@ -338,7 +436,6 @@ const Container = styled.div`
   padding: 0 2rem;
   position: relative;
   z-index: 1;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 768px) {
     padding: 0 1.5rem;
