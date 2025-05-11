@@ -11,8 +11,8 @@ const GlobalStyles = createGlobalStyle`
     --primary-bg: #12142c;
     --primary-gradient: linear-gradient(135deg, #12142c 0%, #202253 50%, #3a1e65 100%);
     --secondary-gradient: linear-gradient(45deg, #3a1e65 0%, #6031a8 100%);
-    --accent-1: #42a5f5;
-    --accent-2: #00d4ff;
+    --accent-1: #cd3efd;
+    --accent-2: #b429e3;
     --accent-3: #ff5b92;
     --accent-4: #00e5bd;
     --dark: #0a0a1a;

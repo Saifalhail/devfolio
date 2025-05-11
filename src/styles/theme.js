@@ -3,8 +3,8 @@ const theme = {
     primaryBg: '#12142c', // Dark background base color
     primaryGradient: 'linear-gradient(135deg, #12142c 0%, #202253 50%, #3a1e65 100%)', // Purple gradient
     secondaryGradient: 'linear-gradient(45deg, #3a1e65 0%, #6031a8 100%)', // Secondary purple gradient
-    accent1: '#42a5f5', // Blue accent for buttons and highlights
-    accent2: '#00d4ff', // Light blue for secondary elements
+    accent1: '#cd3efd', // Purple accent for buttons and highlights
+    accent2: '#b429e3', // Darker purple for secondary elements
     accent3: '#ff5b92', // Pink accent for highlights
     accent4: '#00e5bd', // Teal for decorative elements
     dark: '#0a0a1a', // Extra dark color for contrast

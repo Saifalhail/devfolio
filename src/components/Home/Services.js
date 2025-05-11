@@ -84,11 +84,7 @@ const Services = () => {
   );
 };
 
-const gradientMove = keyframes`
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-`;
+// Animation keyframes for services section
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -123,7 +119,7 @@ const ServicesSection = styled.section`
     width: 300px;
     height: 300px;
     border-radius: 50%;
-    background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+    background: linear-gradient(45deg, #cd3efd, #b429e3);
     opacity: 0.1;
     filter: blur(80px);
   }
@@ -182,13 +178,13 @@ const SectionTitle = styled.h2`
   margin-bottom: 1rem;
   display: inline-block;
   padding: 0.5rem 1.2rem;
-  background: linear-gradient(120deg, rgba(66, 165, 245, 0.1), rgba(0, 212, 255, 0.1));
+  background: linear-gradient(120deg, rgba(205, 62, 253, 0.1), rgba(180, 41, 227, 0.1));
   border-radius: 50px;
   animation: ${fadeIn} 0.8s ease-out;
   align-self: center;
-  box-shadow: 0 2px 15px rgba(66, 165, 245, 0.1);
+  box-shadow: 0 2px 15px rgba(205, 62, 253, 0.1);
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(66, 165, 245, 0.1);
+  border: 1px solid rgba(205, 62, 253, 0.1);
 `;
 
 const SectionSubtitle = styled.h3`
@@ -207,12 +203,12 @@ const SectionSubtitle = styled.h3`
     position: absolute;
     width: 100px;
     height: 6px;
-    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    background: linear-gradient(90deg, #cd3efd, #b429e3);
     bottom: -15px;
     left: 50%;
     transform: translateX(-50%);
     border-radius: 4px;
-    box-shadow: 0 3px 10px rgba(66, 165, 245, 0.3);
+    box-shadow: 0 3px 10px rgba(205, 62, 253, 0.3);
   }
   
   @media (max-width: 768px) {
@@ -257,7 +253,7 @@ const ServiceCard = styled(Link)`
   &:hover {
     transform: translateY(-15px);
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-    border-color: rgba(66, 165, 245, 0.2);
+    border-color: rgba(205, 62, 253, 0.2);
     
     .learn-more {
       transform: translateX(7px);
@@ -277,7 +273,7 @@ const ServiceCard = styled(Link)`
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(120deg, var(--accent-1), var(--accent-2));
+    background: linear-gradient(120deg, #cd3efd, #b429e3);
     z-index: -1;
     opacity: 0;
     transform: translateY(20px);
@@ -294,7 +290,7 @@ const ServiceIcon = styled.div`
   height: 80px;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  background: linear-gradient(135deg, #cd3efd, #b429e3);
   border-radius: 20px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   position: relative;
@@ -326,7 +322,7 @@ const ServiceTitle = styled.h4`
   color: var(--accent-2);
   transition: color 0.3s ease;
   font-family: var(--fonts-display);
-  text-shadow: 0 2px 10px rgba(0, 212, 255, 0.2);
+  text-shadow: 0 2px 10px rgba(205, 62, 253, 0.2);
 `;
 
 const ServiceDescription = styled.p`
@@ -359,7 +355,7 @@ const LearnMore = styled.span`
     bottom: -4px;
     width: 100%;
     height: 2px;
-    background: linear-gradient(to right, var(--accent-1), var(--accent-2));
+    background: linear-gradient(to right, #cd3efd, #b429e3);
     transform: scaleX(0);
     transform-origin: right;
     transition: transform 0.3s ease;
@@ -396,7 +392,7 @@ const CtaContainer = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: radial-gradient(var(--accent-2) 1px, transparent 1px);
+    background-image: radial-gradient(#cd3efd 1px, transparent 1px);
     background-size: 20px 20px;
     opacity: 0.05;
     pointer-events: none;

@@ -166,7 +166,7 @@ const SectionHeader = styled.div`
 const SectionTitle = styled.h2`
   font-size: 1rem;
   font-weight: 600;
-  color: var(--accent-1);
+  color: #cd3efd;
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 0.5rem;
@@ -300,7 +300,7 @@ const FormTextarea = styled.textarea`
 const SubmitButton = styled.button`
   display: inline-block;
   padding: 0.8rem 2rem;
-  background-color: var(--accent-2);
+  background-color: #cd3efd;
   color: white;
   font-weight: 600;
   border: none;

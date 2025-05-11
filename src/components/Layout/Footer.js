@@ -4,12 +4,18 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   return (
     <FooterContainer>
       <FooterContent>
         <FooterSection>
-          <FooterLogo>DevFolio</FooterLogo>
+          <FooterLogo>
+            {/* Force LTR direction for the logo text even in RTL mode */}
+            <span style={{ direction: 'ltr', display: 'inline-block' }}>
+              <span style={{ color: '#cd3efd' }}>S.</span>N.P
+            </span>
+          </FooterLogo>
           <FooterDescription>
             {t('footer.description')}
           </FooterDescription>
@@ -40,7 +46,7 @@ const Footer = () => {
         <FooterSection>
           <FooterHeading>{t('footer.contact.title')}</FooterHeading>
           <ContactDetail>
-            <i className="fas fa-envelope"></i> contact@devfolio.com
+            <i className="fas fa-envelope"></i> contact@snp.com
           </ContactDetail>
           <ContactDetail>
             <i className="fas fa-phone"></i> +123 456 7890
