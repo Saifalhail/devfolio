@@ -10,17 +10,17 @@
   "hero": {
     "welcome": "Hello there!",
     "techBubble": "Tech Magic Happens Here",
-    "title": "Bring your tech idea to life",
-    "highlight": "with expertise",
-    "subtitle": "Professional software development services for websites, mobile apps, and custom solutions",
+    "title": "Let Me Turn Your Idea Into",
+    "highlight": "Reality",
+    "subtitle": "I help turn your vision into a powerful reality—through custom websites, mobile apps, and intelligent AI-driven solutions.",
     "buttons": {
-      "getStarted": "Get Started",
-      "viewProjects": "View Projects"
+      "getStarted": "Start Your Project",
+      "viewProjects": "View Portfolio"
     }
   },
   "services": {
     "title": "Services",
-    "subtitle": "What I Can Do For You",
+    "subtitle": "What I Build for You",
     "learnMore": "Learn more",
     "cta": {
       "question": "Need something specific?",
@@ -29,23 +29,23 @@
     "items": [
       {
         "title": "Web Development",
-        "description": "Custom websites tailored to your needs with responsive design and modern technologies."
+        "description": "Fast, mobile-friendly websites using React, Next.js, or WordPress"
       },
       {
         "title": "Mobile Apps",
-        "description": "Native and cross-platform mobile applications for iOS and Android."
+        "description": "Cross-platform apps with React Native or Expo"
       },
       {
-        "title": "QR Code Solutions",
-        "description": "Custom QR code generation and integration for your business needs."
+        "title": "AI Integrations",
+        "description": "Smart tools powered by Python, YOLO, GPT, and ML"
       },
       {
-        "title": "UI/UX Design",
-        "description": "Beautiful and intuitive designs that enhance user experience and engagement."
+        "title": "Admin Dashboards",
+        "description": "Secure portals, analytics dashboards, and APIs"
       },
       {
-        "title": "E-commerce Solutions",
-        "description": "Complete online store setup with payment integration and inventory management."
+        "title": "QR Code Tools",
+        "description": "Custom QR solutions for events, stores, and products"
       },
       {
         "title": "Custom Software",

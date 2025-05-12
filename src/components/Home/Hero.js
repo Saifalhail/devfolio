@@ -145,7 +145,13 @@ const HeroHeading = styled.h1`
   text-shadow: 0 5px 25px rgba(205, 62, 253, 0.25);
   
   @media (max-width: 768px) {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
+    line-height: 1.3;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.9rem;
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -156,30 +162,52 @@ const HeroHighlight = styled.span`
   -webkit-text-fill-color: transparent;
   position: relative;
   display: inline-block;
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-top: -0.2rem;
+  padding-bottom: 0.15em;
   
   &:after {
     content: '';
     position: absolute;
     width: 100%;
-    height: 8px;
+    height: 3px;
     background: linear-gradient(to right, var(--accent-3), var(--accent-4));
-    bottom: 5px;
+    bottom: 0;
     left: 0;
-    z-index: -1;
-    border-radius: 4px;
-    opacity: 0.3;
+    border-radius: 2px;
+    opacity: 0.5;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 3rem;
+    padding-bottom: 0.1em;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 2.4rem;
   }
 `;
 
 const HeroSubHeading = styled.p`
   font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
   color: var(--light-gray);
   line-height: 1.6;
   max-width: 90%;
   
   @media (max-width: 992px) {
     max-width: 100%;
+    padding: 0 0.5rem;
+    margin-top: 1.2rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
   }
 `;
 
@@ -506,7 +534,10 @@ const Hero = () => {
             👋 {t('hero.welcome')}
           </div>
           <HeroHeading>
-            {t('hero.title')} <HeroHighlight>{t('hero.highlight')}</HeroHighlight>
+            {t('hero.title')}
+            <div style={{ marginTop: '-0.5rem' }}>
+              <HeroHighlight>{t('hero.highlight')}</HeroHighlight>
+            </div>
           </HeroHeading>
           <HeroSubHeading>
             {t('hero.subtitle')}

@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { floatAnimation } from './HeroAnimations';
 
 const Services = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const services = [
     {
       id: 1,
@@ -19,18 +20,18 @@ const Services = () => {
     },
     {
       id: 3,
-      icon: '📲',
-      link: '/services/qr-codes'
+      icon: '🤖',
+      link: '/services/ai-integrations'
     },
     {
       id: 4,
-      icon: '🎨',
-      link: '/services/ui-ux-design'
+      icon: '📊',
+      link: '/services/admin-dashboards'
     },
     {
       id: 5,
-      icon: '🛒',
-      link: '/services/ecommerce'
+      icon: '📲',
+      link: '/services/qr-codes'
     },
     {
       id: 6,
@@ -54,11 +55,16 @@ const Services = () => {
         
         <ServicesGrid>
           {services.map((service, index) => (
-            <ServiceCard key={service.id} to={service.link} className="service-card">
+            <ServiceCard 
+              key={service.id} 
+              to={service.link} 
+              className="service-card" 
+              dir={isRTL ? 'rtl' : 'ltr'}
+            >
               <ServiceIcon>{service.icon}</ServiceIcon>
               <ServiceTitle>{t(`services.items.${index}.title`)}</ServiceTitle>
               <ServiceDescription>{t(`services.items.${index}.description`)}</ServiceDescription>
-              <LearnMore className="learn-more">{t('services.learnMore')}</LearnMore>
+              <LearnMore className="learn-more" isRTL={isRTL}>{t('services.learnMore')}</LearnMore>
             </ServiceCard>
           ))}
         </ServicesGrid>
@@ -206,8 +212,8 @@ const SectionSubtitle = styled.h3`
 
 const ServicesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
   margin: 3rem 0 5rem;
   
   & > * {
@@ -221,12 +227,23 @@ const ServicesGrid = styled.div`
   & > *:nth-child(4) { animation-duration: 0.8s; }
   & > *:nth-child(5) { animation-duration: 0.9s; }
   & > *:nth-child(6) { animation-duration: 1s; }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0 4rem;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
 `;
 
 const ServiceCard = styled(Link)`
   background: var(--card-gradient);
-  border-radius: 20px;
-  padding: 2.2rem;
+  border-radius: 16px;
+  padding: 1.8rem;
   box-shadow: var(--shadows-card);
   display: flex;
   flex-direction: column;
@@ -237,14 +254,36 @@ const ServiceCard = styled(Link)`
   isolation: isolate;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 100%;
+  min-height: 240px;
+  direction: ${props => props.dir || 'ltr'};
+  text-align: ${props => props.dir === 'rtl' ? 'right' : 'left'};
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(205, 62, 253, 0.08) 0%, transparent 50%);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
   
   &:hover {
-    transform: translateY(-15px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
     border-color: rgba(205, 62, 253, 0.2);
     
+    &:before {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
     .learn-more {
-      transform: translateX(7px);
+      transform: ${props => props.dir === 'rtl' ? 'translateX(-7px)' : 'translateX(7px)'};
       color: var(--accent-2);
     }
     
@@ -270,17 +309,17 @@ const ServiceCard = styled(Link)`
 `;
 
 const ServiceIcon = styled.div`
-  font-size: 2.8rem;
-  margin-bottom: 1.5rem;
-  margin-top: 0.5rem;
+  font-size: 2.5rem;
+  margin-bottom: 1.2rem;
+  margin-top: 0.2rem;
   display: flex;
-  width: 80px;
-  height: 80px;
+  width: 65px;
+  height: 65px;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #cd3efd, #b429e3);
-  border-radius: 20px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
   z-index: 1;
@@ -301,38 +340,73 @@ const ServiceIcon = styled.div`
   ${ServiceCard}:hover &::before {
     transform: translateX(100%);
   }
+  
+  ${ServiceCard}:hover & {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(205, 62, 253, 0.3);
+  }
+  
+  @media (max-width: 480px) {
+    width: 55px;
+    height: 55px;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const ServiceTitle = styled.h4`
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  margin-bottom: 1.2rem;
+  margin-bottom: 0.8rem;
   color: var(--accent-2);
   transition: color 0.3s ease;
   font-family: var(--fonts-display);
   text-shadow: 0 2px 10px rgba(205, 62, 253, 0.2);
+  line-height: 1.2;
+  
+  ${ServiceCard}:hover & {
+    background: linear-gradient(to right, #cd3efd, var(--accent-1));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const ServiceDescription = styled.p`
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
   flex: 1;
+  color: var(--light-gray);
+  
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
 `;
 
 const LearnMore = styled.span`
   font-size: 1rem;
   font-weight: 600;
-  align-self: flex-start;
+  align-self: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
+  margin-left: ${props => props.isRTL ? 'auto' : '0'};
+  margin-right: ${props => props.isRTL ? '0' : 'auto'};
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   color: var(--white);
   position: relative;
   display: flex;
   align-items: center;
+  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
   
   &:after {
-    content: '→';
-    margin-left: 8px;
+    content: ${props => props.isRTL ? '\'←\'' : '\'→\''};
+    margin-left: ${props => props.isRTL ? '0' : '8px'};
+    margin-right: ${props => props.isRTL ? '8px' : '0'};
     transition: transform 0.3s ease;
   }
   
