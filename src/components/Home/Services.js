@@ -4,6 +4,12 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { floatAnimation } from './HeroAnimations';
 
+const gradientMove = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
+
 const Services = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
@@ -11,32 +17,38 @@ const Services = () => {
     {
       id: 1,
       icon: '🌐',
-      link: '/services/web-development'
+      link: '/services/web-development',
+      gradient: 'linear-gradient(135deg, #6a11cb, #2575fc)'
     },
     {
       id: 2,
       icon: '📱',
-      link: '/services/mobile-apps'
+      link: '/services/mobile-apps',
+      gradient: 'linear-gradient(135deg, #ff9a9e, #fad0c4)'
     },
     {
       id: 3,
       icon: '🤖',
-      link: '/services/ai-integrations'
+      link: '/services/ai-integrations',
+      gradient: 'linear-gradient(135deg, #cd3efd, #b429e3)'
     },
     {
       id: 4,
       icon: '📊',
-      link: '/services/admin-dashboards'
+      link: '/services/admin-dashboards',
+      gradient: 'linear-gradient(135deg, #a18cd1, #fbc2eb)'
     },
     {
       id: 5,
       icon: '📲',
-      link: '/services/qr-codes'
+      link: '/services/qr-codes',
+      gradient: 'linear-gradient(135deg, #84fab0, #8fd3f4)'
     },
     {
       id: 6,
       icon: '💻',
-      link: '/services/custom-software'
+      link: '/services/custom-software',
+      gradient: 'linear-gradient(135deg, #fa709a, #fee140)'
     }
   ];
 
@@ -61,7 +73,52 @@ const Services = () => {
               className="service-card" 
               dir={isRTL ? 'rtl' : 'ltr'}
             >
-              <ServiceIcon>{service.icon}</ServiceIcon>
+              {/* Blurred background design */}
+              <div className="card-bg" style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: `linear-gradient(rgba(30, 20, 50, 0.7), rgba(30, 20, 50, 0.8)), 
+                           radial-gradient(circle at 50% 0%, ${service.gradient.split(',')[0].split('(')[1]}, transparent 70%)`,
+                zIndex: -1,
+                borderRadius: '16px'
+              }}></div>
+              
+              {/* Blurred design elements */}
+              <div style={{
+                position: 'absolute',
+                top: '10%',
+                right: '10%',
+                width: '100px',
+                height: '100px',
+                background: service.gradient,
+                borderRadius: '50%',
+                filter: 'blur(40px)',
+                opacity: '0.1',
+                zIndex: -1
+              }}></div>
+              
+              <div style={{
+                position: 'absolute',
+                bottom: '10%',
+                left: '5%',
+                width: '80px',
+                height: '80px',
+                background: service.gradient,
+                borderRadius: '50%',
+                filter: 'blur(30px)',
+                opacity: '0.1',
+                zIndex: -1
+              }}></div>
+              
+              {/* Animated particles */}
+              <div className="particle"></div>
+              <div className="particle"></div>
+              <div className="particle"></div>
+              
+              <ServiceIcon style={{ background: service.gradient }}>{service.icon}</ServiceIcon>
               <ServiceTitle>{t(`services.items.${index}.title`)}</ServiceTitle>
               <ServiceDescription>{t(`services.items.${index}.description`)}</ServiceDescription>
               <LearnMore className="learn-more" isRTL={isRTL}>{t('services.learnMore')}</LearnMore>
@@ -240,6 +297,23 @@ const ServicesGrid = styled.div`
   }
 `;
 
+// Animated background pattern keyframes
+const patternMove = keyframes`
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+`;
+
+const glowPulse = keyframes`
+  0% { box-shadow: 0 8px 20px rgba(205, 62, 253, 0.2); }
+  50% { box-shadow: 0 8px 30px rgba(205, 62, 253, 0.4); }
+  100% { box-shadow: 0 8px 20px rgba(205, 62, 253, 0.2); }
+`;
+
+const shimmer = keyframes`
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+`;
+
 const ServiceCard = styled(Link)`
   background: var(--card-gradient);
   border-radius: 16px;
@@ -258,54 +332,159 @@ const ServiceCard = styled(Link)`
   min-height: 240px;
   direction: ${props => props.dir || 'ltr'};
   text-align: ${props => props.dir === 'rtl' ? 'right' : 'left'};
+  z-index: 1;
   
-  &:before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(205, 62, 253, 0.08) 0%, transparent 50%);
-    opacity: 0;
-    transform: scale(0.8);
-    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-  
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-    border-color: rgba(205, 62, 253, 0.2);
-    
-    &:before {
-      opacity: 1;
-      transform: scale(1);
-    }
-    
-    .learn-more {
-      transform: ${props => props.dir === 'rtl' ? 'translateX(-7px)' : 'translateX(7px)'};
-      color: var(--accent-2);
-    }
-    
-    &::after {
-      transform: translateY(0);
-      opacity: 0.08;
-    }
-  }
-  
-  &::after {
+  /* Blurred background pattern */
+  &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(120deg, #cd3efd, #b429e3);
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(205, 62, 253, 0.05) 0%, transparent 20%),
+      radial-gradient(circle at 90% 80%, rgba(180, 41, 227, 0.05) 0%, transparent 20%),
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 30%),
+      radial-gradient(rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 30px 30px;
+    background-position: 0 0;
+    opacity: 0.3;
     z-index: -1;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.4s ease;
+    animation: ${patternMove} 20s linear infinite;
+    transition: opacity 0.5s ease;
   }
+  
+  /* Gradient border effect */
+  &:after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 1px;
+    background: linear-gradient(
+      135deg, 
+      rgba(205, 62, 253, 0.3) 0%, 
+      rgba(180, 41, 227, 0.1) 25%, 
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(180, 41, 227, 0.1) 75%,
+      rgba(205, 62, 253, 0.3) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  
+  /* Decorative blurred elements */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(205, 62, 253, 0.1) 0%, transparent 70%);
+    filter: blur(15px);
+    z-index: -1;
+    opacity: 0.5;
+    transition: all 0.5s ease;
+  }
+  
+  /* Floating particles */
+  .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(205, 62, 253, 0.2);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  .particle:nth-child(1) {
+    top: 20%;
+    left: 10%;
+    animation: ${floatAnimation} 6s ease-in-out infinite;
+  }
+  
+  .particle:nth-child(2) {
+    top: 70%;
+    left: 80%;
+    width: 8px;
+    height: 8px;
+    animation: ${floatAnimation} 8s ease-in-out infinite 1s;
+  }
+  
+  .particle:nth-child(3) {
+    top: 40%;
+    left: 60%;
+    width: 4px;
+    height: 4px;
+    animation: ${floatAnimation} 7s ease-in-out infinite 0.5s;
+  }
+  
+  /* Hover effects */
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25),
+                0 0 30px rgba(205, 62, 253, 0.2);
+    border-color: rgba(205, 62, 253, 0.2);
+    
+    &:before {
+      opacity: 0.7;
+    }
+    
+    &:after {
+      opacity: 0.8;
+      transform: scale(1.2);
+    }
+    
+    .particle {
+      opacity: 1;
+    }
+    
+    .learn-more {
+      transform: ${props => props.dir === 'rtl' ? 'translateX(-7px)' : 'translateX(7px)'};
+      color: var(--accent-2);
+    }
+  }
+  
+  /* Shimmer effect */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+    z-index: 1;
+    transform: skewX(-25deg);
+    animation: ${shimmer} 4s infinite;
+  }
+`;
+
+const iconRotate = keyframes`
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(3deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-3deg); }
+  100% { transform: rotate(0deg); }
+`;
+
+const iconGlow = keyframes`
+  0% { box-shadow: 0 8px 16px rgba(205, 62, 253, 0.2); }
+  50% { box-shadow: 0 8px 25px rgba(205, 62, 253, 0.5); }
+  100% { box-shadow: 0 8px 16px rgba(205, 62, 253, 0.2); }
 `;
 
 const ServiceIcon = styled.div`
@@ -325,25 +504,50 @@ const ServiceIcon = styled.div`
   z-index: 1;
   animation: ${floatAnimation} 5s ease-in-out infinite;
   
+  /* Gradient background with animated rotation */
   &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #cd3efd, #b429e3, #cd3efd);
+    background-size: 200% 200%;
+    animation: gradientMove 3s ease infinite;
+    z-index: -1;
+  }
+  
+  /* Shine effect */
+  &::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     transform: translateX(-100%);
     transition: 0.6s;
   }
   
-  ${ServiceCard}:hover &::before {
+  /* Dot pattern overlay */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    background-size: 8px 8px;
+    opacity: 0.5;
+    z-index: -1;
+  }
+  
+  ${ServiceCard}:hover &::after {
     transform: translateX(100%);
+    animation: ${shimmer} 2s infinite;
   }
   
   ${ServiceCard}:hover & {
-    transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(205, 62, 253, 0.3);
+    transform: scale(1.1);
+    box-shadow: 0 10px 25px rgba(205, 62, 253, 0.5);
+    animation: ${iconRotate} 2s ease-in-out infinite, ${iconGlow} 2s infinite;
   }
   
   @media (max-width: 480px) {
@@ -354,21 +558,50 @@ const ServiceIcon = styled.div`
   }
 `;
 
+const titleAnimation = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+`;
+
 const ServiceTitle = styled.h4`
   font-size: 1.35rem;
   font-weight: 700;
   margin-bottom: 0.8rem;
   color: var(--accent-2);
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
   font-family: var(--fonts-display);
   text-shadow: 0 2px 10px rgba(205, 62, 253, 0.2);
   line-height: 1.2;
+  position: relative;
+  display: inline-block;
+  
+  /* Underline effect */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, #cd3efd, var(--accent-1));
+    transition: width 0.4s ease;
+  }
   
   ${ServiceCard}:hover & {
     background: linear-gradient(to right, #cd3efd, var(--accent-1));
+    background-size: 200% auto;
+    animation: ${gradientMove} 3s linear infinite;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    transform: translateY(-2px);
+    animation: ${titleAnimation} 2s ease-in-out infinite;
+    text-shadow: 0 5px 15px rgba(205, 62, 253, 0.4);
+    
+    &::after {
+      width: 100%;
+    }
   }
   
   @media (max-width: 480px) {
@@ -382,6 +615,16 @@ const ServiceDescription = styled.p`
   margin-bottom: 1.2rem;
   flex: 1;
   color: var(--light-gray);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  
+  /* Subtle highlight effect on hover */
+  ${ServiceCard}:hover & {
+    color: rgba(255, 255, 255, 0.85);
+    transform: translateY(-2px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
   
   @media (max-width: 480px) {
     font-size: 0.85rem;

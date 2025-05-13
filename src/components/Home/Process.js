@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
@@ -14,25 +14,6 @@ const SectionDecor = styled.div`
   z-index: 0;
   overflow: hidden;
   opacity: 0.5;
-`;
-
-// Detail list and item components
-const DetailsList = styled.div`
-  margin-top: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const DetailItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateX(5px);
-  }
 `;
 
 const Process = () => {
@@ -64,19 +45,6 @@ const Process = () => {
     }
   };
   
-  // Animation variants for detail items
-  const detailVariants = {
-    hidden: { opacity: 0, x: isRTL ? 20 : -20 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: {
-        duration: 0.4,
-        ease: [0.175, 0.885, 0.32, 1.275] // Elastic ease for more dynamic animation
-      }
-    }
-  };
-
   // Process steps with icons and additional details
   const steps = [
     {
@@ -84,13 +52,8 @@ const Process = () => {
       number: '01',
       title: t('process.steps.0.title'),
       description: t('process.steps.0.description'),
-      icon: '🔍',
+      icon: '📝',
       color: 'linear-gradient(135deg, #4A90E2, #5E35B1)',
-      details: [
-        { icon: '🗓️', text: t('process.steps.0.details.0', 'Initial 30-minute consultation') },
-        { icon: '🎯', text: t('process.steps.0.details.1', 'Define project scope and goals') },
-        { icon: '💬', text: t('process.steps.0.details.2', 'Discuss timeline and budget') }
-      ],
       bgPattern: 'linear-gradient(to right, rgba(74, 144, 226, 0.05), rgba(94, 53, 177, 0.05)), radial-gradient(circle at 10% 20%, rgba(74, 144, 226, 0.1) 0%, transparent 50%), repeating-linear-gradient(45deg, rgba(74, 144, 226, 0.01) 0px, rgba(74, 144, 226, 0.01) 1px, transparent 1px, transparent 10px)'
     },
     {
@@ -98,13 +61,8 @@ const Process = () => {
       number: '02',
       title: t('process.steps.1.title'),
       description: t('process.steps.1.description'),
-      icon: '✏️',
+      icon: '📊',
       color: 'linear-gradient(135deg, #FF6B6B, #FF8E53)',
-      details: [
-        { icon: '📋', text: t('process.steps.1.details.0', 'Create detailed project roadmap') },
-        { icon: '🎨', text: t('process.steps.1.details.1', 'Design UI/UX wireframes') },
-        { icon: '✅', text: t('process.steps.1.details.2', 'Get your approval on designs') }
-      ],
       bgPattern: 'linear-gradient(to right, rgba(255, 107, 107, 0.05), rgba(255, 142, 83, 0.05)), radial-gradient(circle at 90% 10%, rgba(255, 107, 107, 0.1) 0%, transparent 50%), repeating-linear-gradient(-45deg, rgba(255, 107, 107, 0.01) 0px, rgba(255, 107, 107, 0.01) 1px, transparent 1px, transparent 10px)'
     },
     {
@@ -112,13 +70,8 @@ const Process = () => {
       number: '03',
       title: t('process.steps.2.title'),
       description: t('process.steps.2.description'),
-      icon: '💻',
+      icon: '🎨',
       color: 'linear-gradient(135deg, #56CCF2, #2F80ED)',
-      details: [
-        { icon: '⚙️', text: t('process.steps.2.details.0', 'Set up development environment') },
-        { icon: '📱', text: t('process.steps.2.details.1', 'Build responsive frontend') },
-        { icon: '🔄', text: t('process.steps.2.details.2', 'Implement backend functionality') }
-      ],
       bgPattern: 'linear-gradient(to right, rgba(86, 204, 242, 0.05), rgba(47, 128, 237, 0.05)), radial-gradient(circle at 20% 80%, rgba(86, 204, 242, 0.1) 0%, transparent 50%), repeating-linear-gradient(90deg, rgba(86, 204, 242, 0.01) 0px, rgba(86, 204, 242, 0.01) 1px, transparent 1px, transparent 10px)'
     },
     {
@@ -126,13 +79,8 @@ const Process = () => {
       number: '04',
       title: t('process.steps.3.title'),
       description: t('process.steps.3.description'),
-      icon: '🧪',
+      icon: '💻',
       color: 'linear-gradient(135deg, #6FCF97, #219653)',
-      details: [
-        { icon: '🔍', text: t('process.steps.3.details.0', 'Perform cross-browser testing') },
-        { icon: '📊', text: t('process.steps.3.details.1', 'Optimize performance') },
-        { icon: '🔒', text: t('process.steps.3.details.2', 'Security and vulnerability checks') }
-      ],
       bgPattern: 'linear-gradient(to right, rgba(111, 207, 151, 0.05), rgba(33, 150, 83, 0.05)), radial-gradient(circle at 80% 90%, rgba(111, 207, 151, 0.1) 0%, transparent 50%), repeating-linear-gradient(0deg, rgba(111, 207, 151, 0.01) 0px, rgba(111, 207, 151, 0.01) 1px, transparent 1px, transparent 10px)'
     },
     {
@@ -142,11 +90,6 @@ const Process = () => {
       description: t('process.steps.4.description'),
       icon: '🚀',
       color: 'linear-gradient(135deg, #BB6BD9, #8B5CF6)',
-      details: [
-        { icon: '🌐', text: t('process.steps.4.details.0', 'Domain and hosting setup') },
-        { icon: '📈', text: t('process.steps.4.details.1', 'Analytics integration') },
-        { icon: '🔄', text: t('process.steps.4.details.2', 'Final deployment checks') }
-      ],
       bgPattern: 'linear-gradient(to right, rgba(187, 107, 217, 0.05), rgba(139, 92, 246, 0.05)), radial-gradient(circle at 10% 50%, rgba(187, 107, 217, 0.1) 0%, transparent 50%), repeating-linear-gradient(135deg, rgba(187, 107, 217, 0.01) 0px, rgba(187, 107, 217, 0.01) 1px, transparent 1px, transparent 10px)'
     },
     {
@@ -154,14 +97,9 @@ const Process = () => {
       number: '06',
       title: t('process.steps.5.title'),
       description: t('process.steps.5.description'),
-      icon: '🛠️',
+      icon: '🔧',
       color: 'linear-gradient(135deg, #F2994A, #F2C94C)',
-      details: [
-        { icon: '📞', text: t('process.steps.5.details.0', 'Ongoing technical support') },
-        { icon: '🔄', text: t('process.steps.5.details.1', 'Regular updates and improvements') },
-        { icon: '📊', text: t('process.steps.5.details.2', 'Performance monitoring') }
-      ],
-      bgPattern: 'linear-gradient(to right, rgba(242, 153, 74, 0.05), rgba(242, 201, 76, 0.05)), radial-gradient(circle at 70% 30%, rgba(242, 153, 74, 0.1) 0%, transparent 50%), repeating-linear-gradient(-135deg, rgba(242, 153, 74, 0.01) 0px, rgba(242, 153, 74, 0.01) 1px, transparent 1px, transparent 10px)'
+      bgPattern: 'linear-gradient(to right, rgba(242, 153, 74, 0.05), rgba(242, 201, 76, 0.05)), radial-gradient(circle at 70% 30%, rgba(242, 153, 74, 0.1) 0%, transparent 50%), repeating-linear-gradient(60deg, rgba(242, 153, 74, 0.01) 0px, rgba(242, 153, 74, 0.01) 1px, transparent 1px, transparent 10px)'
     }
   ];
 
@@ -183,6 +121,9 @@ const Process = () => {
             <SectionTitle>{t('process.title')}</SectionTitle>
           </SectionTitleWrapper>
           <SectionSubtitle>{t('process.subtitle')}</SectionSubtitle>
+          <TwoWeeksStamp>
+            <StampText>{t('process.twoWeeks')}</StampText>
+          </TwoWeeksStamp>
         </SectionHeader>
         
         <motion.div
@@ -193,112 +134,19 @@ const Process = () => {
           viewport={{ once: true, margin: "-100px" }}
         >
           <ProcessSteps>
-            {steps.map((step, index) => (
+            {steps.map((step) => (
               <motion.div key={step.id} variants={itemVariants}>
-                <ProcessStep style={{ 
-                  flexDirection: 'row', // Always keep the same direction
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  position: 'relative',
-                  zIndex: 2,
-                  marginBottom: '2rem'
-                }}>
-                  <StepIconContainer 
-                    style={{ 
-                      background: step.color,
-                      marginRight: '2rem', // Always keep the same margin
-                      marginLeft: '0',
-                      boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
-                      width: '80px',
-                      height: '80px',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative',
-                      zIndex: 5, // Increased z-index to ensure it's above the connector
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
-                    {/* Add glow effect around icon */}
-                    <div style={{
-                      position: 'absolute',
-                      top: '-5px',
-                      left: '-5px',
-                      right: '-5px',
-                      bottom: '-5px',
-                      background: step.color,
-                      opacity: 0.3,
-                      borderRadius: '50%',
-                      zIndex: -1
-                    }}></div>
-                    <StepNumber style={{
-                      fontSize: '1.2rem',
-                      fontWeight: '700',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      position: 'absolute',
-                      top: '0',
-                      left: '0',
-                      right: '0',
-                      textAlign: 'center',
-                      transform: 'translateY(-50%)'
-                    }}>{step.number}</StepNumber>
-                    <StepIcon style={{
-                      fontSize: '2rem',
-                      color: 'white',
-                      marginTop: '0.5rem'
-                    }} className="pulse-animation">{step.icon}</StepIcon>
+                <ProcessStep bgPattern={step.bgPattern}>
+                  <StepIconContainer style={{ background: step.color }}>
+                    <IconGlow style={{ background: step.color }} />
+                    <StepNumber>{step.number}</StepNumber>
+                    <StepIcon>{step.icon}</StepIcon>
                   </StepIconContainer>
                   
-                  <StepContent 
-                    style={{ 
-                      textAlign: isRTL ? 'right' : 'left', // Keep text alignment based on language
-                      backgroundImage: step.bgPattern,
-                      transformOrigin: 'left center', // Keep consistent origin
-                      flex: 1
-                    }}
-                  >
-                    <StepTitle style={{ 
-                      background: step.color,
-                      WebkitBackgroundClip: 'text',
-                      backgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      color: 'white' // Fallback
-                    }}>{step.title}</StepTitle>
-                    <StepDescription style={{ color: 'white' }}>{step.description}</StepDescription>
-                    
-                    <DetailsList>
-                      {step.details.map((detail, i) => (
-                        <motion.div 
-                          key={i}
-                          variants={detailVariants}
-                          initial="hidden"
-                          whileInView="visible"
-                          viewport={{ once: true }}
-                          custom={i}
-                        >
-                          <DetailItem>
-                            <DetailIcon style={{ background: step.color }}>{detail.icon}</DetailIcon>
-                            <DetailText style={{ color: 'white' }}>{detail.text}</DetailText>
-                          </DetailItem>
-                        </motion.div>
-                      ))}
-                    </DetailsList>
-                    
-                    <StepProgressBar style={{ background: step.color }} />
+                  <StepContent>
+                    <StepTitle>{step.title}</StepTitle>
+                    <StepDescription>{step.description}</StepDescription>
                   </StepContent>
-                  {index !== steps.length - 1 && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '60px',
-                      [isRTL ? 'right' : 'left']: '40px', // Move to right side in Arabic mode
-                      width: '2px',
-                      height: 'calc(100% + 2rem)',
-                      background: 'linear-gradient(to bottom, rgba(205, 62, 253, 0.3), rgba(205, 62, 253, 0.1))',
-                      zIndex: 1
-                    }} />
-                  )}
                 </ProcessStep>
               </motion.div>
             ))}
@@ -313,6 +161,12 @@ const Process = () => {
 const fadeIn = keyframes`
   from { opacity: 0; }
   to { opacity: 1; }
+`;
+
+const rotate = keyframes`
+  0% { transform: rotate(-12deg); }
+  50% { transform: rotate(-8deg); }
+  100% { transform: rotate(-12deg); }
 `;
 
 const pulse = keyframes`
@@ -517,210 +371,211 @@ const SectionSubtitle = styled.h3`
 `;
 
 const ProcessSteps = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 2rem;
-  position: relative;
-  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+  justify-content: center;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
   
   @media (max-width: 768px) {
-    padding: 0;
+    grid-template-columns: 1fr;
   }
 `;
 
 const ProcessStep = styled.div`
-  display: flex;
-  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
-  align-items: flex-start;
   position: relative;
-  z-index: 2;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
-  }
-`;
-
-const StepConnector = styled.div`
-  position: absolute;
-  top: 60px;
-  ${props => props.isRTL ? 'right: 40px;' : 'left: 40px;'}
-  width: 2px;
-  height: calc(100% + 2rem);
-  background: linear-gradient(to bottom, rgba(66, 165, 245, 0.3), rgba(66, 165, 245, 0.1));
-  z-index: 1;
-  
-  @media (max-width: 768px) {
-    ${props => props.isRTL ? 'right: 40px;' : 'left: 40px;'}
-    height: 50px;
-  }
-`;
-
-const StepIconContainer = styled.div`
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: ${props => props.bgColor || 'linear-gradient(135deg, var(--accent-2), var(--accent-1))'};
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadows-card);
+  overflow: hidden;
+  isolation: isolate;
+  height: 100%;
+  min-height: 250px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin-${props => props.isRTL ? 'left' : 'right'}: 2rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   
   &:before {
     content: '';
     position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    background: ${props => props.bgColor || 'linear-gradient(135deg, var(--accent-2), var(--accent-1))'};
-    opacity: 0.3;
-    border-radius: 50%;
+    inset: 0;
+    background: ${props => props.bgPattern || 'none'};
+    opacity: 0.5;
     z-index: -1;
-    transition: all 0.3s ease;
   }
   
-  &:hover {
-    transform: scale(1.05);
-    
-    &:before {
-      top: -8px;
-      left: -8px;
-      right: -8px;
-      bottom: -8px;
-      opacity: 0.4;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    margin: 0 0 1.5rem 0;
-  }
-`;
-
-const StepNumber = styled.div`
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
-  transform: translateY(-50%);
-`;
-
-const StepIcon = styled.div`
-  font-size: 2rem;
-  color: white;
-  margin-top: 0.5rem;
-  animation: ${pulse} 3s infinite ease-in-out;
-`;
-
-const StepContent = styled.div`
-  flex: 1;
-  background: var(--primary-bg-dark, #1a1a2e);
-  border-radius: 16px;
-  padding: 1.5rem 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
-  position: relative;
-  z-index: 2;
-  overflow: hidden;
-  background-image: ${props => props.bgPattern || 'none'};
-  background-size: cover;
-  background-position: center;
-  border-top: 4px solid transparent;
-  background-clip: padding-box;
-  color: var(--text-primary, #f8f9fa);
-  transform-origin: ${props => props.isRTL ? 'right' : 'left'} center;
-  
-  &:before {
+  &:after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: ${props => props.color || 'linear-gradient(90deg, var(--accent-1), var(--accent-2))'};
-    transform: translateY(-100%);
-    transition: transform 0.3s ease;
+    height: 60px;
+    background: ${props => props.color || 'linear-gradient(135deg, rgba(205, 62, 253, 0.2), rgba(205, 62, 253, 0.05))'};
+    opacity: 0.1;
+    z-index: -1;
+    border-radius: 16px 16px 0 0;
   }
   
   &:hover {
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-    transform: translateY(-5px) scale(1.03);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
     
-    &:before {
-      transform: translateY(0);
+    &:after {
+      opacity: 0.15;
     }
   }
   
   @media (max-width: 768px) {
-    width: 100%;
+    padding: 1.25rem;
+    max-width: 100%;
+    min-height: 220px;
   }
 `;
 
+const StepIconContainer = styled.div`
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  background: ${props => props.color || 'linear-gradient(135deg, #4A90E2, #5E35B1)'};
+  transition: all 0.3s ease;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: ${props => props.color || 'linear-gradient(135deg, #4A90E2, #5E35B1)'};
+    opacity: 0.3;
+    z-index: -1;
+    transition: all 0.3s ease;
+  }
+  
+  ${ProcessStep}:hover & {
+    transform: scale(1.05);
+    
+    &:before {
+      inset: -5px;
+      opacity: 0.4;
+    }
+  }
+`;
+
+const StepNumber = styled.div`
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: white;
+  color: #333;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+`;
+
+const StepIcon = styled.div`
+  font-size: 1.8rem;
+  color: white;
+  margin-top: 0.2rem;
+  animation: ${pulse} 3s infinite ease-in-out;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  
+  ${ProcessStep}:hover & {
+    animation: ${pulse} 1.5s infinite ease-in-out;
+  }
+`;
+
+const StepContent = styled.div`
+  text-align: center;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
 const StepTitle = styled.h4`
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  margin-bottom: 1rem;
-  background: ${props => props.color || 'linear-gradient(to right, var(--accent-1), var(--accent-2))'};
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+  color: var(--text-title);
+  font-family: var(--fonts-display);
   position: relative;
   display: inline-block;
+  transition: all 0.3s ease;
   
   &:after {
     content: '';
     position: absolute;
     bottom: -5px;
-    left: 0;
-    width: 40px;
-    height: 3px;
-    background: ${props => props.color || 'linear-gradient(to right, var(--accent-1), var(--accent-2))'};
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: ${props => props.color || 'linear-gradient(90deg, var(--accent-3), var(--accent-4))'};
+    transition: width 0.3s ease;
     border-radius: 2px;
-    transition: all 0.3s ease;
   }
   
-  ${StepContent}:hover &:after {
-    width: 100%;
+  ${ProcessStep}:hover & {
+    transform: translateY(-2px);
+    
+    &:after {
+      width: 40px;
+    }
   }
 `;
 
 const StepDescription = styled.p`
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--light-gray, #d1d1e1);
-  line-height: 1.7;
-  margin-top: 1rem;
+  line-height: 1.5;
+  margin-top: 0.75rem;
+  /* Ensuring text fits nicely in the box */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 5rem;
+  transition: color 0.3s ease;
   
-  ${StepContent}:hover & {
-    color: var(--text-primary, #f8f9fa);
+  ${ProcessStep}:hover & {
+    color: var(--text-primary);
   }
 `;
 
-// New styled components for enhanced process step boxes
 const IconGlow = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
   border-radius: 50%;
-  background: ${props => props.bgColor || 'linear-gradient(135deg, var(--accent-2), var(--accent-1))'};
-  filter: blur(15px);
   opacity: 0.3;
   z-index: -1;
-  transform: scale(0.7);
-  transition: all 0.3s ease;
-  
   ${StepIconContainer}:hover & {
     transform: scale(1.1);
     opacity: 0.4;
@@ -800,6 +655,78 @@ const StepProgressBar = styled.div`
   
   ${StepContent}:hover & {
     width: 100%;
+  }
+`;
+
+// Two Weeks Stamp styling
+
+const TwoWeeksStamp = styled.div`
+  position: absolute;
+  top: -25px;
+  right: 30px;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 12px;
+  transform: rotate(-12deg);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+  z-index: 10;
+  animation: ${rotate} 6s ease-in-out infinite;
+  border: 2px dashed rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px solid rgba(255, 107, 107, 0.4);
+    border-radius: 14px;
+    z-index: -1;
+  }
+  
+  &:after {
+    content: '⚡';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    animation: ${pulse} 2s infinite ease-in-out;
+  }
+  
+  @media (max-width: 768px) {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin: 20px auto 0;
+    transform: rotate(-5deg);
+    display: inline-block;
+  }
+`;
+
+const StampText = styled.span`
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  position: relative;
+  display: inline-block;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 2px;
   }
 `;
 

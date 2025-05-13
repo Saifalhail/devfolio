@@ -55,33 +55,89 @@
   },
   "process": {
     "title": "My Process",
-    "subtitle": "How We'll Work Together",
+    "subtitle": "My 6-Step Process",
+    "twoWeeks": "2 Weeks or Less",
     "steps": [
       {
-        "title": "Discovery Call",
-        "description": "We start with understanding your requirements and project goals."
+        "title": "Discovery",
+        "description": "You fill out a quick form to describe your idea, features, and target audience."
       },
       {
-        "title": "Planning & Design",
-        "description": "Creating a detailed plan and mockups for your approval."
+        "title": "Proposal",
+        "description": "I prepare a clear roadmap with time, cost, and recommended tech."
+      },
+      {
+        "title": "Design",
+        "description": "I create modern mockups in Figma based on your vision. I'll also provide a branded design kit."
       },
       {
         "title": "Development",
-        "description": "Transforming designs into functional code and features."
+        "description": "I build the site or app using React, Python, or modern stacks optimized for speed."
       },
       {
-        "title": "Testing & Review",
-        "description": "Thorough quality assurance to ensure everything works perfectly."
+        "title": "Launch",
+        "description": "I handle deployment to live servers and ensure a smooth rollout."
       },
       {
-        "title": "Deployment",
-        "description": "Launching your project to the world and ensuring smooth operation."
-      },
-      {
-        "title": "Support & Maintenance",
-        "description": "Ongoing assistance and updates to keep your project running smoothly."
+        "title": "Maintenance",
+        "description": "I provide ongoing support, updates, and improvements to keep your project running smoothly."
       }
     ]
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "Who's Behind S.N.P?",
+    "description": "I'm a solo developer with years of experience in AI, full-stack development, and software for government and defense industries. I code smart, work fast, and speak tech fluently—so you don't have to.",
+    "skills": [
+      {
+        "name": "AI & Machine Learning",
+        "level": 95,
+        "icon": "🤖"
+      },
+      {
+        "name": "Full-Stack Development",
+        "level": 90,
+        "icon": "💻"
+      },
+      {
+        "name": "Python & Data Science",
+        "level": 92,
+        "icon": "🐍"
+      },
+      {
+        "name": "React & Modern Frontend",
+        "level": 88,
+        "icon": "⚛️"
+      },
+      {
+        "name": "DevOps & Cloud",
+        "level": 85,
+        "icon": "☁️"
+      }
+    ],
+    "facts": [
+      {
+        "title": "Years of Experience",
+        "value": "8+",
+        "icon": "⏱️"
+      },
+      {
+        "title": "Projects Completed",
+        "value": "120+",
+        "icon": "🚀"
+      },
+      {
+        "title": "Client Satisfaction",
+        "value": "99%",
+        "icon": "🌟"
+      },
+      {
+        "title": "Technologies Mastered",
+        "value": "20+",
+        "icon": "🔧"
+      }
+    ],
+    "cta": "Ready to work together?"
   },
   "contact": {
     "title": "Contact",
