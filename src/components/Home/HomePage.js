@@ -3,6 +3,7 @@ import Hero from './Hero';
 import Services from './Services';
 import Process from './Process';
 import About from './About';
+import TechStack from './TechStack';
 import Contact from './Contact';
 import Layout from '../Layout/Layout';
 
@@ -13,6 +14,7 @@ const HomePage = () => {
       <Services />
       <Process />
       <About />
+      <TechStack />
       <Contact />
     </Layout>
   );

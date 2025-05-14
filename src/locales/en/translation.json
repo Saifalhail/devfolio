@@ -157,6 +157,19 @@
       "success": "Thank you for your message! I'll get back to you soon."
     }
   },
+  "techStack": {
+    "title": "Powered By",
+    "altTexts": {
+      "react": "React developer Qatar",
+      "reactNative": "React Native developer Qatar",
+      "python": "Python developer Qatar",
+      "yolo": "YOLO AI developer Qatar",
+      "django": "Django developer Qatar",
+      "supabase": "Supabase developer Qatar",
+      "firebase": "Firebase developer Qatar",
+      "vercel": "Vercel developer Qatar"
+    }
+  },
   "footer": {
     "description": "Professional software development services for websites, mobile apps, QR codes and all tech-related applications.",
     "links": {

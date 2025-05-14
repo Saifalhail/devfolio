@@ -68,7 +68,7 @@ const About = () => {
               <ProfileImageWrapper>
                 <ProfileGlow />
                 <ProfileImage>
-                  <ProfileInitials>SNP</ProfileInitials>
+                  <LogoImage src={require('../../assets/logo_cropped.png')} alt="Logo" />
                 </ProfileImage>
                 <ProfileBadge>
                   <span>8+</span>
@@ -450,10 +450,19 @@ const ProfileInitials = styled.div`
   z-index: 2;
 `;
 
+const LogoImage = styled.img`
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+  border-radius: 50%;
+  z-index: 2;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+`;
+
 const ProfileBadge = styled.div`
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: -10px;
+  right: -10px;
   background: linear-gradient(135deg, #faaa93, #ff8e53);
   color: white;
   width: 40px;
