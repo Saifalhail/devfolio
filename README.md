@@ -24,7 +24,8 @@ The website uses the following color scheme:
 - **Frontend**: React.js, styled-components
 - **Routing**: React Router
 - **Internationalization**: i18next, react-i18next
-- **Minimal Backend**: For contact form submissions and signup functionality
+- **Backend**: Firebase Cloud Functions and Firestore
+- **Email Notifications**: SendGrid integration (optional)
 
 ## Getting Started
 
@@ -50,10 +51,34 @@ The website uses the following color scheme:
    npm install
    ```
 
-4. Start the development server
+4. Set up environment variables
+   ```bash
+   # For frontend
+   cp .env.local.example .env.local
+   # Edit .env.local with your Firebase credentials
+   
+   # For backend
+   cd backend/functions
+   cp .env.example .env
+   # Edit .env with your Firebase and SendGrid credentials
+   ```
+
+5. Start the development server
    ```bash
    npm start
    ```
+
+## Security
+
+This project implements several security best practices:
+
+- **Environment Variables**: All sensitive credentials are stored in environment variables
+- **Input Validation**: Form inputs are validated on both client and server sides
+- **Firestore Security Rules**: Database access is restricted through security rules
+- **Error Handling**: Proper error handling to prevent information leakage
+- **SendGrid Integration**: Secure email handling through SendGrid API (optional)
+
+For detailed security setup instructions, see [FIREBASE_SETUP.md](./FIREBASE_SETUP.md).
 
 5. Open [http://localhost:3000](http://localhost:3000) to view it in your browser
 
@@ -87,5 +112,5 @@ devfolio/
 
 ## License
 
-MIT © [Your Name]
+MIT © Saif Al-Hail
 

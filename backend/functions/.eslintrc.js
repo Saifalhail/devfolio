@@ -15,6 +15,9 @@ module.exports = {
     "prefer-arrow-callback": "error",
     "quotes": ["error", "double", {"allowTemplateLiterals": true}],
     "eol-last": "off",
+    "no-trailing-spaces": "warn",
+    "max-len": ["warn", {"code": 100}],
+    "comma-dangle": "off",
   },
   overrides: [
     {

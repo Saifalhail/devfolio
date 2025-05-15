@@ -29,10 +29,10 @@ DevFolio is a responsive website built for a solo developer offering software de
 - **Axios**: For API requests to the backend
 
 ### Backend
-- **Express.js**: Minimal backend server
-- **Body-parser**: For parsing JSON request bodies
-- **CORS**: For handling cross-origin requests
-- **File System**: For storing form submissions (in a production environment, this would use a database)
+- **Firebase Cloud Functions**: Serverless backend for handling form submissions
+- **Firebase Firestore**: NoSQL database for storing contact form submissions
+- **SendGrid**: Email service for sending form submission notifications (optional)
+- **dotenv**: For loading environment variables securely
 
 ## Project Structure
 
@@ -142,6 +142,41 @@ The Express backend provides the following API endpoints:
   }
   ```
 - **Response**: Success/failure message
+
+## Security Measures
+
+### Environment Variables
+
+All sensitive information is stored in environment variables:
+
+- **Frontend**: `.env.local` file with `REACT_APP_` prefixed variables
+- **Backend**: `.env` file in the `functions` directory
+
+Example files (`.env.local.example` and `.env.example`) are provided as templates, but should not contain actual credentials.
+
+### Firebase Security
+
+1. **Firestore Security Rules**: Access to the database is restricted through security rules that:
+   - Allow contact form submissions to be created with proper validation
+   - Restrict read access to prevent unauthorized data access
+   - Validate data structure and types
+
+2. **Cloud Functions**: The Firebase Cloud Functions are secured by:
+   - Input validation for all form fields
+   - Error handling that doesn't expose sensitive information
+   - Proper logging for debugging without exposing sensitive data
+
+### Form Validation
+
+- **Client-side validation**: Prevents invalid submissions and provides immediate feedback
+- **Server-side validation**: Ensures data integrity and security even if client-side validation is bypassed
+
+### Email Security
+
+When using SendGrid for email notifications:
+- API keys are stored securely in environment variables
+- Email templates are sanitized to prevent injection attacks
+- From/to email addresses are validated
 
 ## Deployment
 

@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../../firebase';
+
+// Firebase is already initialized in the imported firebase.js file
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -23,14 +27,46 @@ const Contact = () => {
     }));
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setFormError(null);
     
-    // Simulate form submission - in a real app, you'd make an API call here
-    setTimeout(() => {
+    try {
+      console.log('Starting form submission...');
+      
+      // Validate form data
+      if (!formData.name || !formData.email || !formData.message) {
+        throw new Error('Please fill in all required fields');
+      }
+      
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        throw new Error('Please enter a valid email address');
+      }
+      
+      // Get a reference to the Cloud Function we created
+      // functions is already imported from firebase.js with us-central1 region
+      const submitFormData = httpsCallable(functions, 'submitFormData');
+      console.log('Cloud Function reference created');
+      
+      // Call the function with our form data
+      // Make sure to use the correct format for callable functions
+      // The data must be wrapped in an object with a 'data' property
+      console.log('Submitting form data:', formData);
+      const result = await submitFormData({
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject || '',
+        message: formData.message
+      });
+      
+      console.log('Form submission result:', result.data);
+      
+      // Show success message
       setFormSuccess(true);
-      setIsSubmitting(false);
+      
       // Reset form
       setFormData({
         name: '',
@@ -43,7 +79,29 @@ const Contact = () => {
       setTimeout(() => {
         setFormSuccess(false);
       }, 5000);
-    }, 1500);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      
+      // Extract detailed error information
+      let errorMessage = 'There was an error submitting your form. Please try again.';
+      
+      if (error.code) {
+        errorMessage = `Error type: ${error.code}. `;
+      }
+      
+      if (error.message) {
+        errorMessage += error.message;
+      }
+      
+      if (error.details) {
+        console.error('Error details:', error.details);
+        errorMessage += ` Details: ${JSON.stringify(error.details)}`;
+      }
+      
+      setFormError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
