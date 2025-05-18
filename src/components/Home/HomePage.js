@@ -4,7 +4,8 @@ import Services from './Services';
 import Process from './Process';
 import About from './About';
 import TechStack from './TechStack';
-import Contact from './Contact';
+import Testimonials from './Testimonials';
+import NewContact from './NewContact';
 import Layout from '../Layout/Layout';
 
 const HomePage = () => {
@@ -15,7 +16,8 @@ const HomePage = () => {
       <Process />
       <About />
       <TechStack />
-      <Contact />
+      <Testimonials />
+      <NewContact />
     </Layout>
   );
 };

@@ -141,20 +141,24 @@
   },
   "contact": {
     "title": "Contact",
-    "subtitle": "Get In Touch",
+    "subtitle": "Let's Build Something Together",
     "description": "Have a project in mind or want to discuss your tech needs? I'm just a message away!",
     "info": {
       "heading": "Let's talk about your project",
       "text": "Feel free to reach out if you have any questions or ideas. I'm always open to discussing new projects and opportunities."
     },
     "form": {
+      "title": "Send a Message",
       "name": "Name",
       "email": "Email",
-      "subject": "Subject",
+      "projectType": "Project Type",
       "message": "Message",
       "button": "Send Message",
       "sending": "Sending...",
       "success": "Thank you for your message! I'll get back to you soon."
+    },
+    "seo": {
+      "keywords": "contact software developer, hire a programmer in Qatar"
     }
   },
   "techStack": {
@@ -169,6 +173,10 @@
       "firebase": "Firebase developer Qatar",
       "vercel": "Vercel developer Qatar"
     }
+  },
+  "testimonials": {
+    "title": "Client Testimonials",
+    "subtitle": "What my clients say about my work"
   },
   "footer": {
     "description": "Professional software development services for websites, mobile apps, QR codes and all tech-related applications.",
