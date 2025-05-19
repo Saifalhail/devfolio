@@ -462,28 +462,28 @@ const TechStack = () => {
   const techIcons = [
     // Frontend Technologies
     { name: 'React', logo: reactLogo, alt: t('techStack.altTexts.react'), category: 'frontend' },
-    { name: 'Next.js', logo: nextjsLogo, alt: t('techStack.altTexts.react'), category: 'frontend' },
-    { name: 'Vue', logo: vueLogo, alt: t('techStack.altTexts.react'), category: 'frontend' },
-    { name: 'TypeScript', logo: typescriptLogo, alt: t('techStack.altTexts.react'), category: 'frontend' },
+    { name: 'Next.js', logo: nextjsLogo, alt: t('techStack.altTexts.nextjs'), category: 'frontend' },
+    { name: 'Vue', logo: vueLogo, alt: t('techStack.altTexts.vue'), category: 'frontend' },
+    { name: 'TypeScript', logo: typescriptLogo, alt: t('techStack.altTexts.typescript'), category: 'frontend' },
     { name: 'React Native', logo: reactNativeLogo, alt: t('techStack.altTexts.reactNative'), category: 'frontend' },
-    { name: 'Tailwind CSS', logo: tailwindLogo, alt: t('techStack.altTexts.react'), category: 'frontend' },
+    { name: 'Tailwind CSS', logo: tailwindLogo, alt: t('techStack.altTexts.tailwind'), category: 'frontend' },
     
     // Backend Technologies
     { name: 'Python', logo: pythonLogo, alt: t('techStack.altTexts.python'), category: 'backend' },
-    { name: 'Node.js', logo: nodejsLogo, alt: t('techStack.altTexts.python'), category: 'backend' },
-    { name: 'Express', logo: expressLogo, alt: t('techStack.altTexts.python'), category: 'backend' },
+    { name: 'Node.js', logo: nodejsLogo, alt: t('techStack.altTexts.nodejs'), category: 'backend' },
+    { name: 'Express', logo: expressLogo, alt: t('techStack.altTexts.express'), category: 'backend' },
     { name: 'Django', logo: djangoLogo, alt: t('techStack.altTexts.django'), category: 'backend' },
-    { name: 'GraphQL', logo: graphqlLogo, alt: t('techStack.altTexts.django'), category: 'backend' },
+    { name: 'GraphQL', logo: graphqlLogo, alt: t('techStack.altTexts.graphql'), category: 'backend' },
     
     // AI & Tools
     { name: 'YOLO', logo: yoloLogo, alt: t('techStack.altTexts.yolo'), category: 'ai' },
     
     // Databases & Hosting
-    { name: 'MongoDB', logo: mongodbLogo, alt: t('techStack.altTexts.supabase'), category: 'database' },
+    { name: 'MongoDB', logo: mongodbLogo, alt: t('techStack.altTexts.mongodb'), category: 'database' },
     { name: 'Supabase', logo: supabaseLogo, alt: t('techStack.altTexts.supabase'), category: 'database' },
     { name: 'Firebase', logo: firebaseLogo, alt: t('techStack.altTexts.firebase'), category: 'database' },
     { name: 'Vercel', logo: vercelLogo, alt: t('techStack.altTexts.vercel'), category: 'hosting' },
-    { name: 'AWS', logo: awsLogo, alt: t('techStack.altTexts.vercel'), category: 'hosting' },
+    { name: 'AWS', logo: awsLogo, alt: t('techStack.altTexts.aws'), category: 'hosting' },
   ];
   
   // Define state to keep track of center element
@@ -796,7 +796,7 @@ const TechStack = () => {
           transition={{ duration: 0.6 }}
           className="section-header"
         >
-          <SectionTitle>{isRTL ? t('techStack.title', 'ترسانتي التقنية') : 'My Technical Arsenal'}</SectionTitle>
+          <SectionTitle as="h2">{isRTL ? t('techStack.title', 'ترسانتي التقنية') : 'My Technical Arsenal'}</SectionTitle>
           <SubTitle>
             {isRTL 
               ? t('techStack.subtitle', 'التقنيات والأدوات المتطورة التي أتقنها لتحويل أفكارك الإبداعية إلى تجارب رقمية استثنائية')

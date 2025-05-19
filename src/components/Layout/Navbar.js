@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../Common/LanguageSwitcher';
+import AuthModal from '../Common/AuthModal';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const navigate = useNavigate();
+  const { currentUser, logout } = useAuth();
   
   // Add scroll effect
   useEffect(() => {
@@ -32,6 +37,29 @@ const Navbar = () => {
   const handleNavLinkClick = () => {
     setIsOpen(false);
   };
+  
+  const handleDashboardClick = (e) => {
+    e.preventDefault();
+    
+    if (currentUser) {
+      // If user is logged in, navigate to dashboard
+      navigate('/dashboard');
+    } else {
+      // If not logged in, show auth modal
+      setShowAuthModal(true);
+    }
+    
+    setIsOpen(false);
+  };
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
+  };
 
   return (
     <Nav $scrolled={isScrolled}>
@@ -54,6 +82,11 @@ const Navbar = () => {
             </NavItem>
             <NavItem>
               <NavLink to="/contact" onClick={handleNavLinkClick}>{t('navbar.contact')}</NavLink>
+            </NavItem>
+            <NavItem>
+              <LoginButton onClick={handleDashboardClick}>
+                {currentUser ? t('navbar.dashboard', 'Dashboard') : t('navbar.login', 'Login')}
+              </LoginButton>
             </NavItem>
             <NavItem>
               <StyledLanguageSwitcher />
@@ -113,9 +146,33 @@ const Navbar = () => {
           <NavLink to="/contact" onClick={handleNavLinkClick}>{t('navbar.contact')}</NavLink>
         </NavItem>
         <NavItem>
+          {currentUser ? (
+            <NavDropdown>
+              <LoginButton onClick={handleDashboardClick}>
+                {t('navbar.dashboard', 'Dashboard')}
+              </LoginButton>
+              <DropdownContent>
+                <DropdownItem onClick={handleDashboardClick}>
+                  {t('navbar.dashboard', 'Dashboard')}
+                </DropdownItem>
+                <DropdownItem onClick={handleLogout}>
+                  {t('navbar.logout', 'Logout')}
+                </DropdownItem>
+              </DropdownContent>
+            </NavDropdown>
+          ) : (
+            <LoginButton onClick={handleDashboardClick}>
+              {t('navbar.login', 'Login')}
+            </LoginButton>
+          )}
+        </NavItem>
+        <NavItem>
           <StyledLanguageSwitcher />
         </NavItem>
       </MobileMenu>
+      
+      {/* Auth Modal */}
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </Nav>
   );
 };
@@ -597,6 +654,77 @@ const StyledLanguageSwitcher = styled(LanguageSwitcher)`
   
   &:active {
     transform: translateY(0) scale(0.95);
+  }
+`;
+
+const LoginButton = styled.button`
+  display: inline-block;
+  padding: 0.5rem 1.2rem;
+  background: linear-gradient(135deg, #faaa93, #82a1bf);
+  color: white;
+  border-radius: 30px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #82a1bf, #faaa93);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const NavDropdown = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const DropdownContent = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #1a1a2e;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 0 20px rgba(130, 161, 191, 0.2);
+  border-radius: 10px;
+  padding: 0.5rem 0;
+  z-index: 1;
+  display: none;
+  border: 1px solid rgba(130, 161, 191, 0.3);
+  
+  ${NavDropdown}:hover & {
+    display: block;
+    animation: fadeIn 0.2s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const DropdownItem = styled.div`
+  padding: 0.75rem 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  
+  &:hover {
+    background: rgba(130, 161, 191, 0.2);
+    color: #faaa93;
   }
 `;
 

@@ -7,8 +7,13 @@
     <meta name="theme-color" content="#feefc4" />
     <meta
       name="description"
-      content="S.N.P - Professional software development services for websites, mobile apps, QR codes and more"
+      content="S.N.P delivers web, mobile, and AI software solutions. Led by a solo expert developer. Based in Qatar. Fast. Smart. Personal."
     />
+    <meta name="keywords" content="software developer, web development, mobile apps, AI solutions, Qatar developer, software solutions" />
+    <meta name="author" content="S.N.P" />
+    <meta property="og:title" content="S.N.P – Solo Software Developer in Qatar | Web, Mobile, AI" />
+    <meta property="og:description" content="S.N.P delivers web, mobile, and AI software solutions. Led by a solo expert developer. Based in Qatar. Fast. Smart. Personal." />
+    <meta property="og:type" content="website" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -24,11 +29,41 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>S.N.P | Software Development Services</title>
+    <title>S.N.P – Solo Software Developer in Qatar | Web, Mobile, AI</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    
+    <!-- Schema.org markup for business and person -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "S.N.P",
+      "description": "S.N.P delivers web, mobile, and AI software solutions. Led by a solo expert developer. Based in Qatar. Fast. Smart. Personal.",
+      "url": "https://snp.dev",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Doha",
+        "addressRegion": "Qatar"
+      },
+      "telephone": "+974 1234 5678",
+      "priceRange": "$$$",
+      "founder": {
+        "@type": "Person",
+        "name": "S.N.P",
+        "jobTitle": "Software Developer",
+        "description": "Solo software developer specializing in web, mobile, and AI solutions",
+        "knowsAbout": ["Web Development", "Mobile Apps", "AI Integrations", "Admin Dashboards", "QR Code Tools", "Custom Software"]
+      },
+      "sameAs": [
+        "https://github.com/snp",
+        "https://linkedin.com/in/snp"
+      ],
+      "serviceType": ["Web Development", "Mobile Apps", "AI Integrations", "Admin Dashboards", "QR Code Tools", "Custom Software"]
+    }
+    </script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

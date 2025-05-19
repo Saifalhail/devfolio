@@ -473,25 +473,25 @@ const Hero = () => {
       {/* Floating decorative elements positioned to not interfere with text */}
       <FloatingIcon top="65%" left={isRTL ? "auto" : "8%"} right={isRTL ? "8%" : "auto"} animationDelay="0s" duration="6s">
         <IconBox background="rgba(205, 62, 253, 0.15)" borderRadius="12px">
-          <span style={{ fontSize: '24px' }}>💻</span>
+          <span style={{ fontSize: '24px' }} role="img" aria-label={t('seo.alt.computer')}>💻</span>
         </IconBox>
       </FloatingIcon>
       
       <FloatingIcon top="40%" left={isRTL ? "10%" : "auto"} right={isRTL ? "auto" : "10%"} animationDelay="1s" duration="7s">
         <IconBox background="rgba(205, 62, 253, 0.12)" borderRadius="50%" size="45px">
-          <span style={{ fontSize: '22px' }}>🚀</span>
+          <span style={{ fontSize: '22px' }} role="img" aria-label={t('seo.alt.rocket')}>🚀</span>
         </IconBox>
       </FloatingIcon>
       
       <FloatingIcon bottom="25%" left={isRTL ? "auto" : "20%"} right={isRTL ? "20%" : "auto"} animationDelay="0.5s" duration="5s">
         <IconBox background="rgba(205, 62, 253, 0.18)" borderRadius="10px" size="40px" transform="rotate(45deg)">
-          <span style={{ fontSize: '20px', transform: 'rotate(-45deg)' }}>⚡</span>
+          <span style={{ fontSize: '20px', transform: 'rotate(-45deg)' }} role="img" aria-label={t('seo.alt.lightning')}>⚡</span>
         </IconBox>
       </FloatingIcon>
       
       <PulsingIcon bottom="15%" left={isRTL ? "15%" : "auto"} right={isRTL ? "auto" : "15%"}>
         <IconBox background="rgba(205, 62, 253, 0.15)" borderRadius="15px" size="60px">
-          <span style={{ fontSize: '30px' }}>✨</span>
+          <span style={{ fontSize: '30px' }} role="img" aria-label={t('seo.alt.sparkles')}>✨</span>
         </IconBox>
       </PulsingIcon>
       
@@ -502,7 +502,7 @@ const Hero = () => {
           borderRadius="15px" 
           size="65px"
         >
-          <span style={{ fontSize: '18px' }}>⭐️</span>
+          <span style={{ fontSize: '18px' }} role="img" aria-label={t('seo.alt.star')}>⭐️</span>
         </IconBox>
       </FloatingIcon>
       
@@ -514,7 +514,7 @@ const Hero = () => {
           size="35px"
           transform="rotate(15deg)"
         >
-          <span style={{ fontSize: '16px', transform: 'rotate(-15deg)' }}>🔍</span>
+          <span style={{ fontSize: '16px', transform: 'rotate(-15deg)' }} role="img" aria-label={t('seo.alt.magnifier')}>🔍</span>
         </IconBox>
       </FloatingIcon>
       
@@ -524,16 +524,16 @@ const Hero = () => {
           borderRadius="50%" 
           size="40px"
         >
-          <span style={{ fontSize: '18px' }}>🔮</span>
+          <span style={{ fontSize: '18px' }} role="img" aria-label={t('seo.alt.crystalBall')}>🔮</span>
         </IconBox>
       </FloatingIcon>
 
       <HeroContainer isRTL={isRTL}>
         <HeroContent isRTL={isRTL}>
           <div className="bubble" style={{ display: 'inline-block', marginBottom: '1rem', transform: isRTL ? 'rotate(2deg)' : 'rotate(-2deg)', fontSize: '1rem', textAlign: isRTL ? 'right' : 'left' }}>
-            👋 {t('hero.welcome')}
+            <span role="img" aria-label={t('seo.alt.waving')}>👋</span> {t('hero.welcome')}
           </div>
-          <HeroHeading>
+          <HeroHeading as="h1">
             {t('hero.title')}
             <div style={{ marginTop: '-0.5rem' }}>
               <HeroHighlight>{t('hero.highlight')}</HeroHighlight>
@@ -562,7 +562,7 @@ const Hero = () => {
           
           {/* Cartoon-style floating elements - improved RTL positioning */}
           <div className="bubble" style={{ position: 'absolute', top: '-20px', right: isRTL ? 'auto' : '10%', left: isRTL ? '10%' : 'auto', transform: isRTL ? 'rotate(-5deg)' : 'rotate(5deg)', zIndex: 5, padding: '10px 15px', fontSize: '0.9rem', textAlign: isRTL ? 'right' : 'left' }}>
-            ✨ {t('hero.techBubble')}
+            <span role="img" aria-label={t('seo.alt.sparkles')}>✨</span> {t('hero.techBubble')}
           </div>
         </HeroImageContainer>
       </HeroContainer>

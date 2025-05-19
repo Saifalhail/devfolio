@@ -5,6 +5,8 @@
     "portfolio": "Portfolio",
     "about": "About",
     "contact": "Contact",
+    "login": "Login",
+    "dashboard": "Dashboard",
     "language": "Arabic"
   },
   "hero": {
@@ -29,27 +31,33 @@
     "items": [
       {
         "title": "Web Development",
-        "description": "Fast, mobile-friendly websites using React, Next.js, or WordPress"
+        "description": "Fast, mobile-friendly websites using React, Next.js, or WordPress",
+        "alt": "Web globe icon"
       },
       {
         "title": "Mobile Apps",
-        "description": "Cross-platform apps with React Native or Expo"
+        "description": "Cross-platform apps with React Native or Expo",
+        "alt": "Mobile phone icon"
       },
       {
         "title": "AI Integrations",
-        "description": "Smart tools powered by Python, YOLO, GPT, and ML"
+        "description": "Smart tools powered by Python, YOLO, GPT, and ML",
+        "alt": "Robot icon"
       },
       {
         "title": "Admin Dashboards",
-        "description": "Secure portals, analytics dashboards, and APIs"
+        "description": "Secure portals, analytics dashboards, and APIs",
+        "alt": "Chart icon"
       },
       {
         "title": "QR Code Tools",
-        "description": "Custom QR solutions for events, stores, and products"
+        "description": "Custom QR solutions for events, stores, and products",
+        "alt": "QR code icon"
       },
       {
         "title": "Custom Software",
-        "description": "Tailored software solutions to address your specific business challenges."
+        "description": "Tailored software solutions to address your specific business challenges.",
+        "alt": "Computer icon"
       }
     ]
   },
@@ -57,6 +65,14 @@
     "title": "My Process",
     "subtitle": "My 6-Step Process",
     "twoWeeks": "2 Weeks or Less",
+    "iconAlt": {
+      "0": "Notepad icon for Discovery phase",
+      "1": "Chart icon for Proposal phase",
+      "2": "Artist palette icon for Design phase",
+      "3": "Computer icon for Development phase",
+      "4": "Rocket icon for Launch phase",
+      "5": "Wrench icon for Maintenance phase"
+    },
     "steps": [
       {
         "title": "Discovery",
@@ -137,8 +153,44 @@
         "icon": "🔧"
       }
     ],
-    "cta": "Ready to work together?"
+    "cta": "Ready to work together?",
+    "iconAlt": {
+      "skills": "Flexed bicep icon for skills",
+      "0": "AI and Machine Learning icon",
+      "1": "Full-Stack Development icon",
+      "2": "Python and Data Science icon",
+      "3": "React and Modern Frontend icon",
+      "4": "DevOps and Cloud icon"
+    }
   },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full Name",
+    "phone": "Phone Number (with country code)",
+    "sendCode": "Send Code",
+    "verify": "Verify",
+    "verificationCode": "Verification Code",
+    "loading": "Loading...",
+    "or": "OR",
+    "continueWithGoogle": "Continue with Google",
+    "errorEmptyFields": "Please fill in all fields",
+    "errorPasswordLength": "Password must be at least 6 characters",
+    "errorPhoneEmpty": "Please enter your phone number",
+    "errorCodeEmpty": "Please enter verification code"
+  },
+  
+  "dashboard": {
+    "welcome": "Welcome to your Dashboard",
+    "logout": "Logout",
+    "activeProjects": "Active Projects",
+    "pendingActions": "Pending Actions",
+    "latestUploads": "Latest Uploads",
+    "projectDeadlines": "Project Deadlines"
+  },
+  
   "contact": {
     "title": "Contact",
     "subtitle": "Let's Build Something Together",
@@ -159,6 +211,12 @@
     },
     "seo": {
       "keywords": "contact software developer, hire a programmer in Qatar"
+    },
+    "iconAlt": {
+      "email": "Email icon",
+      "phone": "Phone icon",
+      "location": "Location pin icon",
+      "message": "Envelope icon"
     }
   },
   "techStack": {
@@ -166,20 +224,43 @@
     "altTexts": {
       "react": "React developer Qatar",
       "reactNative": "React Native developer Qatar",
+      "nextjs": "Next.js developer Qatar",
+      "vue": "Vue.js developer Qatar",
+      "typescript": "TypeScript developer Qatar",
+      "tailwind": "Tailwind CSS developer Qatar",
       "python": "Python developer Qatar",
+      "nodejs": "Node.js developer Qatar",
+      "express": "Express.js developer Qatar",
+      "graphql": "GraphQL developer Qatar",
       "yolo": "YOLO AI developer Qatar",
       "django": "Django developer Qatar",
+      "mongodb": "MongoDB developer Qatar",
       "supabase": "Supabase developer Qatar",
       "firebase": "Firebase developer Qatar",
-      "vercel": "Vercel developer Qatar"
+      "vercel": "Vercel developer Qatar",
+      "aws": "AWS developer Qatar"
     }
   },
   "testimonials": {
     "title": "Client Testimonials",
-    "subtitle": "What my clients say about my work"
+    "subtitle": "What my clients say about my work",
+    "iconAlt": "Client testimonial icon"
+  },
+  "seo": {
+    "alt": {
+      "computer": "Computer icon",
+      "rocket": "Rocket icon",
+      "lightning": "Lightning bolt icon",
+      "sparkles": "Sparkles icon",
+      "star": "Star icon",
+      "magnifier": "Magnifying glass icon",
+      "crystalBall": "Crystal ball icon",
+      "waving": "Waving hand icon"
+    }
   },
   "footer": {
     "description": "Professional software development services for websites, mobile apps, QR codes and all tech-related applications.",
+    "slogan": "Smart Native Programming. Built by One, Delivered to Many.",
     "links": {
       "title": "Quick Links"
     },
@@ -193,6 +274,10 @@
     },
     "contact": {
       "title": "Contact"
+    },
+    "social": {
+      "linkedin": "Connect on LinkedIn",
+      "github": "View GitHub Projects"
     },
     "copyright": "All rights reserved."
   }

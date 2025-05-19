@@ -61,7 +61,7 @@ const Services = () => {
       
       <Container>
         <SectionHeader>
-          <SectionTitle>{t('services.title')}</SectionTitle>
+          <SectionTitle as="h2">{t('services.title')}</SectionTitle>
           <SectionSubtitle>{t('services.subtitle')}</SectionSubtitle>
         </SectionHeader>
         
@@ -118,8 +118,10 @@ const Services = () => {
               <div className="particle"></div>
               <div className="particle"></div>
               
-              <ServiceIcon style={{ background: service.gradient }}>{service.icon}</ServiceIcon>
-              <ServiceTitle>{t(`services.items.${index}.title`)}</ServiceTitle>
+              <ServiceIcon style={{ background: service.gradient }}>
+                <span role="img" aria-label={t(`services.items.${index}.alt`)}>{service.icon}</span>
+              </ServiceIcon>
+              <ServiceTitle as="h3">{t(`services.items.${index}.title`)}</ServiceTitle>
               <ServiceDescription>{t(`services.items.${index}.description`)}</ServiceDescription>
               <LearnMore className="learn-more" isRTL={isRTL}>{t('services.learnMore')}</LearnMore>
             </ServiceCard>

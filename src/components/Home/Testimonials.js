@@ -292,7 +292,7 @@ const Testimonials = () => {
     <Section>
       <Container>
         <SectionTitleWrapper>
-          <GradientText>{t('testimonials.title', 'Client Testimonials')}</GradientText>
+          <GradientText as="h2">{t('testimonials.title', 'Client Testimonials')}</GradientText>
           <Subtitle>{t('testimonials.subtitle', 'What my clients say about my work')}</Subtitle>
         </SectionTitleWrapper>
         <TestimonialsContainer>
@@ -311,7 +311,7 @@ const Testimonials = () => {
               >
                 <CardContent color={testimonial.color}>
                   <IconContainer color={testimonial.color} className="icon-container">
-                    <IconText>{testimonial.icon}</IconText>
+                    <IconText role="img" aria-label={t('testimonials.iconAlt', 'Client testimonial icon')}>{testimonial.icon}</IconText>
                   </IconContainer>
                   
                   <TestimonialText className="testimonial-text">

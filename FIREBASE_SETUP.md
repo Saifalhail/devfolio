@@ -9,6 +9,51 @@ This guide explains how to properly set up Firebase for both the frontend and ba
    - Use example files without real credentials
    - Rotate keys if they've been accidentally committed
 
+## Firebase Authentication Setup
+
+The DevFolio project uses Firebase Authentication for user management with multiple sign-in methods. Follow these steps to set up authentication for your project:
+
+### 1. Enable Authentication Providers
+
+1. Go to the [Firebase Console](https://console.firebase.google.com/)
+2. Select your project
+3. Navigate to "Authentication" in the left sidebar
+4. Click on the "Sign-in method" tab
+5. Enable the following providers:
+   - **Google**: Click "Enable" and add your support email
+   - **Email/Password**: Simply click "Enable"
+   - **Phone**: Click "Enable" and configure your default country
+
+### 2. Configure Google Authentication
+
+1. For Google authentication to work properly in production:
+   - Add your domain to the authorized domains list in Firebase Console
+   - Create OAuth credentials in the Google Cloud Console
+   - Add the correct redirect URIs
+
+2. For local development:
+   - Add `localhost` to the authorized domains list
+
+### 3. Configure Phone Authentication
+
+1. For phone authentication to work:
+   - Make sure you've enabled the provider in Firebase Console
+   - Set up reCAPTCHA verification
+   - For testing, you can use test phone numbers in the Firebase Console
+
+### 4. Update Environment Variables
+
+Add the following variables to your `.env.local` file:
+
+```
+REACT_APP_FIREBASE_API_KEY=your-api-key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+REACT_APP_FIREBASE_PROJECT_ID=your-project-id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+REACT_APP_FIREBASE_APP_ID=your-app-id
+```
+
 2. **Use environment variables for all sensitive configuration**
    - Frontend: Use `REACT_APP_` prefixed variables
    - Backend: Use dotenv to load variables from `.env`

@@ -118,7 +118,7 @@ const Process = () => {
       <Container style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
         <SectionHeader>
           <SectionTitleWrapper>
-            <SectionTitle>{t('process.title')}</SectionTitle>
+            <SectionTitle as="h2">{t('process.title')}</SectionTitle>
           </SectionTitleWrapper>
           <SectionSubtitle>{t('process.subtitle')}</SectionSubtitle>
           <TwoWeeksStamp>
@@ -140,11 +140,11 @@ const Process = () => {
                   <StepIconContainer style={{ background: step.color }}>
                     <IconGlow style={{ background: step.color }} />
                     <StepNumber>{step.number}</StepNumber>
-                    <StepIcon>{step.icon}</StepIcon>
+                    <StepIcon role="img" aria-label={t(`process.iconAlt.${step.id - 1}`)}>{step.icon}</StepIcon>
                   </StepIconContainer>
                   
                   <StepContent>
-                    <StepTitle>{step.title}</StepTitle>
+                    <StepTitle as="h3">{step.title}</StepTitle>
                     <StepDescription>{step.description}</StepDescription>
                   </StepContent>
                 </ProcessStep>

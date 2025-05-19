@@ -137,7 +137,7 @@ const NewContact = () => {
       
       <Container>
         <SectionHeader isRTL={isRTL}>
-          <SectionTitle>{t('contact.title')}</SectionTitle>
+          <SectionTitle as="h2">{t('contact.title')}</SectionTitle>
           <SectionSubtitle isRTL={isRTL}>{t('contact.subtitle')}</SectionSubtitle>
           <SectionDescription isRTL={isRTL}>
             {t('contact.description')}
@@ -154,17 +154,17 @@ const NewContact = () => {
               
               <ContactMethods>
                 <ContactMethod isRTL={isRTL}>
-                  <MethodIcon isRTL={isRTL}>📧</MethodIcon>
+                  <MethodIcon isRTL={isRTL} role="img" aria-label={t('contact.iconAlt.email')}>📧</MethodIcon>
                   <MethodText isRTL={isRTL}>contact@devfolio.com</MethodText>
                 </ContactMethod>
                 
                 <ContactMethod isRTL={isRTL}>
-                  <MethodIcon isRTL={isRTL}>📱</MethodIcon>
+                  <MethodIcon isRTL={isRTL} role="img" aria-label={t('contact.iconAlt.phone')}>📱</MethodIcon>
                   <MethodText isRTL={isRTL}>+974 1234 5678</MethodText>
                 </ContactMethod>
                 
                 <ContactMethod isRTL={isRTL}>
-                  <MethodIcon isRTL={isRTL}>📍</MethodIcon>
+                  <MethodIcon isRTL={isRTL} role="img" aria-label={t('contact.iconAlt.location')}>📍</MethodIcon>
                   <MethodText isRTL={isRTL}>Doha, Qatar</MethodText>
                 </ContactMethod>
               </ContactMethods>
@@ -178,7 +178,7 @@ const NewContact = () => {
           <FormContainer>
             <ContactForm onSubmit={handleSubmit} isRTL={isRTL}>
               <FormHeader isRTL={isRTL}>
-                <FormHeaderIcon isRTL={isRTL}>✉️</FormHeaderIcon>
+                <FormHeaderIcon isRTL={isRTL} role="img" aria-label={t('contact.iconAlt.message')}>✉️</FormHeaderIcon>
                 <FormHeaderText isRTL={isRTL}>{t('contact.form.title')}</FormHeaderText>
               </FormHeader>
               

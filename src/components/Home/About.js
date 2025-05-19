@@ -50,7 +50,7 @@ const About = () => {
       <Container style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
         <SectionHeader>
           <SectionTitleWrapper>
-            <SectionTitle>{t('about.title')}</SectionTitle>
+            <SectionTitle as="h2">{t('about.title')}</SectionTitle>
           </SectionTitleWrapper>
           <SectionSubtitle>{t('about.subtitle')}</SectionSubtitle>
         </SectionHeader>
@@ -68,7 +68,7 @@ const About = () => {
               <ProfileImageWrapper>
                 <ProfileGlow />
                 <ProfileImage>
-                  <LogoImage src={require('../../assets/logo_cropped.png')} alt="Logo" />
+                  <LogoImage src={require('../../assets/logo_cropped.png')} alt="S.N.P Logo" />
                 </ProfileImage>
                 <ProfileBadge>
                   <span>8+</span>
@@ -84,14 +84,14 @@ const About = () => {
             
             <motion.div variants={itemVariants} className="skills-card">
               <CardTitle>
-                <CardIcon>💪</CardIcon>
+                <CardIcon role="img" aria-label={t('about.iconAlt.skills')}>💪</CardIcon>
                 <span>{isRTL ? 'المهارات التقنية' : 'Technical Skills'}</span>
               </CardTitle>
               
               <SkillsList>
                 {skillsData.map((skill, index) => (
                   <SkillItem key={index}>
-                    <SkillIcon>{skill.icon}</SkillIcon>
+                    <SkillIcon role="img" aria-label={t(`about.iconAlt.${index}`)}>{skill.icon}</SkillIcon>
                     <SkillInfo>
                       <SkillName>{skill.name}</SkillName>
                       <SkillBarWrapper>

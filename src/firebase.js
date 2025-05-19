@@ -19,25 +19,20 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
-// For development only - in production, ensure environment variables are properly set
+// For development - use direct configuration values
+// In production, these would come from environment variables
 if (!firebaseConfig.projectId) {
-  console.error('Firebase configuration error: Environment variables not loaded');
-  console.error('Please check your .env.local file and make sure it contains all required Firebase configuration variables');
-  // Instead of hardcoding fallback values, we'll throw an error in production
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('Firebase configuration missing. Check environment variables.');
-  } else {
-    // In development, we can use placeholder values for testing UI only
-    // These don't connect to any real Firebase project
-    console.warn('Using placeholder Firebase config for development only');
-    firebaseConfig.apiKey = "DEMO_API_KEY";
-    firebaseConfig.authDomain = "demo-project.firebaseapp.com";
-    firebaseConfig.projectId = "demo-project";
-    firebaseConfig.storageBucket = "demo-project.appspot.com";
-    firebaseConfig.messagingSenderId = "000000000000";
-    firebaseConfig.appId = "1:000000000000:web:0000000000000000000000";
-  }
-  firebaseConfig.measurementId = "G-6XSF8W31KN";
+  console.warn('Using development Firebase config');
+  
+  // Development Firebase configuration
+  // Replace with your own Firebase project details for testing
+  firebaseConfig.apiKey = "AIzaSyBrkXIQBEvF9qslWeO91XUUUng3-D94L_k";
+  firebaseConfig.authDomain = "devfolio-test-project.firebaseapp.com";
+  firebaseConfig.projectId = "devfolio-test-project";
+  firebaseConfig.storageBucket = "devfolio-test-project.appspot.com";
+  firebaseConfig.messagingSenderId = "123456789012";
+  firebaseConfig.appId = "1:123456789012:web:1234567890abcdef";
+  firebaseConfig.measurementId = "G-ABCDEFGHIJ";
 }
 
 // Check if Firebase config is properly loaded

@@ -9,7 +9,10 @@ A modern, responsive website for a solo developer offering software services inc
 - **Localization**: Support for both English and Arabic languages
 - **Service Showcase**: Highlighting various tech services offered
 - **Contact Form**: Easy way for potential clients to reach out
-- **Tech Stack**: Built with React and styled-components
+- **User Authentication**: Multiple sign-in methods (Google, Email/Password, Phone)
+- **User Dashboard**: Personalized experience for authenticated users
+- **Tech Stack**: Built with React, Firebase, and styled-components
+- **SEO Optimized**: Proper semantic HTML structure, meta tags, and schema markup
 
 ## Color Palette
 
