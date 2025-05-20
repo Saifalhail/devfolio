@@ -52,7 +52,7 @@ DevFolio is a responsive website built for a solo developer offering software de
 ```
 devfolio/
 ├── public/               # Static files
-├── server/               # Backend server
+├── backend/              # Backend server
 │   ├── data/             # Storage for form submissions
 │   └── server.js         # Express server
 ├── src/
@@ -280,7 +280,7 @@ npm run build
 ### Backend Deployment
 
 1. Ensure Node.js is installed on your server
-2. Copy the server directory and build directory to your server
+2. Copy the backend directory and build directory to your server
 3. Install production dependencies:
 ```bash
 npm install --production
@@ -288,7 +288,7 @@ npm install --production
 
 4. Start the server:
 ```bash
-NODE_ENV=production node server/server.js
+NODE_ENV=production node backend/server.js
 ```
 
 ## UI Components and Design System
