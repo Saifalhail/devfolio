@@ -248,17 +248,20 @@ export function AuthProvider({ children }) {
   // Listen to auth state changes - REAL FIREBASE
   useEffect(() => {
     console.log('Setting up auth state listener');
-    
+
     // Set up Firebase auth state observer
-    const unsubscribe = onAuthStateChanged(auth, user => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
       console.log('Auth state changed:', user ? 'User logged in' : 'User logged out');
     });
-    
+
     // Clean up the observer when component unmounts
-    return unsubscribe;
-  }, []);
+    return () => {
+      console.log('Cleaning up auth state listener');
+      unsubscribe();
+    };
+  }, [auth]);
 
   // For backward compatibility with existing code
   const login = signInWithEmail;
