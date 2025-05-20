@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { FaGoogle, FaPhone, FaEnvelope, FaLock, FaUser, FaTimes, FaBuilding, FaGlobe } from 'react-icons/fa';
+import { FaGoogle, FaPhone, FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -23,6 +23,19 @@ const AuthModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { signInWithEmail, signup, signInWithGoogle, signInWithPhone, verifyPhoneCode } = useAuth();
 
+  const handleClose = useCallback(() => {
+    setError('');
+    setEmail('');
+    setPassword('');
+    setDisplayName('');
+    setPhoneNumber('');
+    setVerificationCode('');
+    setIsVerificationSent(false);
+    setIsSignUp(false);
+    setShowEmailForm(false);
+    onClose();
+  }, [onClose]);
+
   // Close modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -34,24 +47,11 @@ const AuthModal = ({ isOpen, onClose }) => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
-
-  const handleClose = () => {
-    setError('');
-    setEmail('');
-    setPassword('');
-    setDisplayName('');
-    setPhoneNumber('');
-    setVerificationCode('');
-    setIsVerificationSent(false);
-    setIsSignUp(false);
-    setShowEmailForm(false);
-    onClose();
-  };
+  }, [isOpen, handleClose]);
   
   const toggleSignUpMode = () => {
     setIsSignUp(!isSignUp);
@@ -120,13 +120,13 @@ const AuthModal = ({ isOpen, onClose }) => {
     try {
       setLoading(true);
       setError(''); // Clear any previous errors
-      
+
       // Show a loading message
       console.log('Initiating Google sign-in...');
-      
+
       // Attempt Google sign-in
       const result = await signInWithGoogle();
-      
+
       // Handle successful sign-in
       if (result && result.user) {
         console.log('Google sign-in successful, redirecting to dashboard');
@@ -134,22 +134,58 @@ const AuthModal = ({ isOpen, onClose }) => {
         navigate('/dashboard');
         handleClose();
       } else {
-        setError('Google sign-in was cancelled or failed. Please try again.');
+        setError(t('auth.errorGoogle', 'Google sign-in failed. Please try again.'));
       }
     } catch (err) {
       console.error('Google sign in error:', err);
-      
+
       // Handle specific error cases with user-friendly messages
-      if (err.code === 'auth/popup-blocked') {
-        setError('Google sign-in popup was blocked. Please allow popups for this site and try again.');
-      } else if (err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user') {
-        setError('Google sign-in was cancelled. Please try again.');
-      } else if (err.code === 'auth/unauthorized-domain') {
-        setError('This domain is not authorized for Google sign-in. Using mock authentication instead.');
-        // The actual fallback to mock auth is handled in the AuthContext
-      } else {
-        // Use the error message from the context if available
-        setError(err.message || 'Google sign-in failed. Please try again.');
+      switch (err.code) {
+        case 'auth/popup-blocked':
+          setError(
+            t(
+              'auth.errorGooglePopupBlocked',
+              'Google sign-in popup was blocked. Please allow popups and try again.'
+            )
+          );
+          break;
+        case 'auth/cancelled-popup-request':
+        case 'auth/popup-closed-by-user':
+          setError(
+            t('auth.errorGoogleCancelled', 'Google sign-in was cancelled. Please try again.')
+          );
+          break;
+        case 'auth/unauthorized-domain':
+          setError(
+            t(
+              'auth.errorUnauthorizedDomain',
+              'This domain is not authorized for Google sign-in. Using mock authentication instead.'
+            )
+          );
+          break;
+        case 'auth/network-request-failed':
+          setError(
+            t(
+              'auth.errorNetwork',
+              'Network error during sign-in. Please check your connection and try again.'
+            )
+          );
+          break;
+        case 'auth/user-disabled':
+          setError(t('auth.errorUserDisabled', 'This user account has been disabled.'));
+          break;
+        case 'auth/account-exists-with-different-credential':
+          setError(
+            t(
+              'auth.errorAccountExists',
+              'An account already exists with a different sign-in method.'
+            )
+          );
+          break;
+        default:
+          setError(
+            t('auth.errorGoogle', err.message || 'Google sign-in failed. Please try again.')
+          );
       }
     } finally {
       setLoading(false);
@@ -543,10 +579,6 @@ const FormGroup = styled.div`
   position: relative;
 `;
 
-const PhoneFormGroup = styled(FormGroup)`
-  display: flex;
-  gap: 0.5rem;
-`;
 
 const InputIcon = styled.div`
   position: absolute;
@@ -637,30 +669,6 @@ const PhoneButton = styled(Button)`
   padding: 0.8rem 1rem;
 `;
 
-const Divider = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 1.5rem 0;
-  
-  &:before, &:after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid rgba(130, 161, 191, 0.3);
-  }
-`;
-
-const DividerText = styled.span`
-  padding: 0 1rem;
-  color: #82a1bf;
-  font-size: 0.9rem;
-  text-shadow: 0 0 5px rgba(130, 161, 191, 0.3);
-`;
-
-const SocialButtonsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
 
 const SocialButton = styled.button`
   display: flex;

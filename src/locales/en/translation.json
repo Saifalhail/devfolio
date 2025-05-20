@@ -179,7 +179,14 @@
     "errorEmptyFields": "Please fill in all fields",
     "errorPasswordLength": "Password must be at least 6 characters",
     "errorPhoneEmpty": "Please enter your phone number",
-    "errorCodeEmpty": "Please enter verification code"
+    "errorCodeEmpty": "Please enter verification code",
+    "errorGooglePopupBlocked": "Google sign-in popup was blocked. Please allow popups and try again.",
+    "errorGoogleCancelled": "Google sign-in was cancelled. Please try again.",
+    "errorUnauthorizedDomain": "This domain is not authorized for Google sign-in.",
+    "errorNetwork": "Network error during sign-in. Please check your connection and try again.",
+    "errorUserDisabled": "This user account has been disabled.",
+    "errorAccountExists": "An account already exists with a different sign-in method.",
+    "errorGoogle": "Google sign-in failed. Please try again."
   },
   
   "dashboard": {
