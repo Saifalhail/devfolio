@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FaGoogle, FaPhone, FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { getFirebaseAuthErrorMessage } from '../../utils/errorHandling';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation();
@@ -103,7 +104,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       handleClose();
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.message || 'Login failed');
+      setError(getFirebaseAuthErrorMessage(err, t));
     } finally {
       setLoading(false);
       setLoadingMethod(null);
@@ -141,7 +142,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       handleClose();
     } catch (err) {
       console.error('Signup error:', err);
-      setError(err.message || 'Signup failed');
+      setError(getFirebaseAuthErrorMessage(err, t));
     } finally {
       setLoading(false);
       setLoadingMethod(null);
@@ -171,55 +172,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       }
     } catch (err) {
       console.error('Google sign in error:', err);
-
-      // Handle specific error cases with user-friendly messages
-      switch (err.code) {
-        case 'auth/popup-blocked':
-          setError(
-            t(
-              'auth.errorGooglePopupBlocked',
-              'Google sign-in popup was blocked. Please allow popups and try again.'
-            )
-          );
-          break;
-        case 'auth/cancelled-popup-request':
-        case 'auth/popup-closed-by-user':
-          setError(
-            t('auth.errorGoogleCancelled', 'Google sign-in was cancelled. Please try again.')
-          );
-          break;
-        case 'auth/unauthorized-domain':
-          setError(
-            t(
-              'auth.errorUnauthorizedDomain',
-              'This domain is not authorized for Google sign-in. Using mock authentication instead.'
-            )
-          );
-          break;
-        case 'auth/network-request-failed':
-          setError(
-            t(
-              'auth.errorNetwork',
-              'Network error during sign-in. Please check your connection and try again.'
-            )
-          );
-          break;
-        case 'auth/user-disabled':
-          setError(t('auth.errorUserDisabled', 'This user account has been disabled.'));
-          break;
-        case 'auth/account-exists-with-different-credential':
-          setError(
-            t(
-              'auth.errorAccountExists',
-              'An account already exists with a different sign-in method.'
-            )
-          );
-          break;
-        default:
-          setError(
-            t('auth.errorGoogle', err.message || 'Google sign-in failed. Please try again.')
-          );
-      }
+      setError(getFirebaseAuthErrorMessage(err, t));
     } finally {
       setLoading(false);
       setLoadingMethod(null);
@@ -238,7 +191,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       setIsVerificationSent(true);
     } catch (err) {
       console.error('Phone auth error:', err);
-      setError(err.message || 'Phone verification failed');
+      setError(getFirebaseAuthErrorMessage(err, t));
     } finally {
       setLoading(false);
       setLoadingMethod(null);
@@ -259,28 +212,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       handleClose();
     } catch (err) {
       console.error('Verification error:', err);
-      switch (err.code) {
-        case 'auth/invalid-verification-code':
-          setError(
-            t(
-              'auth.errorInvalidCode',
-              'Invalid verification code. Please try again.'
-            )
-          );
-          break;
-        case 'auth/code-expired':
-          setError(
-            t(
-              'auth.errorCodeExpired',
-              'Verification code has expired. Please request a new code.'
-            )
-          );
-          break;
-        default:
-          setError(
-            t('auth.errorVerifyFailed', err.message || 'Verification failed')
-          );
-      }
+      setError(getFirebaseAuthErrorMessage(err, t));
     } finally {
       setLoading(false);
       setLoadingMethod(null);
