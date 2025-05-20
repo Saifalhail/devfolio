@@ -92,13 +92,23 @@ const AuthModal = ({ isOpen, onClose }) => {
 
   const handleEmailSignUp = async (e) => {
     e.preventDefault();
-    
+
     if (!email || !password || !displayName) {
       return setError(t('auth.errorEmptyFields', 'Please fill in all fields'));
     }
-    
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return setError(t('auth.errorInvalidEmail', 'Invalid email address'));
+    }
+
     if (password.length < 6) {
       return setError(t('auth.errorPasswordLength', 'Password must be at least 6 characters'));
+    }
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+    if (!passwordRegex.test(password)) {
+      return setError(t('auth.errorWeakPassword', 'Password must contain letters and numbers'));
     }
     
     try {
