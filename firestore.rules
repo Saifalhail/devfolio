@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Contact form submissions - only allow creation, not reading/updating/deleting
+    match /contactSubmissions/{submission} {
+      // Allow creation with proper validation
+      allow create: if request.resource.data.name is string &&
+                      request.resource.data.name.size() > 0 &&
+                      request.resource.data.email is string &&
+                      request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$') &&
+                      request.resource.data.message is string &&
+                      request.resource.data.message.size() > 0;
+
+      // Only allow admin access to read submissions
+      allow read, update, delete: if false; // Replace with admin authentication check in production
+    }
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
