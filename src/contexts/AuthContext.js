@@ -136,24 +136,12 @@ export function AuthProvider({ children }) {
       
       // Handle specific error cases
       if (err.code === 'auth/unauthorized-domain') {
-        console.warn('Unauthorized domain error. Using mock authentication as fallback.');
-        // Fall back to mock authentication only if domain is unauthorized
-        const mockUser = {
-          uid: 'google-user-' + Date.now(),
-          email: 'google-user@example.com',
-          displayName: 'Google User',
-          photoURL: 'https://via.placeholder.com/150',
-          providerId: 'google.com'
-        };
-        
-        setCurrentUser(mockUser);
-        localStorage.setItem('mockUser', JSON.stringify(mockUser));
-        return { user: mockUser };
+        setError('This domain is not authorized for Google sign-in.');
       } else {
-        // For other errors, show the error message
         setError(err.message || 'Failed to sign in with Google');
-        throw err;
       }
+
+      throw err;
     }
   }
 
@@ -164,15 +152,22 @@ export function AuthProvider({ children }) {
       console.log('Initializing phone authentication');
       
       // Create a reCAPTCHA verifier instance
-      const recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaContainer, {
-        'size': 'normal',
-        'callback': (response) => {
-          console.log('reCAPTCHA verified');
+      const recaptchaVerifier = new RecaptchaVerifier(
+        recaptchaContainer,
+        {
+          size: 'normal',
+          callback: () => {
+            console.log('reCAPTCHA verified');
+          },
+          'expired-callback': () => {
+            setError('reCAPTCHA expired. Please try again.');
+          }
         },
-        'expired-callback': () => {
-          setError('reCAPTCHA expired. Please try again.');
-        }
-      });
+        auth
+      );
+
+      // Render the reCAPTCHA widget
+      await recaptchaVerifier.render();
       
       // Format phone number if needed (ensure it has country code)
       const formattedPhoneNumber = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
