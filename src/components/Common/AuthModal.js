@@ -213,7 +213,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     if (!verificationCode) {
       return setError(t('auth.errorCodeEmpty', 'Please enter verification code'));
     }
-    
+
     try {
       setLoading(true);
       await verifyPhoneCode(verificationCode);
@@ -222,7 +222,28 @@ const AuthModal = ({ isOpen, onClose }) => {
       handleClose();
     } catch (err) {
       console.error('Verification error:', err);
-      setError(err.message || 'Verification failed');
+      switch (err.code) {
+        case 'auth/invalid-verification-code':
+          setError(
+            t(
+              'auth.errorInvalidCode',
+              'Invalid verification code. Please try again.'
+            )
+          );
+          break;
+        case 'auth/code-expired':
+          setError(
+            t(
+              'auth.errorCodeExpired',
+              'Verification code has expired. Please request a new code.'
+            )
+          );
+          break;
+        default:
+          setError(
+            t('auth.errorVerifyFailed', err.message || 'Verification failed')
+          );
+      }
     } finally {
       setLoading(false);
     }
