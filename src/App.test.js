@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders home page hero title', async () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const heroTitle = await screen.findByText(/Let Me Turn Your Idea Into/i);
+  expect(heroTitle).toBeInTheDocument();
 });
