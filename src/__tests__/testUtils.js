@@ -98,11 +98,31 @@ const customRender = (ui, options = {}) => {
     window.innerHeight = viewport.height || 768;
   }
   
+  // Create a simpler provider wrapper to avoid dependency issues
   const AllProviders = ({ children }) => {
+    // Create a simple mock theme if none exists
+    const mockTheme = theme || {
+      colors: {
+        primary: '#513a52',
+        secondary: '#faaa93',
+        accent: '#82a1bf',
+        background: '#feefc4',
+        text: '#333333',
+      },
+      fonts: {
+        main: 'Arial, sans-serif',
+      },
+      breakpoints: {
+        mobile: '480px',
+        tablet: '768px',
+        desktop: '1024px',
+      },
+    };
+    
     return (
-      <AuthProvider>
+      <AuthProvider mockAuthState={{ loading: false, error: null }}>
         <I18nextProvider i18n={i18n}>
-          <ThemeProvider theme={theme}>
+          <ThemeProvider theme={mockTheme}>
             <BrowserRouter>
               {children}
             </BrowserRouter>

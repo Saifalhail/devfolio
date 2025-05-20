@@ -38,19 +38,7 @@
       "react-app/jest"
     ]
   },
-  "jest": {
-    "testEnvironment": "jsdom",
-    "moduleNameMapper": {
-      "\\.(css|less|scss|sass)$": "<rootDir>/src/__mocks__/styleMock.js",
-      "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/src/__mocks__/fileMock.js"
-    },
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/__tests__/setupTests.js"
-    ],
-    "testMatch": [
-      "**/__tests__/**/*Tests.js"
-    ]
-  },
+
   "browserslist": {
     "production": [
       ">0.2%",
@@ -70,7 +58,6 @@
     "css-mediaquery": "^0.1.2",
     "express": "^4.21.2",
     "jest-axe": "^8.0.0",
-    "jest-environment-jsdom": "^29.7.0",
     "jest-matchmedia-mock": "^1.1.0",
     "jest-styled-components": "^7.2.0",
     "jsdom": "^22.1.0",

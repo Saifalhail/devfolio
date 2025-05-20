@@ -3,7 +3,7 @@
 // It's designed to work offline without internet access
 
 // Import required modules
-const { execSync } = require('child_process');
+const { execSync, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -96,6 +96,7 @@ function runTest(testFile) {
   console.log(`${colors.bright}${colors.blue}Running tests in ${testFile}...${colors.reset}`);
   
   try {
+    // Skip the runTests.js file itself
     if (testFile === 'runTests.js') {
       console.log(`${colors.yellow}Skipping test runner file${colors.reset}`);
       return true;
@@ -103,27 +104,16 @@ function runTest(testFile) {
     
     // Set environment variables needed for tests
     process.env.NODE_ENV = 'test';
-    process.env.JEST_WORKER_ID = 1;
+    process.env.CI = 'true'; // Set CI=true to avoid interactive prompts
     
-    // Configure Jest options directly
-    const jestOptions = [
-      testPath,
-      '--no-cache',
-      '--testTimeout=10000',
-      '--passWithNoTests',
-      '--runInBand',
-      '--env=jsdom',
-      `--testMatch="**/${testFile}"`,
-      '--detectOpenHandles'
-    ];
-    
-    // Run the test using Jest with explicit options
-    const command = `npx jest ${jestOptions.join(' ')}`;
+    // Use react-scripts test command which properly sets up the environment
+    // This ensures proper Babel transpilation and environment setup
+    const command = `npx react-scripts test ${testFile} --watchAll=false --no-cache --testTimeout=10000 --passWithNoTests --runInBand --env=jsdom`;
     
     try {
       const output = execSync(command, { 
         encoding: 'utf8',
-        env: { ...process.env, CI: 'true' } // Set CI=true to avoid interactive prompts
+        env: process.env
       });
       
       // Check if tests passed

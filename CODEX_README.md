@@ -20,13 +20,20 @@ To run all tests in the offline environment:
 node src/__tests__/runTests.js
 ```
 
-This custom test runner is specifically designed to work offline and will provide a clear summary of test results.
+This custom test runner is specifically designed to work offline and will provide a clear summary of test results. It uses Create React App's built-in Jest configuration to ensure proper Babel transpilation and environment setup.
 
 For responsive-specific tests only:
 
 ```bash
 npm run test:responsive
 ```
+
+### Recent Testing Improvements
+
+1. **CRA Integration**: The test runner now uses `react-scripts test` command to leverage Create React App's built-in Jest configuration
+2. **Removed Custom Jest Config**: Removed custom Jest configuration from package.json to avoid conflicts
+3. **Removed jest-environment-jsdom**: Removed this dependency to avoid version conflicts with CRA's built-in version
+4. **More Robust Tests**: Updated tests to be more resilient to rendering differences in different environments
 
 ## Testing Architecture
 
