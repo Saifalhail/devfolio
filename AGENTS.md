@@ -24,6 +24,11 @@
 - Follow the existing code style and patterns
 - Always verify changes work offline without internet access
 
+## Codex Environment Setup
+- When starting a new task, first run the setup script: `bash codex-setup.sh`
+- This script installs all necessary testing dependencies for offline execution
+- All tests are designed to run in an offline environment without network access
+
 ## What to Run
 
 - Run `npm run lint` and `node src/__tests__/runTests.js` on any change in:

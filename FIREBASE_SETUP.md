@@ -157,6 +157,42 @@ If you encounter errors when submitting the contact form:
 3. If using SendGrid, verify that your API key and sender email are correctly set up
 4. Make sure all environment variables are properly set
 
+## Testing Firebase in Offline Environments
+
+For testing in offline environments like Codex AI, we've implemented a comprehensive mocking system:
+
+### Firebase Mocks
+
+The project includes mock implementations of Firebase services in `src/__mocks__/firebase.js` that simulate Firebase functionality without requiring network access:
+
+- **Authentication**: Mock implementations of `signInWithGoogle`, `signInWithEmailPassword`, etc.
+- **Firestore**: Mock implementations of `collection`, `doc`, `get`, etc.
+- **Listeners**: Mock implementations that return unsubscribe functions
+
+### Firebase Listener Cleanup
+
+To prevent memory leaks when using Firebase listeners, use the `useFirebaseListener` hook:
+
+```javascript
+import useFirebaseListener from '../hooks/useFirebaseListener';
+
+function MyComponent() {
+  useFirebaseListener(() => {
+    // Set up the listener
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // Handle auth state changes
+    });
+    
+    // Return the unsubscribe function
+    return unsubscribe;
+  }, []);
+  
+  // Rest of component
+}
+```
+
+This hook ensures that Firebase listeners are properly unsubscribed when the component unmounts.
+
 ## Firestore Security Rules
 
 To protect your Firestore database, you should set up proper security rules. Here's a recommended configuration for your contact form submissions:

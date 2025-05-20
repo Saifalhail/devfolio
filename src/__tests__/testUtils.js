@@ -3,10 +3,20 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
-import i18n from '../i18n'; // Import the i18n configuration
-import { AuthProvider } from '../contexts/AuthContext';
-import { ThemeProvider } from 'styled-components';
 import mediaQuery from 'css-mediaquery';
+
+// Use mock AuthContext for tests to avoid Firebase dependencies
+import { AuthProvider } from '../__mocks__/authContext';
+import { ThemeProvider } from 'styled-components';
+
+// Mock i18n instead of importing the real one to avoid network dependencies
+const i18n = {
+  language: 'en',
+  t: (key) => key,
+  changeLanguage: jest.fn(),
+  use: jest.fn().mockReturnThis(),
+  init: jest.fn(),
+};
 
 // Try to import theme, but don't fail if it doesn't exist
 let theme = {};

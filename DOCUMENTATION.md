@@ -107,7 +107,64 @@ This will start:
 - `npm run server`: Starts the Express backend server only
 - `npm run dev`: Starts both frontend and backend in development mode
 - `npm run build`: Creates a production build of the React application
-- `npm test`: Runs the test suite
+- `npm test`: Runs the test suite with Jest
+- `npm run test:all`: Runs all tests using the custom test runner
+- `npm run test:responsive`: Runs only responsive design tests
+- `npm run lint`: Runs ESLint on the codebase
+
+### Codex Environment Setup
+
+For Codex AI agent development, a special setup script is provided:
+
+```bash
+bash codex-setup.sh
+```
+
+This script installs all necessary testing dependencies for offline execution in the Codex environment. See `CODEX_README.md` for detailed instructions on working with Codex.
+
+## Testing Architecture
+
+The project includes a comprehensive testing setup designed to work both in standard development environments and in offline environments like Codex AI.
+
+### Testing Structure
+
+- **Test Files**: Located in `src/__tests__/` directory
+- **Mock Files**: Located in `src/__mocks__/` directory
+- **Test Utilities**: Common testing utilities in `src/__tests__/testUtils.js`
+- **Custom Test Runner**: `src/__tests__/runTests.js` for offline execution
+
+### Key Testing Components
+
+1. **Firebase Mocks**
+   - Complete mocks for Firebase Auth, Firestore, and other services
+   - Designed to work offline without network access
+   - Located in `src/__mocks__/firebase.js` and `src/__mocks__/authContext.js`
+
+2. **Custom Hooks**
+   - `useFirebaseListener`: Ensures proper cleanup of Firebase listeners
+   - Prevents memory leaks in components using Firebase listeners
+
+3. **Environment Configuration**
+   - `jest.config.js`: Main Jest configuration
+   - `babel.config.js`: Babel configuration for transpiling code
+   - `.eslintignore`: Excludes test files from linting
+
+### Running Tests
+
+Standard development environment:
+```bash
+npm test
+```
+
+Offline environment (Codex):
+```bash
+node src/__tests__/runTests.js
+```
+
+Responsive design tests only:
+```bash
+npm run test:responsive
+```
 
 ## Internationalization
 

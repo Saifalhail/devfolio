@@ -106,6 +106,8 @@ Do not provide Npm start or Npm run dev commands
 - Test locally before deploying
 - Follow the setup instructions in README.md
 - Refer to FIREBASE_SETUP.md for Firebase configuration
+- For Codex AI development, run `bash codex-setup.sh` first
+- Run tests with `node src/__tests__/runTests.js` in Codex environment
 </development>
 
 <deployment>
@@ -134,3 +136,16 @@ Do not provide Npm start or Npm run dev commands
 - Support screen readers with appropriate ARIA attributes
 - Test with accessibility tools before deployment
 </accessibility>
+
+<testing>
+- Use Jest and React Testing Library for all tests
+- Ensure tests can run offline without network access
+- Use the useFirebaseListener hook for Firebase listeners
+- Mock all external dependencies in src/__mocks__/
+- Run tests with node src/__tests__/runTests.js in Codex
+- Use testUtils.js for rendering components in tests
+- Write tests for all new components and features
+- Ensure proper cleanup in useEffect hooks
+- Test responsive layouts with the viewport testing utilities
+- Follow the offline testing guidelines in CODEX_README.md
+</testing>
