@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FaGoogle, FaPhone, FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +17,7 @@ const AuthModal = ({ isOpen, onClose }) => {
   const [verificationCode, setVerificationCode] = useState('');
   const [isVerificationSent, setIsVerificationSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingMethod, setLoadingMethod] = useState(null); // track which auth method is loading
   const [error, setError] = useState('');
   const modalRef = useRef();
   const recaptchaContainerRef = useRef();
@@ -35,6 +36,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     setIsSignUp(false);
     setShowEmailForm(false);
     setLoading(false);
+    setLoadingMethod(null);
     if (window.confirmationResult) {
       window.confirmationResult = null;
     }
@@ -94,6 +96,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     
     try {
       setLoading(true);
+      setLoadingMethod('emailSignIn');
       await signInWithEmail(email, password);
       // Redirect to dashboard on successful login
       navigate('/dashboard');
@@ -103,6 +106,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       setError(err.message || 'Login failed');
     } finally {
       setLoading(false);
+      setLoadingMethod(null);
     }
   };
 
@@ -129,6 +133,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     
     try {
       setLoading(true);
+      setLoadingMethod('emailSignUp');
       await signup(email, password, displayName);
       
       // Redirect to dashboard on successful signup
@@ -139,12 +144,14 @@ const AuthModal = ({ isOpen, onClose }) => {
       setError(err.message || 'Signup failed');
     } finally {
       setLoading(false);
+      setLoadingMethod(null);
     }
   };
 
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
+      setLoadingMethod('google');
       setError(''); // Clear any previous errors
 
       // Show a loading message
@@ -215,6 +222,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       }
     } finally {
       setLoading(false);
+      setLoadingMethod(null);
     }
   };
 
@@ -222,9 +230,10 @@ const AuthModal = ({ isOpen, onClose }) => {
     if (!phoneNumber) {
       return setError(t('auth.errorPhoneEmpty', 'Please enter your phone number'));
     }
-    
+
     try {
       setLoading(true);
+      setLoadingMethod('phone');
       await signInWithPhone(phoneNumber, recaptchaContainerRef.current);
       setIsVerificationSent(true);
     } catch (err) {
@@ -232,6 +241,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       setError(err.message || 'Phone verification failed');
     } finally {
       setLoading(false);
+      setLoadingMethod(null);
     }
   };
 
@@ -242,6 +252,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
     try {
       setLoading(true);
+      setLoadingMethod('verify');
       await verifyPhoneCode(verificationCode);
       // Redirect to dashboard on successful verification
       navigate('/dashboard');
@@ -272,6 +283,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       }
     } finally {
       setLoading(false);
+      setLoadingMethod(null);
     }
   };
 
@@ -299,8 +311,12 @@ const AuthModal = ({ isOpen, onClose }) => {
                 <>
                   <AuthOptionsContainer>
                     <SocialButton onClick={handleGoogleSignIn} disabled={loading}>
-                      <FaGoogle />
-                      <span>{t('auth.continueWithGoogle', 'Continue with Google')}</span>
+                      {loadingMethod === 'google' ? <ButtonSpinner /> : <FaGoogle />}
+                      <span>
+                        {loadingMethod === 'google'
+                          ? t('auth.loading', 'Loading...')
+                          : t('auth.continueWithGoogle', 'Continue with Google')}
+                      </span>
                     </SocialButton>
                     
                     <SocialButton onClick={showEmailSignInForm} disabled={loading}>
@@ -309,8 +325,12 @@ const AuthModal = ({ isOpen, onClose }) => {
                     </SocialButton>
                     
                     <SocialButton onClick={handlePhoneAuth} disabled={loading || isVerificationSent}>
-                      <FaPhone />
-                      <span>{t('auth.continueWithPhone', 'Continue with Phone')}</span>
+                      {loadingMethod === 'phone' ? <ButtonSpinner /> : <FaPhone />}
+                      <span>
+                        {loadingMethod === 'phone'
+                          ? t('auth.loading', 'Loading...')
+                          : t('auth.continueWithPhone', 'Continue with Phone')}
+                      </span>
                     </SocialButton>
                     
                     {isVerificationSent && (
@@ -323,7 +343,14 @@ const AuthModal = ({ isOpen, onClose }) => {
                           isRTL={isRTL}
                         />
                         <PhoneButton onClick={handleVerifyCode} disabled={loading}>
-                          {t('auth.verify', 'Verify')}
+                          {loadingMethod === 'verify' ? (
+                            <>
+                              <ButtonSpinner />
+                              <span>{t('auth.loading', 'Loading...')}</span>
+                            </>
+                          ) : (
+                            t('auth.verify', 'Verify')
+                          )}
                         </PhoneButton>
                       </PhoneVerificationContainer>
                     )}
@@ -366,7 +393,14 @@ const AuthModal = ({ isOpen, onClose }) => {
                     </FormGroup>
                     
                     <Button type="submit" disabled={loading}>
-                      {loading ? t('auth.loading', 'Loading...') : t('auth.signIn', 'Sign In')}
+                      {loadingMethod === 'emailSignIn' ? (
+                        <>
+                          <ButtonSpinner />
+                          <span>{t('auth.loading', 'Loading...')}</span>
+                        </>
+                      ) : (
+                        t('auth.signIn', 'Sign In')
+                      )}
                     </Button>
                   </Form>
                 </>
@@ -387,8 +421,12 @@ const AuthModal = ({ isOpen, onClose }) => {
                 <>
                   <AuthOptionsContainer>
                     <SocialButton onClick={handleGoogleSignIn} disabled={loading}>
-                      <FaGoogle />
-                      <span>{t('auth.signUpWithGoogle', 'Sign up with Google')}</span>
+                      {loadingMethod === 'google' ? <ButtonSpinner /> : <FaGoogle />}
+                      <span>
+                        {loadingMethod === 'google'
+                          ? t('auth.loading', 'Loading...')
+                          : t('auth.signUpWithGoogle', 'Sign up with Google')}
+                      </span>
                     </SocialButton>
                     
                     <SocialButton onClick={showEmailSignInForm} disabled={loading}>
@@ -397,8 +435,12 @@ const AuthModal = ({ isOpen, onClose }) => {
                     </SocialButton>
                     
                     <SocialButton onClick={handlePhoneAuth} disabled={loading || isVerificationSent}>
-                      <FaPhone />
-                      <span>{t('auth.signUpWithPhone', 'Sign up with Phone')}</span>
+                      {loadingMethod === 'phone' ? <ButtonSpinner /> : <FaPhone />}
+                      <span>
+                        {loadingMethod === 'phone'
+                          ? t('auth.loading', 'Loading...')
+                          : t('auth.signUpWithPhone', 'Sign up with Phone')}
+                      </span>
                     </SocialButton>
                     
                     {isVerificationSent && (
@@ -411,7 +453,14 @@ const AuthModal = ({ isOpen, onClose }) => {
                           isRTL={isRTL}
                         />
                         <PhoneButton onClick={handleVerifyCode} disabled={loading}>
-                          {t('auth.verify', 'Verify')}
+                          {loadingMethod === 'verify' ? (
+                            <>
+                              <ButtonSpinner />
+                              <span>{t('auth.loading', 'Loading...')}</span>
+                            </>
+                          ) : (
+                            t('auth.verify', 'Verify')
+                          )}
                         </PhoneButton>
                       </PhoneVerificationContainer>
                     )}
@@ -468,7 +517,14 @@ const AuthModal = ({ isOpen, onClose }) => {
                     </FormGroup>
                     
                     <Button type="submit" disabled={loading}>
-                      {loading ? t('auth.loading', 'Loading...') : t('auth.createAccount', 'Create Account')}
+                      {loadingMethod === 'emailSignUp' ? (
+                        <>
+                          <ButtonSpinner />
+                          <span>{t('auth.loading', 'Loading...')}</span>
+                        </>
+                      ) : (
+                        t('auth.createAccount', 'Create Account')
+                      )}
                     </Button>
                   </Form>
                 </>
@@ -714,6 +770,23 @@ const Button = styled.button`
 const PhoneButton = styled(Button)`
   flex-shrink: 0;
   padding: 0.8rem 1rem;
+`;
+
+// Simple spinner used inside auth buttons
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const ButtonSpinner = styled.div`
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: ${spin} 1s ease-in-out infinite;
 `;
 
 
