@@ -23,7 +23,8 @@ const AuthModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { signInWithEmail, signup, signInWithGoogle, signInWithPhone, verifyPhoneCode } = useAuth();
 
-  const handleClose = useCallback(() => {
+  // Reset all modal state values to defaults
+  const resetModalState = useCallback(() => {
     setError('');
     setEmail('');
     setPassword('');
@@ -33,8 +34,16 @@ const AuthModal = ({ isOpen, onClose }) => {
     setIsVerificationSent(false);
     setIsSignUp(false);
     setShowEmailForm(false);
+    setLoading(false);
+    if (window.confirmationResult) {
+      window.confirmationResult = null;
+    }
+  }, []);
+
+  const handleClose = useCallback(() => {
+    resetModalState();
     onClose();
-  }, [onClose]);
+  }, [onClose, resetModalState]);
 
   // Close modal when clicking outside
   useEffect(() => {
@@ -52,6 +61,13 @@ const AuthModal = ({ isOpen, onClose }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, handleClose]);
+
+  // Ensure state resets if modal is closed externally
+  useEffect(() => {
+    if (!isOpen) {
+      resetModalState();
+    }
+  }, [isOpen, resetModalState]);
   
   const toggleSignUpMode = () => {
     setIsSignUp(!isSignUp);
