@@ -189,7 +189,9 @@
     "errorGoogle": "Google sign-in failed. Please try again.",
     "errorInvalidCode": "Invalid verification code. Please try again.",
     "errorCodeExpired": "Verification code has expired. Please request a new code.",
-    "errorVerifyFailed": "Verification failed. Please try again."
+    "errorVerifyFailed": "Verification failed. Please try again.",
+    "errorInvalidEmail": "Please enter a valid email address",
+    "errorWeakPassword": "Password must contain letters and numbers"
   },
   
   "dashboard": {
