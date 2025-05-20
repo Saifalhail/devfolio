@@ -19,9 +19,9 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
-// For development - use direct configuration values
-// In production, these would come from environment variables
-if (!firebaseConfig.projectId) {
+// For development builds we provide fallback credentials to make local
+// testing easier. These should **never** be used in production.
+if (process.env.NODE_ENV !== 'production' && !firebaseConfig.projectId) {
   console.warn('Using development Firebase config');
   
   // Development Firebase configuration
