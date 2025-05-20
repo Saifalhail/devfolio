@@ -9,6 +9,14 @@ This document provides essential guidelines for working with the DevFolio projec
 - Primary services offered include web development, mobile apps, AI integrations, admin dashboards, QR code tools, and custom software
 </project>
 
+<important>
+At the start always check to which point the project has reached and continue from there
+Check PROJECT_BUILDING_TASKS.md for the current task and rest of tasks
+Always at the start provide the in built Browser view to be opened as an external browser where elements can
+be chosen and sent.
+Do not provide Npm start or Npm run dev commands
+</important>
+
 <tech_stack>
 - Frontend framework is React.js with styled-components for styling
 - Routing is handled by React Router

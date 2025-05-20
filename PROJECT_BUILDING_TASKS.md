@@ -1,22 +1,89 @@
 # DevFolio Project Building Tasks
 
+> **IMPORTANT**: Before starting any task, always refer to [WINDSURF_RULES.md](./WINDSURF_RULES.md) for project guidelines, coding standards, and architectural decisions. This document contains essential information about the project structure and development practices.
+
 This document outlines larger tasks for building significant features, implementing UI changes, and integrating APIs for the DevFolio project. These tasks are designed for the main developer to implement.
 
 ## Dashboard Implementation
 
-1. Create the Dashboard layout structure in `src/components/Dashboard/Dashboard.js` with sidebar navigation and main content area.
+1. ✅ Create the Dashboard layout structure in `src/components/Dashboard/Dashboard.js` with sidebar navigation and main content area.
 
-2. Implement the Dashboard Home/Overview page with welcome message and summary cards for active projects, pending actions, and deadlines.
+2. Implement the Dashboard Home/Overview page with the following features:
+   - Welcome section with personalized greeting and project name
+   - Progress percentage indicator for active projects
+   - Countdown to upcoming deadlines
+   - **Unique Features:**
+     - "Last Interaction Summary" showing last file uploaded, form submitted, or milestone updated
+     - "This Week's Focus" that auto-highlights what's being worked on based on milestones
+     - Mini Bot Prompt with "Need help or clarification?" that opens a chatbot powered by DeepSeek or GPT
 
-3. Build the Projects Panel component with individual project cards showing summary, status, and progress indicators.
+3. Build the Projects Panel component with the following features:
+   - Project cards with brief, timeline, and current status
+   - Grid/list view toggle for project display
+   - Filtering and sorting options (by status, deadline, client)
+   - **Unique Features:**
+     - Status Tracker Chip with emoji (⏳ In Progress, ✅ Done, ✍️ Awaiting Feedback)
+     - Mood Meter showing simple emoji from client at each delivery
+     - Project Notes Recorder where you and the client can leave quick text/audio notes (stored in Firestore)
 
-4. Develop the Project Detail page with tabs for Brief & Files, Milestones & Timeline, Task Tracker, and Deliverables.
+4. Develop the Tasks & Milestones section with the following features:
+   - Checklist or Kanban board (To-do / Doing / Done)
+   - Task assignment and due date tracking
+   - **Unique Features:**
+     - Smart ETA Estimate based on current completion and average time per task
+     - Progress Heatmap showing the most active days of the project
+     - Client-Assigned Tasks (optional toggle) for client actions like "Send Logo" or "Approve Screen 1"
 
-5. Create the File Manager system with upload functionality, file categorization, and version tracking.
+5. Create the Files & Deliverables system with the following features:
+   - Upload/download area with drag-and-drop functionality
+   - File categorization and organization
+   - **Unique Features:**
+     - Auto Image Preview / Playable File Cards for immediate content viewing
+     - Tag Files system (Design, Docs, Final, Feedback) for better organization
+     - Watermarked Previews for files that are not final
+     - Version tracking and file history
 
-6. Implement the Activity Log/Timeline feature to display chronological project updates with filtering options.
+6. Implement the Feedback & Forms section with the following capabilities:
+   - Feedback and revision request forms
+   - Form submission tracking
+   - **Unique Features:**
+     - Feedback Replayer showing feedback across milestones in timeline form
+     - AI-Powered Summary that auto-summarizes feedback using GPT/DeepSeek
+     - Screenshot Annotator allowing clients to upload screenshots and draw arrows/comments
 
-7. Build the Invoices & Payment Tracker section with invoice generation, status tracking, and payment reminders.
+7. Build the Timeline / Activity Log feature with the following features:
+   - Chronological display of all project activities
+   - Filtering options by activity type
+   - **Unique Features:**
+     - Color-coded entries by person (blue = client, purple = developer)
+     - Hover-over context revealing additional details (e.g., "Uploaded by client during milestone #2")
+     - Export functionality for reporting purposes
+
+8. Develop the Design & Prototype section with the following features:
+   - Link to design tools like Figma
+   - **Unique Features:**
+     - Figma Embed with Tabs (Current Design | Style Guide | Revisions)
+     - Download Design Kit (theme + fonts + logo + colors as zip)
+     - Client Style Preference Form (modern, corporate, playful, etc.)
+
+9. Create the Invoicing & Delivery system with the following features:
+   - Invoice display and payment status tracking
+   - **Unique Features:**
+     - Milestone-based delivery view that unlocks sections/files as invoices are paid
+     - Auto-generated PDF report: "Your Software Project Summary"
+     - Payment history and transaction records
+
+10. Implement the Post-Launch Section with the following features:
+    - "Here's how to maintain your app" PDF
+    - "Hire me again" button
+    - Feedback and review form
+    - Social share link ("Built by S.N.P")
+
+11. Develop an Admin Only (Back Office Panel) with the following features:
+    - List of all users/projects
+    - Quick overview cards (total projects, overdue, files uploaded today)
+    - Internal Notes per project
+    - "Client Dashboard Simulator" to preview what the client sees
 
 ## Authentication Enhancements
 

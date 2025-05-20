@@ -3,7 +3,7 @@
 This document contains small, precise tasks for AI agents to complete. Each task is self-contained and focuses on bug fixes, small feature additions, testing, and code improvements. Each task includes references to relevant documentation files.
 
 ## Authentication Tasks
-
+<!-- 
 1. **Fix Google Authentication**
    - File: `src/components/Common/AuthModal.js`
    - Task: Properly implement the signInWithGoogle function and handle potential errors
@@ -58,7 +58,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
    - File: Create `firestore.rules`
    - Task: Implement Firebase security rules based on the recommendations in FIREBASE_SETUP.md
    - Docs: See FIREBASE_SETUP.md (Firestore Security Rules section)
-   - Priority: High
+   - Priority: High -->
 
 10. **Implement Listener Cleanup**
     - File: All components using Firebase listeners
@@ -98,65 +98,127 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Docs: See WINDSURF_RULES.md (styling section) and DOCUMENTATION.md (UI Components and Design System section)
     - Priority: Low
 
-## Testing Tasks
+## Dashboard Tasks
 
-16. **Test AuthContext Provider**
-    - File: Create `src/contexts/__tests__/AuthContext.test.js`
-    - Task: Create unit tests for the AuthContext provider
-    - Docs: See DOCUMENTATION.md (Authentication System section) and package.json for testing setup
+16. **Implement Mobile Sidebar Toggle**
+    - File: `src/components/Dashboard/Dashboard.js`
+    - Task: Add a backdrop overlay when sidebar is open on mobile to allow clicking outside to close it
+    - Docs: See WINDSURF_RULES.md (responsive design section) and PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
     - Priority: Medium
 
-17. **Test Contact Form Submission**
+17. **Add Dashboard Loading State**
+    - File: `src/components/Dashboard/Dashboard.js`
+    - Task: Implement a loading state for the dashboard while user authentication is being verified
+    - Docs: See DOCUMENTATION.md (Authentication System section) and WINDSURF_RULES.md (UI feedback section)
+    - Priority: Medium
+
+18. **Fix Sidebar RTL Support**
+    - File: `src/components/Dashboard/Sidebar.js`
+    - Task: Ensure proper RTL (right-to-left) support for sidebar navigation icons and text alignment
+    - Docs: See DOCUMENTATION.md (Internationalization section) and WINDSURF_RULES.md (internationalization section)
+    - Priority: High
+
+19. **Add Active Route Highlighting**
+    - File: `src/components/Dashboard/Sidebar.js`
+    - Task: Enhance the sidebar navigation to properly highlight the active route with visual indicators
+    - Docs: See WINDSURF_RULES.md (navigation section) and PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
+    - Priority: Medium
+
+20. **Implement Keyboard Navigation**
+    - File: `src/components/Dashboard/Sidebar.js`
+    - Task: Add keyboard navigation support for the sidebar menu items for better accessibility
+    - Docs: See WINDSURF_RULES.md (accessibility section) and DOCUMENTATION.md (Accessibility Features section)
+    - Priority: Low
+
+21. **Add Tooltip Components**
+    - File: Create `src/components/Common/Tooltip.js`
+    - Task: Create a reusable tooltip component for providing additional information on hover
+    - Docs: See WINDSURF_RULES.md (UI components section) and DOCUMENTATION.md (UI Components and Design System section)
+    - Priority: Low
+
+22. **Implement Collapsible Sidebar**
+    - File: `src/components/Dashboard/Sidebar.js`
+    - Task: Add functionality to collapse the sidebar to show only icons on desktop view to save space
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and WINDSURF_RULES.md (responsive design section)
+    - Priority: Medium
+
+## Testing Tasks
+
+23. **Test AuthContext Provider**
+    - File: Create `src/contexts/__tests__/AuthContext.test.js`
+    - Task: Write tests for the AuthContext provider functionality
+    - Docs: See DOCUMENTATION.md (Authentication System section) and package.json for testing setup
+    - Priority: High
+
+24. **Test Contact Form Submission**
     - File: Create `src/components/Home/__tests__/NewContact.test.js`
     - Task: Write tests for the contact form submission functionality
     - Docs: See DOCUMENTATION.md (Contact Form Setup section) and package.json for testing setup
     - Priority: Medium
 
-18. **Add Form Validation Tests**
+25. **Add Form Validation Tests**
     - Files: Create test files for AuthModal and Contact components
     - Task: Add validation tests for form inputs in both components
     - Docs: See DOCUMENTATION.md (Form Validation section) and package.json for testing setup
     - Priority: Low
 
-19. **Create Snapshot Tests**
+26. **Create Snapshot Tests**
     - Files: Create test files for UI components
     - Task: Implement snapshot tests to detect unexpected visual changes
     - Docs: See package.json for testing setup
     - Priority: Low
 
-20. **Implement Integration Tests**
+27. **Implement Integration Tests**
     - File: Create `src/__tests__/authentication.test.js`
     - Task: Create integration tests for the complete authentication flow
     - Docs: See DOCUMENTATION.md (Authentication System section) and package.json for testing setup
     - Priority: Low
 
+28. **Test Dashboard Sidebar**
+    - File: Create `src/components/Dashboard/__tests__/Sidebar.test.js`
+    - Task: Write tests for the sidebar navigation functionality and responsive behavior
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and package.json for testing setup
+    - Priority: Medium
+
+29. **Test Dashboard Layout**
+    - File: Create `src/components/Dashboard/__tests__/Dashboard.test.js`
+    - Task: Test the dashboard layout structure and responsive behavior
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and package.json for testing setup
+    - Priority: Medium
+
 ## Performance Optimization Tasks
 
-21. **Optimize Image Loading**
+30. **Optimize Image Loading**
     - File: Hero section component
     - Task: Implement lazy loading for images to improve page load performance
     - Docs: See DOCUMENTATION.md (Performance Optimization section) and WINDSURF_RULES.md (styling section)
     - Priority: Medium
 
-22. **Refactor Styled Components**
+31. **Refactor Styled Components**
     - File: `src/components/Home/NewContact.js`
     - Task: Refactor styled components to reduce duplication and improve maintainability
     - Docs: See WINDSURF_RULES.md (styling section)
     - Priority: Low
 
-23. **Implement Code Splitting**
+32. **Implement Code Splitting**
     - File: `src/components/Dashboard/Dashboard.js`
     - Task: Use React.lazy and Suspense to implement code splitting and reduce initial load time
     - Docs: See DOCUMENTATION.md (Performance Optimization section)
     - Priority: Medium
 
-24. **Add Component Memoization**
+33. **Add Component Memoization**
     - Files: Various components with expensive renders
     - Task: Implement React.memo, useMemo, and useCallback to optimize rendering performance
     - Docs: See WINDSURF_RULES.md (project_structure section)
     - Priority: Low
 
-25. **Optimize Firebase Queries**
+34. **Optimize Dashboard Rendering**
+    - File: `src/components/Dashboard/Dashboard.js`
+    - Task: Implement virtualization for lists and optimize rendering of dashboard components
+    - Docs: See DOCUMENTATION.md (Performance Optimization section) and PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
+    - Priority: Medium
+
+35. **Optimize Firebase Queries**
     - Files: All components using Firebase
     - Task: Optimize Firebase queries to minimize reads and writes
     - Docs: See FIREBASE_SETUP.md and WINDSURF_RULES.md (firebase section)
@@ -164,96 +226,108 @@ This document contains small, precise tasks for AI agents to complete. Each task
 
 ## Accessibility Tasks
 
-26. **Add ARIA Labels**
+36. **Add ARIA Labels**
     - File: `src/components/Common/AuthModal.js`
     - Task: Add proper ARIA labels to all interactive elements for screen reader accessibility
     - Docs: See DOCUMENTATION.md (Accessibility Features section) and WINDSURF_RULES.md (accessibility section)
     - Priority: Medium
 
-27. **Improve Form Accessibility**
+37. **Improve Form Accessibility**
     - File: `src/components/Home/NewContact.js`
     - Task: Ensure all form inputs have properly associated labels and error messages
     - Docs: See DOCUMENTATION.md (Accessibility Features section) and WINDSURF_RULES.md (accessibility section)
     - Priority: High
 
-28. **Fix Color Contrast**
+38. **Fix Color Contrast**
     - Files: Various UI components
     - Task: Fix color contrast issues to meet WCAG AA standards
     - Docs: See DOCUMENTATION.md (Accessibility Features section) and WINDSURF_RULES.md (accessibility section)
     - Priority: Medium
 
-29. **Implement Keyboard Navigation**
+39. **Implement Keyboard Navigation**
     - File: Language switcher component
     - Task: Ensure the language switcher is fully accessible via keyboard
     - Docs: See DOCUMENTATION.md (Internationalization section) and WINDSURF_RULES.md (accessibility section)
     - Priority: Medium
 
-30. **Add Screen Reader Announcements**
+40. **Add Screen Reader Announcements**
     - Files: Components with status changes
     - Task: Implement screen reader announcements for form submission status changes
     - Docs: See DOCUMENTATION.md (Accessibility Features section) and WINDSURF_RULES.md (accessibility section)
     - Priority: Low
 
+41. **Dashboard Accessibility Audit**
+    - File: `src/components/Dashboard/Dashboard.js` and `src/components/Dashboard/Sidebar.js`
+    - Task: Perform an accessibility audit on dashboard components and fix any issues
+    - Docs: See DOCUMENTATION.md (Accessibility Features section) and WINDSURF_RULES.md (accessibility section)
+    - Priority: Medium
+
 ## Dashboard Initial Components
 
-31. **Create Project Card Component**
+42. **Create Project Card Component**
     - File: Create `src/components/Dashboard/ProjectCard.js`
     - Task: Implement a card component to display project information
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and DOCUMENTATION.md
     - Priority: High
 
-32. **Implement Status Badge Component**
+43. **Implement Status Badge Component**
     - File: Create `src/components/Dashboard/StatusBadge.js`
     - Task: Create a reusable badge component for showing project status (Not Started, In Progress, Review, Done)
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
     - Priority: Medium
 
-33. **Create Project Timeline Component**
+44. **Create Project Timeline Component**
     - File: Create `src/components/Dashboard/ProjectTimeline.js`
     - Task: Implement a timeline component to display project milestone dates
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
     - Priority: Medium
 
-34. **Add Activity Log Component**
+45. **Add Activity Log Component**
     - File: Create `src/components/Dashboard/ActivityLog.js`
     - Task: Create a component to display recent project updates in chronological order
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
     - Priority: Low
 
-35. **Implement Summary Card Component**
+46. **Implement Summary Card Component**
     - File: Create `src/components/Dashboard/SummaryCard.js`
     - Task: Create a component for displaying dashboard statistics and summary information
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
     - Priority: Medium
 
+47. **Create Empty State Components**
+    - File: Create `src/components/Dashboard/EmptyState.js`
+    - Task: Implement empty state components for dashboard sections when no data is available
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and WINDSURF_RULES.md (UI feedback section)
+    - Priority: Low
+
 ## Bug Fixes
 
-36. **Fix Circular Dependency**
+48. **Fix Circular Dependency**
     - Files: Firebase initialization and components
     - Task: Resolve circular dependency issue in Firebase initialization
     - Docs: See FIREBASE_SETUP.md and WINDSURF_RULES.md (firebase section)
     - Priority: High
     - Note: This was previously identified in the project memories
 
-37. **Fix List Rendering Keys**
+49. **Fix List Rendering Keys**
     - Files: Components with list rendering
     - Task: Add proper key props to list items to resolve console errors
     - Docs: See WINDSURF_RULES.md (project_structure section)
     - Priority: Medium
 
-38. **Improve Error Handling**
+50. **Improve Error Handling**
     - File: `src/components/Home/NewContact.js`
     - Task: Fix form submission error handling with proper user feedback
     - Docs: See DOCUMENTATION.md (Contact Form Setup section) and WINDSURF_RULES.md (forms section)
     - Priority: High
 
-39. **Fix Language Switching**
+51. **Fix Language Switching**
     - Files: Components with translation issues
     - Task: Ensure all translated content updates properly when switching languages
     - Docs: See DOCUMENTATION.md (Internationalization section) and WINDSURF_RULES.md (internationalization section)
     - Priority: Medium
 
-40. **Fix Authentication Persistence**
+52. **Fix Authentication Persistence**
     - Files: `src/contexts/AuthContext.js` and related components
     - Task: Ensure authentication state persists after page refresh
     - Docs: See DOCUMENTATION.md (Authentication System section) and WINDSURF_RULES.md (authentication section)
@@ -261,31 +335,31 @@ This document contains small, precise tasks for AI agents to complete. Each task
 
 ## Documentation Tasks
 
-41. **Add JSDoc Comments**
+53. **Add JSDoc Comments**
     - Files: All utility functions in `src/utils/`
     - Task: Add comprehensive JSDoc comments to improve code documentation
     - Docs: See WINDSURF_RULES.md (project_structure section)
     - Priority: Medium
 
-42. **Create Dashboard README**
+54. **Create Dashboard README**
     - File: Create `src/components/Dashboard/README.md`
     - Task: Write comprehensive documentation for the Dashboard feature
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
     - Priority: Low
 
-43. **Document Authentication Flow**
+55. **Document Authentication Flow**
     - Files: Authentication-related components and contexts
     - Task: Add clear comments explaining the authentication flow throughout the codebase
     - Docs: See DOCUMENTATION.md (Authentication System section) and WINDSURF_RULES.md (authentication section)
     - Priority: Medium
 
-44. **Document Styled Components**
+56. **Document Styled Components**
     - Files: Components with complex styled-components
     - Task: Add inline documentation for complex styled-components to improve maintainability
     - Docs: See WINDSURF_RULES.md (styling section)
     - Priority: Low
 
-45. **Create i18n Examples**
+57. **Create i18n Examples**
     - File: Create `src/locales/README.md`
     - Task: Document usage examples for the internationalization system
     - Docs: See DOCUMENTATION.md (Internationalization section) and WINDSURF_RULES.md (internationalization section)

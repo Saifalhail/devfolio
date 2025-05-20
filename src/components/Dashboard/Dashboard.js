@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
 import Layout from '../Layout/Layout';
+import Sidebar from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,6 +12,26 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileView, setMobileView] = useState(window.innerWidth < 768);
+
+  // Handle sidebar toggle
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Handle responsive behavior
+  React.useEffect(() => {
+    const handleResize = () => {
+      setMobileView(window.innerWidth < 768);
+      if (window.innerWidth >= 1200) {
+        setSidebarOpen(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -23,61 +44,128 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <DashboardContainer isRTL={isRTL}>
-        <DashboardHeader>
-          <h1>✅ Simple Project Management Dashboard</h1>
-          <DashboardSubtitle>Solo Developer Edition</DashboardSubtitle>
+      <DashboardWrapper isRTL={isRTL}>
+        {/* Mobile Toggle Button */}
+        {mobileView && (
+          <SidebarToggle onClick={toggleSidebar} isRTL={isRTL}>
+            {sidebarOpen ? <FaTimes /> : <FaBars />}
+          </SidebarToggle>
+        )}
+
+        {/* Sidebar */}
+        <SidebarWrapper isOpen={sidebarOpen} mobileView={mobileView}>
+          <Sidebar />
+        </SidebarWrapper>
+
+        {/* Main Content */}
+        <MainContent sidebarOpen={sidebarOpen} mobileView={mobileView} isRTL={isRTL}>
+          <DashboardHeader>
+            <h1>✅ Simple Project Management Dashboard</h1>
+            <DashboardSubtitle>Solo Developer Edition</DashboardSubtitle>
+            
+            <UserInfoContainer>
+              <UserInfo>
+                <FaUser />
+                <span>{currentUser?.displayName || currentUser?.email || 'User'}</span>
+              </UserInfo>
+              <LogoutButton onClick={handleLogout}>
+                <FaSignOutAlt />
+                <span>{t('dashboard.logout', 'Logout')}</span>
+              </LogoutButton>
+            </UserInfoContainer>
+          </DashboardHeader>
           
-          <UserInfoContainer>
-            <UserInfo>
-              <FaUser />
-              <span>{currentUser?.displayName || currentUser?.email || 'User'}</span>
-            </UserInfo>
-            <LogoutButton onClick={handleLogout}>
-              <FaSignOutAlt />
-              <span>{t('dashboard.logout', 'Logout')}</span>
-            </LogoutButton>
-          </UserInfoContainer>
-        </DashboardHeader>
-        
-        <DashboardContent>
-          <WelcomeCard>
-            <h2>Welcome to your Dashboard</h2>
-            <p>This is a simple dashboard for managing your projects. Here you can track project progress, manage client communications, and more.</p>
-          </WelcomeCard>
-          
-          <SummaryCardsContainer>
-            <SummaryCard>
-              <CardTitle>Active Projects</CardTitle>
-              <CardValue>0</CardValue>
-            </SummaryCard>
+          <DashboardContent>
+            <WelcomeCard>
+              <h2>Welcome to your Dashboard</h2>
+              <p>This is a simple dashboard for managing your projects. Here you can track project progress, manage client communications, and more.</p>
+            </WelcomeCard>
             
-            <SummaryCard>
-              <CardTitle>Pending Actions</CardTitle>
-              <CardValue>0</CardValue>
-            </SummaryCard>
-            
-            <SummaryCard>
-              <CardTitle>Latest Uploads</CardTitle>
-              <CardValue>0</CardValue>
-            </SummaryCard>
-            
-            <SummaryCard>
-              <CardTitle>Project Deadlines</CardTitle>
-              <CardValue>None</CardValue>
-            </SummaryCard>
-          </SummaryCardsContainer>
-        </DashboardContent>
-      </DashboardContainer>
+            <SummaryCardsContainer>
+              <SummaryCard>
+                <CardTitle>Active Projects</CardTitle>
+                <CardValue>0</CardValue>
+              </SummaryCard>
+              
+              <SummaryCard>
+                <CardTitle>Pending Actions</CardTitle>
+                <CardValue>0</CardValue>
+              </SummaryCard>
+              
+              <SummaryCard>
+                <CardTitle>Latest Uploads</CardTitle>
+                <CardValue>0</CardValue>
+              </SummaryCard>
+              
+              <SummaryCard>
+                <CardTitle>Project Deadlines</CardTitle>
+                <CardValue>None</CardValue>
+              </SummaryCard>
+            </SummaryCardsContainer>
+          </DashboardContent>
+        </MainContent>
+      </DashboardWrapper>
     </Layout>
   );
 };
 
-const DashboardContainer = styled.div`
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+const DashboardWrapper = styled.div`
+  display: flex;
+  min-height: 100vh;
+  position: relative;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+`;
+
+const SidebarWrapper = styled.div`
+  flex: 0 0 250px;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  ${props => props.isRTL ? 'right: 0;' : 'left: 0;'}
+  transform: translateX(${props => (props.isOpen ? '0' : (props.isRTL ? '100%' : '-100%'))});
+  
+  @media (max-width: 768px) {
+    box-shadow: ${props => props.isOpen ? '0 0 10px rgba(0, 0, 0, 0.2)' : 'none'};
+  }
+`;
+
+const MainContent = styled.div`
+  flex: 1;
+  padding: 2rem;
+  margin-left: ${props => !props.isRTL && props.sidebarOpen && !props.mobileView ? '250px' : '0'};
+  margin-right: ${props => props.isRTL && props.sidebarOpen && !props.mobileView ? '250px' : '0'};
+  transition: all 0.3s ease;
+  max-width: 100%;
+  overflow-x: hidden;
+`;
+
+const SidebarToggle = styled.button`
+  position: fixed;
+  top: 20px;
+  ${props => props.isRTL ? 'right: 20px;' : 'left: 20px;'}
+  z-index: 1001;
+  background: linear-gradient(135deg, #513a52, #82a1bf);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 const DashboardHeader = styled.div`
