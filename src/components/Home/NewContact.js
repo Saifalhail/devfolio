@@ -3,6 +3,7 @@ import styled, { keyframes, css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../../firebase';
+import { logFirebaseFunctionError } from '../../utils/errorHandling';
 
 const NewContact = () => {
   const { t, i18n } = useTranslation();
@@ -96,7 +97,7 @@ const NewContact = () => {
         setFormSuccess(false);
       }, 5000);
     } catch (error) {
-      console.error('Error submitting form:', error);
+      logFirebaseFunctionError('submitFormData', error);
       
       // Extract detailed error information
       let errorMessage = t('contact.form.errorMessage') || 'There was an error submitting your form. Please try again.';
@@ -110,7 +111,6 @@ const NewContact = () => {
       }
       
       if (error.details) {
-        console.error('Error details:', error.details);
         errorMessage += ` Details: ${JSON.stringify(error.details)}`;
       }
       

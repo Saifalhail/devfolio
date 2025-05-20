@@ -253,6 +253,8 @@ Example files (`.env.local.example` and `.env.example`) are provided as template
    - Input validation for all form fields
    - Error handling that doesn't expose sensitive information
    - Proper logging for debugging without exposing sensitive data
+   - Use the `logFirebaseFunctionError` utility on the frontend to capture
+     detailed error information when a callable function fails
 
 ### Form Validation
 
