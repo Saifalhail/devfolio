@@ -186,7 +186,10 @@
     "errorNetwork": "Network error during sign-in. Please check your connection and try again.",
     "errorUserDisabled": "This user account has been disabled.",
     "errorAccountExists": "An account already exists with a different sign-in method.",
-    "errorGoogle": "Google sign-in failed. Please try again."
+    "errorGoogle": "Google sign-in failed. Please try again.",
+    "errorInvalidCode": "Invalid verification code. Please try again.",
+    "errorCodeExpired": "Verification code has expired. Please request a new code.",
+    "errorVerifyFailed": "Verification failed. Please try again."
   },
   
   "dashboard": {
