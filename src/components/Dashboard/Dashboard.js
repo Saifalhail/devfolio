@@ -6,12 +6,15 @@ import { useAuth } from '../../contexts/AuthContext';
 import { 
   FaChartLine, FaClock, FaFileUpload, FaRobot, FaArrowRight, FaTimes, FaBars,
   FaHome, FaProjectDiagram, FaFileAlt, FaClipboardList, FaFileInvoiceDollar, FaHistory, FaCog,
-  FaCalendarAlt, FaLightbulb, FaClipboardCheck, FaUser, FaSignOutAlt
+  FaCalendarAlt, FaLightbulb, FaClipboardCheck, FaUser, FaSignOutAlt, FaPlus
 } from 'react-icons/fa';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import Navbar from '../Layout/Navbar';
 import Sidebar from './Sidebar';
+import ProjectsPanel from './ProjectsPanel';
+import ProjectNotes from './ProjectNotes';
+import AddProjectModal from './AddProjectModal';
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth();
@@ -21,6 +24,9 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileView, setMobileView] = useState(window.innerWidth < 768);
   const [showChatbot, setShowChatbot] = useState(false);
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'projects', 'tasks'
   
   // Mock data for demonstration purposes
   const mockData = {
@@ -113,6 +119,18 @@ const Dashboard = () => {
 
   return (
     <DashboardPage>
+      {/* Add Project Modal */}
+      {showAddProjectModal && (
+        <AddProjectModal 
+          isOpen={showAddProjectModal} 
+          onClose={() => setShowAddProjectModal(false)} 
+          onProjectAdded={() => {
+            // Refresh projects or handle new project added
+            setShowAddProjectModal(false);
+          }} 
+        />
+      )}
+      
       <NavbarArea>
         <Navbar showUserAccount={true} />
       </NavbarArea>
@@ -133,26 +151,78 @@ const Dashboard = () => {
           )}
           
           <DashboardContent>
-            {/* Welcome Section with Personalized Greeting */}
-            <WelcomeSection>
-              <WelcomeLayout>
-                <WelcomeText>
-                  <h1>{greeting}, {currentUser?.displayName?.split(' ')[0] || 'Developer'}!</h1>
-                  <h2>{mockData.projectName} <span>Dashboard</span></h2>
-                </WelcomeText>
-                
-                <ProgressInfoContainer>
-                  <CompactProgressWrapper>
-                    <CircularProgressbar
-                      value={mockData.progress}
-                      text={`${mockData.progress}%`}
-                      styles={{
-                        path: { stroke: '#82a1bf' },
-                        trail: { stroke: 'rgba(130, 161, 191, 0.2)' },
-                        text: { fill: '#513a52', fontSize: '16px' }
-                      }}
-                    />
-                  </CompactProgressWrapper>
+            {/* Dashboard Navigation Tabs */}
+            <DashboardTabs>
+              <TabButton 
+                active={activeTab === 'overview'} 
+                onClick={() => setActiveTab('overview')}
+              >
+                <FaHome />
+                {t('dashboard.tabs.overview', 'Overview')}
+              </TabButton>
+              <TabButton 
+                active={activeTab === 'projects'} 
+                onClick={() => setActiveTab('projects')}
+              >
+                <FaProjectDiagram />
+                {t('dashboard.tabs.projects', 'Projects')}
+              </TabButton>
+              <TabButton 
+                active={activeTab === 'tasks'} 
+                onClick={() => setActiveTab('tasks')}
+              >
+                <FaClipboardList />
+                {t('dashboard.tabs.tasks', 'Tasks & Milestones')}
+              </TabButton>
+            </DashboardTabs>
+            
+            {/* Projects Tab */}
+            {activeTab === 'projects' && (
+              <ProjectsTabContainer>
+                <ProjectsHeader>
+                  <h2>{t('projects.yourProjects', 'Your Projects')}</h2>
+                  <AddProjectButton onClick={() => setShowAddProjectModal(true)}>
+                    <FaPlus />
+                    {t('projects.addNew', 'Add New Project')}
+                  </AddProjectButton>
+                </ProjectsHeader>
+                <ProjectsPanel />
+              </ProjectsTabContainer>
+            )}
+            
+            {/* Tasks Tab - Placeholder for future implementation */}
+            {activeTab === 'tasks' && (
+              <TasksTabContainer>
+                <h2>{t('tasks.title', 'Tasks & Milestones')}</h2>
+                <ComingSoonMessage>
+                  {t('common.comingSoon', 'Coming Soon!')}
+                </ComingSoonMessage>
+              </TasksTabContainer>
+            )}
+            
+            {/* Overview Tab */}
+            {activeTab === 'overview' && (
+              <div>
+                {/* Welcome Section with Personalized Greeting */}
+                <WelcomeSection>
+                  <WelcomeLayout>
+                    <WelcomeText>
+                      <h1>{getGreeting()}, {currentUser?.displayName?.split(' ')[0] || 'Developer'}!</h1>
+                      <h2>{mockData.projectName} <span>Dashboard</span></h2>
+                    </WelcomeText>
+                    
+                    <ProgressInfoContainer>
+                      <CompactProgressWrapper>
+                        <CircularProgressbar
+                          value={mockData.progress}
+                          text={`${mockData.progress}%`}
+                          styles={{
+                            path: { stroke: '#82a1bf' },
+                            trail: { stroke: 'rgba(130, 161, 191, 0.2)' },
+                            text: { fill: '#513a52', fontSize: '16px' }
+                          }}
+                        />
+                      </CompactProgressWrapper>
                   
                   <div>
                     <CompactProgressTitle>{t('dashboard.projectProgress', 'Project Progress')}</CompactProgressTitle>
@@ -297,6 +367,8 @@ const Dashboard = () => {
                 </QuickActionButton>
               </QuickActionButtons>
             </QuickActionsContainer>
+          </div>
+          )}  {/* End of Overview Tab */}
           </DashboardContent>
         </ContentArea>
       </DashboardBody>
@@ -989,6 +1061,131 @@ const QuickActionButton = styled.button`
   &:active {
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(81, 58, 82, 0.2);
+  }
+`;
+
+// Projects Tab Styled Components
+const ProjectsTabContainer = styled.div`
+  width: 100%;
+  padding: 1rem 0;
+`;
+
+const ProjectsHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  
+  h2 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+`;
+
+const AddProjectButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  svg {
+    font-size: 0.9rem;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(205, 62, 253, 0.3);
+  }
+`;
+
+// Tasks Tab Styled Components
+const TasksTabContainer = styled.div`
+  width: 100%;
+  padding: 1rem 0;
+  
+  h2 {
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
+
+const ComingSoonMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px dashed rgba(205, 62, 253, 0.2);
+`;
+
+// Dashboard Tabs Styled Components
+const DashboardTabs = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
+`;
+
+const TabButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: ${props => props.active ? 'rgba(205, 62, 253, 0.1)' : 'rgba(255, 255, 255, 0.03)'};
+  color: ${props => props.active ? '#cd3efd' : 'rgba(255, 255, 255, 0.7)'};
+  border: 1px solid ${props => props.active ? 'rgba(205, 62, 253, 0.3)' : 'transparent'};
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  svg {
+    font-size: 1rem;
+  }
+  
+  &:hover {
+    background: rgba(205, 62, 253, 0.05);
+    color: ${props => props.active ? '#cd3efd' : '#fff'};
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
   }
 `;
 
