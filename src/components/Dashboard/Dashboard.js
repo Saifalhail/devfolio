@@ -162,6 +162,9 @@ const Dashboard = () => {
         <SidebarArea isRTL={isRTL} isOpen={sidebarOpen} isMobile={mobileView}>
           <Sidebar />
         </SidebarArea>
+        {mobileView && sidebarOpen && (
+          <SidebarBackdrop onClick={toggleSidebar} />
+        )}
         
         {/* Main Content */}
         <ContentArea isRTL={isRTL} isMobile={mobileView} sidebarOpen={sidebarOpen}>
@@ -426,6 +429,24 @@ const SidebarArea = styled.div`
     height: calc(100vh - 60px);
     box-shadow: ${props => props.isOpen ? '0 5px 15px rgba(0, 0, 0, 0.1)' : 'none'};
     z-index: 1001;
+  }
+`;
+
+const SidebarBackdrop = styled.div`
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+
+  @media (max-width: 768px) {
+    top: 60px;
+  }
+
+  @media (min-width: 769px) {
+    display: none;
   }
 `;
 
