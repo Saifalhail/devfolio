@@ -219,7 +219,10 @@
       "message": "Message",
       "button": "Send Message",
       "sending": "Sending...",
-      "success": "Thank you for your message! I'll get back to you soon."
+      "success": "Thank you for your message! I'll get back to you soon.",
+      "validationError": "Please fill in all required fields",
+      "emailError": "Please enter a valid email address",
+      "errorMessage": "There was an error submitting your form. Please try again."
     },
     "seo": {
       "keywords": "contact software developer, hire a programmer in Qatar"

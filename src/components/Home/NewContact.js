@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import React, { useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../../firebase';
@@ -19,6 +19,7 @@ const NewContact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formSuccess, setFormSuccess] = useState(false);
   const [formError, setFormError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [activeField, setActiveField] = useState(null);
   
   // Project type options
@@ -38,34 +39,60 @@ const NewContact = () => {
       [name]: value
     }));
   };
+
+  const validateField = (field) => {
+    let error = '';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (field === 'name' && !formData.name.trim()) {
+      error = t('contact.form.validationError');
+    }
+
+    if (field === 'email') {
+      if (!formData.email.trim()) {
+        error = t('contact.form.validationError');
+      } else if (!emailRegex.test(formData.email)) {
+        error = t('contact.form.emailError');
+      }
+    }
+
+    if (field === 'message' && !formData.message.trim()) {
+      error = t('contact.form.validationError');
+    }
+
+    setFieldErrors(prev => ({ ...prev, [field]: error }));
+    return error === '';
+  };
   
   const handleFocus = (field) => {
     setActiveField(field);
+    setFieldErrors(prev => ({ ...prev, [field]: '' }));
   };
-  
-  const handleBlur = () => {
+
+  const handleBlur = (field) => {
     setActiveField(null);
+    validateField(field);
   };
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormError(null);
-    
+    setFieldErrors({});
+
     try {
       console.log('Starting form submission...');
-      
+
       // Validate form data
-      if (!formData.name || !formData.email || !formData.message) {
-        throw new Error(t('contact.form.validationError') || 'Please fill in all required fields');
+      const nameValid = validateField('name');
+      const emailValid = validateField('email');
+      const messageValid = validateField('message');
+
+      if (!nameValid || !emailValid || !messageValid) {
+        setIsSubmitting(false);
+        return;
       }
-      
-      // Basic email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        throw new Error(t('contact.form.emailError') || 'Please enter a valid email address');
-      }
-      
+
       // Get a reference to the Cloud Function
       const submitFormData = httpsCallable(functions, 'submitFormData');
       console.log('Cloud Function reference created');
@@ -184,32 +211,38 @@ const NewContact = () => {
               
               <InputGroup isActive={activeField === 'name'}>
                 <FormLabel htmlFor="name" isRTL={isRTL}>{t('contact.form.name')}</FormLabel>
-                <FormInput 
-                  type="text" 
-                  id="name" 
-                  name="name" 
+                <FormInput
+                  type="text"
+                  id="name"
+                  name="name"
                   value={formData.name}
                   onChange={handleChange}
                   onFocus={() => handleFocus('name')}
-                  onBlur={handleBlur}
-                  required 
+                  onBlur={() => handleBlur('name')}
+                  required
                   isRTL={isRTL}
                 />
+                {fieldErrors.name && (
+                  <FieldError isRTL={isRTL}>{fieldErrors.name}</FieldError>
+                )}
               </InputGroup>
               
               <InputGroup isActive={activeField === 'email'}>
                 <FormLabel htmlFor="email" isRTL={isRTL}>{t('contact.form.email')}</FormLabel>
-                <FormInput 
-                  type="email" 
-                  id="email" 
-                  name="email" 
+                <FormInput
+                  type="email"
+                  id="email"
+                  name="email"
                   value={formData.email}
                   onChange={handleChange}
                   onFocus={() => handleFocus('email')}
-                  onBlur={handleBlur}
-                  required 
+                  onBlur={() => handleBlur('email')}
+                  required
                   isRTL={isRTL}
                 />
+                {fieldErrors.email && (
+                  <FieldError isRTL={isRTL}>{fieldErrors.email}</FieldError>
+                )}
               </InputGroup>
               
               <InputGroup isActive={activeField === 'projectType'}>
@@ -220,7 +253,7 @@ const NewContact = () => {
                   value={formData.projectType}
                   onChange={handleChange}
                   onFocus={() => handleFocus('projectType')}
-                  onBlur={handleBlur}
+                  onBlur={() => handleBlur('projectType')}
                   isRTL={isRTL}
                 >
                   <option value="">{isRTL ? 'اختر نوع المشروع' : 'Select project type'}</option>
@@ -234,17 +267,20 @@ const NewContact = () => {
               
               <InputGroup isActive={activeField === 'message'}>
                 <FormLabel htmlFor="message" isRTL={isRTL}>{t('contact.form.message')}</FormLabel>
-                <FormTextarea 
-                  id="message" 
-                  name="message" 
+                <FormTextarea
+                  id="message"
+                  name="message"
                   rows="5"
                   value={formData.message}
                   onChange={handleChange}
                   onFocus={() => handleFocus('message')}
-                  onBlur={handleBlur}
-                  required 
+                  onBlur={() => handleBlur('message')}
+                  required
                   isRTL={isRTL}
                 />
+                {fieldErrors.message && (
+                  <FieldError isRTL={isRTL}>{fieldErrors.message}</FieldError>
+                )}
               </InputGroup>
               
               {formSuccess && (
@@ -900,6 +936,14 @@ const ErrorIcon = styled(IconBase)`
 const SuccessText = styled.span``;
 
 const ErrorText = styled.span``;
+
+const FieldError = styled.span`
+  color: #c62828;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: block;
+  text-align: ${props => (props.isRTL ? 'right' : 'left')};
+`;
 
 // Shape divider for the top of the section
 const ShapeDivider = styled.div`
