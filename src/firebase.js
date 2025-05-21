@@ -1,9 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getFunctions } from 'firebase/functions';
+import { getAnalytics, isSupported } from "firebase/analytics";
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 // Your web app's Firebase configuration
 // NOTE: This is the FRONTEND configuration and is separate from the backend
@@ -21,15 +21,14 @@ const firebaseConfig = {
 
 // For development builds we provide fallback credentials to make local
 // testing easier. These should **never** be used in production.
-if (process.env.NODE_ENV !== 'production' && !firebaseConfig.projectId) {
+if (process.env.NODE_ENV !== 'production') {
   console.warn('Using development Firebase config');
   
-  // Development Firebase configuration
-  // Replace with your own Firebase project details for testing
-  firebaseConfig.apiKey = "AIzaSyBrkXIQBEvF9qslWeO91XUUUng3-D94L_k";
-  firebaseConfig.authDomain = "devfolio-test-project.firebaseapp.com";
-  firebaseConfig.projectId = "devfolio-test-project";
-  firebaseConfig.storageBucket = "devfolio-test-project.appspot.com";
+  // Development Firebase configuration with mock values for local development
+  firebaseConfig.apiKey = "demo-api-key";
+  firebaseConfig.authDomain = "demo-project.firebaseapp.com";
+  firebaseConfig.projectId = "demo-project";
+  firebaseConfig.storageBucket = "demo-project.appspot.com";
   firebaseConfig.messagingSenderId = "123456789012";
   firebaseConfig.appId = "1:123456789012:web:1234567890abcdef";
   firebaseConfig.measurementId = "G-ABCDEFGHIJ";
@@ -47,18 +46,33 @@ if (!configLoaded) {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Analytics and get a reference to the service
-const analytics = getAnalytics(app);
-
-// Initialize Authentication and get a reference to the service
+// Initialize Auth and get a reference to the service
 const auth = getAuth(app);
 
-// Initialize Cloud Firestore and get a reference to the service
+// Initialize Firestore and get a reference to the service
 const db = getFirestore(app);
 
-// Initialize Cloud Functions and get a reference to the service
-// Default to us-central1 region
-const functions = getFunctions(app, 'us-central1');
+// Initialize Functions and get a reference to the service
+const functions = getFunctions(app);
+
+// Initialize Analytics only if supported
+let analytics = null;
+isSupported().then(supported => {
+  if (supported) {
+    analytics = getAnalytics(app);
+  }
+});
+
+// Connect to emulators in development mode
+if (process.env.NODE_ENV !== 'production') {
+  // Use auth emulator for local development
+  // Note: You would need to run the Firebase emulators locally
+  // connectAuthEmulator(auth, 'http://localhost:9099');
+  // connectFirestoreEmulator(db, 'localhost', 8080);
+  // connectFunctionsEmulator(functions, 'localhost', 5001);
+  
+  console.log('Firebase initialized with development configuration');
+}
 
 // Export the services you'll use throughout your app
 export { app, analytics, auth, db, functions };

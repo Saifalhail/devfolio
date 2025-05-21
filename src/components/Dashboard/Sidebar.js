@@ -22,7 +22,8 @@ const Sidebar = () => {
     { 
       icon: <FaHome />, 
       label: t('dashboard.sidebar.overview', 'Overview'), 
-      path: '/dashboard' 
+      path: '/dashboard',
+      isHighlighted: true
     },
     { 
       icon: <FaProjectDiagram />, 
@@ -63,19 +64,16 @@ const Sidebar = () => {
 
   return (
     <SidebarContainer isRTL={isRTL}>
-      <SidebarHeader>
-        <BrandName>{t('dashboard.sidebar.dashboard', 'Dashboard')}</BrandName>
-      </SidebarHeader>
-      
       <NavMenu>
         {menuItems.map((item) => (
           <NavItem 
             key={item.path} 
             isActive={location.pathname === item.path}
+            isHighlighted={item.isHighlighted}
             isRTL={isRTL}
             to={item.path}
           >
-            <IconWrapper isRTL={isRTL}>
+            <IconWrapper isRTL={isRTL} isActive={location.pathname === item.path || item.isHighlighted}>
               {item.icon}
             </IconWrapper>
             <span>{item.label}</span>
@@ -87,18 +85,20 @@ const Sidebar = () => {
 };
 
 const SidebarContainer = styled.div`
-  width: 250px;
+  width: 240px;
   height: 100%;
-  background: linear-gradient(180deg, #513a52 0%, #2d2235 100%);
+  background: #2c1e3f; /* Solid dark purple color to match screenshot */
   color: white;
-  padding: 1.5rem 0;
-  position: fixed;
-  top: 0;
-  ${props => props.isRTL ? 'right: 0;' : 'left: 0;'}
+  padding: 0;
+  margin: 0;
+  position: relative;
   overflow-y: auto;
   transition: all 0.3s ease;
-  z-index: 1000;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border-top: none;
   
   @media (max-width: 768px) {
     width: 70px;
@@ -106,25 +106,20 @@ const SidebarContainer = styled.div`
   }
 `;
 
-const SidebarHeader = styled.div`
-  padding: 0 1.5rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 1.5rem;
-  
-  @media (max-width: 768px) {
-    padding: 0 0.5rem 1.5rem;
-    text-align: center;
-  }
-`;
-
-const BrandName = styled.h2`
-  margin: 0;
+const DashboardTitle = styled.div`
+  padding: 1.5rem;
+  text-transform: uppercase;
   font-size: 1.5rem;
-  background: linear-gradient(135deg, #faaa93, #82a1bf);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: white;
+  border-bottom: 3px solid #8a3fe7;
+  margin-bottom: 0;
+  background-color: #231733; /* Darker background for the title */
   
   @media (max-width: 768px) {
+    padding: 1rem 0.5rem;
+    text-align: center;
     font-size: 1.2rem;
   }
 `;
@@ -132,11 +127,13 @@ const BrandName = styled.h2`
 const NavMenu = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0 1rem;
+  gap: 0;
+  padding: 0;
+  margin-top: 0;
+  padding-top: 0;
   
   @media (max-width: 768px) {
-    padding: 0 0.5rem;
+    padding: 0;
     align-items: center;
   }
 `;
@@ -144,17 +141,20 @@ const NavMenu = styled.div`
 const NavItem = styled(Link)`
   display: flex;
   align-items: center;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  color: ${props => props.isActive ? 'white' : 'rgba(255, 255, 255, 0.7)'};
-  background: ${props => props.isActive ? 'rgba(130, 161, 191, 0.2)' : 'transparent'};
+  padding: 1rem 1.5rem;
+  color: ${props => props.isActive || props.isHighlighted ? 'white' : 'rgba(255, 255, 255, 0.7)'};
+  background: ${props => props.isActive || props.isHighlighted ? '#3a2952' : 'transparent'};
   text-decoration: none;
   transition: all 0.3s ease;
   flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  border-left: ${props => props.isActive || props.isHighlighted ? '4px solid #faaa93' : '4px solid transparent'};
+  position: relative;
+  margin-top: ${props => props.isHighlighted ? '0' : '0'};
   
   &:hover {
-    background: rgba(130, 161, 191, 0.1);
+    background: #3a2952;
     color: white;
+    border-left: 4px solid #faaa93;
   }
   
   span {
@@ -173,11 +173,14 @@ const NavItem = styled(Link)`
 `;
 
 const IconWrapper = styled.div`
+  margin-right: ${props => props.isRTL ? '0' : '1rem'};
+  margin-left: ${props => props.isRTL ? '1rem' : '0'};
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
   min-width: 24px;
+  color: ${props => props.isActive ? '#faaa93' : 'inherit'};
   
   @media (max-width: 768px) {
     margin: 0;

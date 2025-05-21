@@ -6,16 +6,17 @@ This document outlines larger tasks for building significant features, implement
 
 ## Dashboard Implementation
 
-1. ✅ Create the Dashboard layout structure in `src/components/Dashboard/Dashboard.js` with sidebar navigation and main content area.
+<!-- 1. ✅ Create the Dashboard layout structure in `src/components/Dashboard/Dashboard.js` with sidebar navigation and main content area. -->
 
-2. Implement the Dashboard Home/Overview page with the following features:
+<!-- 2. ✅ Implement the Dashboard Home/Overview page with the following features:
    - Welcome section with personalized greeting and project name
    - Progress percentage indicator for active projects
    - Countdown to upcoming deadlines
    - **Unique Features:**
      - "Last Interaction Summary" showing last file uploaded, form submitted, or milestone updated
      - "This Week's Focus" that auto-highlights what's being worked on based on milestones
-     - Mini Bot Prompt with "Need help or clarification?" that opens a chatbot powered by DeepSeek or GPT
+     - Mini Bot Prompt with "Need help or clarification?" that opens a chatbot powered by DeepSeek or GPT -->
+
 
 3. Build the Projects Panel component with the following features:
    - Project cards with brief, timeline, and current status
