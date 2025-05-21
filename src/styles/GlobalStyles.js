@@ -1,10 +1,14 @@
 import { createGlobalStyle } from 'styled-components';
 
+/* 
+ * NOTE: Font imports have been moved to index.html to avoid styled-components warnings
+ * - Fredoka & Nunito for English
+ * - Cairo & Tajawal for Arabic
+ * - Font Awesome for icons
+ */
+
 const GlobalStyles = createGlobalStyle`
-  /* Import fonts for both English and Arabic */
-  @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap');
-  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+  /* Global styles */
 
   :root {
     --primary-bg: #12142c;

@@ -507,6 +507,12 @@ const ModalContainer = styled.div`
   @media (max-width: 480px) {
     width: 95%;
     padding: 1.5rem 1rem;
+    max-height: 85vh; /* Slightly smaller on mobile to ensure it doesn't overflow */
+  }
+  
+  @media (max-width: 360px) {
+    padding: 1.2rem 0.8rem;
+    width: 98%;
   }
   
   @keyframes slideIn {
@@ -556,6 +562,12 @@ const ModalTitle = styled.h2`
 
   @media (max-width: 480px) {
     font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
   }
 `;
 
@@ -641,6 +653,16 @@ const InputIcon = styled.div`
   transform: translateY(-50%);
   color: #82a1bf;
   font-size: 1rem;
+  
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    left: 12px;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 0.85rem;
+    left: 10px;
+  }
 `;
 
 const Input = styled.input`
@@ -657,6 +679,12 @@ const Input = styled.input`
   @media (max-width: 480px) {
     font-size: 0.9rem;
     padding: 0.7rem 0.9rem 0.7rem 2.3rem;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem 0.6rem 2.2rem;
+    border-radius: 25px;
   }
   
   &:focus {
@@ -774,6 +802,12 @@ const SocialButton = styled.button`
     font-size: 0.9rem;
     gap: 0.5rem;
     padding: 0.8rem;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 0.8rem;
+    padding: 0.7rem 0.5rem;
+    gap: 0.4rem;
   }
   
   &::before {
