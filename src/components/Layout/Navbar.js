@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FaUser, FaSignOutAlt } from 'react-icons/fa';
 import LanguageSwitcher from '../Common/LanguageSwitcher';
 import AuthModal from '../Common/AuthModal';
 import { useAuth } from '../../contexts/AuthContext';
 
-const Navbar = () => {
+const Navbar = ({ showUserAccount }) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +15,9 @@ const Navbar = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  
+  const location = useLocation();
+  const isDashboard = location.pathname.includes('/dashboard');
+
   // Add scroll effect
   useEffect(() => {
     const handleScroll = () => {
@@ -62,11 +65,12 @@ const Navbar = () => {
   };
 
   return (
-    <Nav $scrolled={isScrolled}>
+    <Nav $scrolled={isScrolled} $isDashboard={isDashboard} $isRTL={isRTL} className={isDashboard ? 'with-sidebar' : ''}>
       {/* Desktop: Logo in corner, Mobile: Logo centered */}
       <NavContainer>
-        {/* Desktop view: Menu centered */}
+        {/* Desktop view: Split layout with menu centered and user account on right */}
         <DesktopMenu>
+          {/* Main Navigation Links */}
           <NavMenu isRTL={isRTL}>
             <NavItem>
               <NavLink to="/" onClick={handleNavLinkClick}>{t('navbar.home')}</NavLink>
@@ -88,10 +92,28 @@ const Navbar = () => {
                 {currentUser ? t('navbar.dashboard', 'Dashboard') : t('navbar.login', 'Login')}
               </LoginButton>
             </NavItem>
+          </NavMenu>
+          
+          {/* User Account and Language Switcher */}
+          <UserControls isRTL={isRTL}>
             <NavItem>
               <StyledLanguageSwitcher />
             </NavItem>
-          </NavMenu>
+            {(currentUser || isDashboard) && (
+              <NavItem>
+                <UserAccountContainer isRTL={isRTL}>
+                  <UserInfo>
+                    <FaUser />
+                    <span>{currentUser?.displayName || 'Developer'}</span>
+                  </UserInfo>
+                  <LogoutButton onClick={handleLogout} isRTL={isRTL}>
+                    <FaSignOutAlt />
+                    <span>{t('navbar.logout', 'Logout')}</span>
+                  </LogoutButton>
+                </UserAccountContainer>
+              </NavItem>
+            )}
+          </UserControls>
         </DesktopMenu>
         
         {/* Mobile view: Logo centered */}
@@ -108,7 +130,7 @@ const Navbar = () => {
       </NavContainer>
       
       {/* Desktop: Logo in corner */}
-      <LogoWrapper isRTL={isRTL}>
+      <LogoWrapper isRTL={isRTL} isDashboard={isDashboard}>
         <Logo to="/">
           <LogoText>
             <span style={{ direction: 'ltr', display: 'inline-block' }} data-component-name="Navbar">
@@ -169,6 +191,20 @@ const Navbar = () => {
         <NavItem>
           <StyledLanguageSwitcher />
         </NavItem>
+        {(currentUser || isDashboard) && (
+          <NavItem>
+            <MobileUserAccountContainer isRTL={isRTL}>
+              <UserInfo>
+                <FaUser />
+                <span>{currentUser?.displayName || 'Developer'}</span>
+              </UserInfo>
+              <LogoutButton onClick={handleLogout} isRTL={isRTL}>
+                <FaSignOutAlt />
+                <span>{t('navbar.logout', 'Logout')}</span>
+              </LogoutButton>
+            </MobileUserAccountContainer>
+          </NavItem>
+        )}
       </MobileMenu>
       
       {/* Auth Modal */}
@@ -227,6 +263,9 @@ const DesktopMenu = styled.div`
   display: flex;
   width: 100%;
   justify-content: center;
+  align-items: center;
+  padding-left: 60px; /* Space for logo */
+  padding-right: 120px; /* Space for AR button and user account */
   
   @media (max-width: 768px) {
     display: none;
@@ -237,10 +276,17 @@ const LogoWrapper = styled.div`
   top: 0;
   ${props => props.isRTL ? 'right' : 'left'}: 0;
   height: 100%;
-  display: flex;
+  display: flex; /* Always show logo */
   align-items: center;
   padding: 0 1.5rem;
   z-index: 10;
+  transition: all 0.3s ease;
+  pointer-events: none; /* Allow clicks to pass through */
+  
+  /* Logo itself should receive pointer events */
+  > * {
+    pointer-events: auto;
+  }
   
   @media (max-width: 768px) {
     display: none; /* Hide on mobile as we're using MobileLogoWrapper instead */
@@ -287,18 +333,25 @@ const shimmerEffect = keyframes`
 
 const Nav = styled.nav`
   background: linear-gradient(to right, rgba(18, 20, 44, 0.85), rgba(42, 18, 82, 0.85), rgba(18, 20, 44, 0.85));
-  height: ${({ $scrolled }) => $scrolled ? '60px' : '70px'}; /* Fixed height for better alignment */
+  height: ${({ $scrolled }) => $scrolled ? '60px' : '70px'};
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  width: 100%;
   z-index: 1000;
-  border-bottom: ${({ $scrolled }) => $scrolled ? '2px solid #cd3efd' : 'none'}; /* Updated to new purple color */
-  box-shadow: ${({ $scrolled }) => $scrolled ? '0 10px 30px rgba(205, 62, 253, 0.2)' : '0 5px 15px rgba(0, 0, 0, 0.1)'}; /* Updated to new purple color */
+  border-bottom: ${({ $scrolled }) => $scrolled ? '2px solid #cd3efd' : 'none'};
+  box-shadow: ${({ $scrolled }) => $scrolled ? '0 10px 30px rgba(205, 62, 253, 0.2)' : '0 5px 15px rgba(0, 0, 0, 0.1)'};
   backdrop-filter: blur(15px);
   display: flex;
-  align-items: center; /* Center items vertically */
+  align-items: center;
   transition: all 0.3s ease;
+  
+  @media (max-width: 768px) {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
   
   /* Glowing edge effect */
   &:after {
@@ -319,7 +372,7 @@ const Nav = styled.nav`
     transition: all 0.3s ease;
   }
   
-  /* Animated background */
+  /* Subtle gradient background - no animation */
   &:before {
     content: '';
     position: absolute;
@@ -327,13 +380,9 @@ const Nav = styled.nav`
     left: 0;
     right: 0;
     height: 100%;
-    background-image: 
-      radial-gradient(circle at 20% 30%, rgba(205, 62, 253, 0.15) 0%, transparent 20%),
-      radial-gradient(circle at 80% 70%, rgba(180, 41, 227, 0.1) 0%, transparent 20%),
-      radial-gradient(circle at 50% 50%, rgba(255, 91, 146, 0.05) 0%, transparent 30%);
-    background-size: 200% 200%;
-    animation: ${shimmerEffect} 8s ease-in-out infinite;
+    background: linear-gradient(to right, rgba(18, 20, 44, 0.85), rgba(42, 18, 82, 0.85), rgba(18, 20, 44, 0.85));
     pointer-events: none;
+    z-index: -1;
   }
 `;
 
@@ -467,13 +516,25 @@ const menuPulse = keyframes`
   100% { box-shadow: 0 0 10px rgba(205, 62, 253, 0.2), inset 0 0 5px rgba(205, 62, 253, 0.1); }
 `;
 
+const UserControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  margin-left: 1rem;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
 const NavMenu = styled.ul`
   display: flex;
   list-style-type: none;
   background: linear-gradient(120deg, rgba(42, 18, 82, 0.4), rgba(18, 20, 44, 0.4));
   border-radius: 30px;
   padding: 0.3rem 0.5rem;
-  margin: 0 auto; /* Center the menu */
+  margin: 0;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(205, 62, 253, 0.1);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(205, 62, 253, 0.15);
@@ -481,6 +542,7 @@ const NavMenu = styled.ul`
   position: relative;
   overflow: hidden;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'}; /* Support RTL layout */
+  width: auto; /* Allow natural width */
   
   /* Glowing dots decoration */
   &:before {
@@ -725,6 +787,99 @@ const DropdownItem = styled.div`
   &:hover {
     background: rgba(130, 161, 191, 0.2);
     color: #faaa93;
+  }
+`;
+
+// User Account Styles for Navbar
+const MobileUserAccountContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 0.6rem 1rem;
+  margin: 0.5rem auto;
+  width: 90%;
+  max-width: 300px;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+  }
+`;
+
+const UserAccountContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 0.2rem 0.4rem;
+  margin-left: 0.3rem;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 1100px) {
+    gap: 0.2rem;
+    padding: 0.2rem 0.3rem;
+  }
+  
+  /* Dashboard specific styling */
+  .with-sidebar & {
+    margin-right: ${props => props.isRTL ? '1rem' : '0'};
+    margin-left: ${props => props.isRTL ? '0' : '1rem'};
+  }
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 500;
+  color: white;
+  font-size: 0.8rem;
+  
+  svg {
+    color: #faaa93;
+    font-size: 0.9rem;
+  }
+  
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
+    
+    @media (max-width: 1100px) {
+      max-width: 60px;
+    }
+  }
+`;
+
+const LogoutButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  background: #513a52;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  svg {
+    font-size: 0.7rem;
+  }
+  
+  &:hover {
+    background: #82a1bf;
   }
 `;
 

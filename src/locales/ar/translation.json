@@ -200,7 +200,32 @@
     "activeProjects": "المشاريع النشطة",
     "pendingActions": "الإجراءات المعلقة",
     "latestUploads": "آخر الملفات المرفوعة",
-    "projectDeadlines": "مواعيد تسليم المشاريع"
+    "projectDeadlines": "مواعيد تسليم المشاريع",
+    "greeting": {
+      "morning": "صباح الخير",
+      "afternoon": "مساء الخير",
+      "evening": "مساء الخير"
+    },
+    "projectProgress": "تقدم المشروع",
+    "upcomingDeadline": "الموعد النهائي القادم",
+    "days": "أيام",
+    "hours": "ساعات",
+    "minutes": "دقائق",
+    "lastInteraction": "آخر تفاعل",
+    "fileUpload": "رفع ملف",
+    "weeklyFocus": "تركيز الأسبوع",
+    "tasksCompleted": "من المهام المكتملة",
+    "aiAssistant": "المساعد الذكي",
+    "needHelp": "هل تحتاج إلى مساعدة أو توضيح بخصوص مشروعك؟",
+    "askAI": "اسأل المساعد الذكي",
+    "howCanIHelp": "كيف يمكنني مساعدتك في مشروعك اليوم؟",
+    "typeQuestion": "اكتب سؤالك هنا...",
+    "send": "إرسال",
+    "quickActions": "إجراءات سريعة",
+    "newProject": "مشروع جديد",
+    "logTime": "تسجيل الوقت",
+    "uploadFile": "رفع ملف",
+    "complete": "مكتمل"
   },
   
   "contact": {

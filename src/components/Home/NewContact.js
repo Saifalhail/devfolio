@@ -211,10 +211,10 @@ const NewContact = () => {
               
               <InputGroup isActive={activeField === 'name'}>
                 <FormLabel htmlFor="name" isRTL={isRTL}>{t('contact.form.name')}</FormLabel>
-                <FormInput
-                  type="text"
-                  id="name"
-                  name="name"
+                <FormInput 
+                  type="text" 
+                  id="name" 
+                  name="name" 
                   value={formData.name}
                   onChange={handleChange}
                   onFocus={() => handleFocus('name')}
@@ -229,10 +229,10 @@ const NewContact = () => {
               
               <InputGroup isActive={activeField === 'email'}>
                 <FormLabel htmlFor="email" isRTL={isRTL}>{t('contact.form.email')}</FormLabel>
-                <FormInput
-                  type="email"
-                  id="email"
-                  name="email"
+                <FormInput 
+                  type="email" 
+                  id="email" 
+                  name="email" 
                   value={formData.email}
                   onChange={handleChange}
                   onFocus={() => handleFocus('email')}
@@ -247,9 +247,10 @@ const NewContact = () => {
               
               <InputGroup isActive={activeField === 'projectType'}>
                 <FormLabel htmlFor="projectType" isRTL={isRTL}>{t('contact.form.projectType')}</FormLabel>
-                <FormSelect
-                  id="projectType"
-                  name="projectType"
+              <FormSelect
+                tabIndex="0"
+                id="projectType"
+                name="projectType"
                   value={formData.projectType}
                   onChange={handleChange}
                   onFocus={() => handleFocus('projectType')}
@@ -267,9 +268,9 @@ const NewContact = () => {
               
               <InputGroup isActive={activeField === 'message'}>
                 <FormLabel htmlFor="message" isRTL={isRTL}>{t('contact.form.message')}</FormLabel>
-                <FormTextarea
-                  id="message"
-                  name="message"
+                <FormTextarea 
+                  id="message" 
+                  name="message" 
                   rows="5"
                   value={formData.message}
                   onChange={handleChange}
@@ -769,12 +770,17 @@ const inputStyles = `
   font-size: 0.95rem;
   transition: all 0.3s ease;
   background-color: #f9f9f9;
-  
+
   &:focus {
     outline: none;
     border-color: #cd3efd;
     box-shadow: 0 0 0 3px rgba(205, 62, 253, 0.2);
     background-color: white;
+  }
+
+  &:focus-visible {
+    outline: 2px dashed var(--accent-1);
+    outline-offset: 3px;
   }
 `;
 
@@ -877,7 +883,12 @@ const SubmitButton = styled.button`
   &:active {
     transform: translateY(-1px);
   }
-  
+
+  &:focus-visible {
+    outline: 2px dashed var(--accent-1);
+    outline-offset: 3px;
+  }
+
   &:disabled {
     background: #cccccc;
     cursor: not-allowed;

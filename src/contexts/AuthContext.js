@@ -104,10 +104,33 @@ export function AuthProvider({ children }) {
     }
   ];
   
-  // Sign in with Google - REAL GOOGLE AUTHENTICATION
+  // Sign in with Google - MOCK FOR DEVELOPMENT, REAL FOR PRODUCTION
   async function signInWithGoogle() {
     try {
       setError('');
+      
+      // For development environment, use mock authentication
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Using mock Google authentication for development');
+        
+        // Create a mock user with Google profile data
+        const mockUser = {
+          uid: 'google-mock-user-1',
+          email: 'developer@example.com',
+          displayName: 'Developer Account',
+          photoURL: 'https://via.placeholder.com/150',
+          providerId: 'google.com',
+          emailVerified: true
+        };
+        
+        // Set the current user with mock data
+        setCurrentUser(mockUser);
+        
+        console.log('Mock Google authentication successful');
+        return { user: mockUser };
+      }
+      
+      // For production, use real Google authentication
       console.log('Initiating real Google authentication');
       
       // Create a Google auth provider
