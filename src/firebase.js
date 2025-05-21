@@ -1,24 +1,44 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported } from "firebase/analytics";
-import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getAuth, connectAuthEmulator, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
+import { getAnalytics, isSupported } from "firebase/analytics";
 
 // Your web app's Firebase configuration
-// NOTE: This is the FRONTEND configuration and is separate from the backend
-// In development, we're using environment variables from .env.local
-// In production, these should be set in the hosting environment
+// Using the exact configuration from Firebase Console
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyAFC5fTqsPYKHnuWq9IEIX2OEqFt7bQDpQ",
+  authDomain: "devfolio-84079.firebaseapp.com",
+  projectId: "devfolio-84079",
+  storageBucket: "devfolio-84079.firebasestorage.app",
+  messagingSenderId: "311766073175",
+  appId: "1:311766073175:web:62f4934248f2c7ec494812",
+  measurementId: "G-6XSF8W31KN"
 };
+
+// Log Firebase config for debugging
+console.log('Firebase Config Project ID:', firebaseConfig.projectId);
+console.log('Firebase Config Auth Domain:', firebaseConfig.authDomain);
+
+// IMPORTANT: We're removing the environment variable override in production
+// to ensure we always use the hardcoded Firebase config from above
+
+// Only use environment variables in development, never in production
+if (process.env.NODE_ENV !== 'production' && 
+    process.env.REACT_APP_FIREBASE_API_KEY && 
+    process.env.REACT_APP_FIREBASE_PROJECT_ID) {
+  console.log('Using environment variables for Firebase config');
+  firebaseConfig.apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
+  firebaseConfig.authDomain = process.env.REACT_APP_FIREBASE_AUTH_DOMAIN;
+  firebaseConfig.projectId = process.env.REACT_APP_FIREBASE_PROJECT_ID;
+  firebaseConfig.storageBucket = process.env.REACT_APP_FIREBASE_STORAGE_BUCKET;
+  firebaseConfig.messagingSenderId = process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID;
+  firebaseConfig.appId = process.env.REACT_APP_FIREBASE_APP_ID;
+  firebaseConfig.measurementId = process.env.REACT_APP_FIREBASE_MEASUREMENT_ID;
+}
 
 // For development builds we provide fallback credentials to make local
 // testing easier. These should **never** be used in production.
@@ -47,12 +67,37 @@ if (!configLoaded) {
   console.warn('Make sure you have created a .env file with the necessary REACT_APP_FIREBASE_* variables');
 }
 
-// Flag to identify if we're using mock credentials
-const usingMockCredentials = process.env.NODE_ENV !== 'production' && 
-                           firebaseConfig.apiKey === "demo-api-key-for-development-only";
+// Flag to identify if we're using mock credentials - NEVER use mocks in production
+let usingMockCredentials = process.env.NODE_ENV !== 'production' && 
+  (firebaseConfig.apiKey === "demo-api-key-for-development-only" || !firebaseConfig.apiKey);
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Force this to false in production to ensure we never use mock services
+if (process.env.NODE_ENV === 'production') {
+  console.log('Running in production mode, using real Firebase services');
+  // Always use real Firebase services in production
+  usingMockCredentials = false;
+}
+
+// Initialize Firebase with proper error handling
+let app;
+try {
+  // Check if Firebase is already initialized
+  if (!window.firebaseInitialized) {
+    app = initializeApp(firebaseConfig);
+    window.firebaseInitialized = true;
+    console.log('Firebase app initialized successfully with config:', firebaseConfig.projectId);
+  } else {
+    // Get the already initialized app
+    app = window.firebase?.apps?.[0] || initializeApp(firebaseConfig);
+    console.log('Using existing Firebase app');
+  }
+} catch (error) {
+  console.error('Firebase initialization error:', error);
+  if (typeof document !== 'undefined') {
+    // Only show alert in browser environment
+    console.error('Firebase initialization failed:', error.message);
+  }
+}
 
 // Initialize services based on whether we're using mock credentials
 let auth, db, functions, storage, analytics = null;
@@ -88,17 +133,14 @@ if (usingMockCredentials) {
   storage = { ref: () => ({ put: () => ({ snapshot: {}, ref: { getDownloadURL: () => Promise.resolve('https://mock-url.com') } }) }) };
 } else {
   // Initialize real Firebase services
-  auth = getAuth(app);
-  db = getFirestore(app);
-  functions = getFunctions(app);
-  storage = getStorage(app);
-  
-  // Initialize Analytics only if supported
-  isSupported().then(supported => {
-    if (supported) {
-      analytics = getAnalytics(app);
-    }
-  });
+  try {
+    auth = getAuth(app);
+    db = getFirestore(app);
+    functions = getFunctions(app);
+    storage = getStorage(app);
+  } catch (error) {
+    console.error('Error initializing Firebase services:', error);
+  }
 }
 
 // Use Firebase emulators in development, but only if we're not using mock credentials

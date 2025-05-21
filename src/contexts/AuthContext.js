@@ -108,6 +108,7 @@ export function AuthProvider({ children }) {
   async function signInWithGoogle() {
     try {
       setError('');
+      setLoading(true);
       
       // For development environment, use mock authentication
       if (process.env.NODE_ENV !== 'production') {
@@ -127,11 +128,12 @@ export function AuthProvider({ children }) {
         setCurrentUser(mockUser);
         
         console.log('Mock Google authentication successful');
+        setLoading(false);
         return { user: mockUser };
       }
       
       // For production, use real Google authentication
-      console.log('Initiating real Google authentication');
+      console.log('Initiating real Google authentication with Firebase config:', auth.app.options.apiKey);
       
       // Create a Google auth provider
       const provider = new GoogleAuthProvider();
@@ -145,20 +147,54 @@ export function AuthProvider({ children }) {
         prompt: 'select_account'
       });
       
-      // Use signInWithPopup to open Google auth in a popup window
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      
-      console.log('Google authentication successful');
-      
-      // Set the current user
-      setCurrentUser(user);
-      
-      return { user };
+      try {
+        console.log('About to open Google auth popup with provider:', provider);
+        
+        // Use signInWithPopup to open Google auth in a popup window
+        const result = await signInWithPopup(auth, provider);
+        
+        // Log the entire result for debugging
+        console.log('Google auth result:', JSON.stringify(result, null, 2));
+        
+        const user = result.user;
+        console.log('Google authentication successful, user:', user.email);
+        
+        // Set the current user
+        setCurrentUser(user);
+        setLoading(false);
+        return { user };
+      } catch (popupError) {
+        console.error('Popup error details:', popupError.code, popupError.message);
+        
+        // Check for specific error conditions
+        if (popupError.code === 'auth/cancelled-popup-request' || 
+            popupError.code === 'auth/popup-closed-by-user') {
+          setError('Sign-in was cancelled. Please try again.');
+        } else if (popupError.code === 'auth/popup-blocked') {
+          setError('Pop-up was blocked by your browser. Please allow pop-ups for this site.');
+        } else if (popupError.code === 'auth/unauthorized-domain') {
+          setError(`This domain is not authorized for Google sign-in. Please use the app at https://devfolio-84079.web.app`);
+        } else {
+          setError(`Google sign-in error: ${popupError.message}`);
+        }
+        
+        setLoading(false);
+        throw popupError;
+      }
     } catch (err) {
       console.error('Google sign-in error:', err);
+      setLoading(false);
       
       // Handle specific error cases
+      if (err.code === 'auth/api-key-not-valid') {
+        setError('Authentication configuration error. Please contact support.');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setError('Sign-in was cancelled. Please try again.');
+      } else if (err.code === 'auth/popup-blocked') {
+        setError('Pop-up was blocked by your browser. Please allow pop-ups for this site.');
+      } else {
+        setError('Failed to sign in with Google: ' + err.message);
+      }
       if (err.code === 'auth/unauthorized-domain') {
         setError('This domain is not authorized for Google sign-in.');
       } else {

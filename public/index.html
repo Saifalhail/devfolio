@@ -38,6 +38,45 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <div id="error-display" style="display:none; background-color: #ffdddd; color: #ff0000; padding: 15px; margin: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap;"></div>
+    
+    <script>
+      // Error handling to catch React initialization errors
+      window.onerror = function(message, source, lineno, colno, error) {
+        console.error('Error caught by index.html:', message, error);
+        
+        var errorDisplay = document.getElementById('error-display');
+        if (errorDisplay) {
+          errorDisplay.style.display = 'block';
+          errorDisplay.innerHTML = '<strong>JavaScript Error:</strong><br>' + message + '<br><br>' + 
+                                  (error && error.stack ? error.stack : '');
+        }
+        
+        return true; // Prevents the default error handling
+      };
+      
+      // Check if React app initializes
+      setTimeout(function() {
+        var root = document.getElementById('root');
+        if (root && root.children.length === 0) {
+          console.log('React app did not initialize within expected time');
+          
+          var errorDisplay = document.getElementById('error-display');
+          if (errorDisplay) {
+            errorDisplay.style.display = 'block';
+            errorDisplay.innerHTML = '<strong>React Initialization Error</strong><br>The React application failed to initialize within the expected time.<br><br>' +
+                                    'This might be due to:<br>' +
+                                    '- JavaScript errors during initialization<br>' +
+                                    '- Firebase configuration issues<br>' +
+                                    '- Missing environment variables<br><br>' +
+                                    'Check the browser console (F12) for more details.';
+          }
+          
+          // No longer redirecting to backup page since the app is working properly
+          console.log('React initialization delayed, but continuing to wait...');
+        }
+      }, 5000); // Wait 5 seconds for React to initialize
+    </script>
     
     <!-- Schema.org markup for business and person -->
     <script type="application/ld+json">

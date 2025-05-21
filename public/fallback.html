@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DevFolio Fallback Page</title>
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #feefc4;
+      color: #513a52;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .hero {
+      text-align: center;
+      padding: 4rem 0;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #555;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .button {
+      display: inline-block;
+      background-color: #82a1bf;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .button:hover {
+      background-color: #6b8aa8;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>DevFolio</h1>
+      <p>A portfolio website for developers</p>
+    </div>
+    
+    <div class="card">
+      <h2>Welcome to DevFolio</h2>
+      <p>This is a fallback page that loads when the main React application has issues.</p>
+      <p>If you're seeing this page, it means the React app is having trouble initializing.</p>
+      <p>Check the browser console (F12) for any JavaScript errors.</p>
+    </div>
+    
+    <div class="card">
+      <h2>Troubleshooting Steps</h2>
+      <ol>
+        <li>Open browser developer tools (F12) and check the console for errors</li>
+        <li>Verify that your Firebase configuration is correct</li>
+        <li>Check that all required environment variables are set</li>
+        <li>Try clearing your browser cache and reloading</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    // Simple script to log any errors that might be happening
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.error('Error caught by fallback.html:', message, error);
+      
+      // Create an error display element
+      var errorDiv = document.createElement('div');
+      errorDiv.style.backgroundColor = '#ffdddd';
+      errorDiv.style.color = '#ff0000';
+      errorDiv.style.padding = '15px';
+      errorDiv.style.margin = '15px';
+      errorDiv.style.borderRadius = '5px';
+      errorDiv.style.fontFamily = 'monospace';
+      errorDiv.style.whiteSpace = 'pre-wrap';
+      
+      errorDiv.innerHTML = '<strong>JavaScript Error:</strong><br>' + message + '<br><br>' + 
+                          (error && error.stack ? error.stack : '');
+      
+      document.body.appendChild(errorDiv);
+      
+      return true; // Prevents the default error handling
+    };
+    
+    console.log('Fallback page loaded successfully');
+  </script>
+</body>
+</html>

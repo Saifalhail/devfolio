@@ -156,23 +156,47 @@ const AuthModal = ({ isOpen, onClose }) => {
       setError(''); // Clear any previous errors
 
       // Show a loading message
-      console.log('Initiating Google sign-in...');
+      console.log('Initiating Google sign-in from AuthModal...');
 
-      // Attempt Google sign-in
-      const result = await signInWithGoogle();
+      // Add a delay to ensure UI updates before the popup
+      await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Handle successful sign-in
-      if (result && result.user) {
-        console.log('Google sign-in successful, redirecting to dashboard');
-        // Redirect to dashboard on successful Google login
-        navigate('/dashboard');
-        handleClose();
-      } else {
-        setError(t('auth.errorGoogle', 'Google sign-in failed. Please try again.'));
+      // Attempt Google sign-in with more detailed error handling
+      try {
+        console.log('Calling signInWithGoogle function...');
+        const result = await signInWithGoogle();
+        
+        // Handle successful sign-in
+        if (result && result.user) {
+          console.log('Google sign-in successful, user:', result.user.email);
+          console.log('Redirecting to dashboard...');
+          // Redirect to dashboard on successful Google login
+          navigate('/dashboard');
+          handleClose();
+        } else {
+          console.warn('Google sign-in returned unexpected result:', result);
+          setError(t('auth.errorGoogle', 'Google sign-in failed. Please try again.'));
+        }
+      } catch (authError) {
+        console.error('Google sign-in auth error:', authError.code, authError.message);
+        
+        // Handle specific error cases
+        if (authError.code === 'auth/popup-closed-by-user') {
+          setError('Sign-in was cancelled. Please try again.');
+        } else if (authError.code === 'auth/cancelled-popup-request') {
+          setError('Sign-in was cancelled. Please try again.');
+        } else if (authError.code === 'auth/popup-blocked') {
+          setError('Pop-up was blocked by your browser. Please allow pop-ups for this site.');
+        } else if (authError.code === 'auth/unauthorized-domain') {
+          setError(`This domain is not authorized for Google sign-in. Please use the app at https://devfolio-84079.web.app`);
+        } else {
+          setError(getFirebaseAuthErrorMessage(authError, t));
+        }
+        throw authError; // Re-throw to be caught by outer catch
       }
     } catch (err) {
-      console.error('Google sign in error:', err);
-      setError(getFirebaseAuthErrorMessage(err, t));
+      console.error('Google sign in outer error:', err);
+      // Error already handled in inner catch
     } finally {
       setLoading(false);
       setLoadingMethod(null);
