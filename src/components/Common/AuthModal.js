@@ -503,6 +503,11 @@ const ModalContainer = styled.div`
   color: #fff;
   border: 1px solid rgba(130, 161, 191, 0.3);
   position: relative;
+
+  @media (max-width: 480px) {
+    width: 95%;
+    padding: 1.5rem 1rem;
+  }
   
   @keyframes slideIn {
     from {
@@ -526,6 +531,11 @@ const CloseText = styled.span`
   cursor: pointer;
   z-index: 1000;
   transition: color 0.2s;
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+    right: 15px;
+  }
   
   &:hover {
     color: #faaa93;
@@ -543,6 +553,10 @@ const ModalTitle = styled.h2`
   margin-bottom: 2rem;
   text-align: center;
   text-shadow: 0 0 10px rgba(250, 170, 147, 0.3);
+
+  @media (max-width: 480px) {
+    font-size: 1.4rem;
+  }
 `;
 
 const AuthOptionsContainer = styled.div`
@@ -564,6 +578,11 @@ const BackButton = styled.span`
   cursor: pointer;
   z-index: 1000;
   transition: color 0.2s;
+
+  @media (max-width: 480px) {
+    left: 15px;
+    font-size: 20px;
+  }
   
   &:hover {
     color: #faaa93;
@@ -634,6 +653,11 @@ const Input = styled.input`
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   background-color: rgba(26, 26, 46, 0.8);
   color: #fff;
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    padding: 0.7rem 0.9rem 0.7rem 2.3rem;
+  }
   
   &:focus {
     outline: none;
@@ -661,6 +685,10 @@ const Button = styled.button`
   z-index: 1;
   letter-spacing: 0.5px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 480px) {
+    font-size: 0.95rem;
+  }
   
   &:before {
     content: '';
@@ -740,6 +768,13 @@ const SocialButton = styled.button`
   overflow: hidden;
   box-shadow: inset 0 0 0 1px rgba(130, 161, 191, 0.3);
   backdrop-filter: blur(4px);
+  width: 100%;
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    gap: 0.5rem;
+    padding: 0.8rem;
+  }
   
   &::before {
     content: '';
