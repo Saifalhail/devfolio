@@ -18,19 +18,28 @@ This document outlines larger tasks for building significant features, implement
      - Mini Bot Prompt with "Need help or clarification?" that opens a chatbot powered by DeepSeek or GPT -->
 
 
-3. Build the Projects Panel component with the following features:
+<!-- 3. ✅ Build the Projects Panel component with the following features:
    - Project cards with brief, timeline, and current status
    - Grid/list view toggle for project display
    - Filtering and sorting options (by status, deadline, client)
    - **Unique Features:**
      - Status Tracker Chip with emoji (⏳ In Progress, ✅ Done, ✍️ Awaiting Feedback)
      - Mood Meter showing simple emoji from client at each delivery
-     - Project Notes Recorder where you and the client can leave quick text/audio notes (stored in Firestore)
+     - Project Notes Recorder where you and the client can leave quick text/audio notes (stored in Firestore) -->
 
-4. Develop the Tasks & Milestones section with the following features:
-   - Checklist or Kanban board (To-do / Doing / Done)
-   - Task assignment and due date tracking
-   - **Unique Features:**
+<!-- 3.1. ✅ Improve mobile sidebar and navigation:
+   - Enhanced mobile sidebar styling with better UI/UX
+   - Added proper Arabic translations for all sidebar items
+   - Improved dashboard icon and positioning for better usability -->
+
+4. ✅ Develop the Tasks & Milestones section with the following features:
+   - Kanban board layout (To-do / In Progress / Done)
+   - Task cards with title, description, due date, and assigned user
+   - Ability to move tasks between columns
+   - **Implemented Features:**
+     - Clean, intuitive UI with consistent styling
+     - Mock data implementation for demonstration purposes
+   - **Future Enhancements:**
      - Smart ETA Estimate based on current completion and average time per task
      - Progress Heatmap showing the most active days of the project
      - Client-Assigned Tasks (optional toggle) for client actions like "Send Logo" or "Approve Screen 1"

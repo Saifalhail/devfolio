@@ -106,13 +106,27 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Docs: See WINDSURF_RULES.md (responsive design section) and PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
     - Priority: Medium
 
+<!-- 
+17. **Implement TasksPanel Component**
+    - File: `src/components/Dashboard/TasksPanel.js`
+    - Task: Create a Kanban-style task management component with three columns (To Do, In Progress, Done)
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section, item 4)
+    - Priority: High
+-->
+
 17. **Add Dashboard Loading State**
     - File: `src/components/Dashboard/Dashboard.js`
     - Task: Implement a loading state for the dashboard while user authentication is being verified
     - Docs: See DOCUMENTATION.md (Authentication System section) and WINDSURF_RULES.md (UI feedback section)
     - Priority: Medium
 
-18. **Fix Sidebar RTL Support**
+18. **Enhance TasksPanel with Data Persistence**
+    - File: `src/components/Dashboard/TasksPanel.js`
+    - Task: Replace mock data with actual data storage using Firebase or local storage
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section, item 4)
+    - Priority: Medium
+
+19. **Fix Sidebar RTL Support**
     - File: `src/components/Dashboard/Sidebar.js`
     - Task: Ensure proper RTL (right-to-left) support for sidebar navigation icons and text alignment
     - Docs: See DOCUMENTATION.md (Internationalization section) and WINDSURF_RULES.md (internationalization section)

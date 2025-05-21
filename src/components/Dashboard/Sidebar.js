@@ -101,8 +101,12 @@ const SidebarContainer = styled.div`
   border-top: none;
   
   @media (max-width: 768px) {
-    width: 70px;
-    padding: 1.5rem 0;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 1rem;
   }
 `;
 
@@ -133,8 +137,11 @@ const NavMenu = styled.div`
   padding-top: 0;
   
   @media (max-width: 768px) {
-    padding: 0;
-    align-items: center;
+    padding: 0.5rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
   }
 `;
 
@@ -162,13 +169,28 @@ const NavItem = styled(Link)`
     font-weight: ${props => props.isActive ? '600' : '400'};
     
     @media (max-width: 768px) {
-      display: none;
+      display: block;
+      font-size: 0.8rem;
+      margin: 0.3rem 0 0 0;
+      text-align: center;
     }
   }
   
   @media (max-width: 768px) {
-    padding: 0.8rem;
+    padding: 0.8rem 1rem;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+    border-left: none;
+    border-radius: 8px;
+    border-bottom: ${props => props.isActive || props.isHighlighted ? '3px solid #faaa93' : '3px solid transparent'};
+    margin: 0.2rem;
+    min-width: 80px;
+    
+    &:hover {
+      border-left: none;
+      border-bottom: 3px solid #faaa93;
+    }
   }
 `;
 
@@ -184,6 +206,11 @@ const IconWrapper = styled.div`
   
   @media (max-width: 768px) {
     margin: 0;
+    font-size: 1.4rem;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
 

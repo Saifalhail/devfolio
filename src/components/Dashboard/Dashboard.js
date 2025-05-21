@@ -6,7 +6,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { 
   FaChartLine, FaClock, FaFileUpload, FaRobot, FaArrowRight, FaTimes, FaBars,
   FaHome, FaProjectDiagram, FaFileAlt, FaClipboardList, FaFileInvoiceDollar, FaHistory, FaCog,
-  FaCalendarAlt, FaLightbulb, FaClipboardCheck, FaUser, FaSignOutAlt, FaPlus
+  FaCalendarAlt, FaLightbulb, FaClipboardCheck, FaUser, FaSignOutAlt, FaPlus,
+  FaThLarge, FaStream, FaTachometerAlt, FaColumns, FaLayerGroup, FaThList
 } from 'react-icons/fa';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -15,10 +16,12 @@ import Sidebar from './Sidebar';
 import ProjectsPanel from './ProjectsPanel';
 import ProjectNotes from './ProjectNotes';
 import AddProjectModal from './AddProjectModal';
+import TasksPanel from './TasksPanel';
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -82,6 +85,18 @@ const Dashboard = () => {
     return () => clearInterval(timer);
   }, []);
   
+  // Set active tab based on URL path
+  useEffect(() => {
+    if (location.pathname.includes('/dashboard/projects')) {
+      setActiveTab('projects');
+    } else if (location.pathname.includes('/dashboard/tasks')) {
+      setActiveTab('tasks');
+    } else {
+      setActiveTab('overview');
+    }
+    console.log('Current path:', location.pathname, 'Active tab:', activeTab);
+  }, [location.pathname]);
+
   // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => {
@@ -132,49 +147,26 @@ const Dashboard = () => {
       )}
       
       <NavbarArea>
-        <Navbar showUserAccount={true} />
+        <NavbarContent>
+          {/* Mobile Toggle Button integrated in Navbar */}
+          {mobileView && (
+            <MenuIconWrapper onClick={toggleSidebar} isRTL={isRTL}>
+              {sidebarOpen ? <FaTimes /> : <FaColumns />}
+            </MenuIconWrapper>
+          )}
+          <Navbar showUserAccount={true} />
+        </NavbarContent>
       </NavbarArea>
       
       <DashboardBody isRTL={isRTL}>
-        {/* Sidebar */}
-        <SidebarArea isOpen={sidebarOpen} isMobile={mobileView} isRTL={isRTL}>
+        <SidebarArea isRTL={isRTL} isOpen={sidebarOpen} isMobile={mobileView}>
           <Sidebar />
         </SidebarArea>
         
         {/* Main Content */}
         <ContentArea isRTL={isRTL} isMobile={mobileView} sidebarOpen={sidebarOpen}>
-          {/* Mobile Toggle Button */}
-          {mobileView && (
-            <SidebarToggle onClick={toggleSidebar} isRTL={isRTL}>
-              {sidebarOpen ? <FaTimes /> : <FaBars />}
-            </SidebarToggle>
-          )}
           
           <DashboardContent>
-            {/* Dashboard Navigation Tabs */}
-            <DashboardTabs>
-              <TabButton 
-                active={activeTab === 'overview'} 
-                onClick={() => setActiveTab('overview')}
-              >
-                <FaHome />
-                {t('dashboard.tabs.overview', 'Overview')}
-              </TabButton>
-              <TabButton 
-                active={activeTab === 'projects'} 
-                onClick={() => setActiveTab('projects')}
-              >
-                <FaProjectDiagram />
-                {t('dashboard.tabs.projects', 'Projects')}
-              </TabButton>
-              <TabButton 
-                active={activeTab === 'tasks'} 
-                onClick={() => setActiveTab('tasks')}
-              >
-                <FaClipboardList />
-                {t('dashboard.tabs.tasks', 'Tasks & Milestones')}
-              </TabButton>
-            </DashboardTabs>
             
             {/* Projects Tab */}
             {activeTab === 'projects' && (
@@ -190,19 +182,16 @@ const Dashboard = () => {
               </ProjectsTabContainer>
             )}
             
-            {/* Tasks Tab - Placeholder for future implementation */}
+            {/* Tasks Tab */}
             {activeTab === 'tasks' && (
               <TasksTabContainer>
-                <h2>{t('tasks.title', 'Tasks & Milestones')}</h2>
-                <ComingSoonMessage>
-                  {t('common.comingSoon', 'Coming Soon!')}
-                </ComingSoonMessage>
+                <TasksPanel />
               </TasksTabContainer>
             )}
             
             {/* Overview Tab */}
             {activeTab === 'overview' && (
-              <div>
+              <div className="overview-tab">
                 {/* Welcome Section with Personalized Greeting */}
                 <WelcomeSection>
                   <WelcomeLayout>
@@ -398,6 +387,14 @@ const NavbarArea = styled.div`
   }
 `;
 
+const NavbarContent = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+`;
+
 const DashboardBody = styled.div`
   display: flex;
   flex: 1;
@@ -452,34 +449,27 @@ const ContentArea = styled.main`
   }
 `;
 
-const SidebarToggle = styled.button`
-  position: fixed;
-  top: 80px; /* Position just below the navbar */
-  ${props => props.isRTL ? 'right: 20px;' : 'left: 20px;'}
-  z-index: 1100; /* Above sidebar */
-  background: linear-gradient(135deg, #513a52, #82a1bf);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+const MenuIconWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  margin: ${props => props.isRTL ? '0 0 0 20px' : '0 0 0 15px'};
+  padding: 8px;
+  z-index: 1200;
+  position: absolute;
+  top: 55%;
+  transform: translateY(-50%);
+  ${props => props.isRTL ? 'right: 0;' : 'left: 0;'}
   
-  &:hover {
-    transform: scale(1.1);
-  }
-  
-  &:active {
-    transform: scale(0.95);
+  svg {
+    font-size: 1.4rem;
   }
   
   @media (max-width: 768px) {
-    top: 70px; /* Adjust for smaller navbar on mobile */
+    margin: ${props => props.isRTL ? '0 15px 0 0' : '0 0 0 15px'};
+    top: 60%;
   }
 `;
 

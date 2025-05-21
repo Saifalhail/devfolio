@@ -1,0 +1,47 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // User files - only accessible by the owner
+    match /users/{userId}/{allPaths=**} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId);
+    }
+    
+    // Project files - accessible by project owner and collaborators
+    match /projects/{projectId}/{allPaths=**} {
+      allow read: if isSignedIn() && 
+        (
+          exists(/databases/$(database)/documents/projects/$(projectId)) && 
+          (
+            get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid || 
+            request.auth.uid in get(/databases/$(database)/documents/projects/$(projectId)).data.collaborators
+          )
+        );
+      
+      // Only project owner can write
+      allow write: if isSignedIn() && 
+        exists(/databases/$(database)/documents/projects/$(projectId)) && 
+        get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
+    }
+    
+    // Public assets - readable by anyone, writable by none
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // Default deny all
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
