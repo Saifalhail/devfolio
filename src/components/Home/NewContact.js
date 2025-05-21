@@ -209,7 +209,7 @@ const NewContact = () => {
                 <FormHeaderText isRTL={isRTL}>{t('contact.form.title')}</FormHeaderText>
               </FormHeader>
               
-              <InputGroup isActive={activeField === 'name'}>
+              <InputGroup isActive={activeField === 'name'} isRTL={isRTL}>
                 <FormLabel htmlFor="name" isRTL={isRTL}>{t('contact.form.name')}</FormLabel>
                 <FormInput 
                   type="text" 
@@ -227,7 +227,7 @@ const NewContact = () => {
                 )}
               </InputGroup>
               
-              <InputGroup isActive={activeField === 'email'}>
+              <InputGroup isActive={activeField === 'email'} isRTL={isRTL}>
                 <FormLabel htmlFor="email" isRTL={isRTL}>{t('contact.form.email')}</FormLabel>
                 <FormInput 
                   type="email" 
@@ -245,7 +245,7 @@ const NewContact = () => {
                 )}
               </InputGroup>
               
-              <InputGroup isActive={activeField === 'projectType'}>
+              <InputGroup isActive={activeField === 'projectType'} isRTL={isRTL}>
                 <FormLabel htmlFor="projectType" isRTL={isRTL}>{t('contact.form.projectType')}</FormLabel>
               <FormSelect
                 tabIndex="0"
@@ -266,7 +266,7 @@ const NewContact = () => {
                 </FormSelect>
               </InputGroup>
               
-              <InputGroup isActive={activeField === 'message'}>
+              <InputGroup isActive={activeField === 'message'} isRTL={isRTL}>
                 <FormLabel htmlFor="message" isRTL={isRTL}>{t('contact.form.message')}</FormLabel>
                 <FormTextarea 
                   id="message" 
@@ -302,7 +302,7 @@ const NewContact = () => {
                 <SubmitButton type="submit" disabled={isSubmitting} isRTL={isRTL}>
                   {isSubmitting ? (
                     <>
-                      <ButtonSpinner />
+                      <ButtonSpinner isRTL={isRTL} />
                       <span>{t('contact.form.sending')}</span>
                     </>
                   ) : (
@@ -743,7 +743,8 @@ const InputGroup = styled.div`
     content: '';
     position: absolute;
     bottom: ${props => props.isActive ? '0' : '-3px'};
-    left: 0;
+    left: ${props => (props.isRTL ? 'auto' : '0')};
+    right: ${props => (props.isRTL ? '0' : 'auto')};
     width: ${props => props.isActive ? '100%' : '0'};
     height: 2px;
     background: linear-gradient(90deg, #cd3efd, #82a1bf);
@@ -823,7 +824,7 @@ const ButtonSpinner = styled.div`
   display: inline-block;
   width: 20px;
   height: 20px;
-  margin-right: 10px;
+  margin-${props => (props.isRTL ? 'left' : 'right')}: 10px;
   border: 3px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: white;
@@ -834,6 +835,7 @@ const SubmitButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-direction: ${props => (props.isRTL ? 'row-reverse' : 'row')};
   padding: 0.8rem 2rem;
   background: linear-gradient(90deg, #cd3efd, #82a1bf);
   color: white;
@@ -915,13 +917,13 @@ const MessageBase = styled.div`
 const SuccessMessage = styled(MessageBase)`
   background-color: rgba(46, 125, 50, 0.1);
   color: #2e7d32;
-  border-left: 4px solid #2e7d32;
+  border-${props => (props.isRTL ? 'right' : 'left')}: 4px solid #2e7d32;
 `;
 
 const ErrorMessage = styled(MessageBase)`
   background-color: rgba(198, 40, 40, 0.1);
   color: #c62828;
-  border-left: 4px solid #c62828;
+  border-${props => (props.isRTL ? 'right' : 'left')}: 4px solid #c62828;
 `;
 
 const IconBase = styled.span`
@@ -931,7 +933,7 @@ const IconBase = styled.span`
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  margin-right: 1rem;
+  margin-${props => (props.isRTL ? 'left' : 'right')}: 1rem;
   font-size: 1.2rem;
 `;
 
