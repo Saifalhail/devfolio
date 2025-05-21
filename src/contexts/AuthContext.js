@@ -10,6 +10,7 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '../firebase';
+import useFirebaseListener from '../hooks/useFirebaseListener';
 
 const AuthContext = createContext();
 
@@ -246,7 +247,8 @@ export function AuthProvider({ children }) {
   }
 
   // Listen to auth state changes - REAL FIREBASE
-  useEffect(() => {
+  // Using useFirebaseListener hook for proper cleanup
+  useFirebaseListener(() => {
     console.log('Setting up auth state listener');
 
     // Set up Firebase auth state observer
@@ -256,11 +258,8 @@ export function AuthProvider({ children }) {
       console.log('Auth state changed:', user ? 'User logged in' : 'User logged out');
     });
 
-    // Clean up the observer when component unmounts
-    return () => {
-      console.log('Cleaning up auth state listener');
-      unsubscribe();
-    };
+    // Return the unsubscribe function for the hook to handle cleanup
+    return unsubscribe;
   }, [auth]);
 
   // For backward compatibility with existing code

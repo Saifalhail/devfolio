@@ -85,6 +85,22 @@ jest.mock('./i18n', () => {
   };
 });
 
+// Mock useFirebaseListener hook
+jest.mock('./hooks/useFirebaseListener', () => {
+  return {
+    __esModule: true,
+    default: jest.fn((listenerSetup, dependencies = []) => {
+      // Just call the setup function once if it exists
+      if (typeof listenerSetup === 'function') {
+        const unsubscribe = listenerSetup();
+        // Return the unsubscribe function for cleanup
+        return unsubscribe;
+      }
+      return null;
+    }),
+  };
+});
+
 // Mock Firebase
 jest.mock('firebase/app', () => {
   return {

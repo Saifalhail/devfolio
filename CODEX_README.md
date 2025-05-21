@@ -55,6 +55,65 @@ If you encounter a JSDOMEnvironment error, it's likely due to Jest configuration
 - `babel.config.js` - Babel configuration for transpiling code
 - Custom test environment setup in `setupTests.js`
 
+### Firebase Listener Cleanup
+
+### Using the useFirebaseListener Hook
+
+The `useFirebaseListener` hook is designed to properly manage Firebase listener cleanup. Here's how to use it in your components:
+
+```javascript
+import React, { useState } from 'react';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { firestore } from '../firebase';
+import useFirebaseListener from '../hooks/useFirebaseListener';
+
+function MyComponent() {
+  const [data, setData] = useState([]);
+  
+  // Use the hook to manage the Firestore listener
+  useFirebaseListener(() => {
+    // Set up the listener
+    const collectionRef = collection(firestore, 'myCollection');
+    
+    // Create the subscription
+    const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
+      const items = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setData(items);
+    });
+    
+    // Return the unsubscribe function
+    return unsubscribe;
+  }, []); // Empty dependency array means this runs once on mount
+  
+  return (
+    <div>
+      {/* Render your component using the data */}
+    </div>
+  );
+}
+```
+
+### Real Example from AuthContext
+
+The `AuthContext` uses the hook to manage the auth state listener:
+
+```javascript
+// Listen to auth state changes
+useFirebaseListener(() => {
+  // Set up Firebase auth state observer
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    setCurrentUser(user);
+    setLoading(false);
+  });
+
+  // Return the unsubscribe function for the hook to handle cleanup
+  return unsubscribe;
+}, [auth]);
+```
+
 ### Firebase-Related Errors
 
 Firebase services are completely mocked for offline testing:

@@ -19,9 +19,11 @@ module.exports = {
     "**/__tests__/**/*Tests.js"
   ],
   
-  // Ignore node_modules in tests
+  // Ignore node_modules and setup files in tests
   testPathIgnorePatterns: [
-    "/node_modules/"
+    "/node_modules/",
+    "setupTests.js",
+    "runTests.js"
   ],
   
   // Longer timeout for Codex environment

@@ -10,20 +10,21 @@ const mockUser = {
   phoneNumber: null
 };
 
-// Create mock auth context
+// Create mock auth context that matches the real AuthContext interface
 export const AuthContext = React.createContext({
   currentUser: null,
   loading: false,
-  error: null,
+  error: '',
+  setError: jest.fn(),
+  // Match the exact function names used in the real AuthContext
+  signInWithEmail: jest.fn(() => Promise.resolve({ user: mockUser })),
+  login: jest.fn(() => Promise.resolve({ user: mockUser })), // Alias for backward compatibility
+  signup: jest.fn(() => Promise.resolve({ user: mockUser })),
+  logout: jest.fn(() => Promise.resolve(true)),
   signInWithGoogle: jest.fn(() => Promise.resolve({ user: mockUser })),
-  signInWithEmailPassword: jest.fn(() => Promise.resolve({ user: mockUser })),
-  signInWithPhoneNumber: jest.fn(() => Promise.resolve({ user: mockUser })),
-  signUpWithEmailPassword: jest.fn(() => Promise.resolve({ user: mockUser })),
-  signOut: jest.fn(() => Promise.resolve()),
-  resetPassword: jest.fn(() => Promise.resolve()),
-  updateProfile: jest.fn(() => Promise.resolve()),
-  verifyPhoneNumber: jest.fn(() => Promise.resolve('verification-id')),
-  confirmPhoneVerification: jest.fn(() => Promise.resolve({ user: mockUser }))
+  loginWithGoogle: jest.fn(() => Promise.resolve({ user: mockUser })), // Alias for backward compatibility
+  signInWithPhone: jest.fn(() => Promise.resolve({ confirmationResult: { confirm: jest.fn() } })),
+  verifyPhoneCode: jest.fn(() => Promise.resolve({ user: mockUser }))
 });
 
 // Create mock provider component
@@ -31,18 +32,20 @@ export const AuthProvider = ({ children, mockAuthState = {} }) => {
   const defaultState = {
     currentUser: null,
     loading: false,
-    error: null,
+    error: '',
+    setError: jest.fn(),
+    // Match the exact function names used in the real AuthContext
+    signInWithEmail: jest.fn(() => Promise.resolve({ user: mockUser })),
+    login: jest.fn(() => Promise.resolve({ user: mockUser })), // Alias for backward compatibility
+    signup: jest.fn(() => Promise.resolve({ user: mockUser })),
+    logout: jest.fn(() => Promise.resolve(true)),
     signInWithGoogle: jest.fn(() => Promise.resolve({ user: mockUser })),
-    signInWithEmailPassword: jest.fn(() => Promise.resolve({ user: mockUser })),
-    signInWithPhoneNumber: jest.fn(() => Promise.resolve({ user: mockUser })),
-    signUpWithEmailPassword: jest.fn(() => Promise.resolve({ user: mockUser })),
-    signOut: jest.fn(() => Promise.resolve()),
-    resetPassword: jest.fn(() => Promise.resolve()),
-    updateProfile: jest.fn(() => Promise.resolve()),
-    verifyPhoneNumber: jest.fn(() => Promise.resolve('verification-id')),
-    confirmPhoneVerification: jest.fn(() => Promise.resolve({ user: mockUser }))
+    loginWithGoogle: jest.fn(() => Promise.resolve({ user: mockUser })), // Alias for backward compatibility
+    signInWithPhone: jest.fn(() => Promise.resolve({ confirmationResult: { confirm: jest.fn() } })),
+    verifyPhoneCode: jest.fn(() => Promise.resolve({ user: mockUser }))
   };
 
+  // For testing, we can override any of the default values
   const value = { ...defaultState, ...mockAuthState };
 
   return (
