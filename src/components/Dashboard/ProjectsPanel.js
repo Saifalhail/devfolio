@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaThLarge, FaList, FaFilter, FaSort, FaClock, FaCheck, FaPencilAlt, FaSmile, FaMeh, FaFrown } from 'react-icons/fa';
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import useFirebaseListener from '../../hooks/useFirebaseListener';
 
 const ProjectsPanel = () => {
   const { t } = useTranslation();
@@ -16,44 +17,41 @@ const ProjectsPanel = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch projects from Firestore
-  useEffect(() => {
-    const fetchProjects = async () => {
-      setIsLoading(true);
-      try {
-        const projectsRef = collection(db, 'projects');
-        let projectQuery = query(projectsRef, where('userId', '==', currentUser.uid));
-        
-        // Apply sorting
-        if (sortBy === 'deadline') {
-          projectQuery = query(projectQuery, orderBy('deadline', 'asc'));
-        } else if (sortBy === 'name') {
-          projectQuery = query(projectQuery, orderBy('name', 'asc'));
-        } else if (sortBy === 'status') {
-          projectQuery = query(projectQuery, orderBy('status', 'asc'));
-        }
-        
-        const querySnapshot = await getDocs(projectQuery);
-        const projectsList = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        
-        // Apply filtering (done client-side since we can't combine where clauses with different fields easily)
-        const filteredProjects = filterStatus === 'all' 
-          ? projectsList 
-          : projectsList.filter(project => project.status === filterStatus);
-        
-        setProjects(filteredProjects);
-      } catch (error) {
-        console.error('Error fetching projects:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  useFirebaseListener(() => {
+    if (!currentUser) return () => {};
 
-    if (currentUser) {
-      fetchProjects();
+    setIsLoading(true);
+
+    const projectsRef = collection(db, 'projects');
+    let projectQuery = query(projectsRef, where('userId', '==', currentUser.uid));
+
+    // Apply sorting
+    if (sortBy === 'deadline') {
+      projectQuery = query(projectQuery, orderBy('deadline', 'asc'));
+    } else if (sortBy === 'name') {
+      projectQuery = query(projectQuery, orderBy('name', 'asc'));
+    } else if (sortBy === 'status') {
+      projectQuery = query(projectQuery, orderBy('status', 'asc'));
     }
+
+    const unsubscribe = onSnapshot(projectQuery, (querySnapshot) => {
+      let projectsList = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      if (filterStatus !== 'all') {
+        projectsList = projectsList.filter(project => project.status === filterStatus);
+      }
+
+      setProjects(projectsList);
+      setIsLoading(false);
+    }, (error) => {
+      console.error('Error fetching projects:', error);
+      setIsLoading(false);
+    });
+
+    return unsubscribe;
   }, [currentUser, filterStatus, sortBy]);
 
   // Get emoji for status

@@ -65,6 +65,23 @@ const AuthModal = ({ isOpen, onClose }) => {
     };
   }, [isOpen, handleClose]);
 
+  // Close modal on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, handleClose]);
+
   // Ensure state resets if modal is closed externally
   useEffect(() => {
     if (!isOpen) {
@@ -248,6 +265,11 @@ const AuthModal = ({ isOpen, onClose }) => {
   return (
     <ModalOverlay isRTL={isRTL}>
       <ModalContainer ref={modalRef} isRTL={isRTL}>
+        {loading && (
+          <ModalLoadingOverlay>
+            <OverlaySpinner />
+          </ModalLoadingOverlay>
+        )}
         <CloseText onClick={handleClose}>×</CloseText>
         
         <ModalHeader>
@@ -512,6 +534,8 @@ const ModalOverlay = styled.div`
   align-items: center;
   z-index: 9999;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  overflow-y: auto;
+  padding: 1rem 0;
 `;
 
 const ModalContainer = styled.div`
@@ -529,14 +553,16 @@ const ModalContainer = styled.div`
   position: relative;
 
   @media (max-width: 480px) {
-    width: 95%;
+    width: 100%;
+    margin: 0 0.5rem;
     padding: 1.5rem 1rem;
     max-height: 85vh; /* Slightly smaller on mobile to ensure it doesn't overflow */
   }
-  
+
   @media (max-width: 360px) {
     padding: 1.2rem 0.8rem;
-    width: 98%;
+    width: 100%;
+    margin: 0 0.3rem;
   }
   
   @keyframes slideIn {
@@ -799,6 +825,27 @@ const ButtonSpinner = styled.div`
   border-radius: 50%;
   border-top-color: white;
   animation: ${spin} 1s ease-in-out infinite;
+`;
+
+const ModalLoadingOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  z-index: 1000;
+`;
+
+const OverlaySpinner = styled(ButtonSpinner)`
+  width: 30px;
+  height: 30px;
+  margin-right: 0;
+  border-width: 4px;
 `;
 
 

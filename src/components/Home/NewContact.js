@@ -20,7 +20,6 @@ const NewContact = () => {
   const [formSuccess, setFormSuccess] = useState(false);
   const [formError, setFormError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
-  const [activeField, setActiveField] = useState(null);
   
   // Project type options
   const projectTypes = [
@@ -65,12 +64,10 @@ const NewContact = () => {
   };
   
   const handleFocus = (field) => {
-    setActiveField(field);
     setFieldErrors(prev => ({ ...prev, [field]: '' }));
   };
 
   const handleBlur = (field) => {
-    setActiveField(null);
     validateField(field);
   };
   
@@ -209,7 +206,7 @@ const NewContact = () => {
                 <FormHeaderText isRTL={isRTL}>{t('contact.form.title')}</FormHeaderText>
               </FormHeader>
               
-              <InputGroup isActive={activeField === 'name'} isRTL={isRTL}>
+              <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="name" isRTL={isRTL}>{t('contact.form.name')}</FormLabel>
                 <FormInput 
                   type="text" 
@@ -227,7 +224,7 @@ const NewContact = () => {
                 )}
               </InputGroup>
               
-              <InputGroup isActive={activeField === 'email'} isRTL={isRTL}>
+              <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="email" isRTL={isRTL}>{t('contact.form.email')}</FormLabel>
                 <FormInput 
                   type="email" 
@@ -245,7 +242,7 @@ const NewContact = () => {
                 )}
               </InputGroup>
               
-              <InputGroup isActive={activeField === 'projectType'} isRTL={isRTL}>
+              <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="projectType" isRTL={isRTL}>{t('contact.form.projectType')}</FormLabel>
               <FormSelect
                 tabIndex="0"
@@ -266,7 +263,7 @@ const NewContact = () => {
                 </FormSelect>
               </InputGroup>
               
-              <InputGroup isActive={activeField === 'message'} isRTL={isRTL}>
+              <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="message" isRTL={isRTL}>{t('contact.form.message')}</FormLabel>
                 <FormTextarea 
                   id="message" 
@@ -737,19 +734,28 @@ const InputGroup = styled.div`
   margin-bottom: 1.2rem;
   position: relative;
   transition: all 0.3s ease;
-  transform: ${props => props.isActive ? 'translateY(-5px)' : 'none'};
-  
+
+  &:focus-within {
+    transform: translateY(-5px);
+  }
+
   &:after {
     content: '';
     position: absolute;
-    bottom: ${props => props.isActive ? '0' : '-3px'};
+    bottom: -3px;
     left: ${props => (props.isRTL ? 'auto' : '0')};
     right: ${props => (props.isRTL ? '0' : 'auto')};
-    width: ${props => props.isActive ? '100%' : '0'};
+    width: 0;
     height: 2px;
     background: linear-gradient(90deg, #cd3efd, #82a1bf);
     transition: all 0.3s ease;
-    opacity: ${props => props.isActive ? '1' : '0'};
+    opacity: 0;
+  }
+
+  &:focus-within:after {
+    bottom: 0;
+    width: 100%;
+    opacity: 1;
   }
 `;
 
