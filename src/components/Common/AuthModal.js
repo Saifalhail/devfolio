@@ -265,6 +265,11 @@ const AuthModal = ({ isOpen, onClose }) => {
   return (
     <ModalOverlay isRTL={isRTL}>
       <ModalContainer ref={modalRef} isRTL={isRTL}>
+        {loading && (
+          <ModalLoadingOverlay>
+            <OverlaySpinner />
+          </ModalLoadingOverlay>
+        )}
         <CloseText onClick={handleClose}>×</CloseText>
         
         <ModalHeader>
@@ -820,6 +825,27 @@ const ButtonSpinner = styled.div`
   border-radius: 50%;
   border-top-color: white;
   animation: ${spin} 1s ease-in-out infinite;
+`;
+
+const ModalLoadingOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  z-index: 1000;
+`;
+
+const OverlaySpinner = styled(ButtonSpinner)`
+  width: 30px;
+  height: 30px;
+  margin-right: 0;
+  border-width: 4px;
 `;
 
 
