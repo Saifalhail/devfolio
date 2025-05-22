@@ -512,6 +512,8 @@ const ModalOverlay = styled.div`
   align-items: center;
   z-index: 9999;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  overflow-y: auto;
+  padding: 1rem 0;
 `;
 
 const ModalContainer = styled.div`
@@ -529,14 +531,16 @@ const ModalContainer = styled.div`
   position: relative;
 
   @media (max-width: 480px) {
-    width: 95%;
+    width: 100%;
+    margin: 0 0.5rem;
     padding: 1.5rem 1rem;
     max-height: 85vh; /* Slightly smaller on mobile to ensure it doesn't overflow */
   }
-  
+
   @media (max-width: 360px) {
     padding: 1.2rem 0.8rem;
-    width: 98%;
+    width: 100%;
+    margin: 0 0.3rem;
   }
   
   @keyframes slideIn {
