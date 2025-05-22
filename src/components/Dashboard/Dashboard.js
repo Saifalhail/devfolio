@@ -7,7 +7,7 @@ import {
   FaChartLine, FaClock, FaFileUpload, FaRobot, FaArrowRight, FaTimes, FaBars,
   FaHome, FaProjectDiagram, FaFileAlt, FaClipboardList, FaFileInvoiceDollar, FaHistory, FaCog,
   FaCalendarAlt, FaLightbulb, FaClipboardCheck, FaUser, FaSignOutAlt, FaPlus,
-  FaThLarge, FaStream, FaTachometerAlt, FaColumns, FaLayerGroup, FaThList
+  FaThLarge, FaStream, FaTachometerAlt, FaColumns, FaLayerGroup, FaThList, FaCommentAlt
 } from 'react-icons/fa';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -17,6 +17,8 @@ import ProjectsPanel from './ProjectsPanel';
 import ProjectNotes from './ProjectNotes';
 import AddProjectModal from './AddProjectModal';
 import TasksPanel from './TasksPanel';
+import FilesPanel from './FilesPanel';
+import FormsPanel from './FormsPanel';
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth();
@@ -91,6 +93,10 @@ const Dashboard = () => {
       setActiveTab('projects');
     } else if (location.pathname.includes('/dashboard/tasks')) {
       setActiveTab('tasks');
+    } else if (location.pathname.includes('/dashboard/files')) {
+      setActiveTab('files');
+    } else if (location.pathname.includes('/dashboard/forms')) {
+      setActiveTab('forms');
     } else {
       setActiveTab('overview');
     }
@@ -190,6 +196,20 @@ const Dashboard = () => {
               <TasksTabContainer>
                 <TasksPanel />
               </TasksTabContainer>
+            )}
+            
+            {/* Files Tab */}
+            {activeTab === 'files' && (
+              <FilesTabContainer>
+                <FilesPanel />
+              </FilesTabContainer>
+            )}
+            
+            {/* Forms Tab */}
+            {activeTab === 'forms' && (
+              <FormsTabContainer>
+                <FormsPanel />
+              </FormsTabContainer>
             )}
             
             {/* Overview Tab */}
@@ -1132,7 +1152,37 @@ const AddProjectButton = styled.button`
 const TasksTabContainer = styled.div`
   width: 100%;
   padding: 1rem 0;
-  
+
+  h2 {
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
+
+const FilesTabContainer = styled.div`
+  width: 100%;
+  padding: 1rem 0;
+
+  h2 {
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
+
+const FormsTabContainer = styled.div`
+  width: 100%;
+  padding: 1rem 0;
+
   h2 {
     color: #fff;
     margin: 0 0 1.5rem 0;

@@ -200,7 +200,7 @@
     "activeProjects": "المشاريع النشطة",
     "pendingActions": "الإجراءات المعلقة",
     "latestUploads": "آخر الملفات المرفوعة",
-    "projectDeadlines": "مواعيد تسليم المشاريع",
+    "projectDeadlines": "مواعيد المشاريع",
     "sidebar": {
       "overview": "نظرة عامة",
       "projects": "المشاريع",
@@ -208,78 +208,8 @@
       "tasks": "المهام",
       "files": "الملفات",
       "invoices": "الفواتير",
-      "history": "السجل",
+      "activity": "سجل النشاط",
       "settings": "الإعدادات"
-    },
-    "tabs": {
-      "overview": "نظرة عامة",
-      "projects": "المشاريع",
-      "tasks": "المهام والإنجازات"
-    },
-    "tasks": {
-      "title": "المهام والإنجازات",
-      "filter": "تصفية",
-      "sortAsc": "تصاعدي",
-      "sortDesc": "تنازلي",
-      "addTask": "إضافة مهمة",
-      "smartETA": "تقدير الوقت الذكي",
-      "etaInfo": "بناءً على معدل الإنجاز الحالي",
-      "days": "أيام",
-      "notAvailable": "غير متوفر",
-      "avgTimePerTask": "متوسط الوقت لكل مهمة",
-      "estimatedCompletion": "تاريخ الإنجاز المتوقع",
-      "completionRate": "معدل الإنجاز",
-      "loading": "جاري تحميل المهام...",
-      "todo": "قيد الانتظار",
-      "doing": "قيد التنفيذ",
-      "done": "مكتملة",
-      "emptyTodo": "لا توجد مهام في الانتظار",
-      "emptyDoing": "لا توجد مهام قيد التنفيذ",
-      "emptyDone": "لا توجد مهام مكتملة",
-      "editTask": "تعديل المهمة",
-      "priority": {
-        "high": "عالية",
-        "medium": "متوسطة",
-        "low": "منخفضة"
-      },
-      "form": {
-        "title": "عنوان المهمة",
-        "titlePlaceholder": "أدخل عنوان المهمة",
-        "description": "الوصف",
-        "descriptionPlaceholder": "أدخل وصف المهمة",
-        "dueDate": "تاريخ الاستحقاق",
-        "selectDate": "اختر التاريخ",
-        "priority": "الأولوية",
-        "status": "الحالة",
-        "assignedTo": "مسندة إلى",
-        "you": "أنت",
-        "clientTask": "هذه مهمة للعميل"
-      },
-      "actions": {
-        "edit": "تعديل",
-        "delete": "حذف",
-        "moveToTodo": "نقل إلى قيد الانتظار",
-        "moveToDoing": "نقل إلى قيد التنفيذ",
-        "moveToDone": "نقل إلى مكتملة"
-      },
-      "errors": {
-        "titleRequired": "عنوان المهمة مطلوب",
-        "saveFailed": "فشل حفظ المهمة. يرجى المحاولة مرة أخرى."
-      },
-      "clientTask": "العميل",
-      "heatmap": {
-        "title": "مخطط النشاط",
-        "activityCount": "{{count}} نشاط",
-        "created": "تم الإنشاء",
-        "updated": "تم التحديث",
-        "completed": "تم الإنجاز",
-        "noActivity": "لا يوجد نشاط",
-        "lowActivity": "نشاط واحد",
-        "mediumActivity": "نشاطان",
-        "highActivity": "3 أنشطة",
-        "veryHighActivity": "4+ أنشطة",
-        "noData": "لا توجد بيانات نشاط متاحة لهذا الشهر"
-      }
     },
     "greeting": {
       "morning": "صباح الخير",
@@ -291,11 +221,11 @@
     "days": "أيام",
     "hours": "ساعات",
     "minutes": "دقائق",
-    "lastInteraction": "آخر تفاعل",
+    "lastInteraction": "ملخص آخر تفاعل",
     "fileUpload": "رفع ملف",
-    "weeklyFocus": "تركيز الأسبوع",
-    "tasksCompleted": "من المهام المكتملة",
-    "aiAssistant": "المساعد الذكي",
+    "weeklyFocus": "تركيز هذا الأسبوع",
+    "tasksCompleted": "من",
+    "aiAssistant": "مساعد الذكاء الاصطناعي",
     "needHelp": "هل تحتاج إلى مساعدة أو توضيح بخصوص مشروعك؟",
     "askAI": "اسأل المساعد الذكي",
     "howCanIHelp": "كيف يمكنني مساعدتك في مشروعك اليوم؟",
@@ -304,8 +234,129 @@
     "quickActions": "إجراءات سريعة",
     "newProject": "مشروع جديد",
     "logTime": "تسجيل الوقت",
-    "uploadFile": "رفع ملف",
-    "complete": "مكتمل"
+    "uploadFile": "رفع ملف"
+  },
+  
+  "files": {
+    "title": "الملفات والتسليمات",
+    "upload": "رفع ملفات",
+    "search": "البحث عن ملفات...",
+    "filterBy": "تصفية حسب:",
+    "categories": {
+      "all": "الكل",
+      "design": "تصميم",
+      "docs": "مستندات",
+      "feedback": "ملاحظات"
+    },
+    "tags": "الوسوم:",
+    "dropHere": "أفلت الملفات هنا",
+    "noFiles": "لا توجد ملفات تطابق معايير البحث",
+    "draft": "مسودة",
+    "status": {
+      "final": "نهائي",
+      "draft": "مسودة"
+    },
+    "actions": {
+      "preview": "معاينة",
+      "download": "تنزيل",
+      "versions": "سجل الإصدارات",
+      "delete": "حذف"
+    },
+    "versionHistory": "سجل الإصدارات",
+    "version": "الإصدار",
+    "current": "الحالي",
+    "download": "تنزيل للعرض",
+    "close": "إغلاق",
+    "previewNotAvailable": "المعاينة غير متاحة لهذا النوع من الملفات",
+    "videoNotSupported": "متصفحك لا يدعم علامة الفيديو.",
+    "audioNotSupported": "متصفحك لا يدعم علامة الصوت.",
+    "details": {
+      "fileInfo": "معلومات الملف",
+      "size": "الحجم",
+      "type": "النوع",
+      "category": "الفئة",
+      "status": "الحالة",
+      "uploadInfo": "معلومات الرفع",
+      "uploadedBy": "تم الرفع بواسطة",
+      "uploadDate": "تاريخ الرفع",
+      "tags": "الوسوم",
+      "versions": "سجل الإصدارات"
+    }
+  },
+  
+  "forms": {
+    "title": "النماذج والملاحظات",
+    "createNew": "إنشاء نموذج جديد",
+    "search": "البحث عن النماذج...",
+    "sortAsc": "تصاعدي",
+    "sortDesc": "تنازلي",
+    "noForms": "لا توجد نماذج تطابق معايير البحث",
+    "client": "العميل",
+    "project": "المشروع",
+    "created": "تاريخ الإنشاء",
+    "responses": "الردود",
+    "createForm": "إنشاء نموذج جديد",
+    "editForm": "تعديل النموذج",
+    "types": {
+      "all": "جميع النماذج",
+      "feedback": "ملاحظات",
+      "revision": "طلب تعديل"
+    },
+    "status": {
+      "pending": "قيد الانتظار",
+      "completed": "مكتمل",
+      "draft": "مسودة"
+    },
+    "actions": {
+      "view": "عرض النموذج",
+      "edit": "تعديل النموذج",
+      "delete": "حذف النموذج",
+      "saveDraft": "حفظ كمسودة",
+      "publish": "نشر النموذج"
+    },
+    "fields": {
+      "title": "عنوان النموذج",
+      "type": "نوع النموذج",
+      "client": "العميل",
+      "project": "المشروع",
+      "description": "الوصف"
+    },
+    "placeholders": {
+      "title": "أدخل عنوان النموذج",
+      "client": "اختر أو أدخل اسم العميل",
+      "project": "اختر المشروع",
+      "description": "أدخل وصف النموذج"
+    },
+    "questions": {
+      "title": "أسئلة النموذج",
+      "add": "إضافة سؤال",
+      "label": "السؤال",
+      "placeholder": "أدخل سؤالك",
+      "type": "نوع الإجابة",
+      "required": "مطلوب",
+      "types": {
+        "text": "نص",
+        "textarea": "نص طويل",
+        "rating": "تقييم",
+        "select": "اختيار"
+      }
+    },
+    "options": {
+      "title": "خيارات النموذج",
+      "allowScreenshots": "السماح بلقطات الشاشة",
+      "allowAttachments": "السماح بالمرفقات"
+    },
+    "features": {
+      "title": "ميزات نظام النماذج",
+      "feedbackReplayer": "مشغل الملاحظات",
+      "feedbackReplayerDesc": "عرض الملاحظات عبر المراحل بشكل زمني",
+      "aiSummary": "ملخص بالذكاء الاصطناعي",
+      "aiSummaryDesc": "تلخيص الملاحظات تلقائيًا باستخدام الذكاء الاصطناعي",
+      "screenshotAnnotator": "محرر لقطات الشاشة",
+      "screenshotAnnotatorDesc": "السماح للعملاء برفع لقطات شاشة مع تعليقات توضيحية",
+      "exportData": "تصدير البيانات",
+      "exportDataDesc": "تصدير ردود النماذج إلى CSV أو PDF"
+    }
   },
   
   "contact": {

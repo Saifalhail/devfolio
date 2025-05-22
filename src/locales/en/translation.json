@@ -200,7 +200,163 @@
     "activeProjects": "Active Projects",
     "pendingActions": "Pending Actions",
     "latestUploads": "Latest Uploads",
-    "projectDeadlines": "Project Deadlines"
+    "projectDeadlines": "Project Deadlines",
+    "sidebar": {
+      "overview": "Overview",
+      "projects": "Projects",
+      "forms": "Forms",
+      "tasks": "Tasks",
+      "files": "Files",
+      "invoices": "Invoices",
+      "activity": "Activity Log",
+      "settings": "Settings"
+    },
+    "greeting": {
+      "morning": "Good Morning",
+      "afternoon": "Good Afternoon",
+      "evening": "Good Evening"
+    },
+    "projectProgress": "Project Progress",
+    "upcomingDeadline": "Upcoming Deadline",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "lastInteraction": "Last Interaction Summary",
+    "fileUpload": "File Upload",
+    "weeklyFocus": "This Week's Focus",
+    "tasksCompleted": "of",
+    "aiAssistant": "AI Assistant",
+    "needHelp": "Need help or clarification with your project?",
+    "askAI": "Ask AI Assistant",
+    "howCanIHelp": "How can I help you with your project today?",
+    "typeQuestion": "Type your question here...",
+    "send": "Send",
+    "quickActions": "Quick Actions",
+    "newProject": "New Project",
+    "logTime": "Log Time",
+    "uploadFile": "Upload File"
+  },
+  
+  "files": {
+    "title": "Files & Deliverables",
+    "upload": "Upload Files",
+    "search": "Search files...",
+    "filterBy": "Filter by:",
+    "categories": {
+      "all": "All",
+      "design": "Design",
+      "docs": "Docs",
+      "feedback": "Feedback"
+    },
+    "tags": "Tags:",
+    "dropHere": "Drop files here",
+    "noFiles": "No files found matching your criteria",
+    "draft": "DRAFT",
+    "status": {
+      "final": "Final",
+      "draft": "Draft"
+    },
+    "actions": {
+      "preview": "Preview",
+      "download": "Download",
+      "versions": "Version History",
+      "delete": "Delete"
+    },
+    "versionHistory": "Version History",
+    "version": "Version",
+    "current": "Current",
+    "download": "Download to view",
+    "close": "Close",
+    "previewNotAvailable": "Preview not available for this file type",
+    "videoNotSupported": "Your browser does not support the video tag.",
+    "audioNotSupported": "Your browser does not support the audio tag.",
+    "details": {
+      "fileInfo": "File Information",
+      "size": "Size",
+      "type": "Type",
+      "category": "Category",
+      "status": "Status",
+      "uploadInfo": "Upload Information",
+      "uploadedBy": "Uploaded By",
+      "uploadDate": "Upload Date",
+      "tags": "Tags",
+      "versions": "Version History"
+    }
+  },
+  
+  "forms": {
+    "title": "Feedback & Forms",
+    "createNew": "Create New Form",
+    "search": "Search forms...",
+    "sortAsc": "Ascending",
+    "sortDesc": "Descending",
+    "noForms": "No forms found matching your criteria",
+    "client": "Client",
+    "project": "Project",
+    "created": "Created",
+    "responses": "Responses",
+    "createForm": "Create New Form",
+    "editForm": "Edit Form",
+    "types": {
+      "all": "All Forms",
+      "feedback": "Feedback",
+      "revision": "Revision"
+    },
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "draft": "Draft"
+    },
+    "actions": {
+      "view": "View Form",
+      "edit": "Edit Form",
+      "delete": "Delete Form",
+      "saveDraft": "Save as Draft",
+      "publish": "Publish Form"
+    },
+    "fields": {
+      "title": "Form Title",
+      "type": "Form Type",
+      "client": "Client",
+      "project": "Project",
+      "description": "Description"
+    },
+    "placeholders": {
+      "title": "Enter form title",
+      "client": "Select or enter client",
+      "project": "Select project",
+      "description": "Enter form description"
+    },
+    "questions": {
+      "title": "Form Questions",
+      "add": "Add Question",
+      "label": "Question",
+      "placeholder": "Enter your question",
+      "type": "Answer Type",
+      "required": "Required",
+      "types": {
+        "text": "Text",
+        "textarea": "Long Text",
+        "rating": "Rating",
+        "select": "Select"
+      }
+    },
+    "options": {
+      "title": "Form Options",
+      "allowScreenshots": "Allow Screenshots",
+      "allowAttachments": "Allow File Attachments"
+    },
+    "features": {
+      "title": "Form System Features",
+      "feedbackReplayer": "Feedback Replayer",
+      "feedbackReplayerDesc": "View feedback across milestones in timeline form",
+      "aiSummary": "AI-Powered Summary",
+      "aiSummaryDesc": "Auto-summarizes feedback using AI",
+      "screenshotAnnotator": "Screenshot Annotator",
+      "screenshotAnnotatorDesc": "Allow clients to upload screenshots with annotations",
+      "exportData": "Export Data",
+      "exportDataDesc": "Export form responses to CSV or PDF"
+    }
   },
   
   "contact": {

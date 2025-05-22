@@ -3,24 +3,25 @@
 This document contains small, precise tasks for AI agents to complete. Each task is self-contained and focuses on bug fixes, small feature additions, testing, and code improvements. Each task includes references to relevant documentation files.
 
 ## Authentication Tasks
-<!-- 
-1. **Fix Google Authentication**
-   - File: `src/components/Common/AuthModal.js`
+
+1. ✅ **Fix Google Authentication**
+   - File: `src/components/Common/AuthModal.js` and `src/firebase.js`
    - Task: Properly implement the signInWithGoogle function and handle potential errors
-   - Docs: See FIREBASE_SETUP.md (Authentication section) and DOCUMENTATION.md (Authentication System section)
-   - Priority: High
+   - Status: COMPLETED - Fixed API key issues and improved error handling
 
 2. **Implement Phone Verification**
    - File: `src/components/Common/AuthModal.js`
    - Task: Add proper error handling for verification code submission in phone authentication
    - Docs: See FIREBASE_SETUP.md (Configure Phone Authentication section)
    - Priority: Medium
+   - **ASSIGN TO CODEX AGENT**
 
 3. **Add Form Validation**
    - File: `src/components/Common/AuthModal.js`
    - Task: Implement validation for email/password sign-up fields with appropriate error messages
    - Docs: See DOCUMENTATION.md (Authentication UI section)
    - Priority: Medium
+   - **ASSIGN TO CODEX AGENT**
 
 4. **Fix Modal Closing**
    - File: `src/components/Common/AuthModal.js`
@@ -41,12 +42,12 @@ This document contains small, precise tasks for AI agents to complete. Each task
    - Task: Create a utility file to standardize Firebase error messages across the application
    - Docs: See FIREBASE_SETUP.md (Troubleshooting section) and WINDSURF_RULES.md (firebase section)
    - Priority: Medium
+   - **ASSIGN TO CODEX AGENT**
 
-7. **Update Firebase Initialization**
+7. ✅ **Update Firebase Initialization**
    - File: `src/firebase.js`
    - Task: Remove development fallback values for production builds
-   - Docs: See FIREBASE_SETUP.md (Security Best Practices section) and WINDSURF_RULES.md (firebase section)
-   - Priority: High
+   - Status: COMPLETED - Ensured production builds use correct Firebase configuration
 
 8. **Improve Error Logging**
    - File: `src/components/Home/NewContact.js`
@@ -58,7 +59,8 @@ This document contains small, precise tasks for AI agents to complete. Each task
    - File: Create `firestore.rules`
    - Task: Implement Firebase security rules based on the recommendations in FIREBASE_SETUP.md
    - Docs: See FIREBASE_SETUP.md (Firestore Security Rules section)
-   - Priority: High -->
+   - Priority: High
+   - **ASSIGN TO CODEX AGENT**
 
 10. **Implement Listener Cleanup**
     - File: All components using Firebase listeners
@@ -104,53 +106,53 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - File: `src/components/Dashboard/Dashboard.js`
     - Task: Add a backdrop overlay when sidebar is open on mobile to allow clicking outside to close it
     - Docs: See WINDSURF_RULES.md (responsive design section) and PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
-    - Priority: Medium
+    - Priority: High
+    - **ASSIGN TO CODEX AGENT**
 
-<!-- 
-17. **Implement TasksPanel Component**
+17. ✅ **Implement TasksPanel Component**
     - File: `src/components/Dashboard/TasksPanel.js`
     - Task: Create a Kanban-style task management component with three columns (To Do, In Progress, Done)
-    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section, item 4)
-    - Priority: High
--->
+    - Status: COMPLETED - Basic implementation with mock data is in place
 
-17. **Add Dashboard Loading State**
+18. **Add Dashboard Loading State**
     - File: `src/components/Dashboard/Dashboard.js`
     - Task: Implement a loading state for the dashboard while user authentication is being verified
     - Docs: See DOCUMENTATION.md (Authentication System section) and WINDSURF_RULES.md (UI feedback section)
-    - Priority: Medium
+    - Priority: High
+    - **ASSIGN TO CODEX AGENT**
 
-18. **Enhance TasksPanel with Data Persistence**
+19. **Enhance TasksPanel with Data Persistence**
     - File: `src/components/Dashboard/TasksPanel.js`
     - Task: Replace mock data with actual data storage using Firebase or local storage
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section, item 4)
-    - Priority: Medium
+    - Priority: High
+    - **ASSIGN TO CODEX AGENT**
 
-19. **Fix Sidebar RTL Support**
+20. **Fix Sidebar RTL Support**
     - File: `src/components/Dashboard/Sidebar.js`
     - Task: Ensure proper RTL (right-to-left) support for sidebar navigation icons and text alignment
     - Docs: See DOCUMENTATION.md (Internationalization section) and WINDSURF_RULES.md (internationalization section)
-    - Priority: High
+    - Priority: Medium
 
-19. **Add Active Route Highlighting**
+21. **Add Active Route Highlighting**
     - File: `src/components/Dashboard/Sidebar.js`
     - Task: Enhance the sidebar navigation to properly highlight the active route with visual indicators
     - Docs: See WINDSURF_RULES.md (navigation section) and PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
     - Priority: Medium
 
-20. **Implement Keyboard Navigation**
+22. **Implement Keyboard Navigation**
     - File: `src/components/Dashboard/Sidebar.js`
     - Task: Add keyboard navigation support for the sidebar menu items for better accessibility
     - Docs: See WINDSURF_RULES.md (accessibility section) and DOCUMENTATION.md (Accessibility Features section)
     - Priority: Low
 
-21. **Add Tooltip Components**
+23. **Add Tooltip Components**
     - File: Create `src/components/Common/Tooltip.js`
     - Task: Create a reusable tooltip component for providing additional information on hover
     - Docs: See WINDSURF_RULES.md (UI components section) and DOCUMENTATION.md (UI Components and Design System section)
     - Priority: Low
 
-22. **Implement Collapsible Sidebar**
+24. **Implement Collapsible Sidebar**
     - File: `src/components/Dashboard/Sidebar.js`
     - Task: Add functionality to collapse the sidebar to show only icons on desktop view to save space
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and WINDSURF_RULES.md (responsive design section)
