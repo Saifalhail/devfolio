@@ -65,6 +65,23 @@ const AuthModal = ({ isOpen, onClose }) => {
     };
   }, [isOpen, handleClose]);
 
+  // Close modal on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, handleClose]);
+
   // Ensure state resets if modal is closed externally
   useEffect(() => {
     if (!isOpen) {
