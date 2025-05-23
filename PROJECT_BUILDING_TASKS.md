@@ -32,7 +32,7 @@ This document outlines larger tasks for building significant features, implement
    - Added proper Arabic translations for all sidebar items
    - Improved dashboard icon and positioning for better usability -->
 
-4. ✅ Develop the Tasks & Milestones section with the following features:
+<!-- 4. ✅ Develop the Tasks & Milestones section with the following features:
    - Kanban board layout (To-do / In Progress / Done)
    - Task cards with title, description, due date, and assigned user
    - Ability to move tasks between columns
@@ -42,7 +42,7 @@ This document outlines larger tasks for building significant features, implement
    - **Future Enhancements:**
      - Smart ETA Estimate based on current completion and average time per task
      - Progress Heatmap showing the most active days of the project
-     - Client-Assigned Tasks (optional toggle) for client actions like "Send Logo" or "Approve Screen 1"
+     - Client-Assigned Tasks (optional toggle) for client actions like "Send Logo" or "Approve Screen 1" -->
 
 5. ✅ Create the Files & Deliverables system with the following features:
    - Upload/download area with drag-and-drop functionality

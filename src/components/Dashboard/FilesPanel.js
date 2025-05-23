@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FaUpload, FaFilter, FaSearch, FaTags, FaDownload, FaEye, FaTrash, FaHistory } from 'react-icons/fa';
@@ -13,6 +13,10 @@ const FilesPanel = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
+  const [showTagsDropdown, setShowTagsDropdown] = useState(false);
+  const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(false);
+  const tagsDropdownRef = useRef(null);
+  const categoriesDropdownRef = useRef(null);
   
   // Mock data for files
   const mockFiles = [
@@ -147,16 +151,33 @@ const FilesPanel = () => {
   // Get all unique tags from files
   const allTags = [...new Set(mockFiles.flatMap(file => file.tags))];
   
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tagsDropdownRef.current && !tagsDropdownRef.current.contains(event.target)) {
+        setShowTagsDropdown(false);
+      }
+      if (categoriesDropdownRef.current && !categoriesDropdownRef.current.contains(event.target)) {
+        setShowCategoriesDropdown(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <FilesPanelContainer isRTL={isRTL}>
       <FilesPanelHeader>
-        <h2>{t('files.title', 'Files & Deliverables')}</h2>
-        <PrimaryButton 
+        <PanelTitle>{t('files.title', 'Files & Deliverables')}</PanelTitle>
+        <UploadButton 
           onClick={() => fileInputRef.current.click()}
         >
-          <FaUpload style={{ marginRight: '0.5rem' }} />
-          {t('files.upload', 'Upload Files')}
-        </PrimaryButton>
+          <FaUpload />
+          <span>{t('files.upload', 'Upload Files')}</span>
+        </UploadButton>
         <input
           type="file"
           ref={fileInputRef}
@@ -177,58 +198,93 @@ const FilesPanel = () => {
           />
         </SearchBar>
         
-        <FilterSection>
-          <FilterLabel>
-            <FaFilter />
-            <span>{t('files.filterBy', 'Filter by:')}</span>
-          </FilterLabel>
+        <ToolbarActions>
+          <FilterDropdown ref={categoriesDropdownRef}>
+            <FilterToggle 
+              onClick={() => setShowCategoriesDropdown(!showCategoriesDropdown)}
+              active={selectedCategory !== 'all'}
+            >
+              <FaFilter />
+              <span>
+                {selectedCategory === 'all' 
+                  ? t('files.filterBy', 'Filter') 
+                  : t(`files.categories.${selectedCategory}`, selectedCategory)}
+              </span>
+              <DropdownArrow isOpen={showCategoriesDropdown} />
+            </FilterToggle>
+            
+            {showCategoriesDropdown && (
+              <DropdownMenu>
+                <DropdownItem 
+                  active={selectedCategory === 'all'} 
+                  onClick={() => {
+                    handleCategoryChange('all');
+                    setShowCategoriesDropdown(false);
+                  }}
+                >
+                  {t('files.categories.all', 'All')}
+                </DropdownItem>
+                <DropdownItem 
+                  active={selectedCategory === 'design'} 
+                  onClick={() => {
+                    handleCategoryChange('design');
+                    setShowCategoriesDropdown(false);
+                  }}
+                >
+                  {t('files.categories.design', 'Design')}
+                </DropdownItem>
+                <DropdownItem 
+                  active={selectedCategory === 'docs'} 
+                  onClick={() => {
+                    handleCategoryChange('docs');
+                    setShowCategoriesDropdown(false);
+                  }}
+                >
+                  {t('files.categories.docs', 'Docs')}
+                </DropdownItem>
+                <DropdownItem 
+                  active={selectedCategory === 'feedback'} 
+                  onClick={() => {
+                    handleCategoryChange('feedback');
+                    setShowCategoriesDropdown(false);
+                  }}
+                >
+                  {t('files.categories.feedback', 'Feedback')}
+                </DropdownItem>
+              </DropdownMenu>
+            )}
+          </FilterDropdown>
           
-          <CategoryFilters>
-            <FilterButton 
-              active={selectedCategory === 'all'} 
-              onClick={() => handleCategoryChange('all')}
+          <TagsDropdown ref={tagsDropdownRef}>
+            <TagsToggle 
+              onClick={() => setShowTagsDropdown(!showTagsDropdown)}
+              active={selectedTags.length > 0}
             >
-              {t('files.categories.all', 'All')}
-            </FilterButton>
-            <FilterButton 
-              active={selectedCategory === 'design'} 
-              onClick={() => handleCategoryChange('design')}
-            >
-              {t('files.categories.design', 'Design')}
-            </FilterButton>
-            <FilterButton 
-              active={selectedCategory === 'docs'} 
-              onClick={() => handleCategoryChange('docs')}
-            >
-              {t('files.categories.docs', 'Docs')}
-            </FilterButton>
-            <FilterButton 
-              active={selectedCategory === 'feedback'} 
-              onClick={() => handleCategoryChange('feedback')}
-            >
-              {t('files.categories.feedback', 'Feedback')}
-            </FilterButton>
-          </CategoryFilters>
-        </FilterSection>
-        
-        <TagsSection>
-          <TagsLabel>
-            <FaTags />
-            <span>{t('files.tags', 'Tags:')}</span>
-          </TagsLabel>
-          
-          <TagsList>
-            {allTags.map(tag => (
-              <TagButton
-                key={tag}
-                active={selectedTags.includes(tag)}
-                onClick={() => handleTagToggle(tag)}
-              >
-                {tag}
-              </TagButton>
-            ))}
-          </TagsList>
-        </TagsSection>
+              <FaTags />
+              <span>
+                {selectedTags.length === 0 
+                  ? t('files.tags', 'Tags') 
+                  : `${selectedTags.length} ${t('files.selectedTags', 'selected')}`}
+              </span>
+              <DropdownArrow isOpen={showTagsDropdown} />
+            </TagsToggle>
+            
+            {showTagsDropdown && (
+              <TagsDropdownMenu>
+                {allTags.map(tag => (
+                  <TagItem
+                    key={tag}
+                    active={selectedTags.includes(tag)}
+                    onClick={() => handleTagToggle(tag)}
+                  >
+                    <TagCheckbox checked={selectedTags.includes(tag)} />
+                    <span>{tag}</span>
+                  </TagItem>
+                ))}
+              </TagsDropdownMenu>
+            )}
+          </TagsDropdown>
+        </ToolbarActions>
       </FilesToolbar>
       
       {/* Drag and Drop Upload Area */}
@@ -268,9 +324,9 @@ const FilesPanelContainer = styled.div`
   flex-direction: column;
   width: 100%;
   background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
 `;
 
@@ -278,29 +334,9 @@ const FilesPanelHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #f5f5f5;
-  
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #513a52;
-    margin: 0;
-    position: relative;
-    padding-bottom: 0.5rem;
-    
-    &:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 40px;
-      height: 3px;
-      background-color: #513a52;
-      border-radius: 3px;
-    }
-  }
+  padding: 1.75rem 2rem;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #ffffff;
   
   @media (max-width: 768px) {
     flex-direction: column;
@@ -309,64 +345,84 @@ const FilesPanelHeader = styled.div`
   }
 `;
 
-const PrimaryButton = styled.button`
+const PanelTitle = styled.h2`
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+`;
+
+const UploadButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 0.75rem 1.25rem;
-  background: linear-gradient(90deg, #513a52, #3d2c3d);
+  background-color: #4A6FA5;
   color: white;
   border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(74, 111, 165, 0.2);
+  
+  svg {
+    margin-right: 0.75rem;
+    font-size: 1rem;
+  }
   
   &:hover {
-    background: linear-gradient(90deg, #3d2c3d, #2a1f2a);
+    background-color: #3A5A8C;
     transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(81, 58, 82, 0.3);
+    box-shadow: 0 4px 12px rgba(74, 111, 165, 0.3);
   }
   
   &:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(81, 58, 82, 0.2);
+    box-shadow: 0 2px 4px rgba(74, 111, 165, 0.3);
   }
+  
+  ${props => props.isRTL && css`
+    flex-direction: row-reverse;
+    
+    svg {
+      margin-right: 0;
+      margin-left: 0.75rem;
+    }
+  `}
 `;
 
 const FilesToolbar = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #f5f5f5;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fafafa;
   
   @media (max-width: 768px) {
     flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
   }
 `;
 
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
-  background-color: #f9f9f9;
+  background-color: white;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 350px;
   transition: all 0.2s ease;
   
-  &:focus-within {
-    background-color: #f7f9fc;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-  }
-  
   svg {
-    color: #513a52;
-    margin-right: 0.5rem;
+    color: #aaa;
+    margin-right: 0.75rem;
+    font-size: 0.9rem;
   }
   
   input {
@@ -374,41 +430,175 @@ const SearchBar = styled.div`
     background: none;
     outline: none;
     width: 100%;
-    color: #513a52;
+    font-size: 0.95rem;
+    color: #333;
     
     &::placeholder {
-      color: #a3a3a3;
+      color: #aaa;
     }
   }
   
-  @media (max-width: 768px) {
-    max-width: 100%;
+  &:focus-within {
+    border-color: #4A6FA5;
+    box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.1);
+    
+    svg {
+      color: #4A6FA5;
+    }
   }
+  
+  ${props => props.isRTL && css`
+    svg {
+      margin-right: 0;
+      margin-left: 0.75rem;
+    }
+  `}
 `;
 
-const FilterSection = styled.div`
+const ToolbarActions = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   
   @media (max-width: 768px) {
-    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
   }
 `;
 
-const FilterLabel = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #513a52;
-  font-weight: 500;
+const FilterDropdown = styled.div`
+  position: relative;
+  z-index: 10;
 `;
 
-const CategoryFilters = styled.div`
+const TagsDropdown = styled.div`
+  position: relative;
+  z-index: 10;
+`;
+
+const DropdownArrow = styled.span`
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  border-top: 5px solid ${props => props.isOpen ? '#4A6FA5' : '#888'};
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  transition: transform 0.2s ease;
+  transform: ${props => props.isOpen ? 'rotate(180deg)' : 'rotate(0)'};
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 180px;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease;
+  z-index: 20;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+`;
+
+const TagsDropdownMenu = styled(DropdownMenu)`
+  width: 220px;
+  max-height: 300px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+  }
+`;
+
+const TagItem = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: ${props => props.active ? '#4A6FA5' : '#666'};
+  background-color: ${props => props.active ? '#EBF2FA' : 'white'};
+  
+  &:hover {
+    background-color: ${props => props.active ? '#D9E6F7' : '#f5f5f5'};
+  }
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  span {
+    margin-left: 0.75rem;
+  }
+`;
+
+const TagCheckbox = styled.div`
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid ${props => props.checked ? '#4A6FA5' : '#ccc'};
+  background-color: ${props => props.checked ? '#4A6FA5' : 'white'};
+  position: relative;
+  transition: all 0.2s ease;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    display: ${props => props.checked ? 'block' : 'none'};
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+`;
+
+const FilterToggle = styled.button`
+  display: flex;
+  align-items: center;
+  background-color: ${props => props.active ? '#EBF2FA' : 'white'};
+  border: 1px solid ${props => props.active ? '#4A6FA5' : '#e0e0e0'};
+  color: ${props => props.active ? '#4A6FA5' : '#666'};
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  svg {
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  &:hover {
+    border-color: #4A6FA5;
+    color: #4A6FA5;
+  }
+`;
+
+const TagsToggle = styled(FilterToggle)`
+  background-color: ${props => props.active ? '#EBF2FA' : 'white'};
+  border: 1px solid ${props => props.active ? '#4A6FA5' : '#e0e0e0'};
+  color: ${props => props.active ? '#4A6FA5' : '#666'};
 `;
 
 const FilterButton = styled.button`
@@ -442,12 +632,21 @@ const TagsSection = styled.div`
   }
 `;
 
-const TagsLabel = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #513a52;
-  font-weight: 500;
+const DropdownItem = styled.div`
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: ${props => props.active ? '#4A6FA5' : '#666'};
+  background-color: ${props => props.active ? '#EBF2FA' : 'white'};
+  
+  &:hover {
+    background-color: ${props => props.active ? '#D9E6F7' : '#f5f5f5'};
+  }
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+  }
 `;
 
 const TagsList = styled.div`
@@ -480,11 +679,27 @@ const TagButton = styled.button`
 const DropZone = styled.div`
   position: relative;
   flex: 1;
-  min-height: 300px;
-  border: ${props => props.dragActive ? '2px dashed #513a52' : '2px dashed transparent'};
+  border: ${props => props.dragActive ? '2px dashed #4A6FA5' : '2px dashed transparent'};
   border-radius: 12px;
-  background-color: ${props => props.dragActive ? 'rgba(81, 58, 82, 0.05)' : 'transparent'};
   transition: all 0.3s ease;
+  padding: 2rem;
+  background-color: ${props => props.dragActive ? 'rgba(74, 111, 165, 0.05)' : 'transparent'} !important;
+  background-image: none !important;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: ${props => props.dragActive ? 'radial-gradient(circle at center, rgba(74, 111, 165, 0.08) 0%, rgba(74, 111, 165, 0) 70%)' : 'none'} !important;
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 12px;
+    opacity: ${props => props.dragActive ? 1 : 0};
+    transition: opacity 0.5s ease;
+  }
 `;
 
 const DropMessage = styled.div`
@@ -497,45 +712,95 @@ const DropMessage = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.95);
   z-index: 10;
+  border-radius: 12px;
+  animation: pulse 2s infinite;
+  
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 111, 165, 0.4); }
+    70% { box-shadow: 0 0 0 20px rgba(74, 111, 165, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 111, 165, 0); }
+  }
   
   svg {
-    font-size: 3rem;
-    color: #513a52;
-    margin-bottom: 1rem;
+    font-size: 3.5rem;
+    color: #4A6FA5;
+    margin-bottom: 1.5rem;
+    animation: bounce 1.5s infinite;
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-15px); }
+      60% { transform: translateY(-7px); }
+    }
   }
   
   p {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    color: #333;
     font-weight: 500;
-    color: #513a52;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 `;
 
 const FilesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.75rem;
   margin-top: 1.5rem;
+  position: relative;
+  z-index: 1;
+  background: none !important;
+  
+  /* Add staggered animation for file cards */
+  & > div {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+    background-color: white !important;
+    background-image: none !important;
+  }
+  
+  & > div:nth-child(1) { animation-delay: 0.1s; }
+  & > div:nth-child(2) { animation-delay: 0.2s; }
+  & > div:nth-child(3) { animation-delay: 0.3s; }
+  & > div:nth-child(4) { animation-delay: 0.4s; }
+  & > div:nth-child(5) { animation-delay: 0.5s; }
+  & > div:nth-child(6) { animation-delay: 0.6s; }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 `;
 
 const NoFilesMessage = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px dashed #e0e0e0;
   grid-column: 1 / -1;
-  padding: 3rem 0;
   
   p {
+    color: #666;
     font-size: 1.1rem;
-    color: #8a8a8a;
-    text-align: center;
+    margin-bottom: 1.5rem;
   }
 `;
 

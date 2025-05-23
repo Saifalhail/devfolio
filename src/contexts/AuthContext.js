@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signInWithPhoneNumber,
   RecaptchaVerifier,
@@ -147,61 +149,52 @@ export function AuthProvider({ children }) {
         prompt: 'select_account'
       });
       
+      // First check if we have a redirect result
       try {
-        console.log('About to open Google auth popup with provider:', provider);
-        
-        // Use signInWithPopup to open Google auth in a popup window
-        const result = await signInWithPopup(auth, provider);
-        
-        // Log the entire result for debugging
-        console.log('Google auth result:', JSON.stringify(result, null, 2));
-        
-        const user = result.user;
-        console.log('Google authentication successful, user:', user.email);
-        
-        // Set the current user
-        setCurrentUser(user);
-        setLoading(false);
-        return { user };
-      } catch (popupError) {
-        console.error('Popup error details:', popupError.code, popupError.message);
-        
-        // Check for specific error conditions
-        if (popupError.code === 'auth/cancelled-popup-request' || 
-            popupError.code === 'auth/popup-closed-by-user') {
-          setError('Sign-in was cancelled. Please try again.');
-        } else if (popupError.code === 'auth/popup-blocked') {
-          setError('Pop-up was blocked by your browser. Please allow pop-ups for this site.');
-        } else if (popupError.code === 'auth/unauthorized-domain') {
-          setError(`This domain is not authorized for Google sign-in. Please use the app at https://devfolio-84079.web.app`);
-        } else {
-          setError(`Google sign-in error: ${popupError.message}`);
+        const redirectResult = await getRedirectResult(auth);
+        if (redirectResult) {
+          // User just got redirected back from the auth provider
+          console.log('Redirect result received:', redirectResult);
+          const user = redirectResult.user;
+          console.log('Google authentication successful via redirect, user:', user.email);
+          
+          // Set the current user
+          setCurrentUser(user);
+          setLoading(false);
+          return { user };
         }
-        
-        setLoading(false);
-        throw popupError;
+      } catch (redirectError) {
+        console.error('Redirect result error:', redirectError);
+        // Continue with the sign-in process even if getting redirect result failed
       }
-    } catch (err) {
-      console.error('Google sign-in error:', err);
+      
+      // If no redirect result, initiate the redirect flow
+      console.log('Starting Google sign-in redirect flow');
+      await signInWithRedirect(auth, provider);
+      
+      // The page will redirect to Google and then back to the app
+      // The function won't return here in the normal flow
+      setLoading(false);
+      return { user: null };
+      
+    } catch (error) {
+      console.error('Google sign-in error:', error);
       setLoading(false);
       
       // Handle specific error cases
-      if (err.code === 'auth/api-key-not-valid') {
+      if (error.code === 'auth/api-key-not-valid') {
         setError('Authentication configuration error. Please contact support.');
-      } else if (err.code === 'auth/popup-closed-by-user') {
+      } else if (error.code === 'auth/unauthorized-domain') {
+        setError(`This domain is not authorized for Google sign-in. Please use the app at https://devfolio-84079.web.app`);
+      } else if (error.code === 'auth/popup-closed-by-user') {
         setError('Sign-in was cancelled. Please try again.');
-      } else if (err.code === 'auth/popup-blocked') {
+      } else if (error.code === 'auth/popup-blocked') {
         setError('Pop-up was blocked by your browser. Please allow pop-ups for this site.');
       } else {
-        setError('Failed to sign in with Google: ' + err.message);
+        setError(error.message || 'Failed to sign in with Google');
       }
-      if (err.code === 'auth/unauthorized-domain') {
-        setError('This domain is not authorized for Google sign-in.');
-      } else {
-        setError(err.message || 'Failed to sign in with Google');
-      }
-
-      throw err;
+      
+      throw error;
     }
   }
 

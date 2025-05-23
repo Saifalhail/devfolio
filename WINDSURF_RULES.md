@@ -17,6 +17,10 @@ be chosen and sent.
 Do not provide Npm start or Npm run dev commands
 </important>
 
+<design>
+refer to UI_DESIGN_DOCUMENTATION.md for the design details
+</design>
+
 <tech_stack>
 - Frontend framework is React.js with styled-components for styling
 - Routing is handled by React Router

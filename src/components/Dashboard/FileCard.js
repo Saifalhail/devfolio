@@ -4,16 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { 
   FaFile, FaFileImage, FaFilePdf, FaFileWord, FaFileCode, 
   FaFileAudio, FaFileVideo, FaDownload, FaEye, FaTrash, 
-  FaHistory, FaTag, FaCheck, FaClock
+  FaHistory, FaCheck, FaClock, FaShare, FaCalendarAlt,
+  FaEllipsisV
 } from 'react-icons/fa';
+import { formatDistanceToNow } from 'date-fns';
+import { enUS, ar } from 'date-fns/locale';
 import FilePreviewModal from './FilePreviewModal';
-import Button from '../Common/Button';
 
 const FileCard = ({ file }) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
+  const [menuOpen, setMenuOpen] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [showVersions, setShowVersions] = useState(false);
   
   // Format file size
   const formatFileSize = (bytes) => {
@@ -22,414 +24,305 @@ const FileCard = ({ file }) => {
     else return (bytes / 1048576).toFixed(1) + ' MB';
   };
   
-  // Format date
+  // Format dates
   const formatDate = (date) => {
-    return date.toLocaleDateString(i18n.language, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    if (!date) return '';
+    
+    const dateObj = date.toDate ? date.toDate() : new Date(date);
+    
+    return formatDistanceToNow(dateObj, { 
+      addSuffix: true,
+      locale: isRTL ? ar : enUS
     });
   };
   
-  // Get file icon based on file type
+  // Get file icon based on type
   const getFileIcon = () => {
-    if (file.type.startsWith('image/')) return <FaFileImage />;
-    else if (file.type === 'application/pdf') return <FaFilePdf />;
-    else if (file.type.includes('word')) return <FaFileWord />;
-    else if (file.type.includes('audio')) return <FaFileAudio />;
-    else if (file.type.includes('video')) return <FaFileVideo />;
-    else if (file.type.includes('text') || file.type.includes('code')) return <FaFileCode />;
-    else return <FaFile />;
-  };
-  
-  // Get file thumbnail or preview
-  const getThumbnail = () => {
-    if (file.type.startsWith('image/')) {
-      return (
-        <ImageThumbnail>
-          <img src={file.thumbnailUrl} alt={file.name} />
-          {!file.isFinal && <Watermark>{t('files.draft', 'DRAFT')}</Watermark>}
-        </ImageThumbnail>
-      );
-    } else {
-      return (
-        <IconThumbnail>
-          {getFileIcon()}
-          {!file.isFinal && <Watermark>{t('files.draft', 'DRAFT')}</Watermark>}
-        </IconThumbnail>
-      );
+    const type = file.type.split('/')[0];
+    const extension = file.name.split('.').pop().toLowerCase();
+    
+    switch(type) {
+      case 'image':
+        return <FaFileImage />;
+      case 'application':
+        if (extension === 'pdf') return <FaFilePdf />;
+        else if (['doc', 'docx'].includes(extension)) return <FaFileWord />;
+        return <FaFile />;
+      case 'text':
+        return <FaFileCode />;
+      case 'audio':
+        return <FaFileAudio />;
+      case 'video':
+        return <FaFileVideo />;
+      default:
+        return <FaFile />;
     }
   };
   
   return (
-    <>
-      <FileCardContainer isRTL={isRTL}>
-        {/* File Preview/Thumbnail */}
-        <ThumbnailContainer onClick={() => setShowPreview(true)}>
-          {getThumbnail()}
-        </ThumbnailContainer>
+    <Card 
+      isRTL={isRTL} 
+      category={file.category}
+    >
+      <CardHeader>
+        <FileTitle>{file.name}</FileTitle>
+        <MenuButton onClick={() => setMenuOpen(!menuOpen)}>
+          <FaEllipsisV />
+        </MenuButton>
         
-        {/* File Info */}
-        <FileInfo>
-          <FileName>{file.name}</FileName>
-          <FileDetails>
-            <FileSize>{formatFileSize(file.size)}</FileSize>
-            <FileDate>
-              <FaClock />
-              <span>{formatDate(file.uploadDate)}</span>
-            </FileDate>
-          </FileDetails>
-          
-          {/* File Tags */}
+        {menuOpen && (
+          <MenuDropdown isRTL={isRTL}>
+            <MenuItem onClick={() => setShowPreview(true)}>
+              <FaEye />
+              {t('files.preview', 'Preview')}
+            </MenuItem>
+            <MenuItem>
+              <FaDownload />
+              {t('files.download', 'Download')}
+            </MenuItem>
+            <MenuItem>
+              <FaShare />
+              {t('files.share', 'Share')}
+            </MenuItem>
+            <MenuItem>
+              <FaHistory />
+              {t('files.versions', 'Version History')}
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem isDelete>
+              <FaTrash />
+              {t('files.delete', 'Delete')}
+            </MenuItem>
+          </MenuDropdown>
+        )}
+      </CardHeader>
+      
+      <FilePreview onClick={() => setShowPreview(true)}>
+        {file.type.startsWith('image/') ? (
+          <img src={file.thumbnailUrl} alt={file.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <IconWrapper>
+            {getFileIcon()}
+          </IconWrapper>
+        )}
+      </FilePreview>
+      
+      <CardFooter>
+        <FooterItem>
+          <FaCalendarAlt />
+          <span>{formatDate(file.uploadDate)}</span>
+        </FooterItem>
+        
+        <FooterItem>
+          <FaFile />
+          <span>{formatFileSize(file.size)}</span>
+        </FooterItem>
+        
+        {file.tags && file.tags.length > 0 && (
           <TagsContainer>
-            {file.tags.map((tag, index) => (
-              <Tag key={index} category={file.category}>
-                <FaTag />
-                <span>{tag}</span>
-              </Tag>
+            {file.tags.map(tag => (
+              <TagBadge key={tag}>{tag}</TagBadge>
             ))}
           </TagsContainer>
-          
-          {/* Status Indicator */}
-          <StatusIndicator isFinal={file.isFinal}>
-            {file.isFinal ? (
-              <>
-                <FaCheck />
-                <span>{t('files.status.final', 'Final')}</span>
-              </>
-            ) : (
-              <>
-                <FaClock />
-                <span>{t('files.status.draft', 'Draft')}</span>
-              </>
-            )}
-          </StatusIndicator>
-        </FileInfo>
-        
-        {/* File Actions */}
-        <FileActions>
-          <ActionIcon 
-            title={t('files.actions.preview', 'Preview')} 
-            onClick={() => setShowPreview(true)}
-            aria-label={t('files.actions.preview', 'Preview')}
-          >
-            <FaEye />
-          </ActionIcon>
-          <ActionIcon 
-            title={t('files.actions.download', 'Download')}
-            aria-label={t('files.actions.download', 'Download')}
-          >
-            <FaDownload />
-          </ActionIcon>
-          <ActionIcon 
-            title={t('files.actions.versions', 'Version History')} 
-            onClick={() => setShowVersions(!showVersions)}
-            active={showVersions}
-            aria-label={t('files.actions.versions', 'Version History')}
-          >
-            <FaHistory />
-          </ActionIcon>
-          <ActionIcon 
-            title={t('files.actions.delete', 'Delete')} 
-            danger
-            aria-label={t('files.actions.delete', 'Delete')}
-          >
-            <FaTrash />
-          </ActionIcon>
-        </FileActions>
-        
-        {/* Version History (Expandable) */}
-        {showVersions && (
-          <VersionHistory>
-            <VersionHistoryTitle>{t('files.versionHistory', 'Version History')}</VersionHistoryTitle>
-            {file.versions.map((version, index) => (
-              <VersionItem key={index} isCurrent={index === file.versions.length - 1}>
-                <VersionInfo>
-                  <VersionNumber>
-                    {t('files.version', 'Version')} {file.versions.length - index}
-                  </VersionNumber>
-                  <VersionDate>{formatDate(version.date)}</VersionDate>
-                  <VersionSize>{formatFileSize(version.size)}</VersionSize>
-                </VersionInfo>
-                <VersionActions>
-                  <ActionIcon 
-                    title={t('files.actions.download', 'Download')}
-                    aria-label={t('files.actions.download', 'Download')}
-                  >
-                    <FaDownload />
-                  </ActionIcon>
-                </VersionActions>
-              </VersionItem>
-            ))}
-          </VersionHistory>
         )}
-      </FileCardContainer>
+        
+        {file.isFinal !== undefined && (
+          <StatusBadge color={file.isFinal ? '#4CAF50' : '#FFC107'}>
+            {file.isFinal ? 
+              <><FaCheck /> {t('files.status.final', 'Final')}</> : 
+              <><FaClock /> {t('files.status.draft', 'Draft')}</>}
+          </StatusBadge>
+        )}
+      </CardFooter>
       
-      {/* File Preview Modal */}
       {showPreview && (
         <FilePreviewModal 
-          file={file} 
-          isOpen={showPreview} 
-          onClose={() => setShowPreview(false)} 
+          file={file}
+          onClose={() => setShowPreview(false)}
         />
       )}
-    </>
+    </Card>
   );
 };
 
-const FileCardContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
-  height: 100%;
-  transition: all 0.3s ease;
-  border: 1px solid #f5f5f5;
+// Styled Components
+const Card = styled.div`
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  border-left: 4px solid ${props => {
+    switch(props.category) {
+      case 'design': return '#82a1bf';
+      case 'docs': return '#27ae60';
+      case 'feedback': return '#faaa93';
+      default: return '#82a1bf';
+    }
+  }};
   
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
   }
 `;
 
-const ThumbnailContainer = styled.div`
+const CardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.8rem;
   position: relative;
-  height: 160px;
-  overflow: hidden;
+`;
+
+const FileTitle = styled.h3`
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+  line-height: 1.4;
+`;
+
+const MenuButton = styled.button`
+  background: none;
+  border: none;
+  color: #999;
   cursor: pointer;
-`;
-
-const ImageThumbnail = styled.div`
-  height: 100%;
-  width: 100%;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-
-const IconThumbnail = styled.div`
-  height: 100%;
-  width: 100%;
+  padding: 0.3rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f7f9fc;
+  border-radius: 4px;
+  
+  &:hover {
+    background: #f5f5f5;
+    color: #666;
+  }
+`;
+
+const MenuDropdown = styled.div`
+  position: absolute;
+  top: 100%;
+  ${props => props.isRTL ? 'left: 0;' : 'right: 0;'}
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  min-width: 180px;
+  overflow: hidden;
+`;
+
+const MenuItem = styled.div`
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  
+  ${props => props.isDelete && `
+    color: #f44336;
+  `}
+  
+  &:hover {
+    background: #f5f5f5;
+  }
   
   svg {
-    font-size: 3rem;
+    font-size: 0.9rem;
+  }
+`;
+
+const MenuDivider = styled.div`
+  height: 1px;
+  background: #eee;
+  margin: 0.5rem 0;
+`;
+
+const FilePreview = styled.div`
+  height: 120px;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  background-color: #f9f9f9;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  }
+`;
+
+const IconWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+  
+  svg {
+    font-size: 2.5rem;
     color: #82a1bf;
   }
 `;
 
-const Watermark = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.7);
-  color: rgba(81, 58, 82, 0.7);
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  transform: rotate(-30deg);
-  pointer-events: none;
-`;
-
-const FileInfo = styled.div`
-  padding: 1.25rem;
+const CardFooter = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  flex: 1;
+  gap: 0.5rem;
 `;
 
-const FileName = styled.h3`
-  margin: 0 0 0.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #513a52;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const FileDetails = styled.div`
+const FooterItem = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-`;
-
-const FileSize = styled.span`
+  gap: 0.5rem;
   font-size: 0.8rem;
   color: #666;
-`;
-
-const FileDate = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.8rem;
-  color: #666;
+  flex-wrap: wrap;
   
   svg {
-    font-size: 0.7rem;
+    color: #82a1bf;
+    font-size: 0.9rem;
   }
 `;
 
 const TagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
-  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
 `;
 
-const Tag = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.7rem;
+const TagBadge = styled.div`
+  background: rgba(130, 161, 191, 0.2);
+  color: #82a1bf;
   padding: 0.2rem 0.5rem;
-  border-radius: 12px;
-  background-color: ${props => {
-    switch (props.category) {
-      case 'design': return 'rgba(130, 161, 191, 0.15)';
-      case 'docs': return 'rgba(250, 170, 147, 0.15)';
-      case 'feedback': return 'rgba(81, 58, 82, 0.15)';
-      default: return 'rgba(130, 161, 191, 0.15)';
-    }
-  }};
-  color: ${props => {
-    switch (props.category) {
-      case 'design': return '#6889a8';
-      case 'docs': return '#f89883';
-      case 'feedback': return '#513a52';
-      default: return '#6889a8';
-    }
-  }};
-  
-  svg {
-    font-size: 0.6rem;
-  }
-`;
-
-const StatusIndicator = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.8rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 12px;
-  background-color: ${props => props.isFinal ? 'rgba(39, 174, 96, 0.15)' : 'rgba(242, 201, 76, 0.15)'};
-  color: ${props => props.isFinal ? '#27ae60' : '#f2c94c'};
-  
-  svg {
-    font-size: 0.7rem;
-  }
-`;
-
-const FileActions = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 1.25rem;
-  padding: 0.75rem 1.25rem;
-  font-size: 1.35rem;
-  border-top: 1px solid #f5f5f5;
-  background-color: #fafafa;
-`;
-
-const FileCardHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.25rem;
-  border-bottom: 1px solid #f5f5f5;
-  background-color: #fafafa;
-`;
-
-const VersionHistory = styled.div`
-  padding: 0.5rem 1rem;
-  background-color: #f9f9f9;
-  border-top: 1px solid #f5f5f5;
-`;
-
-const VersionHistoryTitle = styled.h4`
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #513a52;
-  margin: 0.75rem 0;
-`;
-
-const VersionItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem;
-  border-radius: 8px;
-  background-color: white;
-  margin-bottom: 0.5rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-  border: 1px solid #f5f5f5;
-`;
-
-const VersionInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-`;
-
-const VersionNumber = styled.span`
-  font-size: 0.8rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: #513a52;
-`;
-
-const VersionDate = styled.span`
-  font-size: 0.7rem;
-  color: #666;
-`;
-
-const VersionSize = styled.span`
-  font-size: 0.7rem;
-  color: #666;
-`;
-
-const VersionActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1.1rem;
-`;
-
-const ActionIcon = styled.button`
-  all: unset;
-  color: ${props => props.danger ? '#e74c3c' : '#513a52'};
-  font-size: 1.35rem;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    color: ${props => props.danger ? '#c0392b' : '#3d2c3d'};
-    transform: translateY(-1px);
-  }
-  
-  ${props => props.active && css`
-    color: #513a52;
-    font-weight: bold;
-  `}
+`;
+
+const StatusBadge = styled.div`
+  background: ${props => `${props.color}20`};
+  color: ${props => props.color};
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 `;
 
 export default FileCard;

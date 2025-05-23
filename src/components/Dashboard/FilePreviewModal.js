@@ -89,8 +89,11 @@ const FilePreviewModal = ({ file, isOpen, onClose }) => {
   return (
     <ModalOverlay onClick={onClose}>
       <ModalContent isRTL={isRTL} onClick={e => e.stopPropagation()}>
-        <ModalHeader>
-          <ModalTitle>{file.name}</ModalTitle>
+        <ModalHeader fileType={file.type}>
+          <h3>
+            <FaFileAlt />
+            {file.name}
+          </h3>
           <CloseButton onClick={onClose}>
             <FaTimes />
           </CloseButton>
@@ -206,12 +209,15 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 1rem;
+  opacity: ${props => props.isOpen ? 1 : 0};
+  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(5px);
 `;
 
 const ModalContent = styled.div`
@@ -231,22 +237,37 @@ const ModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid #eee;
-`;
-
-const ModalTitle = styled.h2`
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #513a52;
+  background-color: #fafafa;
+  
+  h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #513a52;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    
+    svg {
+      margin-right: 0.75rem;
+      color: ${props => {
+        if (props.fileType?.startsWith('image/')) return '#27ae60';
+        if (props.fileType === 'application/pdf') return '#e74c3c';
+        if (props.fileType?.includes('word')) return '#3498db';
+        if (props.fileType?.includes('audio')) return '#9b59b6';
+        if (props.fileType?.includes('video')) return '#f39c12';
+        return '#7f8c8d';
+      }};
+    }
+  }
 `;
 
 const CloseButton = styled.button`
   background: none;
   border: none;
-  color: #666;
-  font-size: 1.2rem;
+  color: #513a52;
+  font-size: 1.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -256,29 +277,55 @@ const CloseButton = styled.button`
   transition: all 0.2s ease;
   
   &:hover {
-    background-color: #f7f9fc;
-    color: #513a52;
+    color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+    transform: rotate(90deg);
+  }
+  
+  &:active {
+    transform: rotate(90deg) scale(0.9);
   }
 `;
 
 const ModalBody = styled.div`
-  display: flex;
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
   
-  @media (max-width: 768px) {
-    flex-direction: column;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
   }
 `;
 
 const PreviewContainer = styled.div`
-  flex: 2;
-  overflow: hidden;
+  flex: 1;
+  min-height: 400px;
   position: relative;
   background-color: #f7f9fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(45deg, #f7f9fc 25%, #f0f3f8 25%, #f0f3f8 50%, #f7f9fc 50%, #f7f9fc 75%, #f0f3f8 75%, #f0f3f8 100%);
+  background-size: 20px 20px;
+  animation: slideBackground 30s linear infinite;
   
-  @media (max-width: 768px) {
-    height: 300px;
+  @keyframes slideBackground {
+    from { background-position: 0 0; }
+    to { background-position: 40px 40px; }
   }
 `;
 
@@ -377,18 +424,39 @@ const Watermark = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.5);
-  color: rgba(81, 58, 82, 0.5);
+  background-color: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 3rem;
-  font-weight: 700;
-  letter-spacing: 4px;
-  transform: rotate(-30deg);
+  font-weight: bold;
+  transform: rotate(-45deg);
   pointer-events: none;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  letter-spacing: 3px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  user-select: none;
+  
+  &:before, &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.05) 10px,
+      rgba(255, 255, 255, 0.05) 20px
+    );
+    pointer-events: none;
+  }
 `;
 
 const FileDetails = styled.div`
