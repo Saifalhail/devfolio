@@ -121,7 +121,7 @@ const NewContact = () => {
         setFormSuccess(false);
       }, 5000);
     } catch (error) {
-      logFirebaseFunctionError('submitFormData', error);
+      logFirebaseFunctionError('submitFormData', error, { formData });
       
       // Extract detailed error information
       let errorMessage = t('contact.form.errorMessage') || 'There was an error submitting your form. Please try again.';
