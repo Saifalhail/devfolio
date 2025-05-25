@@ -29,7 +29,7 @@ export const getFirebaseAuthErrorMessage = (error, t) => {
  * @param {string} functionName Name of the Cloud Function.
  * @param {object} error Error object returned from Firebase.
  */
-export const logFirebaseFunctionError = (functionName, error) => {
+export const logFirebaseFunctionError = (functionName, error, context = {}) => {
   if (!error) {
     console.error(`[${functionName}] Unknown error`);
     return;
@@ -39,6 +39,9 @@ export const logFirebaseFunctionError = (functionName, error) => {
   console.error('Message:', error.message);
   if (error.code) console.error('Code:', error.code);
   if (error.details) console.error('Details:', error.details);
+  if (Object.keys(context).length > 0) {
+    console.error('Context:', context);
+  }
   if (error.stack) console.error('Stack:', error.stack);
   console.groupEnd();
 };
