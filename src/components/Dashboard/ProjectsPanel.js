@@ -6,6 +6,18 @@ import { db } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import useFirebaseListener from '../../hooks/useFirebaseListener';
+import {
+  Card,
+  DashboardTitle,
+  PanelHeader as SharedPanelHeader,
+  PanelContainer,
+  PrimaryButton,
+  SecondaryButton,
+  IconButton,
+  Badge,
+  FlexContainer,
+  EmptyState as SharedEmptyState
+} from '../../styles/dashboardStyles';
 
 const ProjectsPanel = () => {
   const { t } = useTranslation();
@@ -102,7 +114,7 @@ const ProjectsPanel = () => {
   return (
     <ProjectsPanelContainer>
       <PanelHeader>
-        <h2>{t('projects.title', 'Projects')}</h2>
+        <DashboardTitle>{t('projects.title', 'Projects')}</DashboardTitle>
         <ControlsGroup>
           <ViewToggle>
             <ToggleButton 
@@ -221,34 +233,13 @@ const ProjectsPanel = () => {
 };
 
 // Styled Components
-const ProjectsPanelContainer = styled.div`
-  background: rgba(18, 20, 44, 0.8);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+const ProjectsPanelContainer = styled(Card)`
   height: 100%;
   overflow: auto;
-  border: 1px solid rgba(205, 62, 253, 0.1);
+  padding: 1.5rem;
 `;
 
-const PanelHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-  
-  h2 {
-    color: #fff;
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  
+const PanelHeader = styled(SharedPanelHeader)`
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
@@ -350,39 +341,12 @@ const LoadingSpinner = styled.div`
   }
 `;
 
-const EmptyState = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+const EmptyState = styled(SharedEmptyState)`
   height: 300px;
-  text-align: center;
-  color: #fff;
-  
-  h3 {
-    margin-bottom: 0.5rem;
-  }
-  
-  p {
-    margin-bottom: 1.5rem;
-    color: rgba(255, 255, 255, 0.7);
-  }
 `;
 
-const AddProjectButton = styled.button`
-  background: linear-gradient(90deg, #cd3efd, #7b2cbf);
-  color: white;
-  border: none;
-  border-radius: 30px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(205, 62, 253, 0.3);
-  }
+const AddProjectButton = styled(PrimaryButton)`
+  padding: 0.7rem 1.2rem;
 `;
 
 const ProjectsContainer = styled.div`
@@ -504,19 +468,10 @@ const ProjectActions = styled.div`
   gap: 0.5rem;
 `;
 
-const ActionButton = styled.button`
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 0.75rem;
+const ActionButton = styled(SecondaryButton)`
+  background: rgba(205, 62, 253, 0.1);
+  padding: 0.4rem 0.6rem;
   font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(205, 62, 253, 0.2);
-  }
 `;
 
 export default ProjectsPanel;

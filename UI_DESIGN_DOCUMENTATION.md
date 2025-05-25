@@ -50,6 +50,30 @@ This document outlines the UI design elements, animations, and interaction patte
 
 ## Components
 
+### Dashboard Components
+
+#### Dark Theme Elements
+The dashboard implements a consistent dark theme with the following design characteristics:
+
+- **Background**: Dark purple gradient (`linear-gradient(145deg, #1a1a20, #1d1d25)`) for all containers and panels
+- **Card Elements**: Deep background gradient with subtle shadows and border highlights
+- **Text**: White text (`#fff`) for headings and important information, muted colors (`#aaa`, `#999`) for secondary information
+- **Accent Colors**: Purple gradient (`linear-gradient(90deg, #cd3efd, #7b2cbf)`) for interactive elements and highlights
+
+#### Interactive Elements
+- **Hover Effects**: Elements scale slightly and increase shadow depth on hover
+- **Progress Bars**: Animated gradient fills with smooth transitions
+- **Action Buttons**: Gradient backgrounds with hover animations and shadow effects
+
+#### Key Dashboard Components
+
+- **DashboardPanel**: Container for dashboard sections with gradient background and subtle decorative elements
+- **WelcomeSection**: Personalized greeting area with gradient background and status information
+- **FocusContainer**: Container for prioritized weekly tasks with status indicators
+- **QuickActionsContainer**: Grid of action buttons for common tasks with hover effects
+- **TaskItem**: List items with status indicators (done/pending) and appropriate visual styling
+- **ProgressBar/FocusProgressBar**: Visual indicators for completion status with gradient fills
+
 ### Buttons
 
 #### Primary Action Button (CreateButton)
@@ -159,6 +183,32 @@ The interface supports right-to-left languages with the following adaptations:
 - Styled-components is used for all styling
 - Animations leverage CSS transitions and keyframes
 - Responsive design uses media queries
+
+### Icon Implementation
+- Icons use the `react-icons/fa` library for consistent styling
+- Action icons (delete, edit, view, etc.) use the reusable `IconButton` component
+- Icons appear without backgrounds for a cleaner, modern look
+- Icon interactions include scale transforms on hover (1.15x) for subtle feedback
+- Color-coding for common actions:
+  - Primary actions: #4a6cf7 (blue)
+  - Secondary actions: #27ae60 (green)
+  - Destructive actions: #e74c3c (red)
+
+### File Card Design
+- Cards feature a modern, clean design with subtle animations
+- Hover effects include:
+  - A gradient top border that animates from 0 to 100% width
+  - Elevation change with translateY(-5px) and enhanced shadow
+  - Subtle scaling of icons and images (1.05x)
+- File previews use different visual treatments based on file type:
+  - Images: Actual thumbnail with subtle zoom on hover
+  - Documents: Color-coded icon representation with shimmer effect
+- Card footer displays essential metadata (upload date, file size)
+- Action buttons have ripple-like hover effects with color-coded backgrounds
+- Title underline animation provides visual feedback on hover
+  - Neutral actions: #666 (gray)
+- Icon buttons maintain consistent sizing (32px × 32px by default)
+- All icons include title attributes for accessibility
 - RTL support is implemented via conditional styling based on language context
 
 ## Recent UI Updates

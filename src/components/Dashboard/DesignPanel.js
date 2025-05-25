@@ -1,0 +1,807 @@
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
+import { 
+  FaFigma, 
+  FaDownload, 
+  FaPalette, 
+  FaLayerGroup, 
+  FaCode, 
+  FaHistory,
+  FaExternalLinkAlt,
+  FaLink,
+  FaImage,
+  FaEye,
+  FaThumbsUp
+} from 'react-icons/fa';
+
+const DesignPanel = () => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  const [activeTab, setActiveTab] = useState('current');
+  const [showStylePreferenceForm, setShowStylePreferenceForm] = useState(false);
+  const [designKitInfo, setDesignKitInfo] = useState(null);
+  const [selectedShowcase, setSelectedShowcase] = useState(null);
+  
+  // Mock design data
+  const mockDesignData = {
+    figmaUrl: 'https://www.figma.com/file/example123/DevFolio-Design',
+    lastUpdated: '2025-05-20',
+    designKitUrl: '/assets/design-kit.zip',
+    styleGuideUrl: 'https://www.figma.com/file/example456/DevFolio-Style-Guide',
+    revisionsUrl: 'https://www.figma.com/file/example789/DevFolio-Revisions'
+  };
+  
+  // Mock showcase examples
+  const showcaseExamples = [
+    {
+      id: 1,
+      title: 'Dark Theme Dashboard',
+      description: 'Modern dark theme with purple gradient accents and glowing elements',
+      image: 'https://via.placeholder.com/800x600/2c1e3f/ffffff?text=Dark+Theme+Dashboard',
+      likes: 24,
+      views: 128
+    },
+    {
+      id: 2,
+      title: 'Mobile App Design',
+      description: 'Responsive mobile interface with playful animations and intuitive navigation',
+      image: 'https://via.placeholder.com/800x600/513a52/ffffff?text=Mobile+App+Design',
+      likes: 18,
+      views: 97
+    },
+    {
+      id: 3,
+      title: 'Landing Page',
+      description: 'Engaging hero section with floating elements and gradient text effects',
+      image: 'https://via.placeholder.com/800x600/6e57e0/ffffff?text=Landing+Page',
+      likes: 32,
+      views: 215
+    },
+    {
+      id: 4,
+      title: 'Admin Dashboard',
+      description: 'Comprehensive admin interface with data visualization and user management',
+      image: 'https://via.placeholder.com/800x600/82a1bf/ffffff?text=Admin+Dashboard',
+      likes: 15,
+      views: 86
+    }
+  ];
+  
+  // Fetch design kit info
+  useEffect(() => {
+    fetch('/assets/design-kit-info.json')
+      .then(response => response.json())
+      .then(data => setDesignKitInfo(data))
+      .catch(error => console.error('Error fetching design kit info:', error));
+  }, []);
+  
+  const handleDownloadDesignKit = () => {
+    // In a real implementation, this would trigger a download
+    alert('Downloading Design Kit...');
+  };
+  
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+  
+  const handleStylePreferenceToggle = () => {
+    setShowStylePreferenceForm(!showStylePreferenceForm);
+  };
+  
+  const handleStylePreferenceSubmit = (e) => {
+    e.preventDefault();
+    // In a real implementation, this would submit the form data
+    alert('Style preferences submitted!');
+    setShowStylePreferenceForm(false);
+  };
+  
+  // Get the appropriate Figma embed URL based on the active tab
+  const getFigmaEmbedUrl = () => {
+    switch(activeTab) {
+      case 'current':
+        return mockDesignData.figmaUrl;
+      case 'styleguide':
+        return mockDesignData.styleGuideUrl;
+      case 'revisions':
+        return mockDesignData.revisionsUrl;
+      default:
+        return mockDesignData.figmaUrl;
+    }
+  };
+
+  return (
+    <Container>
+      <Header>
+        <Title>{t('design.designAndPrototype', 'Design')}</Title>
+        <ToolbarContainer>
+          <FigmaLinkButton href={mockDesignData.figmaUrl} target="_blank" rel="noopener noreferrer">
+            <FaExternalLinkAlt />
+            {t('design.openInFigma', 'Open in Figma')}
+          </FigmaLinkButton>
+          <DownloadButton onClick={handleDownloadDesignKit}>
+            <FaDownload />
+            {t('design.downloadKit', 'Download Design Kit')}
+          </DownloadButton>
+          <StylePreferenceButton onClick={handleStylePreferenceToggle}>
+            <FaPalette />
+            {t('design.stylePreferences', 'Style Preferences')}
+          </StylePreferenceButton>
+        </ToolbarContainer>
+      </Header>
+
+      <TabsContainer>
+        <TabButton 
+          active={activeTab === 'current'} 
+          onClick={() => handleTabChange('current')}
+        >
+          <FaFigma />
+          {t('design.currentDesign', 'Current Design')}
+        </TabButton>
+        <TabButton 
+          active={activeTab === 'styleguide'} 
+          onClick={() => handleTabChange('styleguide')}
+        >
+          <FaPalette />
+          {t('design.styleGuide', 'Style Guide')}
+        </TabButton>
+        <TabButton 
+          active={activeTab === 'revisions'} 
+          onClick={() => handleTabChange('revisions')}
+        >
+          <FaHistory />
+          {t('design.revisions', 'Revisions')}
+        </TabButton>
+        <TabButton 
+          active={activeTab === 'showcase'} 
+          onClick={() => handleTabChange('showcase')}
+        >
+          <FaImage />
+          {t('design.showcase', 'Design Showcase')}
+        </TabButton>
+      </TabsContainer>
+
+      {activeTab === 'showcase' ? (
+        <ShowcaseContainer>
+          <ShowcaseGrid>
+            {showcaseExamples.map(example => (
+              <ShowcaseCard 
+                key={example.id} 
+                onClick={() => setSelectedShowcase(example)}
+                isSelected={selectedShowcase?.id === example.id}
+              >
+                <ShowcaseImage src={example.image} alt={example.title} />
+                <ShowcaseContent>
+                  <ShowcaseTitle>{example.title}</ShowcaseTitle>
+                  <ShowcaseDescription>{example.description}</ShowcaseDescription>
+                  <ShowcaseMeta>
+                    <ShowcaseMetaItem>
+                      <FaEye />
+                      {example.views}
+                    </ShowcaseMetaItem>
+                    <ShowcaseMetaItem>
+                      <FaThumbsUp />
+                      {example.likes}
+                    </ShowcaseMetaItem>
+                  </ShowcaseMeta>
+                </ShowcaseContent>
+              </ShowcaseCard>
+            ))}
+          </ShowcaseGrid>
+          
+          {selectedShowcase && (
+            <ShowcaseDetailOverlay onClick={() => setSelectedShowcase(null)}>
+              <ShowcaseDetail onClick={e => e.stopPropagation()}>
+                <ShowcaseDetailHeader>
+                  <ShowcaseDetailTitle>{selectedShowcase.title}</ShowcaseDetailTitle>
+                  <CloseButton onClick={() => setSelectedShowcase(null)}>×</CloseButton>
+                </ShowcaseDetailHeader>
+                <ShowcaseDetailImage src={selectedShowcase.image} alt={selectedShowcase.title} />
+                <ShowcaseDetailContent>
+                  <ShowcaseDetailDescription>{selectedShowcase.description}</ShowcaseDetailDescription>
+                  <ShowcaseDetailMeta>
+                    <ShowcaseMetaItem>
+                      <FaEye />
+                      {selectedShowcase.views} {t('design.views', 'views')}
+                    </ShowcaseMetaItem>
+                    <ShowcaseMetaItem>
+                      <FaThumbsUp />
+                      {selectedShowcase.likes} {t('design.likes', 'likes')}
+                    </ShowcaseMetaItem>
+                  </ShowcaseDetailMeta>
+                </ShowcaseDetailContent>
+              </ShowcaseDetail>
+            </ShowcaseDetailOverlay>
+          )}
+        </ShowcaseContainer>
+      ) : (
+        <FigmaEmbedContainer>
+          <FigmaEmbed 
+            src={`${getFigmaEmbedUrl()}?embed=true`}
+            allowFullScreen
+          />
+        </FigmaEmbedContainer>
+      )}
+      
+      {showStylePreferenceForm && (
+        <StylePreferenceFormOverlay>
+          <StylePreferenceFormContainer>
+            <StylePreferenceFormHeader>
+              <h3>{t('design.stylePreferences', 'Style Preferences')}</h3>
+              <CloseButton onClick={handleStylePreferenceToggle}>×</CloseButton>
+            </StylePreferenceFormHeader>
+            
+            <StylePreferenceForm onSubmit={handleStylePreferenceSubmit}>
+              <FormGroup>
+                <Label>{t('design.overallStyle', 'Overall Style')}</Label>
+                <StyleOptions>
+                  <StyleOption>
+                    <input type="radio" name="style" id="modern" value="modern" defaultChecked />
+                    <StyleLabel htmlFor="modern">
+                      <StyleIcon><FaLayerGroup /></StyleIcon>
+                      {t('design.styles.modern', 'Modern')}
+                    </StyleLabel>
+                  </StyleOption>
+                  <StyleOption>
+                    <input type="radio" name="style" id="corporate" value="corporate" />
+                    <StyleLabel htmlFor="corporate">
+                      <StyleIcon><FaLink /></StyleIcon>
+                      {t('design.styles.corporate', 'Corporate')}
+                    </StyleLabel>
+                  </StyleOption>
+                  <StyleOption>
+                    <input type="radio" name="style" id="playful" value="playful" />
+                    <StyleLabel htmlFor="playful">
+                      <StyleIcon><FaPalette /></StyleIcon>
+                      {t('design.styles.playful', 'Playful')}
+                    </StyleLabel>
+                  </StyleOption>
+                  <StyleOption>
+                    <input type="radio" name="style" id="minimal" value="minimal" />
+                    <StyleLabel htmlFor="minimal">
+                      <StyleIcon><FaCode /></StyleIcon>
+                      {t('design.styles.minimal', 'Minimal')}
+                    </StyleLabel>
+                  </StyleOption>
+                </StyleOptions>
+              </FormGroup>
+              
+              <FormGroup>
+                <Label>{t('design.colorPreferences', 'Color Preferences')}</Label>
+                <ColorOptions>
+                  <ColorOption>
+                    <ColorSwatch color="#6e57e0" />
+                    <input type="radio" name="color" id="purple" value="purple" defaultChecked />
+                    <ColorLabel htmlFor="purple">{t('design.colors.purple', 'Purple')}</ColorLabel>
+                  </ColorOption>
+                  <ColorOption>
+                    <ColorSwatch color="#4a6cf7" />
+                    <input type="radio" name="color" id="blue" value="blue" />
+                    <ColorLabel htmlFor="blue">{t('design.colors.blue', 'Blue')}</ColorLabel>
+                  </ColorOption>
+                  <ColorOption>
+                    <ColorSwatch color="#27ae60" />
+                    <input type="radio" name="color" id="green" value="green" />
+                    <ColorLabel htmlFor="green">{t('design.colors.green', 'Green')}</ColorLabel>
+                  </ColorOption>
+                  <ColorOption>
+                    <ColorSwatch color="#e74c3c" />
+                    <input type="radio" name="color" id="red" value="red" />
+                    <ColorLabel htmlFor="red">{t('design.colors.red', 'Red')}</ColorLabel>
+                  </ColorOption>
+                </ColorOptions>
+              </FormGroup>
+              
+              <FormGroup>
+                <Label>{t('design.additionalNotes', 'Additional Notes')}</Label>
+                <TextArea 
+                  placeholder={t('design.additionalNotesPlaceholder', 'Any specific preferences or requirements...')}
+                  rows={4}
+                />
+              </FormGroup>
+              
+              <SubmitButton type="submit">
+                {t('design.submitPreferences', 'Submit Preferences')}
+              </SubmitButton>
+            </StylePreferenceForm>
+          </StylePreferenceFormContainer>
+        </StylePreferenceFormOverlay>
+      )}
+    </Container>
+  );
+};
+
+// Styled Components
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+`;
+
+const Header = styled.div`
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+`;
+
+const Title = styled.h2`
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+`;
+
+const ToolbarContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+`;
+
+const FigmaLinkButton = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #1e1e1e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  
+  svg {
+    font-size: 0.9rem;
+  }
+  
+  &:hover {
+    background: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const DownloadButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, #6e57e0, #9b6dff);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  
+  svg {
+    font-size: 0.9rem;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(110, 87, 224, 0.3);
+  }
+`;
+
+const StylePreferenceButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  color: #333;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  
+  svg {
+    color: #6e57e0;
+    font-size: 0.9rem;
+  }
+  
+  &:hover {
+    background: #f9f9f9;
+    border-color: #6e57e0;
+    transform: translateY(-2px);
+  }
+`;
+
+const TabsContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+`;
+
+const TabButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: ${props => props.active ? 'rgba(110, 87, 224, 0.1)' : 'transparent'};
+  color: ${props => props.active ? '#6e57e0' : '#666'};
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid ${props => props.active ? '#6e57e0' : 'transparent'};
+  
+  svg {
+    font-size: 1rem;
+  }
+  
+  &:hover {
+    background: ${props => props.active ? 'rgba(110, 87, 224, 0.1)' : 'rgba(0, 0, 0, 0.03)'};
+  }
+`;
+
+const FigmaEmbedContainer = styled.div`
+  flex: 1;
+  padding: 1rem;
+  overflow: hidden;
+  position: relative;
+  background: #f9f9f9;
+`;
+
+const FigmaEmbed = styled.iframe`
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const StylePreferenceFormOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const StylePreferenceFormContainer = styled.div`
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+`;
+
+const StylePreferenceFormHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+  }
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  
+  &:hover {
+    color: #333;
+  }
+`;
+
+const StylePreferenceForm = styled.form`
+  padding: 1.5rem;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+`;
+
+const StyleOptions = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+`;
+
+const StyleOption = styled.div`
+  position: relative;
+  
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    
+    &:checked + label {
+      background: rgba(110, 87, 224, 0.1);
+      border-color: #6e57e0;
+      color: #6e57e0;
+      
+      svg {
+        color: #6e57e0;
+      }
+    }
+  }
+`;
+
+const StyleLabel = styled.label`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #f9f9f9;
+    transform: translateY(-2px);
+  }
+`;
+
+const StyleIcon = styled.div`
+  font-size: 1.5rem;
+  color: #666;
+`;
+
+const ColorOptions = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+`;
+
+const ColorOption = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    
+    &:checked + label {
+      font-weight: 500;
+      color: #333;
+    }
+  }
+`;
+
+const ColorSwatch = styled.div`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: ${props => props.color};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const ColorLabel = styled.label`
+  cursor: pointer;
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  
+  &:focus {
+    outline: none;
+    border-color: #6e57e0;
+    box-shadow: 0 0 0 2px rgba(110, 87, 224, 0.1);
+  }
+`;
+
+const SubmitButton = styled.button`
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(90deg, #6e57e0, #9b6dff);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(110, 87, 224, 0.3);
+  }
+`;
+
+// Showcase styled components
+const ShowcaseContainer = styled.div`
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  background: #f9f9f9;
+`;
+
+const ShowcaseGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+`;
+
+const ShowcaseCard = styled.div`
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 2px solid ${props => props.isSelected ? '#6e57e0' : 'transparent'};
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+`;
+
+const ShowcaseImage = styled.img`
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid #f0f0f0;
+`;
+
+const ShowcaseContent = styled.div`
+  padding: 1rem;
+`;
+
+const ShowcaseTitle = styled.h3`
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+`;
+
+const ShowcaseDescription = styled.p`
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+`;
+
+const ShowcaseMeta = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #888;
+`;
+
+const ShowcaseMetaItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  
+  svg {
+    font-size: 0.9rem;
+  }
+`;
+
+const ShowcaseDetailOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+`;
+
+const ShowcaseDetail = styled.div`
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+`;
+
+const ShowcaseDetailHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+`;
+
+const ShowcaseDetailTitle = styled.h2`
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+`;
+
+const ShowcaseDetailImage = styled.img`
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  background: #f9f9f9;
+`;
+
+const ShowcaseDetailContent = styled.div`
+  padding: 1.5rem;
+`;
+
+const ShowcaseDetailDescription = styled.p`
+  margin: 0 0 1.5rem 0;
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+`;
+
+const ShowcaseDetailMeta = styled.div`
+  display: flex;
+  gap: 2rem;
+  font-size: 0.9rem;
+  color: #666;
+`;
+
+export default DesignPanel;

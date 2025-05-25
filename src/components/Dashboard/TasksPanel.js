@@ -10,6 +10,23 @@ import {
   FaListUl,
   FaClipboardList
 } from 'react-icons/fa';
+import {
+  KanbanBoard,
+  KanbanColumn,
+  ColumnHeader,
+  ColumnTitle,
+  TaskCount,
+  ColumnContent,
+  TaskCard,
+  TaskCardHeader,
+  TaskTitle,
+  PriorityBadge,
+  TaskDescription,
+  TaskMeta,
+  TaskMetaItem,
+  EmptyColumnMessage,
+  AddTaskButton
+} from '../../styles/dashboardStyles';
 
 // Mock tasks data
 const MOCK_TASKS = [
@@ -88,10 +105,10 @@ const TasksPanel = () => {
         </h2>
         
         <ActionButtons>
-          <AddButton>
+          <AddTaskButton>
             <FaPlus />
             {t('dashboard.tasks.actions.addTask', 'Add Task')}
-          </AddButton>
+          </AddTaskButton>
         </ActionButtons>
       </PanelHeader>
       
@@ -223,12 +240,13 @@ const TasksPanel = () => {
   );
 };
 
-// Styled Components
+// Custom styled components extending from centralized styles
 const TasksPanelContainer = styled.div`
   padding: 1.5rem;
-  background-color: #f7f9fc;
   border-radius: 10px;
   width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 `;
 
 const PanelHeader = styled.div`
@@ -241,183 +259,17 @@ const PanelHeader = styled.div`
     display: flex;
     align-items: center;
     font-size: 1.5rem;
-    color: #513a52;
     margin: 0;
+    color: #fff;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 `;
 
 const ActionButtons = styled.div`
   display: flex;
   gap: 0.8rem;
-`;
-
-const AddButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: #82a1bf;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background: #6b8cb1;
-  }
-`;
-
-const KanbanBoard = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`;
-
-const KanbanColumn = styled.div`
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 400px;
-`;
-
-const ColumnHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid #f0f0f0;
-`;
-
-const ColumnTitle = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
-  h3 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #513a52;
-  }
-  
-  svg {
-    color: #82a1bf;
-  }
-`;
-
-const TaskCount = styled.div`
-  background: #f0f0f0;
-  color: #666;
-  font-size: 0.8rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 12px;
-`;
-
-const ColumnContent = styled.div`
-  padding: 1rem;
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const TaskCard = styled.div`
-  background: white;
-  border: 1px solid #f0f0f0;
-  border-radius: 6px;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-  
-  &:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-  }
-`;
-
-const TaskCardHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.5rem;
-`;
-
-const TaskTitle = styled.h4`
-  margin: 0;
-  font-size: 1rem;
-  color: #513a52;
-  font-weight: 600;
-`;
-
-const PriorityBadge = styled.span`
-  font-size: 0.7rem;
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  font-weight: 600;
-  background-color: ${props => {
-    switch (props.priority) {
-      case 'high':
-        return 'rgba(244, 67, 54, 0.1)';
-      case 'medium':
-        return 'rgba(255, 152, 0, 0.1)';
-      case 'low':
-        return 'rgba(76, 175, 80, 0.1)';
-      default:
-        return 'rgba(0, 0, 0, 0.1)';
-    }
-  }};
-  color: ${props => {
-    switch (props.priority) {
-      case 'high':
-        return '#f44336';
-      case 'medium':
-        return '#ff9800';
-      case 'low':
-        return '#4caf50';
-      default:
-        return '#666';
-    }
-  }};
-`;
-
-const TaskDescription = styled.p`
-  margin: 0 0 0.8rem 0;
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.4;
-`;
-
-const TaskMeta = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: #888;
-`;
-
-const TaskMetaItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  
-  svg {
-    font-size: 0.8rem;
-  }
-`;
-
-const EmptyColumnMessage = styled.div`
-  text-align: center;
-  color: #888;
-  font-size: 0.9rem;
-  padding: 2rem 0;
 `;
 
 export default TasksPanel;

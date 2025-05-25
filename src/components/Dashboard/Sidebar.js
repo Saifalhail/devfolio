@@ -10,7 +10,9 @@ import {
   FaFileUpload, 
   FaFileInvoiceDollar, 
   FaHistory,
-  FaCog
+  FaCog,
+  FaPalette,
+  FaFigma
 } from 'react-icons/fa';
 
 const Sidebar = () => {
@@ -54,6 +56,11 @@ const Sidebar = () => {
       icon: <FaHistory />, 
       label: t('dashboard.sidebar.activity', 'Activity Log'), 
       path: '/dashboard/activity' 
+    },
+    { 
+      icon: <FaFigma />, 
+      label: t('dashboard.sidebar.design', 'Design'), 
+      path: '/dashboard/design' 
     },
     { 
       icon: <FaCog />, 

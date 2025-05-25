@@ -4,19 +4,23 @@ import { useTranslation } from 'react-i18next';
 import { FaUpload, FaFilter, FaSearch, FaTags, FaDownload, FaEye, FaTrash, FaHistory } from 'react-icons/fa';
 import FileCard from './FileCard';
 import Button from '../Common/Button';
+import {
+  PanelContainer,
+  PanelHeader,
+  DashboardTitle,
+  Input,
+  IconButton,
+  PrimaryButton,
+  FlexContainer,
+  Badge
+} from '../../styles/dashboardStyles';
 
 const FilesPanel = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const fileInputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [showTagsDropdown, setShowTagsDropdown] = useState(false);
-  const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(false);
-  const tagsDropdownRef = useRef(null);
-  const categoriesDropdownRef = useRef(null);
   
   // Mock data for files
   const mockFiles = [
@@ -84,18 +88,8 @@ const FilesPanel = () => {
     }
   ];
   
-  // Filter files based on category, tags, and search query
+  // Filter files based on search query only
   const filteredFiles = mockFiles.filter(file => {
-    // Filter by category
-    if (selectedCategory !== 'all' && file.category !== selectedCategory) {
-      return false;
-    }
-    
-    // Filter by tags
-    if (selectedTags.length > 0 && !selectedTags.some(tag => file.tags.includes(tag))) {
-      return false;
-    }
-    
     // Filter by search query
     if (searchQuery && !file.name.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
@@ -134,39 +128,9 @@ const FilesPanel = () => {
     }
   };
   
-  // Handle category selection
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-  };
+  // No category or tag functions needed
   
-  // Handle tag selection
-  const handleTagToggle = (tag) => {
-    if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter(t => t !== tag));
-    } else {
-      setSelectedTags([...selectedTags, tag]);
-    }
-  };
-  
-  // Get all unique tags from files
-  const allTags = [...new Set(mockFiles.flatMap(file => file.tags))];
-  
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (tagsDropdownRef.current && !tagsDropdownRef.current.contains(event.target)) {
-        setShowTagsDropdown(false);
-      }
-      if (categoriesDropdownRef.current && !categoriesDropdownRef.current.contains(event.target)) {
-        setShowCategoriesDropdown(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  // No dropdown useEffect needed anymore
 
   return (
     <FilesPanelContainer isRTL={isRTL}>
@@ -199,91 +163,9 @@ const FilesPanel = () => {
         </SearchBar>
         
         <ToolbarActions>
-          <FilterDropdown ref={categoriesDropdownRef}>
-            <FilterToggle 
-              onClick={() => setShowCategoriesDropdown(!showCategoriesDropdown)}
-              active={selectedCategory !== 'all'}
-            >
-              <FaFilter />
-              <span>
-                {selectedCategory === 'all' 
-                  ? t('files.filterBy', 'Filter') 
-                  : t(`files.categories.${selectedCategory}`, selectedCategory)}
-              </span>
-              <DropdownArrow isOpen={showCategoriesDropdown} />
-            </FilterToggle>
-            
-            {showCategoriesDropdown && (
-              <DropdownMenu>
-                <DropdownItem 
-                  active={selectedCategory === 'all'} 
-                  onClick={() => {
-                    handleCategoryChange('all');
-                    setShowCategoriesDropdown(false);
-                  }}
-                >
-                  {t('files.categories.all', 'All')}
-                </DropdownItem>
-                <DropdownItem 
-                  active={selectedCategory === 'design'} 
-                  onClick={() => {
-                    handleCategoryChange('design');
-                    setShowCategoriesDropdown(false);
-                  }}
-                >
-                  {t('files.categories.design', 'Design')}
-                </DropdownItem>
-                <DropdownItem 
-                  active={selectedCategory === 'docs'} 
-                  onClick={() => {
-                    handleCategoryChange('docs');
-                    setShowCategoriesDropdown(false);
-                  }}
-                >
-                  {t('files.categories.docs', 'Docs')}
-                </DropdownItem>
-                <DropdownItem 
-                  active={selectedCategory === 'feedback'} 
-                  onClick={() => {
-                    handleCategoryChange('feedback');
-                    setShowCategoriesDropdown(false);
-                  }}
-                >
-                  {t('files.categories.feedback', 'Feedback')}
-                </DropdownItem>
-              </DropdownMenu>
-            )}
-          </FilterDropdown>
-          
-          <TagsDropdown ref={tagsDropdownRef}>
-            <TagsToggle 
-              onClick={() => setShowTagsDropdown(!showTagsDropdown)}
-              active={selectedTags.length > 0}
-            >
-              <FaTags />
-              <span>
-                {selectedTags.length === 0 
-                  ? t('files.tags', 'Tags') 
-                  : `${selectedTags.length} ${t('files.selectedTags', 'selected')}`}
-              </span>
-              <DropdownArrow isOpen={showTagsDropdown} />
-            </TagsToggle>
-            
-            {showTagsDropdown && (
-              <TagsDropdownMenu>
-                {allTags.map(tag => (
-                  <TagItem
-                    key={tag}
-                    active={selectedTags.includes(tag)}
-                    onClick={() => handleTagToggle(tag)}
-                  >
-                    <TagCheckbox checked={selectedTags.includes(tag)} />
-                    <span>{tag}</span>
-                  </TagItem>
-                ))}
-              </TagsDropdownMenu>
-            )}
-          </TagsDropdown>
+          <UploadInfoText>
+            {t('files.uploadInfo', 'Drag and drop files anywhere to upload')}
+          </UploadInfoText>
         </ToolbarActions>
       </FilesToolbar>
       
@@ -319,10 +201,8 @@ const FilesPanel = () => {
   );
 };
 
-const FilesPanelContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+// Using the shared PanelContainer component
+const FilesPanelContainer = styled(PanelContainer)`
   background-color: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -330,10 +210,8 @@ const FilesPanelContainer = styled.div`
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
 `;
 
-const FilesPanelHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+// Using the shared PanelHeader component
+const FilesPanelHeader = styled(PanelHeader)`
   padding: 1.75rem 2rem;
   border-bottom: 1px solid #f0f0f0;
   background-color: #ffffff;
@@ -345,53 +223,36 @@ const FilesPanelHeader = styled.div`
   }
 `;
 
-const PanelTitle = styled.h2`
-  margin: 0;
+// Using the shared DashboardTitle component
+const PanelTitle = styled(DashboardTitle)`
   color: #333;
-  font-size: 1.5rem;
-  font-weight: 600;
 `;
 
-const UploadButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+// Using the shared PrimaryButton component
+const UploadButton = styled(PrimaryButton)`
   background-color: #4A6FA5;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(74, 111, 165, 0.2);
   
   svg {
-    margin-right: 0.75rem;
-    font-size: 1rem;
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
   }
   
   &:hover {
-    background-color: #3A5A8C;
-    transform: translateY(-2px);
+    background-color: #3d5d8a;
     box-shadow: 0 4px 12px rgba(74, 111, 165, 0.3);
   }
   
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(74, 111, 165, 0.3);
-  }
-  
-  ${props => props.isRTL && css`
-    flex-direction: row-reverse;
+  @media (max-width: 768px) {
+    width: 100%;
     
     svg {
       margin-right: 0;
       margin-left: 0.75rem;
     }
-  `}
+  }
 `;
+
 
 const FilesToolbar = styled.div`
   display: flex;
@@ -466,139 +327,17 @@ const ToolbarActions = styled.div`
   }
 `;
 
-const FilterDropdown = styled.div`
-  position: relative;
-  z-index: 10;
-`;
-
-const TagsDropdown = styled.div`
-  position: relative;
-  z-index: 10;
-`;
-
-const DropdownArrow = styled.span`
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 0.5rem;
-  vertical-align: middle;
-  border-top: 5px solid ${props => props.isOpen ? '#4A6FA5' : '#888'};
-  border-right: 5px solid transparent;
-  border-left: 5px solid transparent;
-  transition: transform 0.2s ease;
-  transform: ${props => props.isOpen ? 'rotate(180deg)' : 'rotate(0)'};
-`;
-
-const DropdownMenu = styled.div`
-  position: absolute;
-  top: calc(100% + 5px);
-  left: 0;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  width: 180px;
-  overflow: hidden;
-  animation: fadeIn 0.2s ease;
-  z-index: 20;
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-`;
-
-const TagsDropdownMenu = styled(DropdownMenu)`
-  width: 220px;
-  max-height: 300px;
-  overflow-y: auto;
-  
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: #ddd;
-    border-radius: 3px;
-  }
-`;
-
-const TagItem = styled.div`
+const UploadInfoText = styled.div`
+  color: #666;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: ${props => props.active ? '#4A6FA5' : '#666'};
-  background-color: ${props => props.active ? '#EBF2FA' : 'white'};
   
-  &:hover {
-    background-color: ${props => props.active ? '#D9E6F7' : '#f5f5f5'};
-  }
-  
-  &:not(:last-child) {
-    border-bottom: 1px solid #f0f0f0;
-  }
-  
-  span {
-    margin-left: 0.75rem;
-  }
-`;
-
-const TagCheckbox = styled.div`
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 1px solid ${props => props.checked ? '#4A6FA5' : '#ccc'};
-  background-color: ${props => props.checked ? '#4A6FA5' : 'white'};
-  position: relative;
-  transition: all 0.2s ease;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    display: ${props => props.checked ? 'block' : 'none'};
-    left: 5px;
-    top: 2px;
-    width: 4px;
-    height: 8px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-  }
-`;
-
-const FilterToggle = styled.button`
-  display: flex;
-  align-items: center;
-  background-color: ${props => props.active ? '#EBF2FA' : 'white'};
-  border: 1px solid ${props => props.active ? '#4A6FA5' : '#e0e0e0'};
-  color: ${props => props.active ? '#4A6FA5' : '#666'};
-  border-radius: 8px;
-  padding: 0.6rem 1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  svg {
+  &:before {
+    content: '💡';
     margin-right: 0.5rem;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
   }
-  
-  &:hover {
-    border-color: #4A6FA5;
-    color: #4A6FA5;
-  }
-`;
-
-const TagsToggle = styled(FilterToggle)`
-  background-color: ${props => props.active ? '#EBF2FA' : 'white'};
-  border: 1px solid ${props => props.active ? '#4A6FA5' : '#e0e0e0'};
-  color: ${props => props.active ? '#4A6FA5' : '#666'};
 `;
 
 const FilterButton = styled.button`

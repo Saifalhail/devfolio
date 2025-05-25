@@ -3,11 +3,51 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { FaCheck } from 'react-icons/fa';
+import {
+  DashboardTitle,
+  PanelContainer,
+  PanelHeader as SharedPanelHeader,
+  Card,
+  Grid,
+  FlexContainer,
+  IconButton,
+  PrimaryButton,
+  SecondaryButton,
+  Badge,
+  DashboardPanel,
+  CountdownContainer,
+  CountdownDate,
+  CountdownTimers,
+  CountdownItem,
+  CountdownValue,
+  CountdownLabel,
+  InteractionContainer,
+  InteractionIcon,
+  InteractionDetails,
+  InteractionTitle,
+  InteractionTime,
+  InteractionType,
+  ProgressTitle,
+  ProgressWrapper,
+  CompactProgressWrapper,
+  ProgressStats,
+  StatItem,
+  StatLabel,
+  StatValue,
+  CompactStatItem,
+  ProgressBar,
+  ProgressText,
+  TaskItem,
+  TaskStatus,
+  TaskText
+} from '../../styles/dashboardStyles';
 import { 
   FaChartLine, FaClock, FaFileUpload, FaRobot, FaArrowRight, FaTimes, FaBars,
   FaHome, FaProjectDiagram, FaFileAlt, FaClipboardList, FaFileInvoiceDollar, FaHistory, FaCog,
   FaCalendarAlt, FaLightbulb, FaClipboardCheck, FaUser, FaSignOutAlt, FaPlus,
-  FaThLarge, FaStream, FaTachometerAlt, FaColumns, FaLayerGroup, FaThList, FaCommentAlt
+  FaThLarge, FaStream, FaTachometerAlt, FaColumns, FaLayerGroup, FaThList, FaCommentAlt,
+  FaFigma
 } from 'react-icons/fa';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -19,6 +59,8 @@ import AddProjectModal from './AddProjectModal';
 import TasksPanel from './TasksPanel';
 import FilesPanel from './FilesPanel';
 import FormsPanel from './FormsPanel';
+import TimelinePanel from './TimelinePanel';
+import DesignPanel from './DesignPanel';
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth();
@@ -35,7 +77,7 @@ const Dashboard = () => {
   
   // Mock data for demonstration purposes
   const mockData = {
-    projectName: "DevFolio",
+    projectName: "Projects",
     activeProjects: 3,
     totalProjects: 5,
     progress: 68,
@@ -97,6 +139,10 @@ const Dashboard = () => {
       setActiveTab('files');
     } else if (location.pathname.includes('/dashboard/forms')) {
       setActiveTab('forms');
+    } else if (location.pathname.includes('/dashboard/activity')) {
+      setActiveTab('activity');
+    } else if (location.pathname.includes('/dashboard/design')) {
+      setActiveTab('design');
     } else {
       setActiveTab('overview');
     }
@@ -154,28 +200,161 @@ const Dashboard = () => {
       
       <NavbarArea>
         <NavbarContent>
-          {/* Mobile Toggle Button integrated in Navbar */}
-          {mobileView && (
-            <MenuIconWrapper onClick={toggleSidebar} isRTL={isRTL}>
-              {sidebarOpen ? <FaTimes /> : <FaColumns />}
-            </MenuIconWrapper>
-          )}
-          <Navbar showUserAccount={true} />
+          <MenuIconWrapper isRTL={isRTL} onClick={toggleSidebar}>
+            <FaBars />
+          </MenuIconWrapper>
+          <Navbar hideMenu={true} />
         </NavbarContent>
       </NavbarArea>
       
-      <DashboardBody isRTL={isRTL}>
-        <SidebarArea isRTL={isRTL} isOpen={sidebarOpen} isMobile={mobileView}>
-          <Sidebar />
+      <DashboardBody>
+        <SidebarArea isOpen={sidebarOpen} isMobile={mobileView} isRTL={isRTL}>
+          <Sidebar active={activeTab} onLogout={handleLogout} />
         </SidebarArea>
+        
         {mobileView && sidebarOpen && (
           <SidebarBackdrop onClick={toggleSidebar} />
         )}
         
-        {/* Main Content */}
-        <ContentArea isRTL={isRTL} isMobile={mobileView} sidebarOpen={sidebarOpen}>
+        <ContentArea sidebarOpen={sidebarOpen} isMobile={mobileView} isRTL={isRTL}>
           
           <DashboardContent>
+            
+            {/* Overview Tab */}
+            {activeTab === 'overview' && (
+              <div>
+                {/* Welcome Section */}
+                <WelcomeSection>
+                  <WelcomeLayout>
+                    <WelcomeText>
+                      <h1>{greeting}, {currentUser?.displayName || currentUser?.email}</h1>
+                      <h2>{t('dashboard.welcomeBack', 'Welcome back to your')} <span>{t('dashboard.workspace', 'workspace')}</span></h2>
+                    </WelcomeText>
+                    <ProgressInfoContainer>
+                      <CompactProgressWrapper>
+                        <CircularProgressbar
+                          value={mockData.progress}
+                          text={`${mockData.progress}%`}
+                          styles={buildStyles({
+                            textSize: '22px',
+                            pathTransitionDuration: 0.5,
+                            pathColor: '#cd3efd',
+                            textColor: '#fff',
+                            trailColor: 'rgba(255, 255, 255, 0.1)',
+                            rotation: 0.25,
+                            strokeLinecap: 'round',
+                          })}
+                        />
+                      </CompactProgressWrapper>
+                      <div>
+                        <CompactProgressTitle>{t('dashboard.activeProjects', 'Active Projects')}</CompactProgressTitle>
+                        <CompactStatItem>
+                          <StatValue>{mockData.activeProjects}</StatValue>
+                          <StatLabel>{t('dashboard.outOf', 'out of')} {mockData.totalProjects}</StatLabel>
+                        </CompactStatItem>
+                      </div>
+                    </ProgressInfoContainer>
+                  </WelcomeLayout>
+                </WelcomeSection>
+                
+                {/* Dashboard Panels */}
+                <DashboardPanels>
+                  <DashboardColumn>
+                    <DashboardPanel>
+                      <PanelHeader>
+                        <ProgressTitle>{mockData.projectName}</ProgressTitle>
+                        <FocusProgressText>
+                          <span>{mockData.activeProjects} {t('dashboard.active', 'active')}</span>
+                        </FocusProgressText>
+                      </PanelHeader>
+                      <div style={{ padding: '0 1.5rem' }}>
+                        <ProgressBar progress={mockData.progress} />
+                        <FocusProgressText>
+                          <span>{mockData.progress}% {t('dashboard.complete', 'complete')}</span>
+                        </FocusProgressText>
+                      </div>
+                      <ProjectNotes />
+                    </DashboardPanel>
+                  </DashboardColumn>
+                  
+                  <DashboardColumn>
+                    <DashboardPanel>
+                      <PanelHeader>
+                        <ProgressTitle>{t('dashboard.weeklyFocus', 'Weekly Focus')}</ProgressTitle>
+                      </PanelHeader>
+                      <FocusContainer>
+                        <FocusTitle>{mockData.weeklyFocus.title}</FocusTitle>
+                        <FocusProgress>
+                          <FocusProgressBar progress={mockData.weeklyFocus.progress} />
+                          <FocusProgressText>
+                            <span>{mockData.weeklyFocus.progress}% {t('dashboard.complete', 'complete')}</span>
+                            <span>{mockData.weeklyFocus.completed}/{mockData.weeklyFocus.tasks} {t('dashboard.tasks', 'tasks')}</span>
+                          </FocusProgressText>
+                        </FocusProgress>
+                        <FocusTasks>
+                          <TaskItem>
+                            <TaskStatus status="done">
+                              <FaCheck />
+                            </TaskStatus>
+                            <TaskText status="done">Update user authentication</TaskText>
+                          </TaskItem>
+                          <TaskItem>
+                            <TaskStatus status="done">
+                              <FaCheck />
+                            </TaskStatus>
+                            <TaskText status="done">Create password reset flow</TaskText>
+                          </TaskItem>
+                          <TaskItem>
+                            <TaskStatus status="done">
+                              <FaCheck />
+                            </TaskStatus>
+                            <TaskText status="done">Implement email verification</TaskText>
+                          </TaskItem>
+                          <TaskItem>
+                            <TaskStatus status="pending">
+                              <FaClock />
+                            </TaskStatus>
+                            <TaskText status="pending">Design 2FA interface</TaskText>
+                          </TaskItem>
+                          <TaskItem>
+                            <TaskStatus status="pending">
+                              <FaClock />
+                            </TaskStatus>
+                            <TaskText status="pending">Integrate with OAuth providers</TaskText>
+                          </TaskItem>
+                        </FocusTasks>
+                        <FocusTasksCompleted>
+                          <FaClipboardCheck /> {mockData.weeklyFocus.completed} {t('dashboard.tasksCompleted', 'Tasks Completed')}
+                        </FocusTasksCompleted>
+                      </FocusContainer>
+                    </DashboardPanel>
+                  </DashboardColumn>
+                </DashboardPanels>
+                
+                {/* Quick Actions */}
+                <QuickActionsContainer>
+                  <QuickActionTitle>{t('dashboard.quickActions', 'Quick Actions')}</QuickActionTitle>
+                  <QuickActionButtons>
+                    <QuickActionButton onClick={() => setShowAddProjectModal(true)}>
+                      <FaChartLine />
+                      <span>{t('dashboard.newProject', 'New Project')}</span>
+                    </QuickActionButton>
+                    <QuickActionButton>
+                      <FaClock />
+                      <span>{t('dashboard.logTime', 'Log Time')}</span>
+                    </QuickActionButton>
+                    <QuickActionButton>
+                      <FaFileUpload />
+                      <span>{t('dashboard.uploadFile', 'Upload File')}</span>
+                    </QuickActionButton>
+                    <QuickActionButton>
+                      <FaRobot />
+                      <span>{t('dashboard.aiAssistant', 'AI Assistant')}</span>
+                    </QuickActionButton>
+                  </QuickActionButtons>
+                </QuickActionsContainer>
+              </div>
+            )}
             
             {/* Projects Tab */}
             {activeTab === 'projects' && (
@@ -212,175 +391,19 @@ const Dashboard = () => {
               </FormsTabContainer>
             )}
             
-            {/* Overview Tab */}
-            {activeTab === 'overview' && (
-              <div className="overview-tab">
-                {/* Welcome Section with Personalized Greeting */}
-                <WelcomeSection>
-                  <WelcomeLayout>
-                    <WelcomeText>
-                      <h1>{getGreeting()}, {currentUser?.displayName?.split(' ')[0] || 'Developer'}!</h1>
-                      <h2>{mockData.projectName} <span>Dashboard</span></h2>
-                    </WelcomeText>
-                    
-                    <ProgressInfoContainer>
-                      <CompactProgressWrapper>
-                        <CircularProgressbar
-                          value={mockData.progress}
-                          text={`${mockData.progress}%`}
-                          styles={{
-                            path: { stroke: '#82a1bf' },
-                            trail: { stroke: 'rgba(130, 161, 191, 0.2)' },
-                            text: { fill: '#513a52', fontSize: '16px' }
-                          }}
-                        />
-                      </CompactProgressWrapper>
-                  
-                  <div>
-                    <CompactProgressTitle>{t('dashboard.projectProgress', 'Project Progress')}</CompactProgressTitle>
-                    <CompactStatItem>
-                      <StatLabel>{t('dashboard.activeProjects', 'Active Projects')}: </StatLabel>
-                      <StatValue>{mockData.activeProjects}/{mockData.totalProjects}</StatValue>
-                    </CompactStatItem>
-                  </div>
-                </ProgressInfoContainer>
-              </WelcomeLayout>
-            </WelcomeSection>
+            {/* Activity Log Tab */}
+            {activeTab === 'activity' && (
+              <ActivityTabContainer>
+                <TimelinePanel />
+              </ActivityTabContainer>
+            )}
             
-            {/* Main Dashboard Panels */}
-            <DashboardPanels>
-              {/* Left Column */}
-              <DashboardColumn>
-                {/* Deadline Countdown */}
-                <DashboardPanel>
-                  <PanelHeader>
-                    <FaCalendarAlt />
-                    <h3>{t('dashboard.upcomingDeadline', 'Upcoming Deadline')}</h3>
-                  </PanelHeader>
-                  <CountdownContainer>
-                    <CountdownDate>
-                      {mockData.nextDeadline.toLocaleDateString(i18n.language, {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </CountdownDate>
-                    <CountdownTimers>
-                      <CountdownItem>
-                        <CountdownValue>{timeRemaining.days}</CountdownValue>
-                        <CountdownLabel>{t('dashboard.days', 'Days')}</CountdownLabel>
-                      </CountdownItem>
-                      <CountdownItem>
-                        <CountdownValue>{timeRemaining.hours}</CountdownValue>
-                        <CountdownLabel>{t('dashboard.hours', 'Hours')}</CountdownLabel>
-                      </CountdownItem>
-                      <CountdownItem>
-                        <CountdownValue>{timeRemaining.minutes}</CountdownValue>
-                        <CountdownLabel>{t('dashboard.minutes', 'Minutes')}</CountdownLabel>
-                      </CountdownItem>
-                    </CountdownTimers>
-                  </CountdownContainer>
-                </DashboardPanel>
-                
-                {/* Last Interaction Summary */}
-                <DashboardPanel>
-                  <PanelHeader>
-                    <FaFileUpload />
-                    <h3>{t('dashboard.lastInteraction', 'Last Interaction Summary')}</h3>
-                  </PanelHeader>
-                  <InteractionContainer>
-                    <InteractionIcon type={mockData.lastInteraction.type}>
-                      <FaFileUpload />
-                    </InteractionIcon>
-                    <InteractionDetails>
-                      <InteractionTitle>{mockData.lastInteraction.name}</InteractionTitle>
-                      <InteractionTime>{mockData.lastInteraction.time}</InteractionTime>
-                      <InteractionType>{t('dashboard.fileUpload', 'File Upload')}</InteractionType>
-                    </InteractionDetails>
-                  </InteractionContainer>
-                </DashboardPanel>
-              </DashboardColumn>
-              
-              {/* Right Column */}
-              <DashboardColumn>
-                {/* This Week's Focus */}
-                <DashboardPanel>
-                  <PanelHeader>
-                    <FaLightbulb />
-                    <h3>{t('dashboard.weeklyFocus', 'This Week\'s Focus')}</h3>
-                  </PanelHeader>
-                  <FocusContainer>
-                    <FocusTitle>{mockData.weeklyFocus.title}</FocusTitle>
-                    <FocusProgress>
-                      <FocusProgressBar progress={mockData.weeklyFocus.progress} />
-                      <FocusProgressText>{mockData.weeklyFocus.progress}% Complete</FocusProgressText>
-                    </FocusProgress>
-                    <FocusTasks>
-                      <FocusTasksCompleted>
-                        <FaClipboardCheck />
-                        <span>{mockData.weeklyFocus.completed} {t('dashboard.tasksCompleted', 'of')} {mockData.weeklyFocus.tasks}</span>
-                      </FocusTasksCompleted>
-                    </FocusTasks>
-                  </FocusContainer>
-                </DashboardPanel>
-                
-                {/* Mini Bot Prompt */}
-                <DashboardPanel>
-                  <PanelHeader>
-                    <FaRobot />
-                    <h3>{t('dashboard.aiAssistant', 'AI Assistant')}</h3>
-                  </PanelHeader>
-                  <BotPromptContainer>
-                    <BotMessage>{t('dashboard.needHelp', 'Need help or clarification with your project?')}</BotMessage>
-                    <BotButton onClick={toggleChatbot}>
-                      <span>{t('dashboard.askAI', 'Ask AI Assistant')}</span>
-                      <FaArrowRight />
-                    </BotButton>
-                  </BotPromptContainer>
-                  {showChatbot && (
-                    <ChatbotContainer>
-                      <ChatbotHeader>
-                        <h4>{t('dashboard.aiAssistant', 'AI Assistant')}</h4>
-                        <CloseButton onClick={toggleChatbot}>
-                          <FaTimes />
-                        </CloseButton>
-                      </ChatbotHeader>
-                      <ChatbotContent>
-                        <BotMessageBubble>
-                          {t('dashboard.howCanIHelp', 'How can I help you with your project today?')}
-                        </BotMessageBubble>
-                        <ChatbotInput>
-                          <input type="text" placeholder={t('dashboard.typeQuestion', 'Type your question here...')} />
-                          <button>{t('dashboard.send', 'Send')}</button>
-                        </ChatbotInput>
-                      </ChatbotContent>
-                    </ChatbotContainer>
-                  )}
-                </DashboardPanel>
-              </DashboardColumn>
-            </DashboardPanels>
-            
-            {/* Quick Actions */}
-            <QuickActionsContainer>
-              <QuickActionTitle>{t('dashboard.quickActions', 'Quick Actions')}</QuickActionTitle>
-              <QuickActionButtons>
-                <QuickActionButton>
-                  <FaChartLine />
-                  <span>{t('dashboard.newProject', 'New Project')}</span>
-                </QuickActionButton>
-                <QuickActionButton>
-                  <FaClock />
-                  <span>{t('dashboard.logTime', 'Log Time')}</span>
-                </QuickActionButton>
-                <QuickActionButton>
-                  <FaFileUpload />
-                  <span>{t('dashboard.uploadFile', 'Upload File')}</span>
-                </QuickActionButton>
-              </QuickActionButtons>
-            </QuickActionsContainer>
-          </div>
-          )}  {/* End of Overview Tab */}
+            {/* Design & Prototype Tab */}
+            {activeTab === 'design' && (
+              <DesignTabContainer>
+                <DesignPanel />
+              </DesignTabContainer>
+            )}
           </DashboardContent>
         </ContentArea>
       </DashboardBody>
@@ -393,7 +416,9 @@ const DashboardPage = styled.div`
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-  background-color: #f7f9fc;
+  background-color: #12121a;
+  position: relative;
+  overflow-x: hidden;
 `;
 
 const NavbarArea = styled.div`
@@ -443,11 +468,14 @@ const SidebarArea = styled.div`
   margin: 0;
   box-sizing: border-box;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  background: linear-gradient(180deg, #1a1a22 0%, #161620 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
   
   @media (max-width: 768px) {
     top: 60px; /* Adjust for mobile navbar */
     height: calc(100vh - 60px);
-    box-shadow: ${props => props.isOpen ? '0 5px 15px rgba(0, 0, 0, 0.1)' : 'none'};
+    box-shadow: ${props => props.isOpen ? '0 5px 15px rgba(0, 0, 0, 0.3)' : 'none'};
     z-index: 1001;
   }
 `;
@@ -477,10 +505,13 @@ const ContentArea = styled.main`
   margin-right: ${props => props.isRTL && (props.sidebarOpen || !props.isMobile) ? '240px' : '0'};
   transition: all 0.3s ease;
   min-height: calc(100vh - 70px);
-  background-color: #f7f9fc;
+  background-color: #12121a;
+  background-image: radial-gradient(circle at 15% 50%, rgba(123, 44, 191, 0.05) 0%, transparent 40%),
+                    radial-gradient(circle at 85% 30%, rgba(205, 62, 253, 0.05) 0%, transparent 40%);
   overflow-x: hidden;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   text-align: ${props => props.isRTL ? 'right' : 'left'};
+  color: #fff;
   
   @media (max-width: 768px) {
     width: 100%;
@@ -490,638 +521,46 @@ const ContentArea = styled.main`
   }
 `;
 
-const MenuIconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-  margin: ${props => props.isRTL ? '0 0 0 20px' : '0 0 0 15px'};
-  padding: 8px;
-  z-index: 1200;
-  position: absolute;
-  top: 55%;
-  transform: translateY(-50%);
-  ${props => props.isRTL ? 'right: 0;' : 'left: 0;'}
-  
+const PanelHeader = styled(SharedPanelHeader)`
   svg {
-    font-size: 1.4rem;
-  }
-  
-  @media (max-width: 768px) {
-    margin: ${props => props.isRTL ? '0 15px 0 0' : '0 0 0 15px'};
-    top: 60%;
-  }
-`;
-
-/* Removed DashboardHeader as it's no longer needed */
-
-
-const DashboardContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-`;
-
-// Welcome Section Styles
-const WelcomeSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-  
-  @media (max-width: 768px) {
-    padding: 1.5rem;
-  }
-`;
-
-const WelcomeLayout = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    text-align: center;
-  }
-`;
-
-const WelcomeText = styled.div`
-  flex: 1;
-  
-  h1 {
-    font-size: 2.5rem;
-    margin: 0 0 0.5rem 0;
-    color: #c23fe7; /* Adjusted to match screenshot */
-    font-weight: 700;
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-    margin: 0;
-    font-weight: 500;
-    color: #a4a4a4; /* Lighter gray color */
-    
-    span {
-      font-weight: 600;
-      color: #faaa93;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 1.8rem;
-    }
-    
-    h2 {
-      font-size: 1.3rem;
-    }
-  }
-`;
-
-const ProgressInfoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    margin-top: 1rem;
-  }
-`;
-
-const ProgressContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.5rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  min-width: 200px;
-`;
-
-const CompactProgressTitle = styled.h3`
-  margin: 0 0 0.5rem 0;
-  color: #513a52;
-  font-size: 1rem;
-  text-align: left;
-  
-  @media (max-width: 768px) {
-    text-align: center;
-  }
-`;
-
-const ProgressTitle = styled.h3`
-  margin: 0 0 1rem 0;
-  color: #513a52;
-  font-size: 1.1rem;
-`;
-
-const CompactProgressWrapper = styled.div`
-  width: 80px;
-  height: 80px;
-  margin: 0;
-`;
-
-const ProgressWrapper = styled.div`
-  width: 120px;
-  height: 120px;
-  margin-bottom: 1rem;
-`;
-
-const ProgressStats = styled.div`
-  width: 100%;
-  margin-top: 0.5rem;
-`;
-
-const CompactStatItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0;
-  
-  @media (max-width: 768px) {
-    justify-content: center;
-  }
-`;
-
-const StatItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-`;
-
-const StatLabel = styled.span`
-  color: #666;
-  font-size: 0.9rem;
-`;
-
-const StatValue = styled.span`
-  color: #513a52;
-  font-weight: 600;
-  font-size: 1rem;
-`;
-
-// Dashboard Panels Styles
-const DashboardPanels = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const DashboardColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const DashboardPanel = styled.div`
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  position: relative;
-`;
-
-const PanelHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 1.2rem 1.5rem;
-  background: linear-gradient(to right, rgba(130, 161, 191, 0.1), rgba(255, 255, 255, 0));
-  border-bottom: 1px solid rgba(130, 161, 191, 0.1);
-  
-  h3 {
-    margin: 0;
-    color: #513a52;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-  
-  svg {
-    color: #82a1bf;
     font-size: 1.2rem;
   }
 `;
 
-// Countdown Styles
-const CountdownContainer = styled.div`
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const CountdownDate = styled.div`
-  font-size: 1.1rem;
-  color: #513a52;
-  margin-bottom: 1.5rem;
-  font-weight: 500;
-  text-align: center;
-`;
-
-const CountdownTimers = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-`;
-
-const CountdownItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 60px;
-`;
-
-const CountdownValue = styled.div`
-  font-size: 2rem;
-  font-weight: 700;
-  color: #faaa93;
-  line-height: 1;
-`;
-
-const CountdownLabel = styled.div`
-  font-size: 0.8rem;
-  color: #666;
-  margin-top: 0.3rem;
-`;
-
-// Last Interaction Styles
-const InteractionContainer = styled.div`
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
-const InteractionIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${props => {
-    switch(props.type) {
-      case 'file': return 'rgba(130, 161, 191, 0.1)';
-      case 'form': return 'rgba(250, 170, 147, 0.1)';
-      case 'milestone': return 'rgba(81, 58, 82, 0.1)';
-      default: return 'rgba(130, 161, 191, 0.1)';
-    }
-  }};
-  
-  svg {
-    color: ${props => {
-      switch(props.type) {
-        case 'file': return '#82a1bf';
-        case 'form': return '#faaa93';
-        case 'milestone': return '#513a52';
-        default: return '#82a1bf';
-      }
-    }};
-    font-size: 1.5rem;
-  }
-`;
-
-const InteractionDetails = styled.div`
-  flex: 1;
-`;
-
-const InteractionTitle = styled.div`
-  font-weight: 600;
-  color: #513a52;
-  margin-bottom: 0.3rem;
-`;
-
-const InteractionTime = styled.div`
-  font-size: 0.8rem;
-  color: #666;
-  margin-bottom: 0.3rem;
-`;
-
-const InteractionType = styled.div`
-  font-size: 0.8rem;
-  color: #82a1bf;
-  font-weight: 500;
-`;
-
-// Weekly Focus Styles
-const FocusContainer = styled.div`
-  padding: 1.5rem;
-`;
-
-const FocusTitle = styled.div`
-  font-weight: 600;
-  color: #513a52;
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
-`;
-
-const FocusProgress = styled.div`
-  margin-bottom: 1rem;
-`;
-
-const FocusProgressBar = styled.div`
-  height: 8px;
-  background: rgba(130, 161, 191, 0.2);
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-  position: relative;
-  overflow: hidden;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: ${props => props.progress}%;
-    background: linear-gradient(to right, #82a1bf, #faaa93);
-    border-radius: 4px;
-  }
-`;
-
-const FocusProgressText = styled.div`
-  font-size: 0.9rem;
-  color: #666;
+const FocusProgressText = styled(ProgressText)`
   text-align: right;
 `;
 
-const FocusTasks = styled.div`
-  margin-top: 1rem;
-`;
-
-const FocusTasksCompleted = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #513a52;
-  font-size: 0.9rem;
-  
-  svg {
-    color: #faaa93;
-  }
-`;
-
-// Chatbot Styles
-const BotPromptContainer = styled.div`
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-`;
-
-const BotMessage = styled.div`
-  text-align: center;
-  color: #513a52;
-  font-size: 1.1rem;
-  line-height: 1.5;
-`;
-
-const BotButton = styled.button`
+const MenuIconWrapper = styled.div`
+  cursor: pointer;
+  margin-right: ${props => props.isRTL ? '0' : '1rem'};
+  margin-left: ${props => props.isRTL ? '1rem' : '0'};
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.7rem;
-  background: #513a52;
-  color: white;
-  border: none;
-  border-radius: 30px;
-  padding: 0.9rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(81, 58, 82, 0.2);
-  
-  &:hover {
-    background: #3d2c3d;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(81, 58, 82, 0.3);
-  }
-  
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(81, 58, 82, 0.2);
-  }
   
   svg {
-    font-size: 1rem;
-    color: white;
+    color: #fff;
+    font-size: 1.2rem;
   }
 `;
 
-const ChatbotContainer = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  height: 300px;
-  display: flex;
-  flex-direction: column;
-`;
-
-const ChatbotHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid rgba(130, 161, 191, 0.1);
-  
-  h4 {
-    margin: 0;
-    color: #513a52;
-  }
-`;
-
-const CloseButton = styled.button`
-  background: rgba(81, 58, 82, 0.1);
-  border: none;
-  color: #513a52;
-  cursor: pointer;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.4rem;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  width: 32px;
-  height: 32px;
-  
-  &:hover {
-    background: rgba(81, 58, 82, 0.2);
-    transform: rotate(90deg);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
-`;
-
-const ChatbotContent = styled.div`
-  flex: 1;
-  padding: 1rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow-y: auto;
-`;
-
-const BotMessageBubble = styled.div`
-  background: rgba(130, 161, 191, 0.1);
-  color: #513a52;
+const DashboardContent = styled.div`
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 1rem;
-  border-radius: 12px 12px 12px 0;
-  max-width: 80%;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-`;
-
-const ChatbotInput = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
   
-  input {
-    flex: 1;
-    padding: 0.8rem 1rem;
-    border: 1px solid rgba(130, 161, 191, 0.3);
-    border-radius: 30px;
-    font-size: 0.9rem;
-    outline: none;
-    
-    &:focus {
-      border-color: #82a1bf;
-    }
-  }
-  
-  button {
-    background: #513a52;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 0.8rem 1.2rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(81, 58, 82, 0.2);
-    
-    &:hover {
-      background: #3d2c3d;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 10px rgba(81, 58, 82, 0.3);
-    }
-    
-    &:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 4px rgba(81, 58, 82, 0.2);
-    }
+  @media (max-width: 768px) {
+    padding: 0.5rem;
   }
 `;
 
-// Quick Actions Styles
-const QuickActionsContainer = styled.div`
-  margin-top: 1rem;
-  padding: 1.5rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-`;
-
-const QuickActionTitle = styled.h3`
-  margin: 0 0 1rem 0;
-  color: #513a52;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const QuickActionButtons = styled.div`
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-`;
-
-const QuickActionButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.7rem;
-  background: #513a52;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.9rem 1.4rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(81, 58, 82, 0.2);
-  
-  svg {
-    color: white;
-    font-size: 1.1rem;
-  }
-  
-  &:hover {
-    background: #3d2c3d;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(81, 58, 82, 0.3);
-  }
-  
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(81, 58, 82, 0.2);
-  }
-`;
-
-// Projects Tab Styled Components
 const ProjectsTabContainer = styled.div`
   width: 100%;
   padding: 1rem 0;
-`;
-
-const ProjectsHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  
-  h2 {
-    color: #fff;
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
 `;
 
 const AddProjectButton = styled.button`
@@ -1148,7 +587,6 @@ const AddProjectButton = styled.button`
   }
 `;
 
-// Tasks Tab Styled Components
 const TasksTabContainer = styled.div`
   width: 100%;
   padding: 1rem 0;
@@ -1181,8 +619,14 @@ const FilesTabContainer = styled.div`
 
 const FormsTabContainer = styled.div`
   width: 100%;
-  padding: 1rem 0;
+  height: 100%;
+`;
 
+const ActivityTabContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 1rem 0;
+  
   h2 {
     color: #fff;
     margin: 0 0 1.5rem 0;
@@ -1194,29 +638,466 @@ const FormsTabContainer = styled.div`
   }
 `;
 
+const DesignTabContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 1rem 0;
+  
+  h2 {
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
+
+const ProjectsHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  
+  h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
+
+const WelcomeSection = styled.div`
+  margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+`;
+
+const WelcomeLayout = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+`;
+
+const WelcomeText = styled.div`
+  flex: 1;
+  
+  h1 {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+    color: #fff;
+    font-weight: 700;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 500;
+    color: #999;
+    
+    span {
+      font-weight: 600;
+      color: #fff;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 1.8rem;
+    }
+    
+    h2 {
+      font-size: 1.3rem;
+    }
+  }
+`;
+
+const ProgressInfoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: rgba(26, 26, 32, 0.7);
+  padding: 1.2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+`;
+
+const CompactProgressTitle = styled(ProgressTitle)`
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  text-align: left;
+  
+  @media (max-width: 768px) {
+    text-align: center;
+  }
+`;
+
+const DashboardPanels = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+  }
+`;
+
+const DashboardColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
 const ComingSoonMessage = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 300px;
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.5);
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: #999;
+  text-align: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
   border: 1px dashed rgba(205, 62, 253, 0.2);
 `;
 
-// Dashboard Tabs Styled Components
-const DashboardTabs = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
+const FocusContainer = styled.div`
+  padding: 1.5rem;
+`;
+
+const FocusTitle = styled.h3`
+  font-size: 1.2rem;
+  margin: 0 0 1rem 0;
+  color: #fff;
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+  padding-left: 0.8rem;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 1rem;
+    background: linear-gradient(to bottom, #cd3efd, #7b2cbf);
+    border-radius: 3px;
+  }
   
   @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+  }
+`;
+
+const FocusProgress = styled.div`
+  margin-bottom: 1.5rem;
+  background: rgba(26, 26, 32, 0.5);
+  padding: 1.2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  @media (max-width: 768px) {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+  }
+`;
+
+const FocusProgressBar = styled(ProgressBar)`
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: ${props => props.progress}%;
+    background: linear-gradient(to right, #cd3efd, #7b2cbf);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(205, 62, 253, 0.5);
+    transition: width 0.6s ease-in-out;
+  }
+  
+  @media (max-width: 768px) {
+    height: 6px;
+    margin-bottom: 0.5rem;
+  }
+`;
+
+const FocusTasks = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: linear-gradient(145deg, #1a1a20, #1d1d25);
+  border-radius: 12px;
+  padding: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
     gap: 0.5rem;
+  }
+`;
+
+const FocusTasksCompleted = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #999;
+  font-size: 0.9rem;
+  
+  svg {
+    color: #cd3efd;
+  }
+`;
+
+const BotPromptContainer = styled.div`
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const BotMessage = styled.div`
+  text-align: center;
+  color: #fff;
+  font-size: 1.1rem;
+  line-height: 1.5;
+`;
+
+const BotButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(205, 62, 253, 0.2);
+  
+  &:hover {
+    background: linear-gradient(90deg, #7b2cbf, #cd3efd);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(205, 62, 253, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(205, 62, 253, 0.2);
+  }
+  
+  svg {
+    font-size: 1rem;
+    color: #fff;
+  }
+`;
+
+const ChatbotContainer = styled.div`
+  position: fixed;
+  bottom: 6rem;
+  right: 2rem;
+  width: 350px;
+  height: 450px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 10;
+`;
+
+const ChatbotHeader = styled.div`
+  background: #513a52;
+  color: white;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+`;
+
+const CloseButton = styled.button`
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 32px;
+  height: 32px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const ChatbotContent = styled.div`
+  flex: 1;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+`;
+
+const BotMessageBubble = styled.div`
+  background: rgba(130, 161, 191, 0.1);
+  color: #444;
+  padding: 1rem;
+  border-radius: 12px 12px 12px 0;
+  max-width: 80%;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+`;
+
+const ChatbotInput = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  
+  input {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(130, 161, 191, 0.3);
+    border-radius: 30px;
+    font-size: 0.9rem;
+    outline: none;
+    
+    &:focus {
+      border-color: #82a1bf;
+    }
+  }
+  
+  button {
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 0.8rem 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(205, 62, 253, 0.2);
+    
+    &:hover {
+      background: linear-gradient(90deg, #7b2cbf, #cd3efd);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(205, 62, 253, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(205, 62, 253, 0.2);
+    }
+  }
+`;
+
+const QuickActionsContainer = styled.div`
+  margin-top: 1rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+`;
+
+const QuickActionTitle = styled.h3`
+  margin: 0 0 1rem 0;
+  color: #fff;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  svg {
+    color: #cd3efd;
+  }
+`;
+
+const QuickActionButtons = styled.div`
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const QuickActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9rem 1.4rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  svg {
+    color: #cd3efd;
+    font-size: 1.1rem;
+  }
+  
+  &:hover {
+    background: rgba(205, 62, 253, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(205, 62, 253, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 `;
 
@@ -1224,11 +1105,11 @@ const TabButton = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: ${props => props.active ? 'rgba(205, 62, 253, 0.1)' : 'rgba(255, 255, 255, 0.03)'};
-  color: ${props => props.active ? '#cd3efd' : 'rgba(255, 255, 255, 0.7)'};
-  border: 1px solid ${props => props.active ? 'rgba(205, 62, 253, 0.3)' : 'transparent'};
+  padding: 0.8rem 1.2rem;
+  background: ${props => props.active ? 'linear-gradient(90deg, #cd3efd, #7b2cbf)' : 'rgba(255, 255, 255, 0.05)'};
+  color: ${props => props.active ? '#fff' : '#999'};
+  border: none;
   border-radius: 8px;
-  padding: 0.6rem 1.2rem;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -1240,33 +1121,8 @@ const TabButton = styled.button`
   }
   
   &:hover {
-    background: rgba(205, 62, 253, 0.05);
-    color: ${props => props.active ? '#cd3efd' : '#fff'};
-  }
-  
-  @media (max-width: 768px) {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.8rem;
-  }
-`;
-
-// User Info Styles
-const UserInfoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.8rem 1.2rem;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  min-width: 250px;
-  flex-wrap: nowrap;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-  
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 0.8rem;
-    align-items: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
+    background: ${props => props.active ? 'linear-gradient(90deg, #cd3efd, #7b2cbf)' : 'rgba(255, 255, 255, 0.1)'};
+    color: #fff;
   }
 `;
 
@@ -1277,14 +1133,26 @@ const UserInfo = styled.div`
   font-weight: 500;
   color: #513a52;
   overflow: hidden;
-  max-width: 65%;
+`;
+
+const FocusTask = styled(TaskItem)`
+  max-width: 100%;
   
   svg {
-    color: #82a1bf;
-    flex-shrink: 0;
+    font-size: 1.2rem;
+    color: #cd3efd;
+  }
+  
+  img {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
   }
   
   span {
+    margin-left: 0.5rem;
+    flex: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
