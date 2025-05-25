@@ -234,7 +234,8 @@
     "quickActions": "إجراءات سريعة",
     "newProject": "مشروع جديد",
     "logTime": "تسجيل الوقت",
-    "uploadFile": "رفع ملف"
+    "uploadFile": "رفع ملف",
+    "loading": "جاري تحميل لوحة التحكم..."
   },
   
   "files": {

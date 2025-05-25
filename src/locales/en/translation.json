@@ -234,7 +234,8 @@
     "quickActions": "Quick Actions",
     "newProject": "New Project",
     "logTime": "Log Time",
-    "uploadFile": "Upload File"
+    "uploadFile": "Upload File",
+    "loading": "Loading Dashboard..."
   },
   
   "files": {

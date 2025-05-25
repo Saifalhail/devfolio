@@ -329,12 +329,13 @@ export function AuthProvider({ children }) {
     signInWithPhone,
     verifyPhoneCode,
     error,
-    setError
+    setError,
+    loading
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

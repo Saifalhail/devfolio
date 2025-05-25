@@ -63,7 +63,7 @@ import TimelinePanel from './TimelinePanel';
 import DesignPanel from './DesignPanel';
 
 const Dashboard = () => {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation();
@@ -74,6 +74,7 @@ const Dashboard = () => {
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'projects', 'tasks'
+
   
   // Mock data for demonstration purposes
   const mockData = {
@@ -183,6 +184,15 @@ const Dashboard = () => {
       console.error('Failed to log out:', error);
     }
   };
+
+  if (loading) {
+    return (
+      <DashboardLoading>
+        <LoadingSpinner />
+        <p>{t('dashboard.loading', 'Loading Dashboard...')}</p>
+      </DashboardLoading>
+    );
+  }
 
   return (
     <DashboardPage>
@@ -1200,6 +1210,32 @@ const LogoutButton = styled.button`
   
   @media (max-width: 480px) {
     width: 100%;
+  }
+`;
+
+const DashboardLoading = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  background: #12121a;
+  color: #fff;
+`;
+
+const LoadingSpinner = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(205, 62, 253, 0.3);
+  border-top: 4px solid #cd3efd;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 `;
 
