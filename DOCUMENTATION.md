@@ -18,6 +18,7 @@ DevFolio is a responsive website built for a solo developer offering software de
   - Email/Password authentication
   - Phone number verification
 - **User Dashboard**: Personalized dashboard for authenticated users
+  - Tasks are loaded using the `useTasks` hook which syncs data from Firestore and stores a local copy in `localStorage` for offline access.
 - **SEO Optimized**: Comprehensive SEO implementation including:
   - Semantic HTML structure with proper heading hierarchy (h1-h6)
   - Descriptive alt text for all images and icons
