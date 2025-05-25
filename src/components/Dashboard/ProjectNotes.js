@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import LoadingSkeleton from '../Common/LoadingSkeleton';
 import { FaRegStickyNote, FaMicrophone, FaPaperPlane, FaStop, FaTrash } from 'react-icons/fa';
 import { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
@@ -295,10 +296,19 @@ const ProjectNotes = ({ projectId, projectName }) => {
       </NotesForm>
       
       {isLoading && notes.length === 0 ? (
-        <LoadingContainer>
-          <LoadingSpinner />
-          <p>{t('notes.loading', 'Loading notes...')}</p>
-        </LoadingContainer>
+        <NotesList aria-hidden="true">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <NoteItemSkeleton key={idx}>
+              <SkeletonHeader>
+                <LoadingSkeleton width="40%" height="0.9rem" />
+              </SkeletonHeader>
+              <SkeletonBody>
+                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.4rem' }} />
+                <LoadingSkeleton height="0.8rem" />
+              </SkeletonBody>
+            </NoteItemSkeleton>
+          ))}
+        </NotesList>
       ) : notes.length === 0 ? (
         <EmptyState>
           <p>{t('notes.empty', 'No notes yet. Add your first note above.')}</p>
@@ -488,29 +498,6 @@ const StopButton = styled.button`
   }
 `;
 
-const LoadingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  color: #fff;
-`;
-
-const LoadingSpinner = styled.div`
-  width: 30px;
-  height: 30px;
-  border: 3px solid rgba(205, 62, 253, 0.3);
-  border-top: 3px solid #cd3efd;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
 
 const EmptyState = styled.div`
   display: flex;
@@ -521,6 +508,7 @@ const EmptyState = styled.div`
   text-align: center;
   color: rgba(255, 255, 255, 0.6);
 `;
+
 
 const NotesList = styled.div`
   flex: 1;
@@ -592,6 +580,20 @@ const AudioContainer = styled.div`
     border-radius: 18px;
     background: rgba(33, 150, 243, 0.1);
   }
+`;
+
+const NoteItemSkeleton = styled(NoteItem)`
+  border-left-color: rgba(205, 62, 253, 0.1);
+`;
+
+const SkeletonHeader = styled(NoteHeader)`
+  align-items: center;
+`;
+
+const SkeletonBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 `;
 
 export default ProjectNotes;

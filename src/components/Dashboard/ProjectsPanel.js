@@ -6,6 +6,7 @@ import { db } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import useFirebaseListener from '../../hooks/useFirebaseListener';
+import LoadingSkeleton from '../Common/LoadingSkeleton';
 import {
   Card,
   DashboardTitle,
@@ -167,10 +168,21 @@ const ProjectsPanel = () => {
       </PanelHeader>
       
       {isLoading ? (
-        <LoadingContainer>
-          <LoadingSpinner />
-          <p>{t('projects.loading', 'Loading projects...')}</p>
-        </LoadingContainer>
+        <ProjectsContainer isGridView={isGridView} aria-hidden="true">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <ProjectCardSkeleton key={idx} isGridView={isGridView}>
+              <SkeletonHeader>
+                <LoadingSkeleton width="60%" height="1.2rem" />
+                <LoadingSkeleton width="30%" height="1rem" />
+              </SkeletonHeader>
+              <SkeletonBody>
+                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                <LoadingSkeleton height="0.8rem" />
+              </SkeletonBody>
+            </ProjectCardSkeleton>
+          ))}
+        </ProjectsContainer>
       ) : projects.length === 0 ? (
         <EmptyState>
           <h3>{t('projects.noProjects', 'No projects found')}</h3>
@@ -317,29 +329,8 @@ const Select = styled.select`
   }
 `;
 
-const LoadingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 300px;
-  color: #fff;
-`;
 
-const LoadingSpinner = styled.div`
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(205, 62, 253, 0.3);
-  border-top: 3px solid #cd3efd;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
+
 
 const EmptyState = styled(SharedEmptyState)`
   height: 300px;
@@ -472,6 +463,20 @@ const ActionButton = styled(SecondaryButton)`
   background: rgba(205, 62, 253, 0.1);
   padding: 0.4rem 0.6rem;
   font-size: 0.8rem;
+`;
+
+const ProjectCardSkeleton = styled(ProjectCard)`
+  pointer-events: none;
+`;
+
+const SkeletonHeader = styled(ProjectHeader)`
+  align-items: center;
+`;
+
+const SkeletonBody = styled(ProjectDetails)`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 `;
 
 export default ProjectsPanel;
