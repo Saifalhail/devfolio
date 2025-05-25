@@ -106,6 +106,8 @@ const SidebarContainer = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   border-top: none;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
   
   @media (max-width: 768px) {
     width: 100%;
@@ -127,6 +129,7 @@ const DashboardTitle = styled.div`
   border-bottom: 3px solid #8a3fe7;
   margin-bottom: 0;
   background-color: #231733; /* Darker background for the title */
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
   
   @media (max-width: 768px) {
     padding: 1rem 0.5rem;
@@ -142,6 +145,7 @@ const NavMenu = styled.div`
   padding: 0;
   margin-top: 0;
   padding-top: 0;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 768px) {
     padding: 0.5rem;
@@ -161,14 +165,17 @@ const NavItem = styled(Link)`
   text-decoration: none;
   transition: all 0.3s ease;
   flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
-  border-left: ${props => props.isActive || props.isHighlighted ? '4px solid #faaa93' : '4px solid transparent'};
+  border-${props => props.isRTL ? 'right' : 'left'}: ${props =>
+    props.isActive || props.isHighlighted
+      ? '4px solid #faaa93'
+      : '4px solid transparent'};
   position: relative;
   margin-top: ${props => props.isHighlighted ? '0' : '0'};
   
   &:hover {
     background: #3a2952;
     color: white;
-    border-left: 4px solid #faaa93;
+    border-${props => props.isRTL ? 'right' : 'left'}: 4px solid #faaa93;
   }
   
   span {
@@ -188,14 +195,14 @@ const NavItem = styled(Link)`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-left: none;
+    border-${props => props.isRTL ? 'right' : 'left'}: none;
     border-radius: 8px;
     border-bottom: ${props => props.isActive || props.isHighlighted ? '3px solid #faaa93' : '3px solid transparent'};
     margin: 0.2rem;
     min-width: 80px;
     
     &:hover {
-      border-left: none;
+      border-${props => props.isRTL ? 'right' : 'left'}: none;
       border-bottom: 3px solid #faaa93;
     }
   }
