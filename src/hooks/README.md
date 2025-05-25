@@ -48,3 +48,24 @@ The hook uses `useEffect` and `useRef` internally to track the unsubscribe funct
 ### Testing
 
 When testing components that use Firebase listeners, you can use the mock Firebase implementation in `src/__mocks__/firebase.js` along with this hook to ensure proper testing in offline environments.
+
+## useTasks
+
+The `useTasks` hook provides persistent task loading for the dashboard. It reads tasks from Firestore when available and falls back to `localStorage` for offline usage. The hook automatically keeps `localStorage` in sync with updates from Firestore.
+
+### Usage
+
+```javascript
+import useTasks from '../hooks/useTasks';
+
+function TasksPanel() {
+  const tasks = useTasks();
+
+  // Render tasks
+}
+```
+
+### Benefits
+
+1. **Data Persistence**: Tasks remain available offline via `localStorage`.
+2. **Realtime Updates**: When connected to Firestore, task changes update automatically.
