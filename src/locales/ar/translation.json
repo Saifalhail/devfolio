@@ -234,7 +234,19 @@
     "quickActions": "إجراءات سريعة",
     "newProject": "مشروع جديد",
     "logTime": "تسجيل الوقت",
-    "uploadFile": "رفع ملف"
+    "uploadFile": "رفع ملف",
+    "tasks": {
+      "title": "المهام والإنجازات",
+      "actions": {
+        "addTask": "إضافة مهمة"
+      },
+      "todo": "قائمة المهام",
+      "emptyTodo": "لا توجد مهام حالية",
+      "doing": "جاري العمل",
+      "emptyDoing": "لا توجد مهام قيد التنفيذ",
+      "done": "منجز",
+      "emptyDone": "لا توجد مهام منجزة"
+    }
   },
   
   "files": {
