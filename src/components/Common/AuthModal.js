@@ -536,6 +536,10 @@ const ModalOverlay = styled.div`
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   overflow-y: auto;
   padding: 1rem 0;
+
+  @media (max-width: 480px) {
+    align-items: flex-start;
+  }
 `;
 
 const ModalContainer = styled.div`
@@ -557,12 +561,14 @@ const ModalContainer = styled.div`
     margin: 0 0.5rem;
     padding: 1.5rem 1rem;
     max-height: 85vh; /* Slightly smaller on mobile to ensure it doesn't overflow */
+    margin-top: 1rem;
   }
 
   @media (max-width: 360px) {
     padding: 1.2rem 0.8rem;
     width: 100%;
     margin: 0 0.3rem;
+    margin-top: 0.5rem;
   }
   
   @keyframes slideIn {
