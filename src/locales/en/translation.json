@@ -193,7 +193,11 @@
     "errorInvalidEmail": "Please enter a valid email address",
     "errorWeakPassword": "Password must contain letters and numbers"
   },
-  
+
+  "firebase": {
+    "generalError": "There was an unexpected error. Please try again."
+  },
+
   "dashboard": {
     "welcome": "Welcome to your Dashboard",
     "logout": "Logout",

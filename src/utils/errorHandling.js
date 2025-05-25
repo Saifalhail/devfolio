@@ -1,28 +1,44 @@
-export const getFirebaseAuthErrorMessage = (error, t) => {
-  if (!error) return t('auth.errorGoogle', 'Authentication failed. Please try again.');
+const authErrorMap = {
+  'auth/popup-blocked': 'auth.errorGooglePopupBlocked',
+  'auth/cancelled-popup-request': 'auth.errorGoogleCancelled',
+  'auth/popup-closed-by-user': 'auth.errorGoogleCancelled',
+  'auth/unauthorized-domain': 'auth.errorUnauthorizedDomain',
+  'auth/network-request-failed': 'auth.errorNetwork',
+  'auth/user-disabled': 'auth.errorUserDisabled',
+  'auth/account-exists-with-different-credential': 'auth.errorAccountExists',
+  'auth/email-already-in-use': 'auth.errorAccountExists',
+  'auth/invalid-verification-code': 'auth.errorInvalidCode',
+  'auth/code-expired': 'auth.errorCodeExpired',
+  'auth/invalid-email': 'auth.errorInvalidEmail',
+  'auth/weak-password': 'auth.errorWeakPassword',
+};
 
-  const code = error.code;
-  const errorMap = {
-    'auth/popup-blocked': 'auth.errorGooglePopupBlocked',
-    'auth/cancelled-popup-request': 'auth.errorGoogleCancelled',
-    'auth/popup-closed-by-user': 'auth.errorGoogleCancelled',
-    'auth/unauthorized-domain': 'auth.errorUnauthorizedDomain',
-    'auth/network-request-failed': 'auth.errorNetwork',
-    'auth/user-disabled': 'auth.errorUserDisabled',
-    'auth/account-exists-with-different-credential': 'auth.errorAccountExists',
-    'auth/email-already-in-use': 'auth.errorAccountExists',
-    'auth/invalid-verification-code': 'auth.errorInvalidCode',
-    'auth/code-expired': 'auth.errorCodeExpired',
-    'auth/invalid-email': 'auth.errorInvalidEmail',
-    'auth/weak-password': 'auth.errorWeakPassword',
-  };
+const functionErrorMap = {
+  'functions/invalid-argument': 'contact.form.errorMessage',
+  'functions/failed-precondition': 'contact.form.errorMessage',
+  'functions/permission-denied': 'contact.form.errorMessage',
+  'functions/unavailable': 'contact.form.errorMessage',
+};
 
-  if (code && errorMap[code]) {
-    return t(errorMap[code]);
+const getFirebaseErrorMessage = (error, t, fallbackKey = 'firebase.generalError') => {
+  if (!error) return t(fallbackKey, 'An unexpected error occurred. Please try again.');
+
+  const { code } = error;
+  if (code && authErrorMap[code]) {
+    return t(authErrorMap[code]);
+  }
+  if (code && functionErrorMap[code]) {
+    return t(functionErrorMap[code]);
   }
 
-  return error.message || t('auth.errorGoogle', 'Authentication failed. Please try again.');
+  return error.message || t(fallbackKey, 'An unexpected error occurred. Please try again.');
 };
+
+export const getFirebaseAuthErrorMessage = (error, t) =>
+  getFirebaseErrorMessage(error, t, 'auth.errorGoogle');
+
+export const getFirebaseFunctionErrorMessage = (error, t) =>
+  getFirebaseErrorMessage(error, t, 'contact.form.errorMessage');
 
 /**
  * Log detailed information for Firebase function errors.
