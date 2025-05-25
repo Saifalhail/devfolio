@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { httpsCallable } from 'firebase/functions';
@@ -20,6 +20,22 @@ const NewContact = () => {
   const [formSuccess, setFormSuccess] = useState(false);
   const [formError, setFormError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
+
+  // Refs for keyboard navigation
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
+  const projectTypeRef = useRef(null);
+  const messageRef = useRef(null);
+  const submitRef = useRef(null);
+
+  const handleKeyDown = (e, nextRef) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (nextRef && nextRef.current) {
+        nextRef.current.focus();
+      }
+    }
+  };
   
   // Project type options
   const projectTypes = [
@@ -208,14 +224,16 @@ const NewContact = () => {
               
               <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="name" isRTL={isRTL}>{t('contact.form.name')}</FormLabel>
-                <FormInput 
-                  type="text" 
-                  id="name" 
-                  name="name" 
+                <FormInput
+                  type="text"
+                  id="name"
+                  name="name"
                   value={formData.name}
                   onChange={handleChange}
                   onFocus={() => handleFocus('name')}
                   onBlur={() => handleBlur('name')}
+                  onKeyDown={(e) => handleKeyDown(e, emailRef)}
+                  ref={nameRef}
                   required
                   isRTL={isRTL}
                 />
@@ -226,14 +244,16 @@ const NewContact = () => {
               
               <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="email" isRTL={isRTL}>{t('contact.form.email')}</FormLabel>
-                <FormInput 
-                  type="email" 
-                  id="email" 
-                  name="email" 
+                <FormInput
+                  type="email"
+                  id="email"
+                  name="email"
                   value={formData.email}
                   onChange={handleChange}
                   onFocus={() => handleFocus('email')}
                   onBlur={() => handleBlur('email')}
+                  onKeyDown={(e) => handleKeyDown(e, projectTypeRef)}
+                  ref={emailRef}
                   required
                   isRTL={isRTL}
                 />
@@ -252,6 +272,8 @@ const NewContact = () => {
                   onChange={handleChange}
                   onFocus={() => handleFocus('projectType')}
                   onBlur={() => handleBlur('projectType')}
+                  onKeyDown={(e) => handleKeyDown(e, messageRef)}
+                  ref={projectTypeRef}
                   isRTL={isRTL}
                 >
                   <option value="">{isRTL ? 'اختر نوع المشروع' : 'Select project type'}</option>
@@ -265,14 +287,16 @@ const NewContact = () => {
               
               <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="message" isRTL={isRTL}>{t('contact.form.message')}</FormLabel>
-                <FormTextarea 
-                  id="message" 
-                  name="message" 
+                <FormTextarea
+                  id="message"
+                  name="message"
                   rows="5"
                   value={formData.message}
                   onChange={handleChange}
                   onFocus={() => handleFocus('message')}
                   onBlur={() => handleBlur('message')}
+                  onKeyDown={(e) => handleKeyDown(e, submitRef)}
+                  ref={messageRef}
                   required
                   isRTL={isRTL}
                 />
@@ -296,7 +320,12 @@ const NewContact = () => {
               )}
               
               <SubmitButtonWrapper>
-                <SubmitButton type="submit" disabled={isSubmitting} isRTL={isRTL}>
+                <SubmitButton
+                  type="submit"
+                  disabled={isSubmitting}
+                  isRTL={isRTL}
+                  ref={submitRef}
+                >
                   {isSubmitting ? (
                     <>
                       <ButtonSpinner isRTL={isRTL} />
