@@ -525,7 +525,9 @@ const InfoContent = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
+  text-align: ${props => (props.isRTL ? 'right' : 'left')};
+
   @media (max-width: 576px) {
     padding: 1.5rem;
   }
@@ -538,6 +540,8 @@ const InfoHeading = styled.h4`
   background: linear-gradient(90deg, #cd3efd, #82a1bf);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
+  text-align: ${props => (props.isRTL ? 'right' : 'left')};
 `;
 
 const InfoText = styled.p`
@@ -545,6 +549,8 @@ const InfoText = styled.p`
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
+  text-align: ${props => (props.isRTL ? 'right' : 'left')};
 `;
 
 const ContactMethods = styled.div`
@@ -918,6 +924,7 @@ const MessageBase = styled.div`
   align-items: center;
   animation: ${pulse} 2s ease-in-out;
   text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
 `;
 
 const SuccessMessage = styled(MessageBase)`
@@ -962,6 +969,7 @@ const FieldError = styled.span`
   margin-top: 0.25rem;
   display: block;
   text-align: ${props => (props.isRTL ? 'right' : 'left')};
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
 `;
 
 // Shape divider for the top of the section
