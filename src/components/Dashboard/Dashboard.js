@@ -1042,6 +1042,11 @@ const BotMessageBubble = styled.div`
   max-width: 80%;
   margin-bottom: 1rem;
   line-height: 1.5;
+
+  @media (max-width: 480px) {
+    max-width: 90%;
+    padding: 0.8rem;
+  }
 `;
 
 const ChatbotInput = styled.div`
