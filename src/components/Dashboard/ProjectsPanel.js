@@ -1,6 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { FaThLarge, FaList, FaFilter, FaSort, FaClock, FaCheck, FaPencilAlt, FaSmile, FaMeh, FaFrown, FaPlus } from 'react-icons/fa';
+import { 
+  FaThLarge, 
+  FaList, 
+  FaFilter, 
+  FaSort, 
+  FaClock, 
+  FaCheck, 
+  FaPencilAlt, 
+  FaSmile, 
+  FaMeh, 
+  FaFrown, 
+  FaPlus,
+  FaSearch,
+  FaMagic,
+  FaEllipsisV
+} from 'react-icons/fa';
 import { collection, query, where, orderBy, onSnapshot, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9,7 +24,7 @@ import useFirebaseListener from '../../hooks/useFirebaseListener';
 import LoadingSkeleton from '../Common/LoadingSkeleton';
 import Modal from '../Common/Modal';
 import ProjectForm from './ProjectForm';
-import { fadeIn, slideUp } from '../../styles/animations';
+import { fadeIn, slideUp, pulse, slideInRight, slideInLeft } from '../../styles/animations';
 import {
   PanelContainer,
   PanelHeader,
@@ -17,21 +32,38 @@ import {
   ActionButton,
   EmptyState,
   Card,
-  FilterButton
+  FilterButton,
+  SearchInput,
+  Badge,
+  IconButton
 } from '../../styles/GlobalComponents';
-import { colors, spacing, borderRadius, shadows, mixins, transitions, typography } from '../../styles/GlobalTheme';
+import { 
+  colors, 
+  spacing, 
+  borderRadius, 
+  shadows, 
+  mixins, 
+  transitions, 
+  typography,
+  breakpoints 
+} from '../../styles/GlobalTheme';
 
 const ProjectsPanel = () => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
   const [projects, setProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
   const [isGridView, setIsGridView] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortBy, setSortBy] = useState('deadline');
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [activePage, setActivePage] = useState(1);
+  const [itemsPerPage] = useState(9);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Fetch projects from Firestore
   useFirebaseListener(() => {
@@ -56,11 +88,7 @@ const ProjectsPanel = () => {
         id: doc.id,
         ...doc.data()
       }));
-
-      if (filterStatus !== 'all') {
-        projectsList = projectsList.filter(project => project.status === filterStatus);
-      }
-
+      
       setProjects(projectsList);
       setIsLoading(false);
     }, (error) => {
@@ -69,7 +97,37 @@ const ProjectsPanel = () => {
     });
 
     return unsubscribe;
-  }, [currentUser, filterStatus, sortBy]);
+  }, [currentUser, sortBy]);
+  
+  // Filter and search projects
+  useEffect(() => {
+    let result = [...projects];
+    
+    // Apply status filter
+    if (filterStatus !== 'all') {
+      result = result.filter(project => project.status === filterStatus);
+    }
+    
+    // Apply search filter
+    if (searchTerm.trim() !== '') {
+      const searchLower = searchTerm.toLowerCase();
+      result = result.filter(project => 
+        project.name?.toLowerCase().includes(searchLower) ||
+        project.client?.toLowerCase().includes(searchLower) ||
+        project.description?.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    setFilteredProjects(result);
+    
+    // Calculate total pages
+    setTotalPages(Math.max(1, Math.ceil(result.length / itemsPerPage)));
+    
+    // Reset to first page when filters change
+    if (activePage > 1) {
+      setActivePage(1);
+    }
+  }, [projects, filterStatus, searchTerm, itemsPerPage]);
 
   // Get emoji for status
   const getStatusEmoji = (status) => {
@@ -116,6 +174,18 @@ const ProjectsPanel = () => {
     setSortBy(e.target.value);
   };
   
+  // Get current page items
+  const getCurrentPageItems = () => {
+    const indexOfLastItem = activePage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return filteredProjects.slice(indexOfFirstItem, indexOfLastItem);
+  };
+
+  // Pagination handlers
+  const handlePageChange = (pageNumber) => {
+    setActivePage(pageNumber);
+  };
+
   // Open modal
   const openAddProjectModal = () => {
     setIsModalOpen(true);
@@ -125,6 +195,11 @@ const ProjectsPanel = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setError(null);
+  };
+  
+  // Handle search input
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
   
   // Handle form submission
@@ -154,10 +229,10 @@ const ProjectsPanel = () => {
       <PanelHeader>
         <PanelTitle>{t('projects.title', 'Projects')}</PanelTitle>
         <ControlsGroup>
-          <ActionButton onClick={openAddProjectModal}>
+          <AddProjectButton onClick={openAddProjectModal}>
             <FaPlus />
             {t('projects.addProject', 'Add Project')}
-          </ActionButton>
+          </AddProjectButton>
           <ViewToggle>
             <ToggleButton 
               active={isGridView} 
@@ -313,13 +388,19 @@ const ProjectsPanel = () => {
 };
 
 // Styled Components
+const AddProjectButton = styled(ActionButton)`
+  ${mixins.rtlMargin('0', spacing.md, '0', 0)};
+  box-shadow: ${shadows.md};
+`;
+
 const ControlsGroup = styled.div`
   ${mixins.flexBetween}
   flex-wrap: wrap;
   gap: ${spacing.md};
-  
+
   @media (max-width: 768px) {
     justify-content: flex-start;
+    align-items: flex-start;
     width: 100%;
     margin-top: ${spacing.md};
   }
@@ -386,6 +467,8 @@ const FilterIcon = styled.div`
   ${mixins.flexCenter}
   position: absolute;
   ${props => props.isRTL ? css`right: ${spacing.sm};` : css`left: ${spacing.sm};`}
+  top: 50%;
+  transform: translateY(-50%);
   color: ${colors.accent.primary};
   background-color: rgba(123, 44, 191, 0.1);
   border-radius: ${borderRadius.round};
