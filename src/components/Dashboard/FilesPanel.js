@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FaUpload, FaFilter, FaSearch, FaTags, FaDownload, FaEye, FaTrash, FaHistory } from 'react-icons/fa';
 import FileCard from './FileCard';
 import Button from '../Common/Button';
+import SkeletonLoader from '../Common/SkeletonLoader';
 import {
   Card,
   PanelContainer,
@@ -24,6 +25,12 @@ const FilesPanel = () => {
   const fileInputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
   
   // Mock data for files
   const mockFiles = [
@@ -189,7 +196,17 @@ const FilesPanel = () => {
         
         {/* Files Grid */}
         <FilesGrid>
-          {filteredFiles.length > 0 ? (
+          {isLoading ? (
+            Array.from({ length: 4 }).map((_, idx) => (
+              <FileSkeleton key={idx}>
+                <SkeletonLoader height="140px" />
+                <SkeletonInfo>
+                  <SkeletonLoader width="70%" height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                  <SkeletonLoader width="40%" height="0.8rem" />
+                </SkeletonInfo>
+              </FileSkeleton>
+            ))
+          ) : filteredFiles.length > 0 ? (
             filteredFiles.map(file => (
               <FileCard key={file.id} file={file} />
             ))
@@ -546,6 +563,18 @@ const NoFilesMessage = styled.div`
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
   }
+`;
+
+const FileSkeleton = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const SkeletonInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 `;
 
 export default FilesPanel;

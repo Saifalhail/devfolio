@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
@@ -189,6 +189,43 @@ const Dashboard = () => {
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
   };
+
+  const touchStartX = useRef(null);
+  const touchCurrentX = useRef(null);
+
+  const handlePageTouchStart = (e) => {
+    if (e.touches.length !== 1) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchCurrentX.current = e.touches[0].clientX;
+  };
+
+  const handlePageTouchMove = (e) => {
+    if (touchStartX.current === null) return;
+    touchCurrentX.current = e.touches[0].clientX;
+  };
+
+  const handlePageTouchEnd = () => {
+    if (touchStartX.current === null) return;
+    const diff = touchCurrentX.current - touchStartX.current;
+    const threshold = 50;
+
+    if (!sidebarOpen) {
+      if (!isRTL && touchStartX.current < 30 && diff > threshold) {
+        setSidebarOpen(true);
+      } else if (isRTL && touchStartX.current > window.innerWidth - 30 && diff < -threshold) {
+        setSidebarOpen(true);
+      }
+    } else {
+      if (!isRTL && diff < -threshold) {
+        setSidebarOpen(false);
+      } else if (isRTL && diff > threshold) {
+        setSidebarOpen(false);
+      }
+    }
+
+    touchStartX.current = null;
+    touchCurrentX.current = null;
+  };
   
   const handleLogout = async () => {
     try {
@@ -209,7 +246,11 @@ const Dashboard = () => {
   }
 
   return (
-    <DashboardPage>
+    <DashboardPage
+      onTouchStart={handlePageTouchStart}
+      onTouchMove={handlePageTouchMove}
+      onTouchEnd={handlePageTouchEnd}
+    >
       {/* Add Project Modal */}
       {showAddProjectModal && (
         <AddProjectModal 
@@ -238,6 +279,7 @@ const Dashboard = () => {
             onLogout={handleLogout}
             collapsed={sidebarCollapsed}
             onToggleCollapse={toggleSidebarCollapse}
+            onClose={() => setSidebarOpen(false)}
           />
         </SidebarArea>
         

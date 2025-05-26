@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -21,10 +21,17 @@ import {
 } from '../../styles/GlobalComponents';
 import { colors, spacing, borderRadius, shadows, mixins, transitions, typography } from '../../styles/GlobalTheme';
 import useTasks from '../../hooks/useTasks';
+import SkeletonLoader from '../Common/SkeletonLoader';
 
 const TasksPanel = () => {
   const { t } = useTranslation();
   const tasks = useTasks();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const parseDate = (d) => {
     if (!d) return null;
@@ -65,7 +72,18 @@ const TasksPanel = () => {
           </ColumnHeader>
           
           <ColumnContent>
-            {todoTasks.map(task => (
+            {isLoading ? (
+              Array.from({ length: 2 }).map((_, idx) => (
+                <TaskCard key={idx}>
+                  <TaskCardHeader>
+                    <SkeletonLoader width="60%" height="0.9rem" />
+                    <SkeletonLoader width="30%" height="0.8rem" />
+                  </TaskCardHeader>
+                  <SkeletonLoader height="0.8rem" style={{ marginBottom: '0.3rem' }} />
+                  <SkeletonLoader height="0.8rem" />
+                </TaskCard>
+              ))
+            ) : todoTasks.map(task => (
               <TaskCard key={task.id}>
                 <TaskCardHeader>
                   <TaskTitle>{task.title}</TaskTitle>
@@ -86,8 +104,8 @@ const TasksPanel = () => {
                 </TaskMeta>
               </TaskCard>
             ))}
-            
-            {todoTasks.length === 0 && (
+
+            {!isLoading && todoTasks.length === 0 && (
               <EmptyColumnState>
                 {t('dashboard.tasks.emptyTodo', 'No tasks to do')}
               </EmptyColumnState>
@@ -106,7 +124,18 @@ const TasksPanel = () => {
           </ColumnHeader>
           
           <ColumnContent>
-            {doingTasks.map(task => (
+            {isLoading ? (
+              Array.from({ length: 2 }).map((_, idx) => (
+                <TaskCard key={idx}>
+                  <TaskCardHeader>
+                    <SkeletonLoader width="60%" height="0.9rem" />
+                    <SkeletonLoader width="30%" height="0.8rem" />
+                  </TaskCardHeader>
+                  <SkeletonLoader height="0.8rem" style={{ marginBottom: '0.3rem' }} />
+                  <SkeletonLoader height="0.8rem" />
+                </TaskCard>
+              ))
+            ) : doingTasks.map(task => (
               <TaskCard key={task.id}>
                 <TaskCardHeader>
                   <TaskTitle>{task.title}</TaskTitle>
@@ -127,8 +156,8 @@ const TasksPanel = () => {
                 </TaskMeta>
               </TaskCard>
             ))}
-            
-            {doingTasks.length === 0 && (
+
+            {!isLoading && doingTasks.length === 0 && (
               <EmptyColumnState>
                 {t('dashboard.tasks.emptyDoing', 'No tasks in progress')}
               </EmptyColumnState>
@@ -147,7 +176,18 @@ const TasksPanel = () => {
           </ColumnHeader>
           
           <ColumnContent>
-            {doneTasks.map(task => (
+            {isLoading ? (
+              Array.from({ length: 2 }).map((_, idx) => (
+                <TaskCard key={idx}>
+                  <TaskCardHeader>
+                    <SkeletonLoader width="60%" height="0.9rem" />
+                    <SkeletonLoader width="30%" height="0.8rem" />
+                  </TaskCardHeader>
+                  <SkeletonLoader height="0.8rem" style={{ marginBottom: '0.3rem' }} />
+                  <SkeletonLoader height="0.8rem" />
+                </TaskCard>
+              ))
+            ) : doneTasks.map(task => (
               <TaskCard key={task.id}>
                 <TaskCardHeader>
                   <TaskTitle>{task.title}</TaskTitle>
@@ -168,8 +208,8 @@ const TasksPanel = () => {
                 </TaskMeta>
               </TaskCard>
             ))}
-            
-            {doneTasks.length === 0 && (
+
+            {!isLoading && doneTasks.length === 0 && (
               <EmptyColumnState>
                 {t('dashboard.tasks.emptyDone', 'No completed tasks')}
               </EmptyColumnState>

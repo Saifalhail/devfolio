@@ -26,10 +26,7 @@ import { db } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import useFirebaseListener from '../../hooks/useFirebaseListener';
-import LoadingSkeleton from '../Common/LoadingSkeleton';
-import Modal from '../Common/Modal';
-import ProjectForm from './ProjectForm';
-import { fadeIn, slideUp, pulse, slideInRight, slideInLeft, float } from '../../styles/animations';
+import SkeletonLoader from '../Common/SkeletonLoader';
 import {
   PanelContainer,
   PanelHeader,
@@ -360,10 +357,22 @@ const ProjectsPanel = () => {
       </DashboardHeader>
       
       {isLoading ? (
-        <LoadingContainer>
-          <LoadingSkeleton type="projects" count={6} />
-        </LoadingContainer>
-      ) : filteredProjects.length === 0 ? (
+        <ProjectsContainer isGridView={isGridView} aria-hidden="true">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <ProjectCardSkeleton key={idx} isGridView={isGridView}>
+              <SkeletonHeader>
+                <LoadingSkeleton width="60%" height="1.2rem" />
+                <LoadingSkeleton width="30%" height="1rem" />
+              </SkeletonHeader>
+              <SkeletonBody>
+                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                <LoadingSkeleton height="0.8rem" />
+              </SkeletonBody>
+            </ProjectCardSkeleton>
+          ))}
+        </ProjectsContainer>
+      ) : projects.length === 0 ? (
         <ProjectEmptyState>
           {searchTerm || filterStatus !== 'all' ? (
             <>

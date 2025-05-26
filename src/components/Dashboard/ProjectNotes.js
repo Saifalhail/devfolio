@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import LoadingSkeleton from '../Common/LoadingSkeleton';
+import SkeletonLoader from '../Common/SkeletonLoader';
 import { FaRegStickyNote, FaMicrophone, FaPaperPlane, FaStop, FaTrash } from 'react-icons/fa';
 import { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
@@ -300,11 +300,11 @@ const ProjectNotes = ({ projectId, projectName }) => {
           {Array.from({ length: 3 }).map((_, idx) => (
             <NoteItemSkeleton key={idx}>
               <SkeletonHeader>
-                <LoadingSkeleton width="40%" height="0.9rem" />
+                <SkeletonLoader width="40%" height="0.9rem" />
               </SkeletonHeader>
               <SkeletonBody>
-                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.4rem' }} />
-                <LoadingSkeleton height="0.8rem" />
+                <SkeletonLoader height="0.8rem" style={{ marginBottom: '0.4rem' }} />
+                <SkeletonLoader height="0.8rem" />
               </SkeletonBody>
             </NoteItemSkeleton>
           ))}
