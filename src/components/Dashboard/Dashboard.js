@@ -224,7 +224,7 @@ const Dashboard = () => {
       
       <NavbarArea>
         <NavbarContent>
-          <MenuIconWrapper isRTL={isRTL} onClick={toggleSidebar}>
+          <MenuIconWrapper data-testid="menu-toggle" isRTL={isRTL} onClick={toggleSidebar}>
             <FaBars />
           </MenuIconWrapper>
           <Navbar hideMenu={true} />
@@ -232,7 +232,7 @@ const Dashboard = () => {
       </NavbarArea>
       
       <DashboardBody>
-        <SidebarArea isOpen={sidebarOpen} isMobile={mobileView} isRTL={isRTL} collapsed={sidebarCollapsed}>
+        <SidebarArea data-testid="sidebar-area" isOpen={sidebarOpen} isMobile={mobileView} isRTL={isRTL} collapsed={sidebarCollapsed}>
           <Sidebar
             active={activeTab}
             onLogout={handleLogout}
@@ -242,7 +242,7 @@ const Dashboard = () => {
         </SidebarArea>
         
         {mobileView && sidebarOpen && (
-          <SidebarBackdrop onClick={toggleSidebar} />
+          <SidebarBackdrop data-testid="sidebar-backdrop" onClick={toggleSidebar} />
         )}
         
         <ContentArea
