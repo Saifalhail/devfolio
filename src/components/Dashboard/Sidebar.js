@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
@@ -19,6 +19,9 @@ const Sidebar = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const location = useLocation();
+
+  const menuRefs = useRef([]);
+  const [focusedIndex, setFocusedIndex] = useState(0);
   
   const isItemActive = (path) =>
     location.pathname === path || location.pathname.startsWith(`${path}/`);
@@ -72,18 +75,58 @@ const Sidebar = () => {
     }
   ];
 
+  useEffect(() => {
+    const activeIndex = menuItems.findIndex(item => item.path === location.pathname);
+    if (activeIndex !== -1) {
+      setFocusedIndex(activeIndex);
+    }
+  }, [location.pathname]);
+
+  const handleKeyDown = (e, index) => {
+    let newIndex = index;
+    if (e.key === 'ArrowDown' || (!isRTL && e.key === 'ArrowRight') || (isRTL && e.key === 'ArrowLeft')) {
+      newIndex = (index + 1) % menuItems.length;
+      e.preventDefault();
+    } else if (e.key === 'ArrowUp' || (!isRTL && e.key === 'ArrowLeft') || (isRTL && e.key === 'ArrowRight')) {
+      newIndex = (index - 1 + menuItems.length) % menuItems.length;
+      e.preventDefault();
+    } else if (e.key === 'Home') {
+      newIndex = 0;
+      e.preventDefault();
+    } else if (e.key === 'End') {
+      newIndex = menuItems.length - 1;
+      e.preventDefault();
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      menuRefs.current[index]?.click();
+      return;
+    }
+
+    if (newIndex !== index) {
+      setFocusedIndex(newIndex);
+      menuRefs.current[newIndex]?.focus();
+    }
+  };
+
   return (
     <SidebarContainer isRTL={isRTL}>
-      <NavMenu>
-        {menuItems.map((item) => (
+
+      <NavMenu role="menu">
+        {menuItems.map((item, index) => (
           <NavItem
             key={item.path}
-            isActive={isItemActive(item.path)}
+            role="menuitem"
+            ref={el => (menuRefs.current[index] = el)}
+            tabIndex={index === focusedIndex ? 0 : -1}
+            onKeyDown={(e) => handleKeyDown(e, index)}
+            isActive={location.pathname === item.path}
             isHighlighted={item.isHighlighted}
             isRTL={isRTL}
             to={item.path}
           >
-            <IconWrapper isRTL={isRTL} isActive={isItemActive(item.path) || item.isHighlighted}>
+            <IconWrapper
+              isRTL={isRTL}
+              isActive={location.pathname === item.path || item.isHighlighted}
+            >
               {item.icon}
             </IconWrapper>
             <span>{item.label}</span>
