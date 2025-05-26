@@ -17,13 +17,16 @@ import {
   FaAngleDoubleRight
 } from 'react-icons/fa';
 
-const Sidebar = ({ collapsed = false, onToggleCollapse }) => {
+const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const location = useLocation();
 
   const menuRefs = useRef([]);
   const [focusedIndex, setFocusedIndex] = useState(0);
+
+  const touchStartX = useRef(null);
+  const touchCurrentX = useRef(null);
   
   const isItemActive = (path) =>
     location.pathname === path || location.pathname.startsWith(`${path}/`);
@@ -109,8 +112,42 @@ const Sidebar = ({ collapsed = false, onToggleCollapse }) => {
     }
   };
 
+  const handleTouchStart = (e) => {
+    if (e.touches.length !== 1) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchCurrentX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!touchStartX.current) return;
+    touchCurrentX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null) return;
+    const diff = touchCurrentX.current - touchStartX.current;
+    const threshold = 50;
+    if (!isRTL) {
+      if (diff < -threshold) {
+        onClose && onClose();
+      }
+    } else {
+      if (diff > threshold) {
+        onClose && onClose();
+      }
+    }
+    touchStartX.current = null;
+    touchCurrentX.current = null;
+  };
+
   return (
-    <SidebarContainer isRTL={isRTL} collapsed={collapsed}>
+    <SidebarContainer
+      isRTL={isRTL}
+      collapsed={collapsed}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <CollapseButton
         onClick={onToggleCollapse}
         aria-label={collapsed ? t('dashboard.sidebar.expand', 'Expand Sidebar') : t('dashboard.sidebar.collapse', 'Collapse Sidebar')}
@@ -161,6 +198,7 @@ const SidebarContainer = styled.div`
   margin: 0;
   position: relative;
   overflow-y: auto;
+  touch-action: pan-y;
   transition: all 0.3s ease;
   box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
   display: flex;
