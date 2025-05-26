@@ -12,10 +12,12 @@ import {
   FaHistory,
   FaCog,
   FaPalette,
-  FaFigma
+  FaFigma,
+  FaAngleDoubleLeft,
+  FaAngleDoubleRight
 } from 'react-icons/fa';
 
-const Sidebar = () => {
+const Sidebar = ({ collapsed = false, onToggleCollapse }) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const location = useLocation();
@@ -108,9 +110,16 @@ const Sidebar = () => {
   };
 
   return (
-    <SidebarContainer isRTL={isRTL}>
+    <SidebarContainer isRTL={isRTL} collapsed={collapsed}>
+      <CollapseButton
+        onClick={onToggleCollapse}
+        aria-label={collapsed ? t('dashboard.sidebar.expand', 'Expand Sidebar') : t('dashboard.sidebar.collapse', 'Collapse Sidebar')}
+        isRTL={isRTL}
+      >
+        {collapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}
+      </CollapseButton>
 
-      <NavMenu role="menu">
+      <NavMenu role="menu" collapsed={collapsed}>
         {menuItems.map((item, index) => (
           <NavItem
             key={item.path}
@@ -121,6 +130,7 @@ const Sidebar = () => {
             isActive={location.pathname === item.path}
             isHighlighted={item.isHighlighted}
             isRTL={isRTL}
+            collapsed={collapsed}
             to={item.path}
           >
             <IconWrapper
@@ -138,7 +148,7 @@ const Sidebar = () => {
 };
 
 const SidebarContainer = styled.div`
-  width: 240px;
+  width: ${props => (props.collapsed ? '60px' : '240px')};
   height: 100%;
   background: #2c1e3f; /* Solid dark purple color to match screenshot */
   color: white;
@@ -192,6 +202,7 @@ const NavMenu = styled.div`
   margin-top: 0;
   padding-top: 0;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  align-items: ${props => (props.collapsed ? 'center' : 'stretch')};
   
   @media (max-width: 768px) {
     padding: 0.5rem;
@@ -205,28 +216,32 @@ const NavMenu = styled.div`
 const NavItem = styled(Link)`
   display: flex;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: ${props => (props.collapsed ? '1rem' : '1rem 1.5rem')};
+  justify-content: ${props => (props.collapsed ? 'center' : 'flex-start')};
   color: ${props => props.isActive || props.isHighlighted ? 'white' : 'rgba(255, 255, 255, 0.7)'};
   background: ${props => props.isActive || props.isHighlighted ? '#3a2952' : 'transparent'};
   text-decoration: none;
   transition: all 0.3s ease;
   flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
   border-${props => props.isRTL ? 'right' : 'left'}: ${props =>
-    props.isActive || props.isHighlighted
-      ? '4px solid #faaa93'
-      : '4px solid transparent'};
+    props.collapsed
+      ? 'none'
+      : props.isActive || props.isHighlighted
+        ? '4px solid #faaa93'
+        : '4px solid transparent'};
   position: relative;
   margin-top: ${props => props.isHighlighted ? '0' : '0'};
   
   &:hover {
     background: #3a2952;
     color: white;
-    border-${props => props.isRTL ? 'right' : 'left'}: 4px solid #faaa93;
+    border-${props => props.isRTL ? 'right' : 'left'}: ${props => props.collapsed ? 'none' : '4px solid #faaa93'};
   }
   
   span {
     margin-${props => props.isRTL ? 'right' : 'left'}: 0.8rem;
     font-weight: ${props => props.isActive ? '600' : '400'};
+    display: ${props => (props.collapsed ? 'none' : 'inline')};
     
     @media (max-width: 768px) {
       display: block;
@@ -271,6 +286,25 @@ const IconWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+`;
+
+const CollapseButton = styled.button`
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  align-self: ${props => (props.isRTL ? 'flex-end' : 'flex-start')};
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    display: none;
   }
 `;
 
