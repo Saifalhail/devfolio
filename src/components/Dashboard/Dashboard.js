@@ -69,6 +69,7 @@ const Dashboard = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileView, setMobileView] = useState(window.innerWidth < 768);
   const [showChatbot, setShowChatbot] = useState(false);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
@@ -180,6 +181,10 @@ const Dashboard = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  const toggleSidebarCollapse = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
   
   const toggleChatbot = () => {
     setShowChatbot(!showChatbot);
@@ -227,15 +232,25 @@ const Dashboard = () => {
       </NavbarArea>
       
       <DashboardBody>
-        <SidebarArea isOpen={sidebarOpen} isMobile={mobileView} isRTL={isRTL}>
-          <Sidebar active={activeTab} onLogout={handleLogout} />
+        <SidebarArea isOpen={sidebarOpen} isMobile={mobileView} isRTL={isRTL} collapsed={sidebarCollapsed}>
+          <Sidebar
+            active={activeTab}
+            onLogout={handleLogout}
+            collapsed={sidebarCollapsed}
+            onToggleCollapse={toggleSidebarCollapse}
+          />
         </SidebarArea>
         
         {mobileView && sidebarOpen && (
           <SidebarBackdrop onClick={toggleSidebar} />
         )}
         
-        <ContentArea sidebarOpen={sidebarOpen} isMobile={mobileView} isRTL={isRTL}>
+        <ContentArea
+          sidebarOpen={sidebarOpen}
+          isMobile={mobileView}
+          isRTL={isRTL}
+          collapsed={sidebarCollapsed}
+        >
           
           <DashboardContent>
             
@@ -474,7 +489,7 @@ const DashboardBody = styled.div`
 `;
 
 const SidebarArea = styled.div`
-  width: 240px;
+  width: ${props => (props.collapsed ? '60px' : '240px')};
   height: calc(100vh - 70px);
   position: fixed;
   top: 70px; /* Exactly at navbar bottom */
@@ -521,8 +536,8 @@ const SidebarBackdrop = styled.div`
 const ContentArea = styled.main`
   flex: 1;
   padding: 2rem;
-  margin-left: ${props => !props.isRTL && (props.sidebarOpen || !props.isMobile) ? '240px' : '0'};
-  margin-right: ${props => props.isRTL && (props.sidebarOpen || !props.isMobile) ? '240px' : '0'};
+  margin-left: ${props => !props.isRTL && (props.sidebarOpen || !props.isMobile) ? (props.collapsed ? '60px' : '240px') : '0'};
+  margin-right: ${props => props.isRTL && (props.sidebarOpen || !props.isMobile) ? (props.collapsed ? '60px' : '240px') : '0'};
   transition: all 0.3s ease;
   min-height: calc(100vh - 70px);
   background-color: #12121a;
