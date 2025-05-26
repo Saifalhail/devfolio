@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { 
   FaUser, 
@@ -12,55 +12,51 @@ import {
   FaEye, 
   FaCalendarAlt, 
   FaFilter,
-  FaFileExport
+  FaFileExport,
+  FaSearch
 } from 'react-icons/fa';
 import {
-  Card,
-  DashboardTitle,
+  PanelContainer,
   PanelHeader,
-  PrimaryButton,
-  Input,
-  TimelineContainer,
-  DateGroup,
-  DateHeader,
-  DateLabel,
-  TimelineItem,
-  TimelineIconContainer,
-  TimelineContent,
-  ActivityTitle,
-  ActivityComment,
-  ActivityMeta,
-  EmptyState,
-  EmptyIcon,
-  EmptyText,
-  ToolbarContainer
-} from '../../styles/dashboardStyles';
+  PanelTitle,
+  ActionButton,
+  SearchInput,
+  EmptyState
+} from '../../styles/GlobalComponents';
+import { colors, spacing, borderRadius, shadows, mixins, transitions, typography } from '../../styles/GlobalTheme';
 import { format } from 'date-fns';
 import { enUS, ar } from 'date-fns/locale';
 
 // Local styled components for search and filter
-const SearchInput = styled(Input)`
+const TimelineSearchInput = styled(SearchInput)`
   flex: 1;
   min-width: 200px;
 `;
 
 const FilterDropdown = styled.select`
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  padding: ${spacing.sm} ${spacing.md};
+  background: ${colors.background.secondary};
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: ${borderRadius.md};
   min-width: 150px;
-  font-size: 0.9rem;
-  color: #fff;
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.secondary};
+  transition: ${transitions.medium};
   
   &:focus {
     outline: none;
-    border-color: #cd3efd;
+    border-color: rgba(205, 62, 253, 0.3);
+    box-shadow: ${shadows.sm};
   }
 
   option {
-    background: #1f1f24;
-    color: #fff;
+    background: ${colors.background.secondary};
+    color: ${colors.text.secondary};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    text-align: right;
   }
 `;
 
@@ -306,43 +302,58 @@ const TimelinePanel = () => {
   const dateGroups = Object.keys(groupedActivities).sort().reverse();
 
   return (
-    <Container>
-      <Header>
-        <DashboardTitle>{t('timeline.activityLog', 'Activity Log')}</DashboardTitle>
-        <PanelHeader>
-          <SearchInput
-            type="text"
-            placeholder={t('timeline.search', 'Search activities...')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <FilterDropdown
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="all">{t('timeline.allActivities', 'All Activities')}</option>
-            <option value="file">{t('timeline.files', 'Files')}</option>
-            <option value="task">{t('timeline.tasks', 'Tasks')}</option>
-            <option value="comment">{t('timeline.comments', 'Comments')}</option>
-            <option value="milestone">{t('timeline.milestones', 'Milestones')}</option>
-          </FilterDropdown>
-          <ExportContainer>
-            <ExportButton onClick={() => setShowExportOptions(!showExportOptions)}>
+    <PanelContainer>
+      <PanelHeader>
+        <PanelTitle>{t('timeline.activityLog', 'Activity Timeline')}</PanelTitle>
+        <ToolbarWrapper>
+          <TimelineSearchWrapper>
+            <SearchIcon>
+              <FaSearch />
+            </SearchIcon>
+            <TimelineSearchInput
+              type="text"
+              placeholder={t('timeline.search', 'Search activities...')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </TimelineSearchWrapper>
+          
+          <FilterWrapper>
+            <FilterIcon isRTL={isRTL}>
+              <FaFilter />
+            </FilterIcon>
+            <FilterDropdown
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            >
+              <option value="all">{t('timeline.allActivities', 'All Activities')}</option>
+              <option value="file">{t('timeline.files', 'Files')}</option>
+              <option value="task">{t('timeline.tasks', 'Tasks')}</option>
+              <option value="comment">{t('timeline.comments', 'Comments')}</option>
+              <option value="milestone">{t('timeline.milestones', 'Milestones')}</option>
+            </FilterDropdown>
+          </FilterWrapper>
+          
+          <ExportWrapper>
+            <ActionButton onClick={() => setShowExportOptions(!showExportOptions)}>
               <FaFileExport />
               {t('timeline.export', 'Export')}
-            </ExportButton>
+            </ActionButton>
             {showExportOptions && (
-              <ExportOptions>
-                <ExportOption onClick={() => handleExport('pdf')}>PDF</ExportOption>
-                <ExportOption onClick={() => handleExport('csv')}>CSV</ExportOption>
-                <ExportOption onClick={() => handleExport('excel')}>Excel</ExportOption>
-              </ExportOptions>
+              <ExportMenu>
+                <ExportItem onClick={() => handleExport('pdf')}>
+                  <FaFileExport /> {t('timeline.exportAsPDF', 'Export as PDF')}
+                </ExportItem>
+                <ExportItem onClick={() => handleExport('csv')}>
+                  <FaFileExport /> {t('timeline.exportAsCSV', 'Export as CSV')}
+                </ExportItem>
+              </ExportMenu>
             )}
-          </ExportContainer>
-        </PanelHeader>
-      </Header>
-
-      <TimelineContainer>
+          </ExportWrapper>
+        </ToolbarWrapper>
+      </PanelHeader>
+      
+      <TimelineContent>
         {dateGroups.length > 0 ? (
           dateGroups.map(dateGroup => (
             <DateGroup key={dateGroup}>
@@ -352,11 +363,11 @@ const TimelinePanel = () => {
                 </DateLabel>
               </DateHeader>
               {groupedActivities[dateGroup].map(activity => (
-                <TimelineItem 
+                <ActivityItem 
                   key={activity.id}
                   userRole={activity.user.role}
                 >
-                  <TimelineIconContainer userRole={activity.user.role}>
+                  <ActivityIconContainer userRole={activity.user.role}>
                     {activity.user.avatar ? (
                       <Avatar src={activity.user.avatar} alt={activity.user.name} />
                     ) : (
@@ -364,100 +375,267 @@ const TimelinePanel = () => {
                         {getActivityIcon(activity.type)}
                       </IconWrapper>
                     )}
-                  </TimelineIconContainer>
-                  <TimelineContent>
+                  </ActivityIconContainer>
+                  <ActivityContentWrapper>
                     <ActivityTitle>{getActivityTitle(activity)}</ActivityTitle>
                     {activity.type === 'comment' && (
-                      <ActivityCommentStyle>{activity.content}</ActivityCommentStyle>
+                      <ActivityComment>{activity.content}</ActivityComment>
                     )}
-                    <ActivityMeta>
+                    <ActivityMetaData>
                       <ActivityTime>{formatDate(activity.timestamp)}</ActivityTime>
                       <ActivityProject>{activity.project} • {activity.milestone}</ActivityProject>
-                    </ActivityMeta>
+                    </ActivityMetaData>
                     <HoverDetails>
                       <HoverContent>{activity.details}</HoverContent>
                     </HoverDetails>
-                  </TimelineContent>
-                </TimelineItem>
+                  </ActivityContentWrapper>
+                </ActivityItem>
               ))}
             </DateGroup>
           ))
         ) : (
           <EmptyState>
-            <EmptyIcon><FaFilter /></EmptyIcon>
-            <EmptyText>{t('timeline.noActivities', 'No activities match your filters')}</EmptyText>
+            <FaFilter size={32} color={colors.text.muted} />
+            <h3>{t('timeline.noActivities', 'No activities match your filters')}</h3>
+            <p>{t('timeline.tryDifferent', 'Try a different filter or search term')}</p>
           </EmptyState>
         )}
-      </TimelineContainer>
-    </Container>
+      </TimelineContent>
+    </PanelContainer>
   );
 };
 
-// Additional styled components specific to TimelinePanel
-const Container = styled(Card)`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  padding: 0;
-  margin: 0;
-`;
-
-const Header = styled.div`
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-`;
-
-// Using DashboardTitle from shared styles
-
-// Using ToolbarContainer from shared styles
-
-// Using SearchInput from shared styles
-
-// Using FilterDropdown from shared styles
-
-const ExportContainer = styled.div`
-  position: relative;
-`;
-
-const ExportButton = styled(PrimaryButton)`
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-`;
-
-const ExportOptions = styled.div`
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 0.5rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 10;
-  overflow: hidden;
-`;
-
-const ExportOption = styled.div`
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
+// Styled components for the timeline panel
+const ToolbarWrapper = styled.div`
+  ${mixins.flexBetween}
+  flex-wrap: wrap;
+  gap: ${spacing.md};
   
-  &:hover {
-    background: #f5f5f5;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${spacing.sm};
+    margin-top: ${spacing.md};
+    width: 100%;
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 `;
 
-// Using TimelineContainer from shared styles
+const TimelineSearchWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 300px;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+    width: 100%;
+  }
+`;
 
-// Using DateGroup from shared styles
+const SearchIcon = styled.div`
+  position: absolute;
+  left: ${spacing.sm};
+  color: ${colors.text.muted};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    left: auto;
+    right: ${spacing.sm};
+  }
+`;
 
-// Using DateHeader from shared styles
+const FilterWrapper = styled.div`
+  position: relative;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
 
-// Using DateLabel from shared styles
+const FilterIcon = styled.div`
+  position: absolute;
+  ${props => props.isRTL ? css`right: ${spacing.sm};` : css`left: ${spacing.sm};`}
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${colors.text.muted};
+  z-index: 1;
+  pointer-events: none;
+`;
 
-// Using TimelineItem from shared styles
+const ExportWrapper = styled.div`
+  position: relative;
+`;
 
-// Using TimelineIconContainer from shared styles
+const ExportMenu = styled.div`
+  position: absolute;
+  top: calc(100% + ${spacing.xs});
+  right: 0;
+  background: ${colors.background.card};
+  border-radius: ${borderRadius.md};
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: ${shadows.md};
+  z-index: 10;
+  overflow: hidden;
+  min-width: 180px;
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    right: auto;
+    left: 0;
+  }
+`;
+
+const ExportItem = styled.div`
+  ${mixins.flexCenter}
+  gap: ${spacing.sm};
+  padding: ${spacing.sm} ${spacing.md};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  color: ${colors.text.secondary};
+  justify-content: flex-start;
+  
+  &:hover {
+    background: ${colors.background.hover};
+    color: ${colors.text.primary};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+const TimelineContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.md};
+  padding: ${spacing.md};
+  margin-top: ${spacing.md};
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+`;
+
+const DateGroup = styled.div`
+  margin-bottom: ${spacing.lg};
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const DateHeader = styled.div`
+  margin-bottom: ${spacing.md};
+  padding-bottom: ${spacing.xs};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+`;
+
+const DateLabel = styled.h3`
+  margin: 0;
+  font-size: ${typography.fontSizes.md};
+  font-weight: ${typography.fontWeights.medium};
+  color: ${colors.text.primary};
+`;
+
+const ActivityItem = styled.div`
+  display: flex;
+  margin-bottom: ${spacing.md};
+  padding: ${spacing.md};
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: ${borderRadius.md};
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: ${transitions.medium};
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+    transform: translateY(-2px);
+    box-shadow: ${shadows.sm};
+  }
+  
+  /* Add color accent based on user role */
+  ${props => {
+    if (props.userRole === 'client') {
+      return css`border-left: 3px solid ${colors.status.info};`;
+    } else if (props.userRole === 'developer') {
+      return css`border-left: 3px solid ${colors.status.success};`;
+    } else if (props.userRole === 'system') {
+      return css`border-left: 3px solid ${colors.status.neutral};`;
+    } else {
+      return '';
+    }
+  }}
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+    ${props => {
+      if (props.userRole === 'client') {
+        return css`
+          border-left: none;
+          border-right: 3px solid ${colors.status.info};
+        `;
+      } else if (props.userRole === 'developer') {
+        return css`
+          border-left: none;
+          border-right: 3px solid ${colors.status.success};
+        `;
+      } else if (props.userRole === 'system') {
+        return css`
+          border-left: none;
+          border-right: 3px solid ${colors.status.neutral};
+        `;
+      } else {
+        return '';
+      }
+    }}
+  }
+`;
+
+const ActivityIconContainer = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: ${spacing.md};
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  ${props => {
+    if (props.userRole === 'client') {
+      return css`background: rgba(33, 150, 243, 0.2);`;
+    } else if (props.userRole === 'developer') {
+      return css`background: rgba(76, 175, 80, 0.2);`;
+    } else if (props.userRole === 'system') {
+      return css`background: rgba(158, 158, 158, 0.2);`;
+    } else {
+      return css`background: rgba(205, 62, 253, 0.2);`;
+    }
+  }}
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    margin-right: 0;
+    margin-left: ${spacing.md};
+  }
+`;
 
 const Avatar = styled.img`
   width: 100%;
@@ -467,25 +645,76 @@ const Avatar = styled.img`
 `;
 
 const IconWrapper = styled.div`
-  color: white;
-  font-size: 1rem;
+  color: ${props => {
+    if (props.userRole === 'client') {
+      return colors.status.info;
+    } else if (props.userRole === 'developer') {
+      return colors.status.success;
+    } else if (props.userRole === 'system') {
+      return colors.status.neutral;
+    } else {
+      return colors.accent.primary;
+    }
+  }};
+  font-size: ${typography.fontSizes.lg};
 `;
 
-// Using TimelineContent from shared styles
+const ActivityContentWrapper = styled.div`
+  flex: 1;
+  position: relative;
+`;
 
-// Using ActivityTitle from shared styles
+const ActivityTitle = styled.h4`
+  margin: 0 0 ${spacing.xs} 0;
+  font-size: ${typography.fontSizes.md};
+  font-weight: ${typography.fontWeights.medium};
+  color: ${colors.text.primary};
+`;
 
-// Using ActivityComment from shared styles with additional styling
-const ActivityCommentStyle = styled(ActivityComment)`
+const ActivityComment = styled.p`
+  margin: ${spacing.xs} 0;
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.secondary};
   font-style: italic;
+  padding: ${spacing.sm};
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: ${borderRadius.sm};
+  border-left: 2px solid ${colors.accent.primary};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    border-left: none;
+    border-right: 2px solid ${colors.accent.primary};
+  }
 `;
 
-// Using ActivityMeta from shared styles
+const ActivityMetaData = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: ${spacing.xs};
+  font-size: ${typography.fontSizes.xs};
+  color: ${colors.text.muted};
+  gap: ${spacing.md};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
 
-const ActivityTime = styled.span``;
+const ActivityTime = styled.span`
+  ${mixins.flexCenter}
+  gap: ${spacing.xs};
+  
+  &:before {
+    content: '\1F551'; /* clock emoji */
+    font-size: ${typography.fontSizes.sm};
+  }
+`;
 
 const ActivityProject = styled.span`
-  font-weight: 500;
+  font-weight: ${typography.fontWeights.medium};
+  color: ${colors.text.secondary};
 `;
 
 const HoverDetails = styled.div`
@@ -493,18 +722,20 @@ const HoverDetails = styled.div`
   top: -40px;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.8rem;
+  background: ${colors.background.card};
+  color: ${colors.text.primary};
+  padding: ${spacing.sm} ${spacing.md};
+  border-radius: ${borderRadius.md};
+  font-size: ${typography.fontSizes.xs};
   opacity: 0;
   transform: translateY(10px);
-  transition: all 0.3s ease;
+  transition: ${transitions.medium};
   pointer-events: none;
   z-index: 10;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: ${shadows.md};
   
-  ${TimelineContent}:hover & {
+  ${ActivityContentWrapper}:hover & {
     opacity: 1;
     transform: translateY(0);
   }
@@ -518,18 +749,18 @@ const HoverDetails = styled.div`
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 6px solid rgba(0, 0, 0, 0.8);
+    border-top: 6px solid ${colors.background.card};
+    
+    /* RTL Support */
+    [dir="rtl"] & {
+      left: auto;
+      right: 20px;
+    }
   }
 `;
 
 const HoverContent = styled.div`
   text-align: center;
 `;
-
-// Using EmptyState from shared styles
-
-// Using EmptyIcon from shared styles
-
-// Using EmptyText from shared styles
 
 export default TimelinePanel;

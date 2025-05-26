@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import { FaThLarge, FaList, FaFilter, FaSort, FaClock, FaCheck, FaPencilAlt, FaSmile, FaMeh, FaFrown } from 'react-icons/fa';
+import styled, { css } from 'styled-components';
+import { FaThLarge, FaList, FaFilter, FaSort, FaClock, FaCheck, FaPencilAlt, FaSmile, FaMeh, FaFrown, FaPlus } from 'react-icons/fa';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -8,17 +8,14 @@ import { useTranslation } from 'react-i18next';
 import useFirebaseListener from '../../hooks/useFirebaseListener';
 import LoadingSkeleton from '../Common/LoadingSkeleton';
 import {
-  Card,
-  DashboardTitle,
-  PanelHeader as SharedPanelHeader,
   PanelContainer,
-  PrimaryButton,
-  SecondaryButton,
-  IconButton,
-  Badge,
-  FlexContainer,
-  EmptyState as SharedEmptyState
-} from '../../styles/dashboardStyles';
+  PanelHeader,
+  PanelTitle,
+  ActionButton,
+  EmptyState,
+  Card
+} from '../../styles/GlobalComponents';
+import { colors, spacing, borderRadius, shadows, mixins, transitions, typography } from '../../styles/GlobalTheme';
 
 const ProjectsPanel = () => {
   const { t } = useTranslation();
@@ -113,10 +110,46 @@ const ProjectsPanel = () => {
   };
 
   return (
-    <ProjectsPanelContainer>
+    <PanelContainer>
       <PanelHeader>
-        <DashboardTitle>{t('projects.title', 'Projects')}</DashboardTitle>
+        <PanelTitle>{t('projects.title', 'Projects')}</PanelTitle>
         <ControlsGroup>
+          <ActionButton
+            css={css`
+              background: ${colors.gradients.button};
+              color: ${colors.text.primary};
+              padding: ${spacing.sm} ${spacing.md};
+              font-weight: ${typography.fontWeights.medium};
+              box-shadow: ${shadows.md};
+              margin-right: ${spacing.md};
+              transition: ${transitions.medium};
+              
+              &:hover {
+                transform: translateY(-2px);
+                box-shadow: ${shadows.lg};
+                background: ${colors.gradients.buttonHover};
+              }
+              
+              svg {
+                margin-right: ${spacing.xs};
+                font-size: ${typography.fontSizes.sm};
+              }
+              
+              /* RTL Support */
+              [dir="rtl"] & {
+                margin-right: 0;
+                margin-left: ${spacing.md};
+                
+                svg {
+                  margin-right: 0;
+                  margin-left: ${spacing.xs};
+                }
+              }
+            `}
+          >
+            <FaPlus />
+            {t('projects.addProject', 'Add Project')}
+          </ActionButton>
           <ViewToggle>
             <ToggleButton 
               active={isGridView} 
@@ -184,13 +217,32 @@ const ProjectsPanel = () => {
           ))}
         </ProjectsContainer>
       ) : projects.length === 0 ? (
-        <EmptyState>
+        <ProjectEmptyState>
           <h3>{t('projects.noProjects', 'No projects found')}</h3>
           <p>{t('projects.createProject', 'Create your first project to get started')}</p>
-          <AddProjectButton>
+          <ActionButton
+            css={css`
+              background: ${colors.gradients.accent};
+              color: ${colors.text.primary};
+              padding: ${spacing.sm} ${spacing.lg};
+              font-weight: ${typography.fontWeights.medium};
+              box-shadow: ${shadows.md};
+              
+              &:hover {
+                transform: translateY(-2px);
+                box-shadow: ${shadows.lg};
+              }
+              
+              svg {
+                font-size: ${typography.fontSizes.sm};
+                margin-right: ${spacing.xs};
+              }
+            `}
+          >
+            <FaPlus />
             {t('projects.addProject', 'Add Project')}
-          </AddProjectButton>
-        </EmptyState>
+          </ActionButton>
+        </ProjectEmptyState>
       ) : (
         <ProjectsContainer isGridView={isGridView}>
           {projects.map(project => (
@@ -228,245 +280,328 @@ const ProjectsPanel = () => {
                 </MoodMeter>
                 
                 <ProjectActions>
-                  <ActionButton aria-label={t('projects.viewProject', 'View Project')}>
+                  <ProjectActionButton aria-label={t('projects.viewProject', 'View Project')}>
                     {t('projects.view', 'View')}
-                  </ActionButton>
-                  <ActionButton aria-label={t('projects.addNote', 'Add Note')}>
+                  </ProjectActionButton>
+                  <ProjectActionButton aria-label={t('projects.addNote', 'Add Note')}>
                     {t('projects.note', 'Note')}
-                  </ActionButton>
+                  </ProjectActionButton>
                 </ProjectActions>
               </ProjectFooter>
             </ProjectCard>
           ))}
         </ProjectsContainer>
       )}
-    </ProjectsPanelContainer>
+    </PanelContainer>
   );
 };
 
 // Styled Components
-const ProjectsPanelContainer = styled(Card)`
-  height: 100%;
-  overflow: auto;
-  padding: 1.5rem;
-`;
-
-const PanelHeader = styled(SharedPanelHeader)`
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-`;
-
 const ControlsGroup = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+  ${mixins.flexBetween}
+  flex-wrap: wrap;
+  gap: ${spacing.md};
   
-  @media (max-width: 576px) {
-    flex-wrap: wrap;
+  @media (max-width: 768px) {
+    justify-content: flex-start;
     width: 100%;
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
   }
 `;
 
 const ViewToggle = styled.div`
   display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  border-radius: ${borderRadius.md};
   overflow: hidden;
+  background: ${colors.background.secondary};
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
 `;
 
 const ToggleButton = styled.button`
-  background: ${props => props.active ? 'rgba(205, 62, 253, 0.2)' : 'transparent'};
-  color: ${props => props.active ? '#cd3efd' : '#fff'};
+  ${mixins.flexCenter}
+  background: ${props => props.active ? colors.accent.secondary : 'transparent'};
+  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
   border: none;
-  padding: 0.5rem 0.75rem;
+  padding: ${spacing.sm} ${spacing.md};
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: ${transitions.medium};
+  font-size: ${typography.fontSizes.sm};
+  
+  svg {
+    font-size: ${typography.fontSizes.sm};
+  }
   
   &:hover {
-    background: rgba(205, 62, 253, 0.1);
+    background: ${colors.background.hover};
+    color: ${props => props.active ? colors.accent.primary : colors.text.secondary};
   }
 `;
 
 const FilterContainer = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 0 0.5rem;
-`;
-
-const FilterIcon = styled.div`
-  color: #cd3efd;
-  margin-right: 0.5rem;
-`;
-
-const SortContainer = styled.div`
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 0 0.5rem;
-`;
-
-const SortIcon = styled.div`
-  color: #cd3efd;
-  margin-right: 0.5rem;
-`;
-
-const Select = styled.select`
-  background: transparent;
-  color: #fff;
-  border: none;
-  padding: 0.5rem;
-  cursor: pointer;
-  appearance: none;
+  background: ${colors.background.secondary};
+  border-radius: ${borderRadius.md};
+  padding: 0 ${spacing.sm};
+  border: 1px solid rgba(255, 255, 255, 0.05);
   
-  option {
-    background: #121428;
-    color: #fff;
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
   }
 `;
 
-
-
-
-const EmptyState = styled(SharedEmptyState)`
-  height: 300px;
+const SortContainer = styled(FilterContainer)`
+  /* Additional styles specific to sort container if needed */
 `;
 
-const AddProjectButton = styled(PrimaryButton)`
-  padding: 0.7rem 1.2rem;
+const FilterIcon = styled.div`
+  ${mixins.flexCenter}
+  position: absolute;
+  ${props => props.isRTL ? css`right: ${spacing.sm};` : css`left: ${spacing.sm};`}
+  color: ${colors.accent.primary};
+  background-color: rgba(123, 44, 191, 0.1);
+  border-radius: ${borderRadius.round};
+  width: 24px;
+  height: 24px;
+  z-index: 1;
+  pointer-events: none;
+  
+  svg {
+    font-size: ${typography.fontSizes.xs};
+  }
+`;
+
+const SortIcon = styled(FilterIcon)`
+  /* Additional styles specific to sort icon if needed */
+`;
+
+const Select = styled.select`
+  background: ${colors.background.secondary};
+  color: ${colors.text.primary}; /* Brighter text for better contrast */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.md} ${spacing.sm} ${spacing.xl};
+  appearance: none;
+  cursor: pointer;
+  transition: ${transitions.medium};
+  font-size: ${typography.fontSizes.sm};
+  min-width: 150px;
+  font-weight: ${typography.fontWeights.medium};
+  
+  &:focus {
+    outline: none;
+    border-color: rgba(205, 62, 253, 0.5);
+    box-shadow: ${shadows.sm};
+  }
+  
+  &:hover {
+    border-color: rgba(205, 62, 253, 0.3);
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    padding: ${spacing.sm} ${spacing.xl} ${spacing.sm} ${spacing.md};
+  }
+  
+  @media (max-width: 768px) {
+    min-width: 120px;
+  }
+  
+  option {
+    background: ${colors.background.secondary};
+    color: ${colors.text.secondary};
+  }
 `;
 
 const ProjectsContainer = styled.div`
   display: ${props => props.isGridView ? 'grid' : 'flex'};
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  flex-direction: ${props => props.isGridView ? 'row' : 'column'};
+  ${props => props.isGridView 
+    ? css`
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: ${spacing.lg};
+      @media (max-width: 1200px) {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    ` 
+    : css`
+      flex-direction: column;
+      gap: ${spacing.md};
+    `
+  }
+  margin-top: ${spacing.lg};
 `;
 
-const ProjectCard = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  padding: 1.25rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(205, 62, 253, 0.05);
+const ProjectCard = styled(Card)`
   display: flex;
   flex-direction: column;
+  padding: ${spacing.lg};
+  transition: ${transitions.medium};
   height: ${props => props.isGridView ? 'auto' : 'auto'};
   
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: ${shadows.lg};
     border-color: rgba(205, 62, 253, 0.2);
   }
 `;
 
+const ProjectCardSkeleton = styled(Card)`
+  ${mixins.card(false)}
+  padding: ${spacing.lg};
+  pointer-events: none;
+  
+  ${props => !props.isGridView && css`
+    display: flex;
+    flex-direction: column;
+  `}
+`;
+
 const ProjectHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
+  ${mixins.flexBetween}
+  margin-bottom: ${spacing.md};
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: ${spacing.sm};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
 `;
 
 const ProjectTitle = styled.h3`
   margin: 0;
-  color: #fff;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: ${typography.fontSizes.lg};
+  font-weight: ${typography.fontWeights.semiBold};
+  color: ${colors.text.primary};
+  ${mixins.truncate}
 `;
 
 const StatusChip = styled.div`
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  background: ${props => {
+  padding: ${spacing.xs} ${spacing.md};
+  border-radius: ${borderRadius.round};
+  font-size: ${typography.fontSizes.xs};
+  font-weight: ${typography.fontWeights.medium};
+  
+  ${props => {
     switch(props.status) {
-      case 'inProgress': return 'rgba(255, 193, 7, 0.15)';
-      case 'done': return 'rgba(76, 175, 80, 0.15)';
-      case 'awaitingFeedback': return 'rgba(33, 150, 243, 0.15)';
-      default: return 'rgba(158, 158, 158, 0.15)';
+      case 'inProgress': return css`
+        background-color: rgba(255, 193, 7, 0.15);
+        color: ${colors.status.warning};
+      `;
+      case 'done': return css`
+        background-color: rgba(76, 175, 80, 0.15);
+        color: ${colors.status.success};
+      `;
+      case 'awaitingFeedback': return css`
+        background-color: rgba(33, 150, 243, 0.15);
+        color: ${colors.status.info};
+      `;
+      default: return css`
+        background-color: rgba(158, 158, 158, 0.15);
+        color: ${colors.status.neutral};
+      `;
     }
-  }};
-  color: ${props => {
-    switch(props.status) {
-      case 'inProgress': return '#FFC107';
-      case 'done': return '#4CAF50';
-      case 'awaitingFeedback': return '#2196F3';
-      default: return '#9E9E9E';
-    }
-  }};
+  }}
 `;
 
 const ProjectDetails = styled.div`
   flex: 1;
-  margin-bottom: 1rem;
+  margin-bottom: ${spacing.md};
 `;
 
 const DetailItem = styled.div`
-  margin-bottom: 0.75rem;
+  margin-bottom: ${spacing.sm};
   
   &:last-child {
     margin-bottom: 0;
   }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    text-align: right;
+  }
 `;
 
 const DetailLabel = styled.span`
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.85rem;
-  margin-right: 0.5rem;
+  color: ${colors.text.secondary}; /* Brighter text for better contrast */
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  margin-right: ${spacing.xs};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    margin-right: 0;
+    margin-left: ${spacing.xs};
+  }
 `;
 
 const DetailValue = styled.span`
-  color: #fff;
-  font-size: 0.9rem;
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
   word-break: break-word;
 `;
 
 const ProjectFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  ${mixins.flexBetween}
   margin-top: auto;
-  padding-top: 1rem;
+  padding-top: ${spacing.md};
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
 `;
 
 const MoodMeter = styled.div`
-  display: flex;
-  align-items: center;
+  ${mixins.flexCenter}
+  gap: ${spacing.xs};
 `;
 
 const MoodLabel = styled.span`
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.85rem;
-  margin-right: 0.5rem;
+  color: ${colors.text.secondary}; /* Brighter text for better contrast */
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
 `;
 
 const MoodValue = styled.div`
-  font-size: 1.2rem;
+  font-size: ${typography.fontSizes.md};
 `;
 
 const ProjectActions = styled.div`
   display: flex;
-  gap: 0.5rem;
+  gap: ${spacing.sm};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
 `;
 
-const ActionButton = styled(SecondaryButton)`
-  background: rgba(205, 62, 253, 0.1);
-  padding: 0.4rem 0.6rem;
-  font-size: 0.8rem;
-`;
-
-const ProjectCardSkeleton = styled(ProjectCard)`
-  pointer-events: none;
+const ProjectActionButton = styled(ActionButton)`
+  font-size: ${typography.fontSizes.xs};
+  padding: ${spacing.xs} ${spacing.sm};
+  color: ${colors.text.primary}; /* Ensure white text for better contrast */
+  font-weight: ${typography.fontWeights.medium};
+  background: ${colors.gradients.accent};
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${shadows.md};
+  }
 `;
 
 const SkeletonHeader = styled(ProjectHeader)`
@@ -476,7 +611,23 @@ const SkeletonHeader = styled(ProjectHeader)`
 const SkeletonBody = styled(ProjectDetails)`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: ${spacing.sm};
+`;
+
+const ProjectEmptyState = styled(EmptyState)`
+  padding: ${spacing.xl};
+  margin: ${spacing.md} 0;
+  
+  h3 {
+    font-size: ${typography.fontSizes.xl};
+    margin-bottom: ${spacing.sm};
+    color: ${colors.text.primary};
+  }
+  
+  p {
+    color: ${colors.text.secondary};
+    margin-bottom: ${spacing.lg};
+  }
 `;
 
 export default ProjectsPanel;

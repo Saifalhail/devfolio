@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { Card } from '../../styles/dashboardStyles';
 import { useTranslation } from 'react-i18next';
 import {
   FaCommentAlt, FaClipboardList, FaEdit, FaEye,
@@ -18,6 +17,22 @@ import {
   pulse,
   shine,
 } from '../../styles/animations';
+import { colors, spacing, shadows, borderRadius, typography, mixins, transitions, breakpoints } from '../../styles/GlobalTheme';
+import {
+  PanelContainer,
+  PanelHeader,
+  PanelTitle,
+  SectionTitle,
+  ActionButton,
+  SearchInput,
+  CardGrid,
+  Card,
+  EmptyState,
+  StatusBadge,
+  FeatureCard,
+  FeatureIcon,
+  FilterButton
+} from '../../styles/GlobalComponents';
 
 const FormsPanel = () => {
   const { t, i18n } = useTranslation();
@@ -133,13 +148,13 @@ const FormsPanel = () => {
   });
   
   return (
-    <FormsPanelContainer>
+    <PanelContainer>
       <PanelHeader>
-        <HeaderTitle>{t('forms.title', 'Forms')}</HeaderTitle>
-        <CreateButton onClick={toggleNewForm} isRTL={isRTL}>
+        <PanelTitle>{t('forms.title', 'Forms')}</PanelTitle>
+        <ActionButton onClick={toggleNewForm}>
           <FaPlus />
           {t('forms.create', 'Create Form')}
-        </CreateButton>
+        </ActionButton>
       </PanelHeader>
       
       <FormsToolbar>
@@ -147,7 +162,6 @@ const FormsPanel = () => {
           <FilterButton 
             active={activeFormType === 'all'} 
             onClick={() => handleFormTypeChange('all')}
-            isRTL={isRTL}
           >
             <FaClipboardList />
             {t('forms.types.all', 'All Forms')}
@@ -155,7 +169,6 @@ const FormsPanel = () => {
           <FilterButton 
             active={activeFormType === 'feedback'} 
             onClick={() => handleFormTypeChange('feedback')}
-            isRTL={isRTL}
           >
             <FaCommentAlt />
             {t('forms.types.feedback', 'Feedback')}
@@ -163,15 +176,14 @@ const FormsPanel = () => {
           <FilterButton 
             active={activeFormType === 'revision'} 
             onClick={() => handleFormTypeChange('revision')}
-            isRTL={isRTL}
           >
             <FaEdit />
             {t('forms.types.revision', 'Revision')}
           </FilterButton>
         </FormTypeFilters>
         
-        <SearchAndSortContainer isRTL={isRTL}>
-          <SearchBar isRTL={isRTL}>
+        <SearchAndSortContainer>
+          <SearchInputWrapper isRTL={isRTL}>
             <FaSearch />
             <input
               type="text"
@@ -179,18 +191,17 @@ const FormsPanel = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-          </SearchBar>
+          </SearchInputWrapper>
           
-          <SortButton 
+          <FilterButton 
             onClick={toggleSortDirection}
-            isRTL={isRTL}
           >
             <FaSort />
             {sortDirection === 'asc' 
               ? t('forms.sortAsc', 'Ascending') 
               : t('forms.sortDesc', 'Descending')
             }
-          </SortButton>
+          </FilterButton>
         </SearchAndSortContainer>
       </FormsToolbar>
       
@@ -202,12 +213,14 @@ const FormsPanel = () => {
       
       <FormsListContainer>
         {sortedForms.length > 0 ? (
-          <FormsGrid>
+          <CardGrid>
             {sortedForms.map((form, index) => (
-              <FormCard key={form.id} index={index}>
+              <Card key={form.id} withAccent={true}>
                 <FormCardHeader>
                   <FormTitle>{form.title}</FormTitle>
-                  {renderStatusBadge(form.status)}
+                  <StatusBadge status={form.status}>
+                    {t(`forms.status.${form.status}`, form.status)}
+                  </StatusBadge>
                 </FormCardHeader>
                 <FormDescription>{form.description}</FormDescription>
                 <FormMeta>
@@ -220,182 +233,130 @@ const FormsPanel = () => {
                   <IconButton 
                     title={t('forms.actions.view', 'View Form')} 
                     icon={<FaEye />} 
-                    color="#82a1bf"
+                    color={colors.accent.secondary}
                   />
                   <IconButton 
                     title={t('forms.actions.edit', 'Edit Form')} 
                     icon={<FaEdit />} 
-                    color="#faaa93"
+                    color={colors.accent.primary}
                   />
                   <IconButton 
                     title={t('forms.actions.delete', 'Delete Form')} 
                     icon={<FaTrash />} 
-                    color="#e74c3c"
+                    color={colors.status.error}
                   />
                 </FormActions>
-              </FormCard>
+              </Card>
             ))}
-          </FormsGrid>
+          </CardGrid>
         ) : (
           <EmptyState>
-            <EmptyIcon>
-              <FaClipboardList />
-            </EmptyIcon>
-            <EmptyTitle>{t('forms.empty.title', 'No forms found')}</EmptyTitle>
-            <EmptyDescription>
+            <div className="empty-icon">
+              <FaClipboardList size={48} />
+            </div>
+            <SectionTitle>{t('forms.empty.title', 'No forms found')}</SectionTitle>
+            <p>
               {t('forms.empty.description', 'Create a new form or change your filters to see results')}
-            </EmptyDescription>
-            <CreateButton onClick={toggleNewForm} small isRTL={isRTL}>
+            </p>
+            <ActionButton onClick={toggleNewForm} small>
               <FaPlus />
               {t('forms.create', 'Create Form')}
-            </CreateButton>
+            </ActionButton>
           </EmptyState>
         )}
       </FormsListContainer>
       
       <FormFeaturesSection>
         <SectionTitle>{t('forms.features.title', 'Form System Features')}</SectionTitle>
-        <FeaturesGrid>
+        <CardGrid>
           <FeatureCard index={0}>
-            <FeatureIcon isRTL={isRTL}>
+            <FeatureIcon>
               <FaComments />
             </FeatureIcon>
-            <FeatureContent>
-              <FeatureTitle>{t('forms.features.feedback', 'Feedback Collection')}</FeatureTitle>
-              <FeatureDescription>
+            <div>
+              <h4>{t('forms.features.feedback', 'Feedback Collection')}</h4>
+              <p>
                 {t('forms.features.feedbackDesc', 'Create custom feedback forms to collect insights from clients')}
-              </FeatureDescription>
-            </FeatureContent>
+              </p>
+            </div>
           </FeatureCard>
           <FeatureCard index={1}>
-            <FeatureIcon isRTL={isRTL}>
+            <FeatureIcon>
               <FaCamera />
             </FeatureIcon>
-            <FeatureContent>
-              <FeatureTitle>{t('forms.features.visual', 'Visual Annotations')}</FeatureTitle>
-              <FeatureDescription>
+            <div>
+              <h4>{t('forms.features.visual', 'Visual Annotations')}</h4>
+              <p>
                 {t('forms.features.visualDesc', 'Allow clients to add visual annotations to their feedback')}
-              </FeatureDescription>
-            </FeatureContent>
+              </p>
+            </div>
           </FeatureCard>
           <FeatureCard index={2}>
-            <FeatureIcon isRTL={isRTL}>
+            <FeatureIcon>
               <FaRobot />
             </FeatureIcon>
-            <FeatureContent>
-              <FeatureTitle>{t('forms.features.ai', 'AI Analysis')}</FeatureTitle>
-              <FeatureDescription>
+            <div>
+              <h4>{t('forms.features.ai', 'AI Analysis')}</h4>
+              <p>
                 {t('forms.features.aiDesc', 'Automatically analyze feedback with AI to identify key insights')}
-              </FeatureDescription>
-            </FeatureContent>
+              </p>
+            </div>
           </FeatureCard>
           <FeatureCard index={3}>
-            <FeatureIcon isRTL={isRTL}>
+            <FeatureIcon>
               <FaDownload />
             </FeatureIcon>
-            <FeatureContent>
-              <FeatureTitle>{t('forms.features.export', 'Export Options')}</FeatureTitle>
-              <FeatureDescription>
+            <div>
+              <h4>{t('forms.features.export', 'Export Options')}</h4>
+              <p>
                 {t('forms.features.exportDesc', 'Export feedback data in multiple formats for further analysis')}
-              </FeatureDescription>
-            </FeatureContent>
+              </p>
+            </div>
           </FeatureCard>
-        </FeaturesGrid>
+        </CardGrid>
       </FormFeaturesSection>
-    </FormsPanelContainer>
+    </PanelContainer>
   );
 };
 
-// Styled components
-const FormsPanelContainer = styled(Card)`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 1.5rem;
-  position: relative;
-  overflow: hidden;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background-color: rgba(130, 161, 191, 0.05);
-    z-index: -1;
-  }
-  
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -50px;
-    left: -50px;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background-color: rgba(250, 170, 147, 0.05);
-    z-index: -1;
-  }
-  
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-`;
-
-const PanelHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-`;
-
-const HeaderTitle = styled.h2`
-  margin: 0;
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #513a52;
-  
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-  }
-`;
-
+// Styled components for the FormsPanel - using GlobalTheme system
 const FormsToolbar = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  ${mixins.flexColumn}
+  gap: ${spacing.md};
+  margin-bottom: ${spacing.lg};
   
-  @media (max-width: 768px) {
-    gap: 0.75rem;
+  @media (max-width: ${breakpoints.md}) {
+    gap: ${spacing.sm};
   }
 `;
 
 const FormTypeFilters = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: ${spacing.sm};
+  margin-bottom: ${spacing.md};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    justify-content: flex-end;
+  }
 `;
 
 const SearchAndSortContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: ${spacing.md};
   
-  @media (max-width: 768px) {
+  @media (max-width: ${breakpoints.md}) {
     flex-direction: column;
-    align-items: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
+    align-items: flex-start;
     width: 100%;
+    
+    /* RTL Support */
+    [dir="rtl"] & {
+      align-items: flex-end;
+    }
   }
 `;
 
@@ -452,9 +413,9 @@ const SearchBar = styled.div`
 `;
 
 const FormsListContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+  ${mixins.flexColumn}
   flex: 1;
+  margin-bottom: ${spacing.lg};
 `;
 
 const FormsGrid = styled.div`
@@ -530,20 +491,24 @@ const FormCard = styled(Card)`
 `;
 
 const FormCardHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
+  ${mixins.flexBetween}
   align-items: flex-start;
-  margin-bottom: 0.75rem;
+  margin-bottom: ${spacing.sm};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
 `;
 
 const FormTitle = styled.h3`
   margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #513a52;
+  font-size: ${typography.fontSizes.lg};
+  font-weight: ${typography.fontWeights.semiBold};
+  color: ${colors.text.primary};
   position: relative;
   display: inline-block;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: ${transitions.medium};
   
   &:after {
     content: '';
@@ -552,29 +517,37 @@ const FormTitle = styled.h3`
     left: 0;
     width: 0;
     height: 2px;
-    background-color: #faaa93;
+    background: ${colors.gradients.accent};
     transition: width 0.3s ease;
+    
+    /* RTL Support */
+    [dir="rtl"] & {
+      left: auto;
+      right: 0;
+    }
   }
   
-  ${FormCard}:hover & {
+  ${Card}:hover & {
     transform: translateX(5px);
-    color: #3a2a3b;
-  }
-  
-  ${FormCard}:hover &:after {
-    width: 100%;
+    color: ${colors.accent.primary};
   }
 `;
 
 const FormDescription = styled.p`
-  margin: 0 0 1rem 0;
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.4;
-  transition: color 0.3s ease, transform 0.3s ease;
+  margin: 0 0 ${spacing.md} 0;
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.secondary};
+  line-height: ${typography.lineHeights.normal};
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  transition: ${transitions.medium};
   
   ${FormCard}:hover & {
-    color: #444;
+    color: ${colors.text.primary};
     transform: translateY(-2px);
   }
 `;
@@ -583,57 +556,79 @@ const FormMeta = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: auto;
-  padding-top: 1rem;
-  font-size: 0.85rem;
-  color: #888;
-  transition: color 0.3s ease, transform 0.3s ease;
+  padding-top: ${spacing.md};
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.secondary};
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  transition: ${transitions.medium};
   
   ${FormCard}:hover & {
-    color: #666;
+    color: ${colors.text.primary};
     transform: translateY(-3px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 `;
 
-const FormDate = styled.span``;
-
-const FormResponses = styled.span``;
-
-const StatusBadge = styled.span`
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: white;
-  background-color: ${props => props.color};
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-  overflow: hidden;
+const FormDate = styled.span`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
   
-  &:before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
-    opacity: 0;
-    transform: scale(0.5);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    pointer-events: none;
-  }
-  
-  ${FormCard}:hover & {
-    transform: scale(1.05);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    
-    &:before {
-      opacity: 1;
-      transform: scale(1);
-    }
+  svg {
+    color: ${colors.accent.primary};
+    font-size: ${typography.fontSizes.xs};
   }
 `;
+
+const FormResponses = styled.span`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  font-weight: ${typography.fontWeights.medium};
+  
+  svg {
+    color: ${colors.accent.primary};
+    font-size: ${typography.fontSizes.xs};
+  }
+`;
+
+// This component is no longer needed as we're using the global StatusBadge component
+// const FormStatusBadge = styled.span`
+//   display: inline-block;
+//   padding: 0.25rem 0.5rem;
+//   border-radius: 4px;
+//   font-size: 0.75rem;
+//   font-weight: 500;
+//   color: white;
+//   background-color: ${props => props.color};
+//   transition: transform 0.3s ease, box-shadow 0.3s ease;
+//   position: relative;
+//   overflow: hidden;
+//   
+//   &:before {
+//     content: '';
+//     position: absolute;
+//     top: -50%;
+//     left: -50%;
+//     width: 200%;
+//     height: 200%;
+//     background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+//     opacity: 0;
+//     transform: scale(0.5);
+//     transition: opacity 0.5s ease, transform 0.5s ease;
+//     pointer-events: none;
+//   }
+//   
+//   ${FormCard}:hover & {
+//     transform: scale(1.05);
+//     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+//     
+//     &:before {
+//       opacity: 1;
+//       transform: scale(1);
+//     }
+//   }
+// `
 
 const FormActions = styled.div`
   display: flex;
@@ -666,11 +661,19 @@ const FormActions = styled.div`
 `;
 
 const NewFormContainer = styled(Card)`
-  margin-bottom: 2rem;
+  margin-bottom: ${spacing.lg};
   animation: ${fadeIn} 0.3s ease-in-out, ${slideUp} 0.3s ease-in-out;
+  background: ${colors.background.card};
+  border-left: 4px solid ${colors.accent.primary};
+  transition: ${transitions.medium};
+  
+  &:hover {
+    box-shadow: ${shadows.md};
+    background: ${colors.background.hover};
+  }
 `;
 
-const EmptyState = styled(Card)`
+const FormEmptyState = styled(Card)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -678,13 +681,15 @@ const EmptyState = styled(Card)`
   text-align: center;
   padding: 3rem 1rem;
   animation: ${fadeIn} 0.5s ease-in-out, ${slideUp} 0.5s ease-in-out;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: ${transitions.medium};
   position: relative;
   overflow: hidden;
+  background: ${colors.background.card};
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    box-shadow: ${shadows.lg};
+    background: ${colors.background.hover};
   }
   
   &:before {
@@ -723,53 +728,76 @@ const EmptyState = styled(Card)`
 `;
 
 const EmptyIcon = styled.div`
-  font-size: 3rem;
-  color: #ddd;
-  margin-bottom: 1rem;
-  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: ${borderRadius.full};
+  background: ${colors.background.secondary};
+  margin-bottom: ${spacing.lg};
+  color: ${colors.accent.primary};
+  font-size: ${typography.fontSizes.xxxl};
+  transition: ${transitions.medium};
   position: relative;
   z-index: 1;
+  box-shadow: ${shadows.sm};
   
-  svg {
-    transition: transform 0.5s ease, color 0.5s ease;
-  }
-  
-  ${EmptyState}:hover & svg {
-    transform: scale(1.2) rotate(10deg);
-    color: #82a1bf;
+  &:before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    background: ${colors.gradients.subtle};
+    border-radius: inherit;
+    z-index: -1;
+    transform: scale(0.8);
+    opacity: 0;
+    transition: ${transitions.medium};
   }
   
   &:after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: rgba(130, 161, 191, 0.1);
-    transform: translate(-50%, -50%) scale(0);
-    transition: transform 0.5s ease;
-    z-index: -1;
+    inset: 0;
+    background: ${colors.gradients.button};
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
   
-  ${EmptyState}:hover &:after {
-    transform: translate(-50%, -50%) scale(1);
+  ${EmptyState}:hover & {
+    transform: translateY(-5px) scale(1.05);
+    color: ${colors.text.primary};
+    
+    &:after {
+      opacity: 1;
+    }
+  }
+  
+  ${EmptyState}:hover &:before {
+    transform: scale(1.1);
+    opacity: 0.7;
   }
 `;
 
 const EmptyTitle = styled.h3`
-  margin: 0 0 0.5rem 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #513a52;
-  transition: all 0.3s ease;
+  margin: 0 0 ${spacing.md} 0;
+  font-size: ${typography.fontSizes.xl};
+  font-weight: ${typography.fontWeights.semiBold};
+  color: ${colors.text.primary};
+  transition: ${transitions.medium};
   position: relative;
   z-index: 1;
+  display: inline-block;
   
   ${EmptyState}:hover & {
-    color: #3a2a3b;
     transform: translateY(-3px);
+    background: ${colors.gradients.text};
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   &:after {
@@ -779,7 +807,7 @@ const EmptyTitle = styled.h3`
     left: 50%;
     width: 0;
     height: 2px;
-    background-color: #faaa93;
+    background: ${colors.gradients.accent};
     transform: translateX(-50%);
     transition: width 0.3s ease;
   }
@@ -791,15 +819,15 @@ const EmptyTitle = styled.h3`
 
 const EmptyDescription = styled.p`
   margin: 0 0 1.5rem 0;
-  font-size: 0.95rem;
-  color: #888;
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.secondary};
   max-width: 400px;
-  transition: all 0.3s ease;
+  transition: ${transitions.medium};
   position: relative;
   z-index: 1;
-  
+
   ${EmptyState}:hover & {
-    color: #666;
+    color: ${colors.text.primary};
     transform: translateY(-2px);
   }
 `;
@@ -808,81 +836,226 @@ const FormFeaturesSection = styled.section`
   margin-top: 3rem;
 `;
 
-const SectionTitle = styled.h3`
-  margin: 0 0 1.5rem 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #513a52;
+const FormSectionTitle = styled.h3`
+  margin: 0 0 ${spacing.lg} 0;
+  font-size: ${typography.fontSizes.xl};
+  font-weight: ${typography.fontWeights.semiBold};
+  color: ${colors.text.primary};
+  position: relative;
+  display: inline-block;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: ${colors.gradients.accent};
+    border-radius: ${borderRadius.full};
+  }
+
+  /* RTL Support */
+  [dir="rtl"] & {
+    &:after {
+      left: auto;
+      right: 0;
+    }
+  }
 `;
 
 const FeaturesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
 `;
 
-const FeatureCard = styled(Card)`
+// Removed duplicate FormFeatureIcon declaration
+
+const FormFeatureCard = styled(Card).attrs({
+  className: 'feature-card'
+})`
   display: flex;
   align-items: flex-start;
-  padding: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: ${spacing.lg};
+  transition: ${transitions.medium};
   animation: ${fadeIn} 0.5s ease-in-out, ${slideUp} 0.5s ease-in-out;
   animation-delay: ${props => props.index * 0.15}s;
   opacity: 0;
   animation-fill-mode: forwards;
   position: relative;
   overflow: hidden;
-  
+  background: ${colors.background.card};
+  border-left: 3px solid ${colors.accent.secondary};
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(205, 62, 253, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    opacity: 0;
+    transform: translate(30%, 30%);
+    transition: opacity 0.3s ease;
+  }
+
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-    background-color: #fafafa;
+    box-shadow: ${shadows.lg};
+    background: ${colors.background.hover};
+    border-left: 3px solid ${colors.accent.primary};
+
+    &:after {
+      opacity: 1;
+    }
   }
-  
-  &:hover ${props => props.FeatureIcon} {
+
+  &:hover .feature-icon {
     transform: scale(1.1) rotate(5deg);
-    background-color: #faaa93;
-    color: white;
+    background: ${colors.accent.primary};
+    color: ${colors.text.primary};
   }
 `;
 
-const FeatureIcon = styled.div`
+// Apply the className in the component render
+// <FormFeatureIcon className="feature-icon">
+
+const FormFeatureIcon = styled.div.attrs({
+  className: 'feature-icon'
+})`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 50px;
   height: 50px;
-  border-radius: 12px;
-  background-color: #f5f5f5;
-  margin-right: ${props => props.isRTL ? '0' : '1rem'};
-  margin-left: ${props => props.isRTL ? '1rem' : '0'};
-  font-size: 1.5rem;
-  color: #513a52;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: ${borderRadius.lg};
+  background: ${colors.background.secondary};
+  margin-right: ${props => props.isRTL ? '0' : spacing.md};
+  margin-left: ${props => props.isRTL ? spacing.md : '0'};
+  flex-shrink: 0;
+  color: ${colors.accent.primary};
+  font-size: ${typography.fontSizes.lg};
+  transition: ${transitions.medium};
+  position: relative;
+  z-index: 1;
+  box-shadow: ${shadows.sm};
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: ${colors.accent.secondary};
+    opacity: 0.3;
+    border-radius: ${borderRadius.full};
+    transform: translateX(-50%);
+    z-index: -1;
+    transition: ${transitions.medium};
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: ${colors.gradients.subtle};
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .feature-card:hover & {
+    color: ${colors.text.primary};
+    transform: scale(1.1) rotate(5deg);
+    background: ${colors.accent.primary};
+
+    &:before {
+      opacity: 1;
+    }
+  }
+
+  .feature-card:hover &:after {
+    width: 25px;
+    height: 5px;
+    border-radius: ${borderRadius.full};
+    bottom: -8px;
+    background: ${colors.accent.primary};
+    opacity: 0.5;
+  }
+`;
+
+const FormFeatureTitle = styled.h4`
+  margin: 0 0 ${spacing.sm} 0;
+  font-size: ${typography.fontSizes.md};
+  font-weight: ${typography.fontWeights.semiBold};
+  color: ${colors.text.primary};
+  transition: ${transitions.medium};
+  position: relative;
+  display: inline-block;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: ${colors.gradients.accent};
+    transition: width 0.3s ease;
+  }
+
+  ${FormFeatureCard}:hover & {
+    color: ${colors.accent.primary};
+
+    &:after {
+      width: 30px;
+    }
+  }
+
+  /* RTL Support */
+  [dir="rtl"] & {
+    &:after {
+      left: auto;
+      right: 0;
+    }
+  }
 `;
 
 const FeatureContent = styled.div`
   flex: 1;
-`;
-
-const FeatureTitle = styled.h4`
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #513a52;
+  transition: ${transitions.medium};
+  
+  ${FormFeatureCard}:hover & {
+    transform: translateX(5px);
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    ${FormFeatureCard}:hover & {
+      transform: translateX(-5px);
+    }
+  }
 `;
 
 const FeatureDescription = styled.p`
   margin: 0;
-  font-size: 0.9rem;
-  color: #666;
-  line-height: 1.4;
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.secondary};
+  transition: ${transitions.medium};
+  line-height: ${typography.lineHeights.normal};
+  
+  ${FormFeatureCard}:hover & {
+    color: ${colors.text.primary};
+  }
 `;
 
 // Button components
@@ -917,50 +1090,58 @@ const buttonBase = css`
   }
 `;
 
-const CreateButton = styled.button`
-  ${buttonBase}
-  background-color: #faaa93;
-  color: white;
-  padding: ${props => props.small ? '0.5rem 1rem' : '0.6rem 1.2rem'};
-  font-size: ${props => props.small ? '0.9rem' : '0.95rem'};
+const CreateButton = styled(ActionButton)`
+  background: ${colors.gradients.button};
+  color: ${colors.text.primary};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  padding: ${spacing.sm} ${spacing.lg};
+  box-shadow: ${shadows.md};
+  transition: ${transitions.medium};
   position: relative;
   overflow: hidden;
-  z-index: 1;
+  border-radius: ${borderRadius.md};
+  border: none;
   
   &:before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
-    transform: translateX(-100%);
-    z-index: -1;
-  }
-  
-  &:hover:before {
-    animation: ${shine} 1.5s ease-out;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+    transform: scale(0);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    pointer-events: none;
+    opacity: 0;
   }
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(250, 170, 147, 0.4);
+    transform: translateY(-3px);
+    box-shadow: ${shadows.lg};
+    background: ${colors.gradients.buttonHover};
+  }
+  
+  &:hover:before {
+    transform: scale(1);
+    opacity: 1;
   }
   
   &:active {
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(250, 170, 147, 0.3);
+    box-shadow: ${shadows.sm};
   }
   
-  @media (max-width: 768px) {
-    font-size: 0.9rem;
-    padding: 0.6rem 1.2rem;
-    
-    svg {
-      margin-right: 0.5rem;
-      font-size: 1rem;
-    }
+  svg {
+    margin-right: ${spacing.sm};
+    font-size: ${typography.fontSizes.md};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & svg {
+    margin-right: 0;
+    margin-left: ${spacing.sm};
   }
   
   // Add pulsing animation
@@ -981,27 +1162,105 @@ const CreateButton = styled.button`
   }
 `;
 
-const FilterButton = styled.button`
+// Wrapper for search functionality to avoid input element having children
+const SearchInputWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background-color: ${props => props.active ? '#82a1bf' : '#f7f9fc'};
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: ${props => props.active ? '0 2px 5px rgba(130, 161, 191, 0.3)' : 'none'};
+  background-color: ${colors.background.card};
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.md};
+  box-shadow: ${shadows.sm};
+  width: 100%;
+  max-width: 350px;
+  transition: ${transitions.medium};
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: ${colors.gradients.accent};
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  
+  &:focus-within {
+    box-shadow: ${shadows.md};
+    border-color: rgba(205, 62, 253, 0.3);
+    transform: translateY(-2px);
+    
+    &:after {
+      transform: scaleX(1);
+    }
+  }
   
   svg {
-    font-size: 0.9rem;
-    color: white;
+    color: ${colors.accent.primary};
+    ${props => props.isRTL 
+      ? css`margin-left: ${spacing.sm};`
+      : css`margin-right: ${spacing.sm};`
+    }
+    transition: color 0.3s ease;
+    font-size: ${typography.fontSizes.sm};
+  }
+  
+  &:focus-within svg {
+    color: ${colors.accent.primary};
+  }
+  
+  input {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+    font-size: ${typography.fontSizes.sm};
+    color: ${colors.text.secondary};
+    direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+    
+    &::placeholder {
+      color: ${colors.text.disabled};
+      transition: color 0.3s ease;
+    }
+    
+    &:focus::placeholder {
+      color: ${colors.text.muted};
+    }
+  }
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+`;
+
+const FormFilterButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  background: ${props => props.active ? colors.accent.secondary : 'rgba(255, 255, 255, 0.05)'};
+  color: ${colors.text.primary}; /* Always white text for better visibility */
+  border: none;
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.xs} ${spacing.md};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  box-shadow: ${props => props.active ? shadows.md : 'none'};
+  
+  svg {
+    font-size: ${typography.fontSizes.sm};
+    color: ${colors.text.primary};
   }
   
   &:hover {
-    background-color: #82a1bf;
+    background: ${colors.accent.secondary};
+    transform: translateY(-2px);
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(130, 161, 191, 0.3);
@@ -1013,28 +1272,61 @@ const FilterButton = styled.button`
 `;
 
 const SortButton = styled.button`
-  ${buttonBase}
-  background-color: #82a1bf;
-  color: white;
-  font-size: 0.85rem;
-  padding: 0.4rem 0.8rem;
-  box-shadow: 0 2px 5px rgba(130, 161, 191, 0.3);
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  background: ${colors.accent.secondary};
+  color: ${colors.text.primary}; /* Always white text for better visibility */
+  border: none;
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.xs} ${spacing.md};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  box-shadow: ${shadows.sm};
+  position: relative;
+  overflow: hidden;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: ${colors.gradients.accent};
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
   
   svg {
-    color: white;
+    font-size: ${typography.fontSizes.sm};
+    color: ${colors.text.primary};
+    transition: transform 0.3s ease;
   }
   
   &:hover {
-    background-color: #6889a8;
+    background: ${colors.accent.primary};
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(130, 161, 191, 0.3);
+    box-shadow: ${shadows.md};
+    
+    &:after {
+      transform: scaleX(1);
+    }
+    
+    svg {
+      transform: rotate(180deg);
+    }
   }
   
   &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(130, 161, 191, 0.2);
+    transform: translateY(-1px);
+    box-shadow: ${shadows.sm};
   }
 `;
 
 
 export default FormsPanel;
+

@@ -1,20 +1,104 @@
 import styled, { css } from 'styled-components';
 import { fadeInUp } from './animations';
 
-// Basic fade in animation used for panel and card entrances
+//-----------------------------------------------------------------------------
+// BASE COMPONENTS - Foundational styled components that others inherit from
+//-----------------------------------------------------------------------------
 
-// Common Dashboard Styles
+// Base Container - Common styles for containers with gradient background and decorative elements
+export const BaseContainer = styled.div`
+  background: linear-gradient(145deg, #1a1a20, #1d1d25);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(205, 62, 253, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+`;
+
+// Base Card - Foundation for card-like elements
+export const BaseCard = styled.div`
+  background: linear-gradient(145deg, #1c1c24, #1e1e28);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  animation: ${fadeInUp} 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    border-color: rgba(205, 62, 253, 0.3);
+  }
+`;
+
+// Base Button - Foundation for button components
+export const BaseButton = styled.button`
+  border-radius: 8px;
+  padding: 0.7rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  svg {
+    font-size: 1rem;
+  }
+`;
+
+// Base Input - Common styles for form inputs
+export const BaseInput = styled.input`
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+  }
+`;
+
+// Base Title - Common styles for section titles
+export const BaseTitle = styled.h2`
+  margin: 0 0 1.5rem 0;
+  font-weight: 600;
+  position: relative;
+`;
+
+//-----------------------------------------------------------------------------
+// TYPOGRAPHY COMPONENTS - Text and heading styled components
+//-----------------------------------------------------------------------------
 
 // Title styles used across dashboard components
-export const DashboardTitle = styled.h2`
+export const DashboardTitle = styled(BaseTitle)`
   color: #fff;
-  margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
-  font-weight: 600;
   background: linear-gradient(90deg, #cd3efd, #7b2cbf);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  position: relative;
   display: inline-block;
   
   &:after {
@@ -34,26 +118,15 @@ export const DashboardTitle = styled.h2`
 `;
 
 // Common container for dashboard panel components
-export const DashboardPanelContainer = styled.div`
+export const DashboardPanelContainer = styled(BaseContainer)`
   width: 100%;
   padding: 1.5rem 0;
-  background: linear-gradient(145deg, #1a1a20, #1d1d25);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
   
+  /* Override the :before pseudo-element from BaseContainer to change position */
   &:before {
-    content: '';
-    position: absolute;
     top: -50px;
     left: -50px;
-    width: 150px;
-    height: 150px;
     background: radial-gradient(circle, rgba(123, 44, 191, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-    border-radius: 50%;
-    pointer-events: none;
   }
   
   @media (max-width: 768px) {
@@ -61,32 +134,27 @@ export const DashboardPanelContainer = styled.div`
   }
 `;
 
+//-----------------------------------------------------------------------------
+// PANEL & HEADER COMPONENTS - Panel, header, and container components
+//-----------------------------------------------------------------------------
+
 // Header style used in dashboard panels
-export const PanelHeader = styled.div`
+export const PanelHeader = styled(BaseContainer)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
   gap: 1rem;
-  background: linear-gradient(145deg, #1a1a20, #1d1d25);
-  border-radius: 12px;
   padding: 1.2rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  position: relative;
-  overflow: hidden;
   
+  /* Override the :before pseudo-element from BaseContainer */
   &:before {
-    content: '';
-    position: absolute;
     top: -50px;
     right: -50px;
-    width: 150px;
-    height: 150px;
     background: radial-gradient(circle, rgba(205, 62, 253, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-    border-radius: 50%;
-    pointer-events: none;
   }
   
   @media (max-width: 768px) {
@@ -95,19 +163,40 @@ export const PanelHeader = styled.div`
   }
 `;
 
-// Card container for dashboard items
-export const Card = styled.div`
-  background: linear-gradient(145deg, #1c1c24, #1e1e28);
-  border-radius: 12px;
+// Dashboard panel
+export const DashboardPanel = styled(BaseContainer)`
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
-  animation: ${fadeInUp} 0.5s ease-out;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  animation: ${fadeInUp} 0.6s ease-out;
   
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
+// Panel container
+export const PanelContainer = styled.div`
+  padding: 1.5rem;
+  width: 100%;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
+//-----------------------------------------------------------------------------
+// CARD COMPONENTS - Reusable card components 
+//-----------------------------------------------------------------------------
+
+// Card container for dashboard items
+export const Card = styled(BaseCard)`
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  
+  /* Add specific decoration to cards */
   &:before {
     content: '';
     position: absolute;
@@ -121,39 +210,26 @@ export const Card = styled.div`
     pointer-events: none;
   }
   
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-    border-color: rgba(205, 62, 253, 0.3);
-  }
-  
   @media (max-width: 768px) {
     padding: 1.2rem;
     margin-bottom: 1rem;
   }
 `;
 
+//-----------------------------------------------------------------------------
+// QUICK ACTION COMPONENTS - Quick action buttons and containers
+//-----------------------------------------------------------------------------
+
 // Quick Actions Container
-export const QuickActionsContainer = styled.div`
-  background: linear-gradient(145deg, #1a1a20, #1d1d25);
-  border-radius: 16px;
+export const QuickActionsContainer = styled(BaseContainer)`
   padding: 1.8rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  position: relative;
-  overflow: hidden;
   
+  /* Override the :before pseudo-element from BaseContainer */
   &:before {
-    content: '';
-    position: absolute;
     top: -50px;
     left: -50px;
-    width: 150px;
-    height: 150px;
     background: radial-gradient(circle, rgba(123, 44, 191, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-    border-radius: 50%;
-    pointer-events: none;
   }
   
   @media (max-width: 768px) {
@@ -163,10 +239,7 @@ export const QuickActionsContainer = styled.div`
 `;
 
 // Quick Action Button
-export const QuickActionButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+export const QuickActionButton = styled(BaseButton)`
   flex-direction: column;
   width: 110px;
   height: 100px;
@@ -174,8 +247,6 @@ export const QuickActionButton = styled.button`
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 14px;
   color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   position: relative;
   overflow: hidden;
@@ -198,7 +269,6 @@ export const QuickActionButton = styled.button`
     margin-bottom: 0.7rem;
     color: #cd3efd;
     filter: drop-shadow(0 2px 4px rgba(205, 62, 253, 0.4));
-    transition: all 0.3s ease;
   }
   
   span {
@@ -217,7 +287,6 @@ export const QuickActionButton = styled.button`
     
     svg {
       transform: scale(1.1);
-      color: #cd3efd;
     }
   }
   
@@ -241,28 +310,14 @@ export const QuickActionButton = styled.button`
   }
 `;
 
-// Welcome Section
-export const WelcomeSection = styled.div`
+//-----------------------------------------------------------------------------
+// WELCOME SECTION COMPONENTS - Components for the welcome/greeting section
+//-----------------------------------------------------------------------------
+
+// Welcome Section container
+export const WelcomeSection = styled(BaseContainer)`
   margin-bottom: 2rem;
-  background: linear-gradient(145deg, #1a1a20, #1d1d25);
-  border-radius: 16px;
   padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle, rgba(205, 62, 253, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-    border-radius: 50%;
-    pointer-events: none;
-  }
   
   @media (max-width: 768px) {
     padding: 1.5rem;
@@ -330,7 +385,11 @@ export const QuickActionButtons = styled.div`
   }
 `;
 
-// Kanban Board
+//-----------------------------------------------------------------------------
+// KANBAN BOARD COMPONENTS - Kanban layout and task management components
+//-----------------------------------------------------------------------------
+
+// Kanban Board - Main container for Kanban columns
 export const KanbanBoard = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -346,10 +405,69 @@ export const KanbanBoard = styled.div`
   }
 `;
 
-// Modal Content
-// (Enhanced version defined below)
+// Kanban Column - Container for a column of tasks
+export const KanbanColumn = styled(BaseContainer)`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 500px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+`;
 
-// Quick Action Title
+// Column Header - Header for each Kanban column
+export const ColumnHeader = styled.div`
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+// Column Title - Title for each Kanban column
+export const ColumnTitle = styled.h3`
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  svg {
+    color: ${props => props.color || '#cd3efd'};
+  }
+`;
+
+// Empty Column Message - Displayed when a column has no tasks
+export const EmptyColumnMessage = styled.div`
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #666;
+  font-size: 0.9rem;
+`;
+
+// Column Content - Container for tasks in a column
+export const ColumnContent = styled.div`
+  padding: 1rem;
+  flex: 1;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(123, 44, 191, 0.5);
+    border-radius: 3px;
+  }
+`;
+
+// Quick Action Title - Title for quick action sections
 export const QuickActionTitle = styled.h3`
   margin: 0 0 1.2rem 0;
   font-size: 1.2rem;
@@ -358,7 +476,6 @@ export const QuickActionTitle = styled.h3`
   position: relative;
   padding-left: 1rem;
   display: inline-block;
-  font-weight: 600;
   background-color: ${props => {
     switch (props.priority) {
       case 'high':
@@ -409,7 +526,11 @@ export const TaskMetaItem = styled.div`
 
 
 
-// Progress components
+//-----------------------------------------------------------------------------
+// PROGRESS COMPONENTS - Progress bars, indicators, and related components
+//-----------------------------------------------------------------------------
+
+// Progress Title - Title for progress sections
 export const ProgressTitle = styled.h3`
   font-size: 1.1rem;
   font-weight: 600;
@@ -417,6 +538,7 @@ export const ProgressTitle = styled.h3`
   margin: 0;
 `;
 
+// Progress Text - Descriptive text for progress indicators
 export const ProgressText = styled.div`
   font-size: 0.9rem;
   color: #aaa;
@@ -425,6 +547,7 @@ export const ProgressText = styled.div`
   gap: 0.5rem;
 `;
 
+// Progress Bar - Base progress bar component
 export const ProgressBar = styled.div`
   width: 100%;
   height: 6px;
@@ -446,33 +569,9 @@ export const ProgressBar = styled.div`
   }
 `;
 
-// Dashboard panel
-export const DashboardPanel = styled.div`
-  background: linear-gradient(145deg, #1a1a20, #1d1d25);
-  border-radius: 16px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-  animation: ${fadeInUp} 0.6s ease-out;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle, rgba(205, 62, 253, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-    border-radius: 50%;
-    pointer-events: none;
-  }
-`;
+//-----------------------------------------------------------------------------
+// TASK CARD COMPONENTS - Task cards and related components
+//-----------------------------------------------------------------------------
 
 // Progress components for focus section
 export const FocusProgressBar = styled(ProgressBar)`
@@ -744,21 +843,15 @@ export const EmptyText = styled.div`
   max-width: 400px;
 `;
 
-// Button components
-export const PrimaryButton = styled.button`
+//-----------------------------------------------------------------------------
+// BUTTON COMPONENTS - Various button styles used throughout the dashboard
+//-----------------------------------------------------------------------------
+
+// Primary action button with gradient background
+export const PrimaryButton = styled(BaseButton)`
   background: linear-gradient(90deg, #cd3efd, #7b2cbf);
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 0.7rem 1.2rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
   box-shadow: 0 4px 10px rgba(123, 44, 191, 0.3);
   
   &:hover {
@@ -770,31 +863,13 @@ export const PrimaryButton = styled.button`
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(123, 44, 191, 0.3);
   }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  svg {
-    font-size: 1rem;
-  }
 `;
 
-export const SecondaryButton = styled.button`
+// Secondary action button with subtle styling
+export const SecondaryButton = styled(BaseButton)`
   background: rgba(255, 255, 255, 0.05);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 0.7rem 1.2rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
   
   &:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -804,47 +879,11 @@ export const SecondaryButton = styled.button`
   &:active {
     background: rgba(255, 255, 255, 0.15);
   }
-  
-  svg {
-    font-size: 1rem;
-  }
 `;
 
 
 
-export const KanbanColumn = styled.div`
-  background: linear-gradient(145deg, #1a1a20, #1d1d25);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 500px;
-`;
-
-export const ColumnHeader = styled.div`
-  padding: 1rem 1.2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-export const ColumnTitle = styled.h3`
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fff;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
-  svg {
-    color: ${props => props.color || '#cd3efd'};
-  }
-`;
-
+// Task Count - Counter for tasks in a column
 export const TaskCount = styled.span`
   background: rgba(0, 0, 0, 0.2);
   border-radius: 12px;
@@ -853,25 +892,9 @@ export const TaskCount = styled.span`
   color: #aaa;
 `;
 
-export const ColumnContent = styled.div`
-  padding: 1rem;
-  flex: 1;
-  overflow-y: auto;
-  
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba(123, 44, 191, 0.5);
-    border-radius: 3px;
-  }
-`;
+//-----------------------------------------------------------------------------
+// TASK CARD COMPONENTS - Components for task cards in the Kanban board
+//-----------------------------------------------------------------------------
 
 export const TaskCardHeader = styled.div`
   display: flex;
@@ -910,26 +933,17 @@ export const PriorityBadge = styled.span`
   `}
 `;
 
-export const EmptyColumnMessage = styled.div`
-  text-align: center;
-  padding: 2rem 1rem;
-  color: #666;
-  font-size: 0.9rem;
-`;
+//-----------------------------------------------------------------------------
+// FORM COMPONENTS - Form inputs and related components
+//-----------------------------------------------------------------------------
 
 // Form input
-export const Input = styled.input`
+export const Input = styled(BaseInput)`
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  font-size: 0.9rem;
   color: #fff;
-  width: 100%;
-  transition: all 0.3s ease;
   
   &:focus {
-    outline: none;
     border-color: rgba(205, 62, 253, 0.5);
     box-shadow: 0 0 0 2px rgba(205, 62, 253, 0.2);
   }
@@ -939,36 +953,18 @@ export const Input = styled.input`
   }
 `;
 
-// Panel container
-export const PanelContainer = styled.div`
-  padding: 1.5rem;
-  width: 100%;
-  
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-`;
 
 
 
 
-
-// Add Task Button
-export const AddTaskButton = styled.button`
+// Add Task Button - Button for adding new tasks
+export const AddTaskButton = styled(BaseButton)`
   width: 100%;
   padding: 0.8rem;
   background: rgba(123, 44, 191, 0.2);
   border: 1px dashed rgba(205, 62, 253, 0.5);
   border-radius: 10px;
   color: #cd3efd;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
   
   &:hover {
     background: rgba(123, 44, 191, 0.3);
@@ -979,30 +975,16 @@ export const AddTaskButton = styled.button`
   }
 `;
 
-// Modal Content
+//-----------------------------------------------------------------------------
+// MODAL COMPONENTS - Modal dialogs and related components
+//-----------------------------------------------------------------------------
+
 // Enhanced Modal Content with dark theme and decorative elements
-export const ModalContent = styled.div`
-  background: linear-gradient(145deg, #1a1a20, #1d1d25);
-  border-radius: 16px;
+export const ModalContent = styled(BaseContainer)`
   padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 550px;
-  position: relative;
-  overflow: hidden;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle, rgba(205, 62, 253, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-    border-radius: 50%;
-    pointer-events: none;
-  }
   
   @media (max-width: 768px) {
     padding: 1.5rem;

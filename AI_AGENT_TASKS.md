@@ -147,7 +147,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Task: Add keyboard navigation support for the sidebar menu items for better accessibility
     - Docs: See WINDSURF_RULES.md (accessibility section) and DOCUMENTATION.md (Accessibility Features section)
     - Priority: Low -->
-
+<!-- 
 23. **Add Tooltip Components**
     - File: Create `src/components/Common/Tooltip.js`
     - Task: Create a reusable tooltip component for providing additional information on hover
@@ -265,7 +265,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - File: Create `src/components/Dashboard/__tests__/Dashboard.test.js`
     - Task: Test the dashboard layout structure and responsive behavior
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and package.json for testing setup
-    - Priority: Medium
+    - Priority: Medium -->
 
 ## Performance Optimization Tasks
 

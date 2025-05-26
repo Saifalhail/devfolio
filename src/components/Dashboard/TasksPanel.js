@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { 
   FaPlus, 
@@ -10,23 +10,16 @@ import {
   FaListUl,
   FaClipboardList
 } from 'react-icons/fa';
-import {
-  KanbanBoard,
-  KanbanColumn,
-  ColumnHeader,
-  ColumnTitle,
-  TaskCount,
-  ColumnContent,
-  TaskCard,
-  TaskCardHeader,
-  TaskTitle,
-  PriorityBadge,
-  TaskDescription,
-  TaskMeta,
-  TaskMetaItem,
-  EmptyColumnMessage,
-  AddTaskButton
-} from '../../styles/dashboardStyles';
+import { 
+  PanelContainer, 
+  PanelHeader, 
+  PanelTitle,
+  ActionButton,
+  EmptyState,
+  Card,
+  StatusBadge
+} from '../../styles/GlobalComponents';
+import { colors, spacing, borderRadius, shadows, mixins, transitions, typography } from '../../styles/GlobalTheme';
 import useTasks from '../../hooks/useTasks';
 
 const TasksPanel = () => {
@@ -45,19 +38,19 @@ const TasksPanel = () => {
   const doneTasks = tasks.filter(task => task.status === 'done');
 
   return (
-    <TasksPanelContainer>
+    <PanelContainer>
       <PanelHeader>
-        <h2>
-          <FaClipboardList style={{ marginRight: '0.5rem' }} />
+        <PanelTitle>
+          <FaClipboardList style={{ marginRight: spacing.sm }} />
           {t('dashboard.tasks.title', 'Tasks & Milestones')}
-        </h2>
+        </PanelTitle>
         
-        <ActionButtons>
-          <AddTaskButton>
+        <ActionButtonWrapper>
+          <ActionButton>
             <FaPlus />
             {t('dashboard.tasks.actions.addTask', 'Add Task')}
-          </AddTaskButton>
-        </ActionButtons>
+          </ActionButton>
+        </ActionButtonWrapper>
       </PanelHeader>
       
       <KanbanBoard>
@@ -68,7 +61,7 @@ const TasksPanel = () => {
               <FaListUl />
               <h3>{t('dashboard.tasks.todo', 'To Do')}</h3>
             </ColumnTitle>
-            <TaskCount>{todoTasks.length}</TaskCount>
+            <TaskCount status="neutral">{todoTasks.length}</TaskCount>
           </ColumnHeader>
           
           <ColumnContent>
@@ -95,9 +88,9 @@ const TasksPanel = () => {
             ))}
             
             {todoTasks.length === 0 && (
-              <EmptyColumnMessage>
+              <EmptyColumnState>
                 {t('dashboard.tasks.emptyTodo', 'No tasks to do')}
-              </EmptyColumnMessage>
+              </EmptyColumnState>
             )}
           </ColumnContent>
         </KanbanColumn>
@@ -109,7 +102,7 @@ const TasksPanel = () => {
               <FaClock />
               <h3>{t('dashboard.tasks.doing', 'In Progress')}</h3>
             </ColumnTitle>
-            <TaskCount>{doingTasks.length}</TaskCount>
+            <TaskCount status="info">{doingTasks.length}</TaskCount>
           </ColumnHeader>
           
           <ColumnContent>
@@ -136,9 +129,9 @@ const TasksPanel = () => {
             ))}
             
             {doingTasks.length === 0 && (
-              <EmptyColumnMessage>
+              <EmptyColumnState>
                 {t('dashboard.tasks.emptyDoing', 'No tasks in progress')}
-              </EmptyColumnMessage>
+              </EmptyColumnState>
             )}
           </ColumnContent>
         </KanbanColumn>
@@ -150,7 +143,7 @@ const TasksPanel = () => {
               <FaCheck />
               <h3>{t('dashboard.tasks.done', 'Done')}</h3>
             </ColumnTitle>
-            <TaskCount>{doneTasks.length}</TaskCount>
+            <TaskCount status="success">{doneTasks.length}</TaskCount>
           </ColumnHeader>
           
           <ColumnContent>
@@ -177,47 +170,215 @@ const TasksPanel = () => {
             ))}
             
             {doneTasks.length === 0 && (
-              <EmptyColumnMessage>
+              <EmptyColumnState>
                 {t('dashboard.tasks.emptyDone', 'No completed tasks')}
-              </EmptyColumnMessage>
+              </EmptyColumnState>
             )}
           </ColumnContent>
         </KanbanColumn>
       </KanbanBoard>
-    </TasksPanelContainer>
+    </PanelContainer>
   );
 };
 
 // Custom styled components extending from centralized styles
-const TasksPanelContainer = styled.div`
-  padding: 1.5rem;
-  border-radius: 10px;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-`;
-
-const PanelHeader = styled.div`
+const ActionButtonWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  gap: ${spacing.md};
   
-  h2 {
-    display: flex;
-    align-items: center;
-    font-size: 1.5rem;
-    margin: 0;
-    color: #fff;
-    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
   }
 `;
 
-const ActionButtons = styled.div`
+// Kanban Board Components
+const KanbanBoard = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: ${spacing.lg};
+  margin-top: ${spacing.lg};
+  width: 100%;
+  
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: ${spacing.md};
+  }
+`;
+
+const KanbanColumn = styled(Card)`
   display: flex;
-  gap: 0.8rem;
+  flex-direction: column;
+  min-height: 300px;
+  max-height: 600px;
+  overflow-y: hidden;
+  padding: 0;
+  
+  &:hover {
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+  }
+`;
+
+const ColumnHeader = styled.div`
+  ${mixins.flexBetween}
+  padding: ${spacing.md};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  background: ${colors.background.card};
+  z-index: 10;
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+const ColumnTitle = styled.div`
+  ${mixins.flexCenter}
+  gap: ${spacing.sm};
+  
+  h3 {
+    margin: 0;
+    font-size: ${typography.fontSizes.lg};
+    font-weight: ${typography.fontWeights.medium};
+    color: ${colors.text.primary};
+  }
+  
+  svg {
+    color: ${colors.accent.primary};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+const TaskCount = styled(StatusBadge)`
+  font-size: ${typography.fontSizes.sm};
+`;
+
+const ColumnContent = styled.div`
+  padding: ${spacing.md};
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.md};
+  overflow-y: auto;
+`;
+
+const TaskCard = styled(Card)`
+  padding: ${spacing.md};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: ${shadows.md};
+    border-color: rgba(205, 62, 253, 0.3);
+  }
+`;
+
+const TaskCardHeader = styled.div`
+  ${mixins.flexBetween}
+  margin-bottom: ${spacing.sm};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+const TaskTitle = styled.h4`
+  margin: 0;
+  font-size: ${typography.fontSizes.md};
+  font-weight: ${typography.fontWeights.medium};
+  color: ${colors.text.primary};
+  ${mixins.truncate}
+`;
+
+// Custom priority badge that maps priority levels to status colors
+const PriorityBadge = styled.span`
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.xs};
+  font-weight: ${typography.fontWeights.medium};
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  ${props => {
+    const getStatusType = () => {
+      switch (props.priority) {
+        case 'high': return 'error';
+        case 'medium': return 'warning';
+        case 'low': return 'info';
+        default: return 'neutral';
+      }
+    };
+    return css`
+      ${mixins.statusBadge(getStatusType())}
+    `;
+  }}
+`;
+
+const TaskDescription = styled.p`
+  margin: ${spacing.sm} 0;
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.secondary};
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: ${typography.lineHeights.normal};
+`;
+
+const TaskMeta = styled.div`
+  display: flex;
+  gap: ${spacing.md};
+  margin-top: ${spacing.sm};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+const TaskMetaItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  font-size: ${typography.fontSizes.xs};
+  color: ${colors.text.muted};
+  
+  svg {
+    font-size: ${typography.fontSizes.sm};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+const EmptyColumnState = styled(EmptyState)`
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.muted};
+  padding: ${spacing.md};
+  min-height: 150px;
+  display: flex;
+  gap: ${spacing.sm};
+  border-radius: ${borderRadius.md};
+  background: rgba(255, 255, 255, 0.02);
 `;
 
 export default TasksPanel;
