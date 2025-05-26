@@ -1,16 +1,7 @@
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
+import { fadeInUp } from './animations';
 
 // Basic fade in animation used for panel and card entrances
-const fadeInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
 
 // Common Dashboard Styles
 

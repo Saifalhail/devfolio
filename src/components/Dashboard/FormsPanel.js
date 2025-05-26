@@ -1,52 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Card } from '../../styles/dashboardStyles';
 import { useTranslation } from 'react-i18next';
-import { 
-  FaCommentAlt, FaClipboardList, FaEdit, FaEye, 
-  FaTrash, FaPlus, FaFilter, FaSearch, FaSort, 
+import {
+  FaCommentAlt, FaClipboardList, FaEdit, FaEye,
+  FaTrash, FaPlus, FaFilter, FaSearch, FaSort,
   FaComments, FaCamera, FaRobot, FaDownload
 } from 'react-icons/fa';
 import FeedbackForm from './FeedbackForm';
 import Button from '../Common/Button';
 import IconButton from '../Common/IconButton';
-
-// Animation keyframes
-const fadeIn = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
-`;
-
-const slideUp = keyframes`
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-`;
-
-const slideInRight = keyframes`
-  from { transform: translateX(20px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-`;
-
-const slideInLeft = keyframes`
-  from { transform: translateX(-20px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-`;
-
-const pulse = keyframes`
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-`;
-
-const shimmer = keyframes`
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-`;
-
-const rotate = keyframes`
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-`;
+import {
+  fadeIn,
+  slideUp,
+  slideInRight,
+  slideInLeft,
+  pulse,
+  shine,
+} from '../../styles/animations';
 
 const FormsPanel = () => {
   const { t, i18n } = useTranslation();
@@ -969,13 +940,7 @@ const CreateButton = styled.button`
   }
   
   &:hover:before {
-    animation: shine 1.5s ease-out;
-  }
-  
-  @keyframes shine {
-    100% {
-      transform: translateX(100%);
-    }
+    animation: ${shine} 1.5s ease-out;
   }
   
   &:hover {

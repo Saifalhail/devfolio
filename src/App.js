@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyles from './styles/GlobalStyles';
+import { GlobalAnimationStyles } from './styles/animations';
 import theme from './styles/theme';
 import './i18n'; // Import i18n initialization
 import i18n from './i18n';
@@ -90,6 +91,7 @@ function App() {
     return (
       <ThemeProvider theme={theme}>
         <GlobalStyles />
+        <GlobalAnimationStyles />
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
@@ -156,6 +158,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
+        <GlobalAnimationStyles />
         <AuthProvider>
           <Router>
             <Routes>
