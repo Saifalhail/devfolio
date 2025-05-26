@@ -370,7 +370,7 @@ const SearchBar = styled.div`
   width: 100%;
   max-width: 350px;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #ddd;
   
   &:focus-within {
     box-shadow: 0 3px 15px rgba(130, 161, 191, 0.15);
@@ -440,10 +440,11 @@ const FormCard = styled(Card)`
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: ${fadeIn} 0.5s ease-in-out forwards, ${slideUp} 0.5s ease-in-out forwards;
+  cursor: pointer;
+  transition: ${transitions.medium};
+  animation: ${fadeIn} 0.6s ease-out both, ${slideUp} 0.6s ease-out both;
   animation-delay: ${props => props.index * 0.1}s;
-  opacity: 1;
+  opacity: 0;
   position: relative;
   overflow: hidden;
   
@@ -451,6 +452,9 @@ const FormCard = styled(Card)`
     transform: translateY(-5px) scale(1.02);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
     background: ${colors.background.hover};
+    &:before {
+      width: 6px;
+    }
   }
   
   &:active {
@@ -487,6 +491,7 @@ const FormCard = styled(Card)`
     height: 100%;
     background: linear-gradient(to bottom, #faaa93, #82a1bf);
     opacity: 0.8;
+    transition: width 0.3s ease;
   }
 `;
 
@@ -648,11 +653,16 @@ const FormActions = styled.div`
   
   & > * {
     transform: scale(0.95);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, filter 0.3s ease;
   }
-  
+
   ${FormCard}:hover & > * {
     transform: scale(1);
+  }
+
+  & > *:hover {
+    transform: scale(1.1) rotate(5deg);
+    filter: brightness(1.1);
   }
   
   & > *:nth-child(1) { transition-delay: 0.05s; }
@@ -1173,7 +1183,7 @@ const SearchInputWrapper = styled.div`
   width: 100%;
   max-width: 350px;
   transition: ${transitions.medium};
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #ddd;
   position: relative;
   overflow: hidden;
   
@@ -1192,7 +1202,7 @@ const SearchInputWrapper = styled.div`
   
   &:focus-within {
     box-shadow: ${shadows.md};
-    border-color: rgba(205, 62, 253, 0.3);
+    border-color: ${colors.accent.primary};
     transform: translateY(-2px);
     
     &:after {
