@@ -5,24 +5,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
 > **NOTE FOR CODEX AGENTS**: This project is undergoing UI modernization to match the dark purple theme with gradient effects. All new components must use white text on dark backgrounds for better visibility and accessibility. Components should use gradient backgrounds, subtle animations, and consistent hover effects as detailed in the UI documentation. Refer to UI_DESIGN_DOCUMENTATION.md for the complete style guide and GlobalComponents.js/GlobalTheme.js for implementation examples.
 
 
-20. **Complete Arabic Translation Integration**
-    - Files: `src/locales/ar/translation.json` and all dashboard components
-    - Task: Add missing Arabic translations for all dashboard components and ensure all text strings are properly internationalized
-    - Docs: See DOCUMENTATION.md (Internationalization section) and WINDSURF_RULES.md (internationalization section)
-    - Priority: High
 
-21. **Enhance RTL Layout Support**
-    - Files: `src/styles/GlobalComponents.js` and all dashboard panel components
-    - Task: Ensure all components properly flip layout direction, icon positions, and text alignment in RTL mode
-    - Docs: See UI_DESIGN_DOCUMENTATION.md (RTL Support section)
-    - Priority: High
-    - **ASSIGN TO CODEX AGENT**
-
-22. **Create Reusable Modal Component**
-    - File: Create `src/components/Common/Modal.js`
-    - Task: Implement a flexible, reusable modal component with animation effects for add/edit operations
-    - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section) and WINDSURF_RULES.md (styling section)
-    - Priority: High
 
 23. **Refine ProjectsPanel UI**
     - File: `src/components/Dashboard/ProjectsPanel.js`
