@@ -116,7 +116,9 @@ const Sidebar = ({ collapsed = false, onToggleCollapse }) => {
         aria-label={collapsed ? t('dashboard.sidebar.expand', 'Expand Sidebar') : t('dashboard.sidebar.collapse', 'Collapse Sidebar')}
         isRTL={isRTL}
       >
-        {collapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}
+        {collapsed
+          ? (isRTL ? <FaAngleDoubleLeft /> : <FaAngleDoubleRight />)
+          : (isRTL ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />)}
       </CollapseButton>
 
       <NavMenu role="menu" collapsed={collapsed}>
