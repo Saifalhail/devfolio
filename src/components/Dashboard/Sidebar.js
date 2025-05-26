@@ -78,7 +78,7 @@ const Sidebar = ({ collapsed = false, onToggleCollapse }) => {
   ];
 
   useEffect(() => {
-    const activeIndex = menuItems.findIndex(item => item.path === location.pathname);
+    const activeIndex = menuItems.findIndex(item => isItemActive(item.path));
     if (activeIndex !== -1) {
       setFocusedIndex(activeIndex);
     }
@@ -127,15 +127,16 @@ const Sidebar = ({ collapsed = false, onToggleCollapse }) => {
             ref={el => (menuRefs.current[index] = el)}
             tabIndex={index === focusedIndex ? 0 : -1}
             onKeyDown={(e) => handleKeyDown(e, index)}
-            isActive={location.pathname === item.path}
+            isActive={isItemActive(item.path)}
             isHighlighted={item.isHighlighted}
             isRTL={isRTL}
             collapsed={collapsed}
             to={item.path}
+            aria-current={isItemActive(item.path) ? 'page' : undefined}
           >
             <IconWrapper
               isRTL={isRTL}
-              isActive={location.pathname === item.path || item.isHighlighted}
+              isActive={isItemActive(item.path) || item.isHighlighted}
             >
               {item.icon}
             </IconWrapper>
