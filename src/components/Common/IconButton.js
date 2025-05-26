@@ -26,7 +26,7 @@ const IconButtonWrapper = styled.div`
     left: 50%;
     width: 0;
     height: 0;
-    background: ${props => `${props.color}15` || 'rgba(0,0,0,0.05)'};
+    background: ${props => props.withBg ? `${props.color}15` : 'transparent'};
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: width 0.4s ease, height 0.4s ease;
@@ -35,10 +35,10 @@ const IconButtonWrapper = styled.div`
   
   &:hover {
     transform: translateY(-2px);
-    
+
     &:before {
-      width: 150%;
-      height: 150%;
+      width: ${props => (props.withBg ? '150%' : '0')};
+      height: ${props => (props.withBg ? '150%' : '0')};
     }
   }
   
@@ -56,18 +56,19 @@ const IconButtonWrapper = styled.div`
   }
 `;
 
-const IconButton = ({ 
-  icon, 
-  title, 
-  color, 
+const IconButton = ({
+  icon,
+  title,
+  color,
   size,
   fontSize,
   onClick,
   className,
-  ...rest 
+  withBg = false,
+  ...rest
 }) => {
   return (
-    <IconButtonWrapper 
+    <IconButtonWrapper
       as="span"
       title={title}
       color={color}
@@ -75,6 +76,7 @@ const IconButton = ({
       fontSize={fontSize}
       onClick={onClick}
       className={className}
+      withBg={withBg}
       {...rest}
     >
       {icon}
