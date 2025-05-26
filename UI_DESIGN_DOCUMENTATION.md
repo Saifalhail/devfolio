@@ -57,13 +57,15 @@ The dashboard implements a consistent dark theme with the following design chara
 
 - **Background**: Dark purple gradient (`linear-gradient(145deg, #1a1a20, #1d1d25)`) for all containers and panels
 - **Card Elements**: Deep background gradient with subtle shadows and border highlights
-- **Text**: White text (`#fff`) for headings and important information, muted colors (`#aaa`, `#999`) for secondary information
+- **Text**: White text (`#fff`) for ALL text on dark backgrounds to ensure visibility and accessibility
 - **Accent Colors**: Purple gradient (`linear-gradient(90deg, #cd3efd, #7b2cbf)`) for interactive elements and highlights
+- **Secondary Background**: Slightly lighter dark background for cards and form elements (`#272730`)
 
 #### Interactive Elements
-- **Hover Effects**: Elements scale slightly and increase shadow depth on hover
+- **Hover Effects**: Elements scale slightly and increase shadow depth on hover with subtle glow effects
 - **Progress Bars**: Animated gradient fills with smooth transitions
 - **Action Buttons**: Gradient backgrounds with hover animations and shadow effects
+- **Transitions**: All interactive elements use consistent transition times (300ms) for smooth interactions
 
 #### Key Dashboard Components
 
@@ -76,29 +78,52 @@ The dashboard implements a consistent dark theme with the following design chara
 
 ### Buttons
 
-#### Primary Action Button (CreateButton)
-- Background: `#faaa93`
-- Text: White
+#### Primary Action Button (ActionButton)
+- Background: Gradient background (`linear-gradient(90deg, #cd3efd, #7b2cbf)`)
+- Text: Always white for visibility and contrast
 - Border Radius: 8px
-- Shadow: `0 4px 10px rgba(250, 170, 147, 0.3)`
-- Hover: Scale up, deeper shadow, icon rotation
-- Active: Slight scale down, reduced shadow
+- Shadow: `0 4px 12px rgba(123, 44, 191, 0.3)`
+- Hover: Scale up (-2px Y-translation), deeper shadow, subtle glow effect
+- Active: Less Y-translation (-1px), reduced shadow
+- Transitions: Smooth 300ms transitions for all properties
 
-#### Filter Button
-- Background: `#f7f9fc` (inactive), `#82a1bf` (active)
-- Text: `#555` (inactive), White (active)
+#### Filter/Sort Button
+- Background: `#7b2cbf` (active), slightly darker variant (inactive)
+- Text: Always white for visibility and contrast
 - Border Radius: 6px
-- Hover: Scale up, deeper shadow, shine effect
+- Hover: Scale up, deeper shadow, gradient accent underline animation
+- Active: Applied accent color with matching icon color
 
 #### Icon Button
-- Background: Transparent
-- Color: Varies based on action (view: `#82a1bf`, edit: `#faaa93`, delete: `#e74c3c`)
-- Hover: Scale up, subtle rotation
+- Background: Transparent or subtle gradient
+- Color: Always visible against background (white or bright accent colors)
+- Hover: Scale up, subtle rotation, glow effect
+- Active: Slight scale down
+
+#### Add/Create Button
+- Background: Gradient background (`linear-gradient(90deg, #cd3efd, #7b2cbf)`)
+- Text: White with matching icon
+- Border Radius: 8px
+- Shadow: Medium depth shadow
+- Hover: Y-translation up, increased shadow depth, subtle background shift
+- RTL Support: Proper icon positioning for right-to-left languages
 
 ### Cards
 
+#### General Card Component
+- Background: Dark gradient (`#272730` to `#1d1d25`)
+- Border: Subtle highlight border or left accent border (3-4px) with accent color
+- Text: White for all text to ensure visibility against dark backgrounds
+- Shadow: Medium depth with increased shadow on hover
+- Animation: Smooth entrance animations with `fadeIn` and `slideUp` effects
+- Hover: Y-translation up (-5px), increased shadow depth, subtle background shift
+- Decorative Elements: Subtle gradient orbs/circles in corners for visual interest
+
 #### Form Card
-- Background: White
+- Background: Dark gradient with accent border-left
+- Header: White text with animated underline effect on hover
+- Icons: Accent colored with rotation/scale effects on hover
+- Metadata: Lighter colored text with upward animation on parent hover
 - Border Radius: 12px
 - Shadow: `0 3px 10px rgba(0, 0, 0, 0.08)`
 - Padding: 1.5rem

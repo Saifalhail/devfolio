@@ -2,7 +2,7 @@
 
 This document contains small, precise tasks for AI agents to complete. Each task is self-contained and focuses on bug fixes, small feature additions, testing, and code improvements. Each task includes references to relevant documentation files.
 
-> **NOTE FOR CODEX AGENTS**: This project is undergoing UI modernization to match the dark purple theme with gradient effects found in the Overview dashboard page. All new components should match this style. White card components are being phased out in favor of dark purple gradient cards with subtle animations. Refer to UI_DESIGN_DOCUMENTATION.md for the complete style guide.
+> **NOTE FOR CODEX AGENTS**: This project is undergoing UI modernization to match the dark purple theme with gradient effects. All new components must use white text on dark backgrounds for better visibility and accessibility. Components should use gradient backgrounds, subtle animations, and consistent hover effects as detailed in the UI documentation. Refer to UI_DESIGN_DOCUMENTATION.md for the complete style guide and GlobalComponents.js/GlobalTheme.js for implementation examples.
 
 ## Authentication Tasks
 <!-- 
@@ -149,6 +149,16 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Priority: Low -->
 <!-- 
 23. **Add Tooltip Components**
+
+## UI Enhancement Tasks
+
+23. ✅ **Enhance UI Consistency and Text Visibility**
+    - Files: `src/components/Dashboard/FormsPanel.js`, `src/components/Dashboard/ProjectsPanel.js`, `src/styles/GlobalComponents.js`, `src/styles/GlobalTheme.js`
+    - Task: Ensure all buttons have white text for better visibility, improve hover effects, and make sure styles are consistent across components
+    - Status: COMPLETED - Enhanced text contrast, added consistent hover animations, improved component styling, and fixed circular dependencies
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Buttons and Cards sections)
+
+24. **Implement Circular Progress Animation**
     - File: Create `src/components/Common/Tooltip.js`
     - Task: Create a reusable tooltip component for providing additional information on hover
     - Docs: See WINDSURF_RULES.md (UI components section) and DOCUMENTATION.md (UI Components and Design System section)
@@ -195,31 +205,17 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Docs: See UI_DESIGN_DOCUMENTATION.md (Responsive Design section)
     - Priority: High
 
+## UI Refinement Tasks
+
+
 ## Refactoring Tasks
 
-30. **Create Reusable Styled Components**
+40. **Create Reusable Styled Components**
     - File: Create `src/styles/components.js`
     - Task: Extract common styled components into a reusable library (cards, buttons, form elements, etc.)
     - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section) and WINDSURF_RULES.md (styling section)
     - Priority: High
     - **ASSIGN TO CODEX AGENT**
-
-31. **Implement Centralized Theme**
-    - File: Update `src/styles/theme.js`
-    - Task: Enhance the theme object with additional tokens for consistent styling across components
-    - Docs: See UI_DESIGN_DOCUMENTATION.md (Color Palette section)
-    - Priority: High
-
-32. **Create Animation Library**
-    - File: Create `src/styles/animations.js`
-    - Task: Extract all animation keyframes and transitions into a reusable library
-    - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section)
-    - Priority: Medium
-
-33. **Refactor Form Components**
-    - Files: Various form-related components
-    - Task: Create reusable form components with standardized styling and behavior
-    - Docs: See UI_DESIGN_DOCUMENTATION.md (Form Elements section) and WINDSURF_RULES.md (forms section)
     - Priority: Medium
     - **ASSIGN TO CODEX AGENT**
 
@@ -266,6 +262,68 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Task: Test the dashboard layout structure and responsive behavior
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and package.json for testing setup
     - Priority: Medium -->
+
+20. **Complete Arabic Translation Integration**
+    - Files: `src/locales/ar/translation.json` and all dashboard components
+    - Task: Add missing Arabic translations for all dashboard components and ensure all text strings are properly internationalized
+    - Docs: See DOCUMENTATION.md (Internationalization section) and WINDSURF_RULES.md (internationalization section)
+    - Priority: High
+
+21. **Enhance RTL Layout Support**
+    - Files: `src/styles/GlobalComponents.js` and all dashboard panel components
+    - Task: Ensure all components properly flip layout direction, icon positions, and text alignment in RTL mode
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (RTL Support section)
+    - Priority: High
+    - **ASSIGN TO CODEX AGENT**
+
+22. **Create Reusable Modal Component**
+    - File: Create `src/components/Common/Modal.js`
+    - Task: Implement a flexible, reusable modal component with animation effects for add/edit operations
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section) and WINDSURF_RULES.md (styling section)
+    - Priority: High
+
+23. **Refine ProjectsPanel UI**
+    - File: `src/components/Dashboard/ProjectsPanel.js`
+    - Task: Improve alignment of filter/sort controls, enhance Add Project button styling, and ensure consistent spacing
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Dashboard Components section)
+    - Priority: Medium
+
+24. **Implement Skeleton Loading States**
+    - Files: Create `src/components/Common/SkeletonLoader.js` and integrate with panel components
+    - Task: Add animated skeleton loading states for all dashboard panels during data fetching
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section) and WINDSURF_RULES.md (UI feedback section)
+    - Priority: Medium
+
+25. **Enhance Forms UI**
+    - File: `src/components/Dashboard/FormsPanel.js`
+    - Task: Improve form card styling, add subtle entrance animations, and enhance visual feedback for interactions
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Form Elements section)
+    - Priority: Medium
+
+26. **Create Animated Tab Component**
+    - File: Create `src/components/Common/Tabs.js`
+    - Task: Implement a reusable tab component with smooth transition animations for content switching
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section) and WINDSURF_RULES.md (UI components section)
+    - Priority: Low
+
+27. **Add Mobile Navigation Drawer**
+    - File: Modify `src/components/Dashboard/Sidebar.js` and `Dashboard.js`
+    - Task: Create a mobile-optimized navigation drawer with touch gestures and smooth animations
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Responsive Design section) and WINDSURF_RULES.md (responsive design section)
+    - Priority: High
+
+28. **Implement Toast Notification System**
+    - File: Create `src/components/Common/Toast.js` and `src/contexts/ToastContext.js`
+    - Task: Create a reusable toast notification system for displaying success/error messages with animations
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section) and WINDSURF_RULES.md (UI feedback section)
+    - Priority: Medium
+
+29. **Create Theme Switch Animation**
+    - File: Modify `src/contexts/ThemeContext.js` and create `src/components/Common/ThemeSwitch.js`
+    - Task: Implement a smooth theme transition animation when switching between light/dark modes
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section)
+    - Priority: Low
+
 
 ## Performance Optimization Tasks
 
