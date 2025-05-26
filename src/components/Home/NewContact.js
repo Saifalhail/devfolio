@@ -236,9 +236,12 @@ const NewContact = () => {
                   ref={nameRef}
                   required
                   isRTL={isRTL}
+                  aria-invalid={!!fieldErrors.name}
+                  aria-describedby={fieldErrors.name ? 'name-error' : undefined}
+                  hasError={!!fieldErrors.name}
                 />
                 {fieldErrors.name && (
-                  <FieldError isRTL={isRTL}>{fieldErrors.name}</FieldError>
+                  <FieldError id="name-error" isRTL={isRTL}>{fieldErrors.name}</FieldError>
                 )}
               </InputGroup>
               
@@ -256,9 +259,12 @@ const NewContact = () => {
                   ref={emailRef}
                   required
                   isRTL={isRTL}
+                  aria-invalid={!!fieldErrors.email}
+                  aria-describedby={fieldErrors.email ? 'email-error' : undefined}
+                  hasError={!!fieldErrors.email}
                 />
                 {fieldErrors.email && (
-                  <FieldError isRTL={isRTL}>{fieldErrors.email}</FieldError>
+                  <FieldError id="email-error" isRTL={isRTL}>{fieldErrors.email}</FieldError>
                 )}
               </InputGroup>
               
@@ -299,9 +305,12 @@ const NewContact = () => {
                   ref={messageRef}
                   required
                   isRTL={isRTL}
+                  aria-invalid={!!fieldErrors.message}
+                  aria-describedby={fieldErrors.message ? 'message-error' : undefined}
+                  hasError={!!fieldErrors.message}
                 />
                 {fieldErrors.message && (
-                  <FieldError isRTL={isRTL}>{fieldErrors.message}</FieldError>
+                  <FieldError id="message-error" isRTL={isRTL}>{fieldErrors.message}</FieldError>
                 )}
               </InputGroup>
               
@@ -804,10 +813,10 @@ const FormLabel = styled.label`
   font-size: 0.9rem;
 `;
 
-const inputStyles = `
+const inputStyles = css`
   width: 100%;
   padding: 0.8rem 1rem;
-  border: 2px solid #e0e0e0;
+  border: 2px solid ${props => (props.hasError ? '#c62828' : '#e0e0e0')};
   border-radius: 10px;
   font-size: 0.95rem;
   transition: all 0.3s ease;

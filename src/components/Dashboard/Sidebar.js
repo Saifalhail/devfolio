@@ -23,6 +23,9 @@ const Sidebar = () => {
   const menuRefs = useRef([]);
   const [focusedIndex, setFocusedIndex] = useState(0);
   
+  const isItemActive = (path) =>
+    location.pathname === path || location.pathname.startsWith(`${path}/`);
+
   const menuItems = [
     { 
       icon: <FaHome />, 
@@ -106,6 +109,7 @@ const Sidebar = () => {
 
   return (
     <SidebarContainer isRTL={isRTL}>
+
       <NavMenu role="menu">
         {menuItems.map((item, index) => (
           <NavItem

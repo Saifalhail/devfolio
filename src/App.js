@@ -56,13 +56,13 @@ class ErrorBoundary extends React.Component {
 
 // ProtectedRoute component to secure routes that require authentication
 const ProtectedRoute = ({ children }) => {
-  const { currentUser } = useAuth();
-  
-  if (!currentUser) {
-    // Redirect to home if not authenticated
+  const { currentUser, loading } = useAuth();
+
+  if (!currentUser && !loading) {
+    // Redirect to home if not authenticated after loading
     return <Navigate to="/" replace />;
   }
-  
+
   return children;
 };
 
