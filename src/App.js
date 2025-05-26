@@ -4,6 +4,8 @@ import { ThemeProvider } from 'styled-components';
 import GlobalStyles from './styles/GlobalStyles';
 import theme from './styles/theme';
 import './i18n'; // Import i18n initialization
+import i18n from './i18n';
+import { setDocumentDirection } from './utils/rtl';
 
 // Import components after initialization imports
 import HomePage from './components/Home/HomePage';
@@ -69,6 +71,10 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   // Add state to track if the app has loaded
   const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setDocumentDirection(i18n.language);
+  }, []);
   
   // Simulate a loading state to ensure Firebase has time to initialize
   useEffect(() => {
