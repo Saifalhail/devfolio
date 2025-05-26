@@ -379,18 +379,315 @@ export const FilterButton = styled.button`
   align-items: center;
   gap: ${spacing.sm};
   background: ${props => props.active ? colors.accent.secondary : 'rgba(255, 255, 255, 0.05)'};
-  color: ${colors.text.primary}; /* Always white text for better visibility */
-  border: 1px solid ${props => props.active ? 'transparent' : 'rgba(255, 255, 255, 0.05)'};
-  padding: ${spacing.xs} ${spacing.md};
+  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
+  border: none;
   border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.md};
   font-size: ${typography.fontSizes.sm};
-  font-weight: ${typography.fontWeights.medium};
   cursor: pointer;
   transition: ${transitions.medium};
-  box-shadow: ${props => props.active ? shadows.sm : 'none'};
+  
+  &:hover {
+    background: ${props => props.active ? colors.accent.secondary : 'rgba(255, 255, 255, 0.08)'};
+    transform: translateY(-2px);
+  }
+  
+  svg {
+    font-size: ${typography.fontSizes.md};
+    color: ${props => props.active ? colors.text.primary : colors.accent.primary};
+  }
+`;
+
+// Dashboard header with consistent styling
+export const DashboardHeader = styled.div`
+  margin-bottom: ${spacing.lg};
+`;
+
+// Flexible container for header content
+export const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${spacing.md};
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${spacing.md};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: ${props => props.reverseRtl ? 'row-reverse' : 'row'};
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+`;
+
+// Title section with optional subtitle
+export const TitleSection = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: ${spacing.md};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+// Subtitle or count text
+export const Subtitle = styled.span`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+`;
+
+// Search container
+export const SearchContainer = styled.div`
+  width: 300px;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+// Search input with icon
+export const SearchInputWrapper = styled.div`
   position: relative;
+  width: 100%;
+`;
+
+// Search icon
+export const SearchIcon = styled.div`
+  position: absolute;
+  left: ${spacing.sm};
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${colors.text.secondary};
+  
+  [dir="rtl"] & {
+    left: auto;
+    right: ${spacing.sm};
+  }
+`;
+
+// Styled search input
+export const StyledSearchInput = styled.input`
+  width: 100%;
+  background: ${colors.background.secondary};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.sm} ${spacing.sm} ${spacing.xl};
+  color: ${colors.text.primary};
+  font-size: ${typography.fontSizes.sm};
+  transition: ${transitions.medium};
+  
+  &:focus {
+    outline: none;
+    border-color: ${colors.accent.primary};
+    box-shadow: 0 0 0 2px rgba(205, 62, 253, 0.2);
+  }
+  
+  &::placeholder {
+    color: ${colors.text.muted};
+  }
+  
+  [dir="rtl"] & {
+    padding: ${spacing.sm} ${spacing.xl} ${spacing.sm} ${spacing.sm};
+  }
+`;
+
+// Action row for filters and buttons
+export const ActionsRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: ${spacing.md};
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+`;
+
+// Filter group container
+export const FilterGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.md};
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+// Filter label with icon
+export const FilterLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+  
+  svg {
+    color: ${colors.accent.primary};
+    font-size: ${typography.fontSizes.sm};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+// Tabs for filtering
+export const FilterTabs = styled.div`
+  display: flex;
+  align-items: center;
+  background: ${colors.background.secondary};
+  border-radius: ${borderRadius.md};
   overflow: hidden;
-  animation: fadeIn 0.4s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+// Tab button with indicator
+export const FilterTab = styled.button`
+  background: ${props => props.active ? colors.background.hover : 'transparent'};
+  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
+  border: none;
+  padding: ${spacing.xs} ${spacing.md};
+  cursor: pointer;
+  font-size: ${typography.fontSizes.sm};
+  transition: ${transitions.medium};
+  position: relative;
+  
+  &:hover {
+    background: ${colors.background.hover};
+  }
+  
+  ${props => props.active && props.color && css`
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: ${props.color};
+    }
+  `}
+`;
+
+// Gradient button with animation
+export const GradientButton = styled.button`
+  ${mixins.flexCenter}
+  background: ${colors.gradients.button};
+  color: ${colors.text.primary};
+  border: none;
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.lg};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  font-weight: ${typography.fontWeights.medium};
+  gap: ${spacing.sm};
+  box-shadow: ${shadows.sm};
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${shadows.md};
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+  }
+  
+  svg {
+    font-size: ${typography.fontSizes.md};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+// Empty state icon
+export const EmptyStateIcon = styled.div`
+  ${mixins.flexCenter}
+  font-size: ${typography.fontSizes.xxl};
+  color: ${colors.accent.primary};
+  background: rgba(205, 62, 253, 0.1);
+  width: 80px;
+  height: 80px;
+  border-radius: ${borderRadius.round};
+  margin-bottom: ${spacing.md};
+`;
+
+// Project card styling
+export const ProjectCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  transition: ${transitions.medium};
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: ${shadows.lg};
+    border-color: rgba(205, 62, 253, 0.2);
+  }
+  
+  /* For list view */
+  ${props => !props.isGrid && css`
+    flex-direction: row;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  `}
+`;
+
+// Project card inner content
+export const ProjectCardInner = styled.div`
+  padding: ${spacing.lg};
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+// Project header with gradient indicator
+export const ProjectHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: ${spacing.md};
+  position: relative;
   animation-fill-mode: both;
   
   &:after {

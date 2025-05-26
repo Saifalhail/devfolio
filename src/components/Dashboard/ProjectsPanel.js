@@ -14,7 +14,12 @@ import {
   FaPlus,
   FaSearch,
   FaMagic,
-  FaEllipsisV
+  FaEllipsisV,
+  FaArrowRight,
+  FaArrowLeft,
+  FaCalendarAlt,
+  FaUserAlt,
+  FaTags
 } from 'react-icons/fa';
 import { collection, query, where, orderBy, onSnapshot, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase';
@@ -24,7 +29,7 @@ import useFirebaseListener from '../../hooks/useFirebaseListener';
 import LoadingSkeleton from '../Common/LoadingSkeleton';
 import Modal from '../Common/Modal';
 import ProjectForm from './ProjectForm';
-import { fadeIn, slideUp, pulse, slideInRight, slideInLeft } from '../../styles/animations';
+import { fadeIn, slideUp, pulse, slideInRight, slideInLeft, float } from '../../styles/animations';
 import {
   PanelContainer,
   PanelHeader,
@@ -33,9 +38,32 @@ import {
   EmptyState,
   Card,
   FilterButton,
-  SearchInput,
-  Badge,
-  IconButton
+  IconButton,
+  DashboardHeader,
+  HeaderContent,
+  TitleSection,
+  Subtitle,
+  SearchContainer,
+  SearchInputWrapper,
+  SearchIcon,
+  StyledSearchInput,
+  ActionsRow,
+  FilterGroup,
+  FilterLabel,
+  FilterTabs,
+  FilterTab,
+  GradientButton,
+  EmptyStateIcon,
+  ProjectCard,
+  ProjectCardInner,
+  ProjectHeader,
+  ProjectName,
+  StatusChip,
+  Pagination,
+  PaginationText,
+  PaginationControls,
+  PaginationButton,
+  ModalFooter
 } from '../../styles/GlobalComponents';
 import { 
   colors, 
@@ -226,161 +254,268 @@ const ProjectsPanel = () => {
 
   return (
     <PanelContainer>
-      <PanelHeader>
-        <PanelTitle>{t('projects.title', 'Projects')}</PanelTitle>
-        <ControlsGroup>
-          <AddProjectButton onClick={openAddProjectModal}>
+      <DashboardHeader>
+        <HeaderContent>
+          <TitleSection>
+            <PanelTitle>
+              {t('projects.title', 'Projects')}
+            </PanelTitle>
+            <Subtitle>
+              {filteredProjects.length} {filteredProjects.length === 1 
+                ? t('projects.project', 'Project') 
+                : t('projects.projects', 'Projects')}
+            </Subtitle>
+          </TitleSection>
+          
+          <SearchContainer>
+            <SearchInputWrapper>
+              <SearchIcon><FaSearch /></SearchIcon>
+              <StyledSearchInput 
+                type="text" 
+                placeholder={t('projects.searchPlaceholder', 'Search projects...')} 
+                value={searchTerm}
+                onChange={handleSearchChange}
+                aria-label={t('projects.searchAriaLabel', 'Search projects')}
+              />
+            </SearchInputWrapper>
+          </SearchContainer>
+        </HeaderContent>
+        
+        <ActionsRow>
+          <FilterGroup>
+            <FilterTabs>
+              <FilterTab 
+                active={filterStatus === 'all'} 
+                onClick={() => setFilterStatus('all')}
+              >
+                {t('projects.filters.all', 'All')}
+              </FilterTab>
+              <FilterTab 
+                active={filterStatus === 'inProgress'} 
+                onClick={() => setFilterStatus('inProgress')}
+                color={colors.status.info}
+              >
+                <FaClock />
+                {t('projects.inProgress', 'In Progress')}
+              </FilterTab>
+              <FilterTab 
+                active={filterStatus === 'done'} 
+                onClick={() => setFilterStatus('done')}
+                color={colors.status.success}
+              >
+                <FaCheck />
+                {t('projects.done', 'Done')}
+              </FilterTab>
+              <FilterTab 
+                active={filterStatus === 'awaitingFeedback'} 
+                onClick={() => setFilterStatus('awaitingFeedback')}
+                color={colors.status.warning}
+              >
+                <FaPencilAlt />
+                {t('projects.awaitingFeedback', 'Feedback')}
+              </FilterTab>
+            </FilterTabs>
+            
+            <ViewToggleContainer>
+              <ViewToggleLabel>{t('projects.layout', 'Layout')}:</ViewToggleLabel>
+              <ViewToggle>
+                <ToggleButton 
+                  active={isGridView} 
+                  onClick={() => setIsGridView(true)}
+                  aria-label={t('projects.gridView', 'Grid View')}
+                >
+                  <FaThLarge />
+                </ToggleButton>
+                <ToggleButton 
+                  active={!isGridView} 
+                  onClick={() => setIsGridView(false)}
+                  aria-label={t('projects.listView', 'List View')}
+                >
+                  <FaList />
+                </ToggleButton>
+              </ViewToggle>
+            </ViewToggleContainer>
+            
+            <SortContainer>
+              <SortIcon>
+                <FaSort />
+              </SortIcon>
+              <Select 
+                value={sortBy} 
+                onChange={handleSortChange}
+                aria-label={t('projects.sortBy', 'Sort By')}
+              >
+                <option value="deadline">{t('projects.sortOptions.deadline', 'Deadline')}</option>
+                <option value="name">{t('projects.sortOptions.alphabetical', 'Alphabetical')}</option>
+                <option value="status">{t('projects.sortOptions.status', 'Status')}</option>
+              </Select>
+            </SortContainer>
+          </FilterGroup>
+          
+          <GradientButton onClick={openAddProjectModal}>
             <FaPlus />
-            {t('projects.addProject', 'Add Project')}
-          </AddProjectButton>
-          <ViewToggle>
-            <ToggleButton 
-              active={isGridView} 
-              onClick={() => setIsGridView(true)}
-              aria-label={t('projects.gridView', 'Grid View')}
-            >
-              <FaThLarge />
-            </ToggleButton>
-            <ToggleButton 
-              active={!isGridView} 
-              onClick={() => setIsGridView(false)}
-              aria-label={t('projects.listView', 'List View')}
-            >
-              <FaList />
-            </ToggleButton>
-          </ViewToggle>
-          
-          <FilterContainer>
-            <FilterIcon>
-              <FaFilter />
-            </FilterIcon>
-            <Select 
-              value={filterStatus} 
-              onChange={handleFilterChange}
-              aria-label={t('projects.filterByStatus', 'Filter by Status')}
-            >
-              <option value="all">{t('projects.allStatuses', 'All Statuses')}</option>
-              <option value="inProgress">{t('projects.inProgress', 'In Progress')}</option>
-              <option value="done">{t('projects.done', 'Done')}</option>
-              <option value="awaitingFeedback">{t('projects.awaitingFeedback', 'Awaiting Feedback')}</option>
-            </Select>
-          </FilterContainer>
-          
-          <SortContainer>
-            <SortIcon>
-              <FaSort />
-            </SortIcon>
-            <Select 
-              value={sortBy} 
-              onChange={handleSortChange}
-              aria-label={t('projects.sortBy', 'Sort By')}
-            >
-              <option value="deadline">{t('projects.deadline', 'Deadline')}</option>
-              <option value="name">{t('projects.name', 'Name')}</option>
-              <option value="status">{t('projects.status', 'Status')}</option>
-            </Select>
-          </SortContainer>
-        </ControlsGroup>
-      </PanelHeader>
+            <span>{t('projects.createNew', 'Create New Project')}</span>
+          </GradientButton>
+        </ActionsRow>
+      </DashboardHeader>
       
       {isLoading ? (
-        <ProjectsContainer isGridView={isGridView} aria-hidden="true">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <ProjectCardSkeleton key={idx} isGridView={isGridView}>
-              <SkeletonHeader>
-                <LoadingSkeleton width="60%" height="1.2rem" />
-                <LoadingSkeleton width="30%" height="1rem" />
-              </SkeletonHeader>
-              <SkeletonBody>
-                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
-                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
-                <LoadingSkeleton height="0.8rem" />
-              </SkeletonBody>
-            </ProjectCardSkeleton>
-          ))}
-        </ProjectsContainer>
-      ) : projects.length === 0 ? (
+        <LoadingContainer>
+          <LoadingSkeleton type="projects" count={6} />
+        </LoadingContainer>
+      ) : filteredProjects.length === 0 ? (
         <ProjectEmptyState>
-          <h3>{t('projects.noProjects', 'No projects found')}</h3>
-          <p>{t('projects.createProject', 'Create your first project to get started')}</p>
-          <ActionButton>
-            <FaPlus />
-            {t('projects.addProject', 'Add Project')}
-          </ActionButton>
+          {searchTerm || filterStatus !== 'all' ? (
+            <>
+              <EmptyStateIcon><FaSearch /></EmptyStateIcon>
+              <h3>{t('projects.noMatchingProjects', 'No matching projects')}</h3>
+              <p>{t('projects.noMatchingMessage', 'Try adjusting your search or filters')}</p>
+              <GradientButton onClick={() => {
+                setSearchTerm('');
+                setFilterStatus('all');
+              }}>
+                <FaMagic />
+                {t('projects.clearFilters', 'Clear Filters')}
+              </GradientButton>
+            </>
+          ) : (
+            <>
+              <EmptyStateIcon><FaPlus /></EmptyStateIcon>
+              <h3>{t('projects.noProjects', 'No projects yet')}</h3>
+              <p>{t('projects.emptyStateMessage', 'Create your first project to get started')}</p>
+              <GradientButton onClick={openAddProjectModal}>
+                <FaPlus />
+                {t('projects.createNew', 'Create New Project')}
+              </GradientButton>
+            </>
+          )}
         </ProjectEmptyState>
       ) : (
-        <ProjectsContainer isGridView={isGridView}>
-          {projects.map(project => (
-            <ProjectCard key={project.id} isGridView={isGridView}>
-              <ProjectHeader>
-                <ProjectTitle>{project.name}</ProjectTitle>
-                <StatusChip status={project.status}>
-                  {getStatusEmoji(project.status)} {getStatusLabel(project.status)}
-                </StatusChip>
-              </ProjectHeader>
+        <>
+          <ProjectsContainer isGrid={isGridView}>
+            {getCurrentPageItems().map(project => (
+              <ProjectCard key={project.id} isGrid={isGridView}>
+                <ProjectCardInner>
+                  <ProjectHeader>
+                    <ProjectName>{project.name}</ProjectName>
+                    <ActionButtonsGroup>
+                      <ActionIcon title={t('projects.editProject', 'Edit Project')}>
+                        <FaPencilAlt />
+                      </ActionIcon>
+                      <ActionIcon title={t('projects.moreOptions', 'More Options')}>
+                        <FaEllipsisV />
+                      </ActionIcon>
+                    </ActionButtonsGroup>
+                  </ProjectHeader>
+                  
+                  <ProjectDetails>
+                    <DetailRow>
+                      <DetailItem>
+                        <DetailIcon><FaUserAlt /></DetailIcon>
+                        <DetailContent>
+                          <DetailLabel>{t('projects.client', 'Client')}</DetailLabel>
+                          <DetailValue>{project.client || '—'}</DetailValue>
+                        </DetailContent>
+                      </DetailItem>
+                      <DetailItem>
+                        <DetailIcon><FaCalendarAlt /></DetailIcon>
+                        <DetailContent>
+                          <DetailLabel>{t('projects.deadline', 'Deadline')}</DetailLabel>
+                          <DetailValue>
+                            {project.deadline ? new Date(project.deadline.toDate()).toLocaleDateString() : '—'}
+                          </DetailValue>
+                        </DetailContent>
+                      </DetailItem>
+                    </DetailRow>
+                    
+                    <DetailRow>
+                      <DetailItem>
+                        <DetailIcon><FaTags /></DetailIcon>
+                        <DetailContent>
+                          <DetailLabel>{t('projects.status', 'Status')}</DetailLabel>
+                          <StatusChip status={project.status}>
+                            {getStatusEmoji(project.status)} {getStatusLabel(project.status)}
+                          </StatusChip>
+                        </DetailContent>
+                      </DetailItem>
+                      {project.mood && (
+                        <DetailItem>
+                          <DetailIcon>
+                            {getMoodEmoji(project.mood)}
+                          </DetailIcon>
+                          <DetailContent>
+                            <DetailLabel>{t('projects.clientMood', 'Client Mood')}</DetailLabel>
+                            <DetailValue>{project.mood}</DetailValue>
+                          </DetailContent>
+                        </DetailItem>
+                      )}
+                    </DetailRow>
+                    
+                    <ProjectDescription>
+                      {project.description || t('projects.noDescription', 'No description provided.')}
+                    </ProjectDescription>
+                  </ProjectDetails>
+                </ProjectCardInner>
+              </ProjectCard>
+            ))}
+          </ProjectsContainer>
+          
+          {/* Pagination */}
+          {filteredProjects.length > itemsPerPage && (
+            <Pagination>
+              <PaginationText>
+                {t('pagination.showing', 'Showing')} {(activePage - 1) * itemsPerPage + 1}-
+                {Math.min(activePage * itemsPerPage, filteredProjects.length)} {t('pagination.of', 'of')} {filteredProjects.length}
+              </PaginationText>
               
-              <ProjectDetails>
-                <DetailItem>
-                  <DetailLabel>{t('projects.client', 'Client')}:</DetailLabel>
-                  <DetailValue>{project.client}</DetailValue>
-                </DetailItem>
+              <PaginationControls>
+                <PaginationButton 
+                  onClick={() => handlePageChange(Math.max(1, activePage - 1))}
+                  disabled={activePage === 1}
+                  aria-label={t('pagination.previous', 'Previous page')}
+                >
+                  <FaArrowLeft />
+                </PaginationButton>
                 
-                <DetailItem>
-                  <DetailLabel>{t('projects.deadline', 'Deadline')}:</DetailLabel>
-                  <DetailValue>
-                    {new Date(project.deadline?.toDate()).toLocaleDateString()}
-                  </DetailValue>
-                </DetailItem>
+                {[...Array(totalPages)].map((_, index) => (
+                  <PaginationButton
+                    key={index + 1}
+                    active={activePage === index + 1}
+                    onClick={() => handlePageChange(index + 1)}
+                    aria-label={t('pagination.page', 'Page {{number}}', { number: index + 1 })}
+                  >
+                    {index + 1}
+                  </PaginationButton>
+                ))}
                 
-                <DetailItem>
-                  <DetailLabel>{t('projects.description', 'Description')}:</DetailLabel>
-                  <DetailValue>{project.description}</DetailValue>
-                </DetailItem>
-              </ProjectDetails>
-              
-              <ProjectFooter>
-                <MoodMeter>
-                  <MoodLabel>{t('projects.clientMood', 'Client Mood')}:</MoodLabel>
-                  <MoodValue>{getMoodEmoji(project.clientMood)}</MoodValue>
-                </MoodMeter>
-                
-                <ProjectActions>
-                  <ProjectActionButton aria-label={t('projects.viewProject', 'View Project')}>
-                    {t('projects.view', 'View')}
-                  </ProjectActionButton>
-                  <ProjectActionButton aria-label={t('projects.addNote', 'Add Note')}>
-                    {t('projects.note', 'Note')}
-                  </ProjectActionButton>
-                </ProjectActions>
-              </ProjectFooter>
-            </ProjectCard>
-          ))}
-        </ProjectsContainer>
+                <PaginationButton 
+                  onClick={() => handlePageChange(Math.min(totalPages, activePage + 1))}
+                  disabled={activePage === totalPages}
+                  aria-label={t('pagination.next', 'Next page')}
+                >
+                  <FaArrowRight />
+                </PaginationButton>
+              </PaginationControls>
+            </Pagination>
+          )}
+        </>
       )}
       
       {/* Add Project Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={t('projects.addProject', 'Add Project')}
+        title={t('projects.createNew', 'Create New Project')}
         size="lg"
         animation="zoom"
-        footer={
-          <>
-            <CancelButton onClick={closeModal} disabled={isSubmitting}>
-              {t('common.cancel', 'Cancel')}
-            </CancelButton>
-            <SubmitButton form="add-project-form" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? t('common.creating', 'Creating...') : t('common.create', 'Create')}
-            </SubmitButton>
-          </>
-        }
+        theme="gradient"
+        centered
       >
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <ProjectForm 
           onSubmit={handleAddProject} 
           onCancel={closeModal}
-          id="add-project-form"
+          isSubmitting={isSubmitting}
         />
       </Modal>
     </PanelContainer>
@@ -545,9 +680,17 @@ const ProjectsContainer = styled.div`
 const ProjectCard = styled(Card)`
   display: flex;
   flex-direction: column;
-  padding: ${spacing.lg};
   transition: ${transitions.medium};
-  height: ${props => props.isGridView ? 'auto' : 'auto'};
+  height: ${props => props.isGridView ? 'auto' : 'auto'};  
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: ${shadows.lg};
+    border-color: rgba(205, 62, 253, 0.2);
+  }
   
   &:hover {
     transform: translateY(-3px);
@@ -568,23 +711,32 @@ const ProjectCardSkeleton = styled(Card)`
 `;
 
 const ProjectHeader = styled.div`
-  ${mixins.flexBetween}
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: ${spacing.md};
-  flex-wrap: wrap;
-  gap: ${spacing.sm};
+  position: relative;
   
-  /* RTL Support */
-  [dir="rtl"] & {
-    flex-direction: row-reverse;
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -${spacing.sm};
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: ${colors.gradients.accent};
+    border-radius: ${borderRadius.sm};
   }
 `;
 
-const ProjectTitle = styled.h3`
+const ProjectName = styled.h3`
   margin: 0;
   font-size: ${typography.fontSizes.lg};
-  font-weight: ${typography.fontWeights.semiBold};
+  font-weight: ${typography.fontWeights.semibold};
   color: ${colors.text.primary};
-  ${mixins.truncate}
+  background: ${colors.gradients.accent};
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const StatusChip = styled.div`
@@ -617,9 +769,91 @@ const StatusChip = styled.div`
   }}
 `;
 
+const ProjectCardInner = styled.div`
+  padding: ${spacing.lg};
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
 const ProjectDetails = styled.div`
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.md};
   margin-bottom: ${spacing.md};
+`;
+
+const DetailRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${spacing.lg};
+  
+  @media (max-width: ${breakpoints.sm}) {
+    flex-direction: column;
+    gap: ${spacing.sm};
+  }
+`;
+
+const ProjectDescription = styled.p`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+  line-height: 1.5;
+  margin-top: auto;
+  background: linear-gradient(to bottom, rgba(26, 26, 32, 0) 0%, rgba(26, 26, 32, 0.8) 15%);
+  padding-top: ${spacing.md};
+  margin-bottom: 0;
+`;
+
+const LoadingContainer = styled.div`
+  margin-top: ${spacing.lg};
+`;
+
+const Pagination = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: ${spacing.xl};
+  padding-top: ${spacing.lg};
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  
+  @media (max-width: ${breakpoints.sm}) {
+    flex-direction: column;
+    gap: ${spacing.md};
+  }
+`;
+
+const PaginationText = styled.div`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+`;
+
+const PaginationControls = styled.div`
+  display: flex;
+  gap: ${spacing.xs};
+`;
+
+const PaginationButton = styled.button`
+  ${mixins.flexCenter}
+  width: 36px;
+  height: 36px;
+  border-radius: ${borderRadius.sm};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${props => props.active ? colors.accent.secondary : colors.background.secondary};
+  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  
+  &:hover {
+    background: ${props => props.active ? colors.accent.secondary : colors.background.hover};
+    transform: translateY(-2px);
+  }
+`;
+
+const ModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: ${spacing.md};
 `;
 
 const DetailItem = styled.div`
@@ -739,6 +973,7 @@ const ErrorMessage = styled.div`
   margin-bottom: ${spacing.md};
   border-left: 4px solid ${colors.status.error};
   font-size: ${typography.fontSizes.sm};
+  animation: ${fadeIn} 0.3s ease-out;
 `;
 
 const Button = styled.button`
@@ -787,6 +1022,222 @@ const CancelButton = styled(Button)`
   &:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.05);
     color: ${colors.text.primary};
+  }
+`;
+
+const DashboardHeader = styled.div`
+  margin-bottom: ${spacing.lg};
+`;
+
+const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${spacing.md};
+  
+  @media (max-width: ${breakpoints.md}) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${spacing.md};
+  }
+`;
+
+const TitleSection = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: ${spacing.md};
+`;
+
+const ProjectsCount = styled.span`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+`;
+
+const SearchContainer = styled.div`
+  width: 300px;
+  
+  @media (max-width: ${breakpoints.md}) {
+    width: 100%;
+  }
+`;
+
+const SearchInputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const SearchIcon = styled.div`
+  position: absolute;
+  left: ${spacing.sm};
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${colors.text.secondary};
+  
+  [dir="rtl"] & {
+    left: auto;
+    right: ${spacing.sm};
+  }
+`;
+
+const StyledSearchInput = styled.input`
+  width: 100%;
+  background: ${colors.background.secondary};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.sm} ${spacing.sm} ${spacing.xl};
+  color: ${colors.text.primary};
+  font-size: ${typography.fontSizes.sm};
+  transition: ${transitions.medium};
+  
+  &:focus {
+    outline: none;
+    border-color: ${colors.accent.primary};
+    box-shadow: 0 0 0 2px rgba(205, 62, 253, 0.2);
+  }
+  
+  &::placeholder {
+    color: ${colors.text.muted};
+  }
+  
+  [dir="rtl"] & {
+    padding: ${spacing.sm} ${spacing.xl} ${spacing.sm} ${spacing.sm};
+  }
+`;
+
+const ActionsRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: ${spacing.md};
+  
+  @media (max-width: ${breakpoints.md}) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+`;
+
+const FilterGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.md};
+  flex-wrap: wrap;
+  
+  @media (max-width: ${breakpoints.md}) {
+    width: 100%;
+    justify-content: space-between;
+  }
+`;
+
+const FilterLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+  
+  svg {
+    color: ${colors.accent.primary};
+    font-size: ${typography.fontSizes.sm};
+  }
+`;
+
+const FilterTabs = styled.div`
+  display: flex;
+  align-items: center;
+  background: ${colors.background.secondary};
+  border-radius: ${borderRadius.md};
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+`;
+
+const FilterTab = styled.button`
+  background: ${props => props.active ? colors.background.hover : 'transparent'};
+  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
+  border: none;
+  padding: ${spacing.xs} ${spacing.md};
+  cursor: pointer;
+  font-size: ${typography.fontSizes.sm};
+  transition: ${transitions.medium};
+  position: relative;
+  
+  &:hover {
+    background: ${colors.background.hover};
+  }
+  
+  ${props => props.active && props.color && css`
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: ${props.color};
+    }
+  `}
+`;
+
+const GradientButton = styled.button`
+  ${mixins.flexCenter}
+  background: ${colors.gradients.button};
+  color: ${colors.text.primary};
+  border: none;
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.lg};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  font-weight: ${typography.fontWeights.medium};
+  gap: ${spacing.sm};
+  box-shadow: ${shadows.sm};
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${shadows.md};
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+  }
+  
+  svg {
+    font-size: ${typography.fontSizes.md};
+  }
+`;
+
+const EmptyStateIcon = styled.div`
+  ${mixins.flexCenter}
+  font-size: ${typography.fontSizes.xxl};
+  color: ${colors.accent.primary};
+  background: rgba(205, 62, 253, 0.1);
+  width: 80px;
+  height: 80px;
+  border-radius: ${borderRadius.round};
+  margin-bottom: ${spacing.md};
+`;
+
+const MoodContainer = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: ${typography.fontSizes.md};
+  gap: ${spacing.xs};
+`;
+
+const ActionIcon = styled.button`
+  ${mixins.flexCenter}
+  background: transparent;
+  color: ${colors.text.secondary};
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: ${borderRadius.round};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: ${colors.accent.primary};
+    transform: rotate(15deg);
   }
 `;
 
