@@ -522,10 +522,16 @@ const ProjectsPanel = () => {
   );
 };
 
-// Styled Components
-const AddProjectButton = styled(ActionButton)`
-  ${mixins.rtlMargin('0', spacing.md, '0', 0)};
-  box-shadow: ${shadows.md};
+// Additional Styled Components
+const ViewToggleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
 `;
 
 const ControlsGroup = styled.div`
@@ -677,27 +683,7 @@ const ProjectsContainer = styled.div`
   margin-top: ${spacing.lg};
 `;
 
-const ProjectCard = styled(Card)`
-  display: flex;
-  flex-direction: column;
-  transition: ${transitions.medium};
-  height: ${props => props.isGridView ? 'auto' : 'auto'};  
-  overflow: hidden;
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: ${shadows.lg};
-    border-color: rgba(205, 62, 253, 0.2);
-  }
-  
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: ${shadows.lg};
-    border-color: rgba(205, 62, 253, 0.2);
-  }
-`;
+// Removed duplicate component - now using ProjectCard from GlobalComponents
 
 const ProjectCardSkeleton = styled(Card)`
   ${mixins.card(false)}
@@ -794,15 +780,7 @@ const DetailRow = styled.div`
   }
 `;
 
-const ProjectDescription = styled.p`
-  color: ${colors.text.secondary};
-  font-size: ${typography.fontSizes.sm};
-  line-height: 1.5;
-  margin-top: auto;
-  background: linear-gradient(to bottom, rgba(26, 26, 32, 0) 0%, rgba(26, 26, 32, 0.8) 15%);
-  padding-top: ${spacing.md};
-  margin-bottom: 0;
-`;
+// Removed duplicate ProjectDescription component - now using from GlobalComponents
 
 const LoadingContainer = styled.div`
   margin-top: ${spacing.lg};
@@ -856,37 +834,9 @@ const ModalFooter = styled.div`
   gap: ${spacing.md};
 `;
 
-const DetailItem = styled.div`
-  margin-bottom: ${spacing.sm};
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    text-align: right;
-  }
-`;
+// Removed duplicate DetailItem component - now using from GlobalComponents
 
-const DetailLabel = styled.span`
-  color: ${colors.text.secondary}; /* Brighter text for better contrast */
-  font-size: ${typography.fontSizes.sm};
-  font-weight: ${typography.fontWeights.medium};
-  margin-right: ${spacing.xs};
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    margin-right: 0;
-    margin-left: ${spacing.xs};
-  }
-`;
-
-const DetailValue = styled.span`
-  color: ${colors.text.secondary};
-  font-size: ${typography.fontSizes.sm};
-  word-break: break-word;
-`;
+// Removed duplicate DetailValue component - now using from GlobalComponents
 
 const ProjectFooter = styled.div`
   ${mixins.flexBetween}
@@ -915,7 +865,7 @@ const MoodValue = styled.div`
   font-size: ${typography.fontSizes.md};
 `;
 
-const ProjectActions = styled.div`
+const ActionButtonsGroup = styled.div`
   display: flex;
   gap: ${spacing.sm};
   
@@ -1029,6 +979,85 @@ const DashboardHeader = styled.div`
   margin-bottom: ${spacing.lg};
 `;
 
+// Additional styling components for project details
+const DetailIcon = styled.div`
+  ${mixins.flexCenter}
+  width: 36px;
+  height: 36px;
+  border-radius: ${borderRadius.round};
+  background: rgba(205, 62, 253, 0.1);
+  color: ${colors.accent.primary};
+  margin-right: ${spacing.sm};
+  
+  svg {
+    font-size: ${typography.fontSizes.md};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    margin-right: 0;
+    margin-left: ${spacing.sm};
+  }
+`;
+
+const DetailContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.xs};
+  flex: 1;
+`;
+
+const DetailItem = styled.div`
+  display: flex;
+  align-items: flex-start;
+  width: 48%;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const DetailLabel = styled.div`
+  font-size: ${typography.fontSizes.xs};
+  color: ${colors.text.secondary};
+  margin-bottom: ${spacing.xs};
+`;
+
+const DetailValue = styled.div`
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.primary};
+  font-weight: ${typography.fontWeights.medium};
+`;
+
+const ProjectDescription = styled.div`
+  margin-top: ${spacing.md};
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.secondary};
+  line-height: 1.6;
+  padding: ${spacing.sm} ${spacing.md};
+  border-radius: ${borderRadius.md};
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  border-left: 2px solid ${colors.accent.primary};
+  max-height: 100px;
+  overflow-y: auto;
+  
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: ${borderRadius.round};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    border-left: none;
+    border-right: 2px solid ${colors.accent.primary};
+  }
+`;
+
 const HeaderContent = styled.div`
   display: flex;
   align-items: center;
@@ -1127,6 +1156,11 @@ const FilterGroup = styled.div`
     width: 100%;
     justify-content: space-between;
   }
+`;
+
+const ViewToggleLabel = styled.span`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
 `;
 
 const FilterLabel = styled.div`
