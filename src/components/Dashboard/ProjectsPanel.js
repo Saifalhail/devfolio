@@ -21,10 +21,7 @@ import { db } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import useFirebaseListener from '../../hooks/useFirebaseListener';
-import LoadingSkeleton from '../Common/LoadingSkeleton';
-import Modal from '../Common/Modal';
-import ProjectForm from './ProjectForm';
-import { fadeIn, slideUp, pulse, slideInRight, slideInLeft } from '../../styles/animations';
+import SkeletonLoader from '../Common/SkeletonLoader';
 import {
   PanelContainer,
   PanelHeader,
@@ -288,13 +285,13 @@ const ProjectsPanel = () => {
           {Array.from({ length: 4 }).map((_, idx) => (
             <ProjectCardSkeleton key={idx} isGridView={isGridView}>
               <SkeletonHeader>
-                <LoadingSkeleton width="60%" height="1.2rem" />
-                <LoadingSkeleton width="30%" height="1rem" />
+                <SkeletonLoader width="60%" height="1.2rem" />
+                <SkeletonLoader width="30%" height="1rem" />
               </SkeletonHeader>
               <SkeletonBody>
-                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
-                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
-                <LoadingSkeleton height="0.8rem" />
+                <SkeletonLoader height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                <SkeletonLoader height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                <SkeletonLoader height="0.8rem" />
               </SkeletonBody>
             </ProjectCardSkeleton>
           ))}
