@@ -550,7 +550,7 @@ const Hero = () => {
         <HeroImageContainer isRTL={isRTL}>
           <div className="float-element">
             <LogoContainer>
-              <img src={logoImage} alt="S.N.P Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <img src={logoImage} alt="S.N.P Logo" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               
               {/* Floating bubbles */}
               <FloatingBubble style={{ top: '-30px', left: isRTL ? 'auto' : '-30px', right: isRTL ? '-30px' : 'auto', background: 'var(--accent-2)', opacity: 0.25, width: '60px', height: '60px', filter: 'blur(8px)' }} />
