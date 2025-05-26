@@ -87,6 +87,10 @@ const HeroSection = styled.section`
   @media (max-width: 768px) {
     padding: 4rem 0 3rem; /* Reduced top padding for mobile */
   }
+
+  @media (max-width: 480px) {
+    padding: 3rem 0 2rem; /* Further reduce padding on very small screens */
+  }
 `;
 
 const HeroContainer = styled.div`
@@ -150,7 +154,7 @@ const HeroHeading = styled.h1`
   }
 
   @media (max-width: 480px) {
-    font-size: 1.9rem;
+    font-size: 1.8rem;
     margin-bottom: 0.5rem;
   }
 `;

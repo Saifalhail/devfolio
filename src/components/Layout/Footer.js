@@ -227,6 +227,10 @@ const FooterDescription = styled.p`
   font-size: 1rem;
   max-width: 400px;
   text-align: ${props => props.isRTL ? 'right' : 'left'};
+
+  @media (max-width: 576px) {
+    max-width: 100%;
+  }
 `;
 
 const FooterSlogan = styled.p`
@@ -245,6 +249,10 @@ const FooterSlogan = styled.p`
   
   @media (max-width: 768px) {
     font-size: 1.1rem;
+  }
+
+  @media (max-width: 576px) {
+    max-width: 100%;
   }
 `;
 
@@ -377,6 +385,10 @@ const FooterDivider = styled.div`
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   margin: 0 auto;
   width: 80%;
+
+  @media (max-width: 576px) {
+    width: 90%;
+  }
 `;
 
 const FooterBottom = styled.div`
