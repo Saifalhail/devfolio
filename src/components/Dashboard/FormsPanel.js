@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css, keyframes } from 'styled-components';
+import { Card } from '../../styles/dashboardStyles';
 import { useTranslation } from 'react-i18next';
 import { 
   FaCommentAlt, FaClipboardList, FaEdit, FaEye, 
@@ -335,7 +336,7 @@ const FormsPanel = () => {
 };
 
 // Styled components
-const FormsPanelContainer = styled.div`
+const FormsPanelContainer = styled(Card)`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -503,12 +504,9 @@ const FormsGrid = styled.div`
   }
 `;
 
-const FormCard = styled.div`
+const FormCard = styled(Card)`
   display: flex;
   flex-direction: column;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   padding: 1.5rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: ${fadeIn} 0.5s ease-in-out forwards, ${slideUp} 0.5s ease-in-out forwards;
@@ -696,24 +694,18 @@ const FormActions = styled.div`
   & > *:nth-child(3) { transition-delay: 0.15s; }
 `;
 
-const NewFormContainer = styled.div`
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+const NewFormContainer = styled(Card)`
   margin-bottom: 2rem;
   animation: ${fadeIn} 0.3s ease-in-out, ${slideUp} 0.3s ease-in-out;
 `;
 
-const EmptyState = styled.div`
+const EmptyState = styled(Card)`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 3rem 1rem;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
   animation: ${fadeIn} 0.5s ease-in-out, ${slideUp} 0.5s ease-in-out;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -863,12 +855,9 @@ const FeaturesGrid = styled.div`
   }
 `;
 
-const FeatureCard = styled.div`
+const FeatureCard = styled(Card)`
   display: flex;
   align-items: flex-start;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   padding: 1.5rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: ${fadeIn} 0.5s ease-in-out, ${slideUp} 0.5s ease-in-out;

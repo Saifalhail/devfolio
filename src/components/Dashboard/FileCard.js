@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
+import { Card as BaseCard } from '../../styles/dashboardStyles';
 import { useTranslation } from 'react-i18next';
 import { 
   FaFile, FaFileImage, FaFilePdf, FaFileWord, FaFileCode, 
@@ -132,13 +133,8 @@ const FileCard = ({ file }) => {
 };
 
 // Styled Components
-const Card = styled.div`
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
+const Card = styled(BaseCard)`
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   display: flex;
@@ -147,7 +143,6 @@ const Card = styled.div`
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
   }
   
   &:after {
