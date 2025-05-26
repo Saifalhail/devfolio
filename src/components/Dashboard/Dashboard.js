@@ -161,12 +161,21 @@ const Dashboard = () => {
         setSidebarOpen(true);
       }
     };
-    
+
     handleResize();
     window.addEventListener('resize', handleResize);
-    
+
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Prevent background scrolling when sidebar is open on mobile
+  useEffect(() => {
+    if (mobileView && sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [mobileView, sidebarOpen]);
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -498,6 +507,7 @@ const SidebarBackdrop = styled.div`
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
+  cursor: pointer;
 
   @media (max-width: 768px) {
     top: 60px;

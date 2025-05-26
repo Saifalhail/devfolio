@@ -235,7 +235,18 @@
     "newProject": "New Project",
     "logTime": "Log Time",
     "uploadFile": "Upload File",
-    "loading": "Loading Dashboard..."
+    "tasks": {
+      "title": "Tasks & Milestones",
+      "actions": {
+        "addTask": "Add Task"
+      },
+      "todo": "To Do",
+      "emptyTodo": "No tasks to do",
+      "doing": "In Progress",
+      "emptyDoing": "No tasks in progress",
+      "done": "Done",
+      "emptyDone": "No completed tasks"
+    }
   },
   
   "files": {

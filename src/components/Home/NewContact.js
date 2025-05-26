@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { httpsCallable } from 'firebase/functions';
@@ -20,6 +20,22 @@ const NewContact = () => {
   const [formSuccess, setFormSuccess] = useState(false);
   const [formError, setFormError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
+
+  // Refs for keyboard navigation
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
+  const projectTypeRef = useRef(null);
+  const messageRef = useRef(null);
+  const submitRef = useRef(null);
+
+  const handleKeyDown = (e, nextRef) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (nextRef && nextRef.current) {
+        nextRef.current.focus();
+      }
+    }
+  };
   
   // Project type options
   const projectTypes = [
@@ -208,37 +224,47 @@ const NewContact = () => {
               
               <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="name" isRTL={isRTL}>{t('contact.form.name')}</FormLabel>
-                <FormInput 
-                  type="text" 
-                  id="name" 
-                  name="name" 
+                <FormInput
+                  type="text"
+                  id="name"
+                  name="name"
                   value={formData.name}
                   onChange={handleChange}
                   onFocus={() => handleFocus('name')}
                   onBlur={() => handleBlur('name')}
+                  onKeyDown={(e) => handleKeyDown(e, emailRef)}
+                  ref={nameRef}
                   required
                   isRTL={isRTL}
+                  aria-invalid={!!fieldErrors.name}
+                  aria-describedby={fieldErrors.name ? 'name-error' : undefined}
+                  hasError={!!fieldErrors.name}
                 />
                 {fieldErrors.name && (
-                  <FieldError isRTL={isRTL}>{fieldErrors.name}</FieldError>
+                  <FieldError id="name-error" isRTL={isRTL}>{fieldErrors.name}</FieldError>
                 )}
               </InputGroup>
               
               <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="email" isRTL={isRTL}>{t('contact.form.email')}</FormLabel>
-                <FormInput 
-                  type="email" 
-                  id="email" 
-                  name="email" 
+                <FormInput
+                  type="email"
+                  id="email"
+                  name="email"
                   value={formData.email}
                   onChange={handleChange}
                   onFocus={() => handleFocus('email')}
                   onBlur={() => handleBlur('email')}
+                  onKeyDown={(e) => handleKeyDown(e, projectTypeRef)}
+                  ref={emailRef}
                   required
                   isRTL={isRTL}
+                  aria-invalid={!!fieldErrors.email}
+                  aria-describedby={fieldErrors.email ? 'email-error' : undefined}
+                  hasError={!!fieldErrors.email}
                 />
                 {fieldErrors.email && (
-                  <FieldError isRTL={isRTL}>{fieldErrors.email}</FieldError>
+                  <FieldError id="email-error" isRTL={isRTL}>{fieldErrors.email}</FieldError>
                 )}
               </InputGroup>
               
@@ -252,6 +278,8 @@ const NewContact = () => {
                   onChange={handleChange}
                   onFocus={() => handleFocus('projectType')}
                   onBlur={() => handleBlur('projectType')}
+                  onKeyDown={(e) => handleKeyDown(e, messageRef)}
+                  ref={projectTypeRef}
                   isRTL={isRTL}
                 >
                   <option value="">{isRTL ? 'اختر نوع المشروع' : 'Select project type'}</option>
@@ -265,19 +293,24 @@ const NewContact = () => {
               
               <InputGroup isRTL={isRTL}>
                 <FormLabel htmlFor="message" isRTL={isRTL}>{t('contact.form.message')}</FormLabel>
-                <FormTextarea 
-                  id="message" 
-                  name="message" 
+                <FormTextarea
+                  id="message"
+                  name="message"
                   rows="5"
                   value={formData.message}
                   onChange={handleChange}
                   onFocus={() => handleFocus('message')}
                   onBlur={() => handleBlur('message')}
+                  onKeyDown={(e) => handleKeyDown(e, submitRef)}
+                  ref={messageRef}
                   required
                   isRTL={isRTL}
+                  aria-invalid={!!fieldErrors.message}
+                  aria-describedby={fieldErrors.message ? 'message-error' : undefined}
+                  hasError={!!fieldErrors.message}
                 />
                 {fieldErrors.message && (
-                  <FieldError isRTL={isRTL}>{fieldErrors.message}</FieldError>
+                  <FieldError id="message-error" isRTL={isRTL}>{fieldErrors.message}</FieldError>
                 )}
               </InputGroup>
               
@@ -296,7 +329,12 @@ const NewContact = () => {
               )}
               
               <SubmitButtonWrapper>
-                <SubmitButton type="submit" disabled={isSubmitting} isRTL={isRTL}>
+                <SubmitButton
+                  type="submit"
+                  disabled={isSubmitting}
+                  isRTL={isRTL}
+                  ref={submitRef}
+                >
                   {isSubmitting ? (
                     <>
                       <ButtonSpinner isRTL={isRTL} />
@@ -525,7 +563,9 @@ const InfoContent = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
+  text-align: ${props => (props.isRTL ? 'right' : 'left')};
+
   @media (max-width: 576px) {
     padding: 1.5rem;
   }
@@ -538,6 +578,8 @@ const InfoHeading = styled.h4`
   background: linear-gradient(90deg, #cd3efd, #82a1bf);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
+  text-align: ${props => (props.isRTL ? 'right' : 'left')};
 `;
 
 const InfoText = styled.p`
@@ -545,6 +587,8 @@ const InfoText = styled.p`
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
+  text-align: ${props => (props.isRTL ? 'right' : 'left')};
 `;
 
 const ContactMethods = styled.div`
@@ -769,10 +813,10 @@ const FormLabel = styled.label`
   font-size: 0.9rem;
 `;
 
-const inputStyles = `
+const inputStyles = css`
   width: 100%;
   padding: 0.8rem 1rem;
-  border: 2px solid #e0e0e0;
+  border: 2px solid ${props => (props.hasError ? '#c62828' : '#e0e0e0')};
   border-radius: 10px;
   font-size: 0.95rem;
   transition: all 0.3s ease;
@@ -918,6 +962,7 @@ const MessageBase = styled.div`
   align-items: center;
   animation: ${pulse} 2s ease-in-out;
   text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
 `;
 
 const SuccessMessage = styled(MessageBase)`
@@ -962,6 +1007,7 @@ const FieldError = styled.span`
   margin-top: 0.25rem;
   display: block;
   text-align: ${props => (props.isRTL ? 'right' : 'left')};
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
 `;
 
 // Shape divider for the top of the section
