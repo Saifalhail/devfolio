@@ -231,6 +231,14 @@ const ModalContent = styled.div`
   flex-direction: column;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+  }
 `;
 
 const ModalHeader = styled.div`

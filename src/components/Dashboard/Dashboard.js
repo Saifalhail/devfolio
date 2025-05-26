@@ -979,6 +979,15 @@ const ChatbotContainer = styled.div`
   flex-direction: column;
   overflow: hidden;
   z-index: 10;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    left: 0.5rem;
+    width: calc(100% - 1rem);
+    height: 80vh;
+    border-radius: 8px;
+  }
 `;
 
 const ChatbotHeader = styled.div`

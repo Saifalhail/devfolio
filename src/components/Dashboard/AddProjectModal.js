@@ -221,6 +221,14 @@ const ModalContent = styled.div`
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(205, 62, 253, 0.2);
   animation: modalFadeIn 0.3s ease-out;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+  }
   
   @keyframes modalFadeIn {
     from {
