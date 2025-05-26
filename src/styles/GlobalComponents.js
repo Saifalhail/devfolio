@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { BaseCard, BaseButton, BaseInput } from './dashboardStyles';
 import { colors, spacing, shadows, borderRadius, typography, mixins, transitions } from './GlobalTheme';
+import { shine } from './animations';
 
 // Panel Container - Consistent container for all dashboard panels
 export const PanelContainer = styled(BaseCard)`
@@ -11,6 +12,8 @@ export const PanelContainer = styled(BaseCard)`
   position: relative;
   overflow: hidden;
   ${mixins.decorativeElement}
+  animation: fadeIn 0.4s ease-out, slideUp 0.4s ease-out;
+  animation-fill-mode: both;
   
   @media (max-width: 768px) {
     padding: ${spacing.md};
@@ -97,7 +100,7 @@ export const ActionButton = styled(BaseButton)`
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: ${transitions.medium};
+    pointer-events: none;
   }
   
   svg {
@@ -111,8 +114,7 @@ export const ActionButton = styled(BaseButton)`
     box-shadow: ${shadows.md};
     
     &:after {
-      left: 100%;
-      transition: 0.8s;
+      animation: ${shine} 0.8s forwards;
     }
     
     svg {
@@ -238,6 +240,8 @@ export const Card = styled(BaseCard)`
   transition: ${transitions.medium};
   position: relative;
   overflow: hidden;
+  animation: fadeIn 0.5s ease-out, slideUp 0.5s ease-out;
+  animation-fill-mode: both;
   
   &:hover {
     transform: translateY(-5px);
@@ -349,41 +353,20 @@ export const FeatureIcon = styled.div`
   width: 48px;
   height: 48px;
   border-radius: ${borderRadius.round};
-  background: ${colors.gradients.card};
-  box-shadow: ${shadows.md};
+  background: none;
   color: ${colors.accent.primary};
   transition: ${transitions.medium};
-  position: relative;
-  overflow: hidden;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: ${colors.gradients.accent};
-    opacity: 0;
-    border-radius: ${borderRadius.round};
-    transition: opacity 0.3s ease;
-  }
-  
+
   svg {
     font-size: ${typography.fontSizes.lg};
     position: relative;
-    z-index: 1;
     transition: ${transitions.medium};
+    z-index: 1;
   }
-  
+
   ${FeatureCard}:hover & {
     transform: scale(1.1);
     box-shadow: ${shadows.lg};
-    
-    &:before {
-      opacity: 0.2;
-    }
-    
     svg {
       color: ${colors.text.primary};
     }
@@ -407,6 +390,8 @@ export const FilterButton = styled.button`
   box-shadow: ${props => props.active ? shadows.sm : 'none'};
   position: relative;
   overflow: hidden;
+  animation: fadeIn 0.4s ease-out;
+  animation-fill-mode: both;
   
   &:after {
     content: '';

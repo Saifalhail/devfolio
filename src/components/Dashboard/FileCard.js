@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Card as BaseCard } from '../../styles/dashboardStyles';
+import { colors } from '../../styles/GlobalTheme';
 import { useTranslation } from 'react-i18next';
 import { 
   FaFile, FaFileImage, FaFilePdf, FaFileWord, FaFileCode, 
@@ -280,7 +281,7 @@ const FilePreview = styled.div`
   cursor: pointer;
   position: relative;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  background-color: #f9f9f9;
+  background: ${colors.background.card};
   
   &:before {
     content: '';
@@ -332,7 +333,7 @@ const IconWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #f9f9f9, #f0f0f0);
+  background: ${colors.gradients.card};
   position: relative;
   overflow: hidden;
   
@@ -381,7 +382,7 @@ const CardFooter = styled.div`
   flex-direction: column;
   gap: 0.75rem;
   padding: 1.25rem 1.5rem 1.5rem;
-  background: white;
+  background: ${colors.background.card};
   position: relative;
   z-index: 1;
 `;

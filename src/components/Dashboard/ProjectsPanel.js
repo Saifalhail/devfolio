@@ -114,39 +114,7 @@ const ProjectsPanel = () => {
       <PanelHeader>
         <PanelTitle>{t('projects.title', 'Projects')}</PanelTitle>
         <ControlsGroup>
-          <ActionButton
-            css={css`
-              background: ${colors.gradients.button};
-              color: ${colors.text.primary};
-              padding: ${spacing.sm} ${spacing.md};
-              font-weight: ${typography.fontWeights.medium};
-              box-shadow: ${shadows.md};
-              margin-right: ${spacing.md};
-              transition: ${transitions.medium};
-              
-              &:hover {
-                transform: translateY(-2px);
-                box-shadow: ${shadows.lg};
-                background: ${colors.gradients.buttonHover};
-              }
-              
-              svg {
-                margin-right: ${spacing.xs};
-                font-size: ${typography.fontSizes.sm};
-              }
-              
-              /* RTL Support */
-              [dir="rtl"] & {
-                margin-right: 0;
-                margin-left: ${spacing.md};
-                
-                svg {
-                  margin-right: 0;
-                  margin-left: ${spacing.xs};
-                }
-              }
-            `}
-          >
+          <ActionButton>
             <FaPlus />
             {t('projects.addProject', 'Add Project')}
           </ActionButton>
@@ -220,25 +188,7 @@ const ProjectsPanel = () => {
         <ProjectEmptyState>
           <h3>{t('projects.noProjects', 'No projects found')}</h3>
           <p>{t('projects.createProject', 'Create your first project to get started')}</p>
-          <ActionButton
-            css={css`
-              background: ${colors.gradients.accent};
-              color: ${colors.text.primary};
-              padding: ${spacing.sm} ${spacing.lg};
-              font-weight: ${typography.fontWeights.medium};
-              box-shadow: ${shadows.md};
-              
-              &:hover {
-                transform: translateY(-2px);
-                box-shadow: ${shadows.lg};
-              }
-              
-              svg {
-                font-size: ${typography.fontSizes.sm};
-                margin-right: ${spacing.xs};
-              }
-            `}
-          >
+          <ActionButton>
             <FaPlus />
             {t('projects.addProject', 'Add Project')}
           </ActionButton>
@@ -298,7 +248,8 @@ const ProjectsPanel = () => {
 
 // Styled Components
 const ControlsGroup = styled.div`
-  ${mixins.flexBetween}
+  display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: ${spacing.md};
   

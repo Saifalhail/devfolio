@@ -16,6 +16,7 @@ import {
   FlexContainer,
   Badge
 } from '../../styles/dashboardStyles';
+import { colors } from '../../styles/GlobalTheme';
 
 const FilesPanel = () => {
   const { t, i18n } = useTranslation();
@@ -211,8 +212,8 @@ const FilesPanelContainer = styled(Card)`
 // Using the shared PanelHeader component
 const FilesPanelHeader = styled(PanelHeader)`
   padding: 1.75rem 2rem;
-  border-bottom: 1px solid #f0f0f0;
-  background-color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${colors.gradients.card};
   
   @media (max-width: 768px) {
     flex-direction: column;
@@ -265,8 +266,8 @@ const FilesToolbar = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 2rem;
-  border-bottom: 1px solid #f0f0f0;
-  background-color: #fafafa;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: ${colors.gradients.card};
   
   @media (max-width: 768px) {
     flex-direction: column;
@@ -278,8 +279,8 @@ const FilesToolbar = styled.div`
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
-  background-color: white;
-  border: 1px solid #e0e0e0;
+  background: ${colors.background.card};
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   padding: 0.6rem 1rem;
   width: 100%;
@@ -357,12 +358,12 @@ const FilterButton = styled.button`
   transition: all 0.3s ease;
   font-size: 0.8rem;
   padding: 0.5rem 0.75rem;
-  background-color: ${props => props.active ? '#513a52' : '#f7f9fc'};
-  color: ${props => props.active ? 'white' : '#513a52'};
+  background: ${props => props.active ? colors.accent.secondary : colors.background.card};
+  color: ${colors.text.primary};
   border: none;
   
   &:hover {
-    background-color: ${props => props.active ? '#3d2c3d' : '#edf1f7'};
+    background: ${props => props.active ? colors.accent.primary : colors.background.hover};
   }
 `;
 
@@ -382,15 +383,15 @@ const DropdownItem = styled.div`
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: ${props => props.active ? '#4A6FA5' : '#666'};
-  background-color: ${props => props.active ? '#EBF2FA' : 'white'};
+  color: ${props => props.active ? colors.accent.primary : colors.text.secondary};
+  background: ${colors.background.card};
   
   &:hover {
-    background-color: ${props => props.active ? '#D9E6F7' : '#f5f5f5'};
+    background: ${colors.background.hover};
   }
   
   &:not(:last-child) {
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 `;
 
@@ -412,12 +413,12 @@ const TagButton = styled.button`
   transition: all 0.3s ease;
   font-size: 0.8rem;
   padding: 0.5rem 0.75rem;
-  background-color: ${props => props.active ? '#513a52' : '#f7f9fc'};
-  color: ${props => props.active ? 'white' : '#513a52'};
+  background: ${props => props.active ? colors.accent.secondary : colors.background.card};
+  color: ${colors.text.primary};
   border: none;
   
   &:hover {
-    background-color: ${props => props.active ? '#3d2c3d' : '#edf1f7'};
+    background: ${props => props.active ? colors.accent.primary : colors.background.hover};
   }
 `;
 
@@ -457,7 +458,7 @@ const DropMessage = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.1);
   z-index: 10;
   border-radius: 12px;
   animation: pulse 2s infinite;
@@ -534,10 +535,10 @@ const NoFilesMessage = styled.div`
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
-  background-color: #f8f9fa;
+  background: ${colors.background.card};
   border-radius: 12px;
   text-align: center;
-  border: 1px dashed #e0e0e0;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
   grid-column: 1 / -1;
   
   p {
