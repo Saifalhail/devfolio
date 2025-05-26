@@ -7,7 +7,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
 
 
 
-23. **Refine ProjectsPanel UI**
+<!-- 23. **Refine ProjectsPanel UI**
     - File: `src/components/Dashboard/ProjectsPanel.js`
     - Task: Improve alignment of filter/sort controls, enhance Add Project button styling, and ensure consistent spacing
     - Docs: See UI_DESIGN_DOCUMENTATION.md (Dashboard Components section)
@@ -47,7 +47,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - File: Modify `src/contexts/ThemeContext.js` and create `src/components/Common/ThemeSwitch.js`
     - Task: Implement a smooth theme transition animation when switching between light/dark modes
     - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section)
-    - Priority: Low -->
+    - Priority: Low --> -->
 
 
 ## Performance Optimization Tasks

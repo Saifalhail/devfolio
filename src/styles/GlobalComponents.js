@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { BaseCard, BaseButton, BaseInput } from './dashboardStyles';
-import { colors, spacing, shadows, borderRadius, typography, mixins, transitions } from './GlobalTheme';
+import { colors, spacing, shadows, borderRadius, typography, mixins, transitions, breakpoints } from './GlobalTheme';
 import { shine } from './animations';
 
 // Panel Container - Consistent container for all dashboard panels
@@ -724,5 +724,163 @@ export const ProjectHeader = styled.div`
     &:after {
       transform-origin: right;
     }
+  }
+`;
+
+// Project name with gradient text effect
+export const ProjectName = styled.h3`
+  margin: 0;
+  font-size: ${typography.fontSizes.lg};
+  font-weight: ${typography.fontWeights.semibold};
+  color: ${colors.text.primary};
+  background: ${colors.gradients.accent};
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+// Status chip for project cards
+export const StatusChip = styled.div`
+  display: inline-flex;
+  align-items: center;
+  padding: ${spacing.xs} ${spacing.md};
+  border-radius: ${borderRadius.round};
+  font-size: ${typography.fontSizes.xs};
+  font-weight: ${typography.fontWeights.medium};
+  
+  ${props => {
+    switch(props.status) {
+      case 'inProgress': return css`
+        background-color: rgba(255, 193, 7, 0.15);
+        color: ${colors.status.warning};
+      `;
+      case 'done': return css`
+        background-color: rgba(76, 175, 80, 0.15);
+        color: ${colors.status.success};
+      `;
+      case 'awaitingFeedback': return css`
+        background-color: rgba(33, 150, 243, 0.15);
+        color: ${colors.status.info};
+      `;
+      default: return css`
+        background-color: rgba(158, 158, 158, 0.15);
+        color: ${colors.status.neutral};
+      `;
+    }
+  }}
+`;
+
+// Project description with truncation
+export const ProjectDescription = styled.p`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+  margin: ${spacing.sm} 0 ${spacing.md};
+  line-height: 1.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: ${props => props.lines || 3};
+  -webkit-box-orient: vertical;
+`;
+
+// Detail item container
+export const DetailItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  margin-bottom: ${spacing.sm};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+`;
+
+// Detail icon container
+export const DetailIcon = styled.div`
+  ${mixins.flexCenter}
+  width: 28px;
+  height: 28px;
+  border-radius: ${borderRadius.round};
+  background-color: rgba(123, 44, 191, 0.1);
+  color: ${colors.accent.primary};
+  flex-shrink: 0;
+  
+  svg {
+    font-size: ${typography.fontSizes.sm};
+  }
+`;
+
+// Detail content container
+export const DetailContent = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+// Detail label
+export const DetailLabel = styled.span`
+  font-size: ${typography.fontSizes.xs};
+  color: ${colors.text.muted};
+  margin-bottom: 2px;
+`;
+
+// Detail value with optional emphasis
+export const DetailValue = styled.span`
+  font-size: ${typography.fontSizes.sm};
+  color: ${props => props.highlight ? colors.accent.primary : colors.text.secondary};
+  font-weight: ${props => props.bold ? typography.fontWeights.medium : typography.fontWeights.regular};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+`;
+
+// Pagination container
+export const Pagination = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: ${spacing.xl};
+  padding-top: ${spacing.lg};
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  
+  @media (max-width: ${breakpoints.sm}) {
+    flex-direction: column;
+    gap: ${spacing.md};
+  }
+`;
+
+// Pagination text showing current page info
+export const PaginationText = styled.div`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+`;
+
+// Pagination controls container
+export const PaginationControls = styled.div`
+  display: flex;
+  gap: ${spacing.xs};
+`;
+
+// Pagination button for page navigation
+export const PaginationButton = styled.button`
+  ${mixins.flexCenter}
+  width: 36px;
+  height: 36px;
+  border-radius: ${borderRadius.sm};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${props => props.active ? colors.accent.secondary : colors.background.secondary};
+  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  
+  &:hover {
+    background: ${props => props.active ? colors.accent.secondary : colors.background.hover};
+    transform: translateY(-2px);
   }
 `;

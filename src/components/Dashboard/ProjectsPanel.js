@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
+import { fadeIn, slideUp } from '../../styles/animations';
 import { 
   FaThLarge, 
   FaList, 
@@ -19,7 +20,8 @@ import {
   FaArrowLeft,
   FaCalendarAlt,
   FaUserAlt,
-  FaTags
+  FaTags,
+  FaListUl
 } from 'react-icons/fa';
 import { collection, query, where, orderBy, onSnapshot, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase';
@@ -27,6 +29,9 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import useFirebaseListener from '../../hooks/useFirebaseListener';
 import SkeletonLoader from '../Common/SkeletonLoader';
+import Modal from '../Common/Modal';
+import LoadingSkeleton from '../Common/LoadingSkeleton';
+import ProjectForm from './ProjectForm';
 import {
   PanelContainer,
   PanelHeader,
@@ -47,8 +52,7 @@ import {
   ActionsRow,
   FilterGroup,
   FilterLabel,
-  FilterTabs,
-  FilterTab,
+
   GradientButton,
   EmptyStateIcon,
   ProjectCard,
@@ -60,7 +64,13 @@ import {
   PaginationText,
   PaginationControls,
   PaginationButton,
-  ModalFooter
+  ModalFooter,
+  DetailItem,
+  DetailIcon,
+  DetailContent,
+  DetailLabel,
+  DetailValue,
+  ProjectDescription
 } from '../../styles/GlobalComponents';
 import { 
   colors, 
@@ -154,13 +164,13 @@ const ProjectsPanel = () => {
     }
   }, [projects, filterStatus, searchTerm, itemsPerPage]);
 
-  // Get emoji for status
-  const getStatusEmoji = (status) => {
+  // Get icon for status
+  const getStatusIcon = (status) => {
     switch(status) {
-      case 'inProgress': return '⏳';
-      case 'done': return '✅';
-      case 'awaitingFeedback': return '✍️';
-      default: return '🔄';
+      case 'inProgress': return <FaClock />;
+      case 'done': return <FaCheck />;
+      case 'awaitingFeedback': return <FaPencilAlt />;
+      default: return <FaClock />;
     }
   };
 
@@ -280,38 +290,47 @@ const ProjectsPanel = () => {
         
         <ActionsRow>
           <FilterGroup>
-            <FilterTabs>
-              <FilterTab 
+            <CustomFilterTabs>
+              <StatusFilterTab 
                 active={filterStatus === 'all'} 
                 onClick={() => setFilterStatus('all')}
+                tooltip={t('projects.filters.all', 'All')}
+                title={t('projects.filters.all', 'All')}
+                aria-label={t('projects.filters.all', 'All')}
               >
-                {t('projects.filters.all', 'All')}
-              </FilterTab>
-              <FilterTab 
+                <FaListUl />
+              </StatusFilterTab>
+              <StatusFilterTab 
                 active={filterStatus === 'inProgress'} 
                 onClick={() => setFilterStatus('inProgress')}
-                color={colors.status.info}
+                status="inProgress"
+                tooltip={t('projects.inProgress', 'In Progress')}
+                title={t('projects.inProgress', 'In Progress')}
+                aria-label={t('projects.inProgress', 'In Progress')}
               >
                 <FaClock />
-                {t('projects.inProgress', 'In Progress')}
-              </FilterTab>
-              <FilterTab 
+              </StatusFilterTab>
+              <StatusFilterTab 
                 active={filterStatus === 'done'} 
                 onClick={() => setFilterStatus('done')}
-                color={colors.status.success}
+                status="done"
+                tooltip={t('projects.done', 'Done')}
+                title={t('projects.done', 'Done')}
+                aria-label={t('projects.done', 'Done')}
               >
                 <FaCheck />
-                {t('projects.done', 'Done')}
-              </FilterTab>
-              <FilterTab 
+              </StatusFilterTab>
+              <StatusFilterTab 
                 active={filterStatus === 'awaitingFeedback'} 
                 onClick={() => setFilterStatus('awaitingFeedback')}
-                color={colors.status.warning}
+                status="awaitingFeedback"
+                tooltip={t('projects.awaitingFeedback', 'Feedback')}
+                title={t('projects.awaitingFeedback', 'Feedback')}
+                aria-label={t('projects.awaitingFeedback', 'Feedback')}
               >
                 <FaPencilAlt />
-                {t('projects.awaitingFeedback', 'Feedback')}
-              </FilterTab>
-            </FilterTabs>
+              </StatusFilterTab>
+            </CustomFilterTabs>
             
             <ViewToggleContainer>
               <ViewToggleLabel>{t('projects.layout', 'Layout')}:</ViewToggleLabel>
@@ -442,9 +461,14 @@ const ProjectsPanel = () => {
                         <DetailIcon><FaTags /></DetailIcon>
                         <DetailContent>
                           <DetailLabel>{t('projects.status', 'Status')}</DetailLabel>
-                          <StatusChip status={project.status}>
-                            {getStatusEmoji(project.status)} {getStatusLabel(project.status)}
-                          </StatusChip>
+                          <StatusIndicator 
+                            status={project.status} 
+                            title={getStatusLabel(project.status)}
+                            aria-label={getStatusLabel(project.status)}
+                          >
+                            {getStatusIcon(project.status)}
+                            <StatusTooltip>{getStatusLabel(project.status)}</StatusTooltip>
+                          </StatusIndicator>
                         </DetailContent>
                       </DetailItem>
                       {project.mood && (
@@ -514,15 +538,17 @@ const ProjectsPanel = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={t('projects.createNew', 'Create New Project')}
+        title={t('projects.addProject', 'Add New Project')}
         size="lg"
+        theme="dark"
         animation="zoom"
-        theme="gradient"
-        centered
+        centered={true}
+        closeOnClickOutside={true}
       >
         {error && <ErrorMessage>{error}</ErrorMessage>}
-        <ProjectForm 
-          onSubmit={handleAddProject} 
+        
+        <ProjectForm
+          onSubmit={handleAddProject}
           onCancel={closeModal}
           isSubmitting={isSubmitting}
         />
@@ -692,7 +718,6 @@ const ProjectsContainer = styled.div`
   margin-top: ${spacing.lg};
 `;
 
-// Removed duplicate component - now using ProjectCard from GlobalComponents
 
 const ProjectCardSkeleton = styled(Card)`
   ${mixins.card(false)}
@@ -703,72 +728,6 @@ const ProjectCardSkeleton = styled(Card)`
     display: flex;
     flex-direction: column;
   `}
-`;
-
-const ProjectHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: ${spacing.md};
-  position: relative;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -${spacing.sm};
-    left: 0;
-    width: 60px;
-    height: 2px;
-    background: ${colors.gradients.accent};
-    border-radius: ${borderRadius.sm};
-  }
-`;
-
-const ProjectName = styled.h3`
-  margin: 0;
-  font-size: ${typography.fontSizes.lg};
-  font-weight: ${typography.fontWeights.semibold};
-  color: ${colors.text.primary};
-  background: ${colors.gradients.accent};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-`;
-
-const StatusChip = styled.div`
-  display: inline-flex;
-  align-items: center;
-  padding: ${spacing.xs} ${spacing.md};
-  border-radius: ${borderRadius.round};
-  font-size: ${typography.fontSizes.xs};
-  font-weight: ${typography.fontWeights.medium};
-  
-  ${props => {
-    switch(props.status) {
-      case 'inProgress': return css`
-        background-color: rgba(255, 193, 7, 0.15);
-        color: ${colors.status.warning};
-      `;
-      case 'done': return css`
-        background-color: rgba(76, 175, 80, 0.15);
-        color: ${colors.status.success};
-      `;
-      case 'awaitingFeedback': return css`
-        background-color: rgba(33, 150, 243, 0.15);
-        color: ${colors.status.info};
-      `;
-      default: return css`
-        background-color: rgba(158, 158, 158, 0.15);
-        color: ${colors.status.neutral};
-      `;
-    }
-  }}
-`;
-
-const ProjectCardInner = styled.div`
-  padding: ${spacing.lg};
-  display: flex;
-  flex-direction: column;
-  height: 100%;
 `;
 
 const ProjectDetails = styled.div`
@@ -789,63 +748,9 @@ const DetailRow = styled.div`
   }
 `;
 
-// Removed duplicate ProjectDescription component - now using from GlobalComponents
-
 const LoadingContainer = styled.div`
   margin-top: ${spacing.lg};
 `;
-
-const Pagination = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: ${spacing.xl};
-  padding-top: ${spacing.lg};
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  
-  @media (max-width: ${breakpoints.sm}) {
-    flex-direction: column;
-    gap: ${spacing.md};
-  }
-`;
-
-const PaginationText = styled.div`
-  color: ${colors.text.secondary};
-  font-size: ${typography.fontSizes.sm};
-`;
-
-const PaginationControls = styled.div`
-  display: flex;
-  gap: ${spacing.xs};
-`;
-
-const PaginationButton = styled.button`
-  ${mixins.flexCenter}
-  width: 36px;
-  height: 36px;
-  border-radius: ${borderRadius.sm};
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: ${props => props.active ? colors.accent.secondary : colors.background.secondary};
-  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
-  font-size: ${typography.fontSizes.sm};
-  cursor: pointer;
-  transition: ${transitions.medium};
-  
-  &:hover {
-    background: ${props => props.active ? colors.accent.secondary : colors.background.hover};
-    transform: translateY(-2px);
-  }
-`;
-
-const ModalFooter = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: ${spacing.md};
-`;
-
-// Removed duplicate DetailItem component - now using from GlobalComponents
-
-// Removed duplicate DetailValue component - now using from GlobalComponents
 
 const ProjectFooter = styled.div`
   ${mixins.flexBetween}
@@ -984,280 +889,18 @@ const CancelButton = styled(Button)`
   }
 `;
 
-const DashboardHeader = styled.div`
-  margin-bottom: ${spacing.lg};
-`;
-
-// Additional styling components for project details
-const DetailIcon = styled.div`
-  ${mixins.flexCenter}
-  width: 36px;
-  height: 36px;
-  border-radius: ${borderRadius.round};
-  background: rgba(205, 62, 253, 0.1);
-  color: ${colors.accent.primary};
-  margin-right: ${spacing.sm};
-  
-  svg {
-    font-size: ${typography.fontSizes.md};
-  }
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    margin-right: 0;
-    margin-left: ${spacing.sm};
-  }
-`;
-
-const DetailContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing.xs};
-  flex: 1;
-`;
-
-const DetailItem = styled.div`
-  display: flex;
-  align-items: flex-start;
-  width: 48%;
-  
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-`;
-
-const DetailLabel = styled.div`
-  font-size: ${typography.fontSizes.xs};
-  color: ${colors.text.secondary};
-  margin-bottom: ${spacing.xs};
-`;
-
-const DetailValue = styled.div`
-  font-size: ${typography.fontSizes.sm};
-  color: ${colors.text.primary};
-  font-weight: ${typography.fontWeights.medium};
-`;
-
-const ProjectDescription = styled.div`
-  margin-top: ${spacing.md};
-  font-size: ${typography.fontSizes.sm};
-  color: ${colors.text.secondary};
-  line-height: 1.6;
-  padding: ${spacing.sm} ${spacing.md};
-  border-radius: ${borderRadius.md};
-  background: linear-gradient(to right, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
-  border-left: 2px solid ${colors.accent.primary};
-  max-height: 100px;
-  overflow-y: auto;
-  
-  /* Scrollbar styling */
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: ${borderRadius.round};
-  }
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    border-left: none;
-    border-right: 2px solid ${colors.accent.primary};
-  }
-`;
-
-const HeaderContent = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: ${spacing.md};
-  
-  @media (max-width: ${breakpoints.md}) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: ${spacing.md};
-  }
-`;
-
-const TitleSection = styled.div`
-  display: flex;
-  align-items: baseline;
-  gap: ${spacing.md};
-`;
 
 const ProjectsCount = styled.span`
   color: ${colors.text.secondary};
   font-size: ${typography.fontSizes.sm};
 `;
 
-const SearchContainer = styled.div`
-  width: 300px;
-  
-  @media (max-width: ${breakpoints.md}) {
-    width: 100%;
-  }
-`;
-
-const SearchInputWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const SearchIcon = styled.div`
-  position: absolute;
-  left: ${spacing.sm};
-  top: 50%;
-  transform: translateY(-50%);
-  color: ${colors.text.secondary};
-  
-  [dir="rtl"] & {
-    left: auto;
-    right: ${spacing.sm};
-  }
-`;
-
-const StyledSearchInput = styled.input`
-  width: 100%;
-  background: ${colors.background.secondary};
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: ${borderRadius.md};
-  padding: ${spacing.sm} ${spacing.sm} ${spacing.sm} ${spacing.xl};
-  color: ${colors.text.primary};
-  font-size: ${typography.fontSizes.sm};
-  transition: ${transitions.medium};
-  
-  &:focus {
-    outline: none;
-    border-color: ${colors.accent.primary};
-    box-shadow: 0 0 0 2px rgba(205, 62, 253, 0.2);
-  }
-  
-  &::placeholder {
-    color: ${colors.text.muted};
-  }
-  
-  [dir="rtl"] & {
-    padding: ${spacing.sm} ${spacing.xl} ${spacing.sm} ${spacing.sm};
-  }
-`;
-
-const ActionsRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: ${spacing.md};
-  
-  @media (max-width: ${breakpoints.md}) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-`;
-
-const FilterGroup = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.md};
-  flex-wrap: wrap;
-  
-  @media (max-width: ${breakpoints.md}) {
-    width: 100%;
-    justify-content: space-between;
-  }
-`;
 
 const ViewToggleLabel = styled.span`
   color: ${colors.text.secondary};
   font-size: ${typography.fontSizes.sm};
 `;
 
-const FilterLabel = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.xs};
-  color: ${colors.text.secondary};
-  font-size: ${typography.fontSizes.sm};
-  
-  svg {
-    color: ${colors.accent.primary};
-    font-size: ${typography.fontSizes.sm};
-  }
-`;
-
-const FilterTabs = styled.div`
-  display: flex;
-  align-items: center;
-  background: ${colors.background.secondary};
-  border-radius: ${borderRadius.md};
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-`;
-
-const FilterTab = styled.button`
-  background: ${props => props.active ? colors.background.hover : 'transparent'};
-  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
-  border: none;
-  padding: ${spacing.xs} ${spacing.md};
-  cursor: pointer;
-  font-size: ${typography.fontSizes.sm};
-  transition: ${transitions.medium};
-  position: relative;
-  
-  &:hover {
-    background: ${colors.background.hover};
-  }
-  
-  ${props => props.active && props.color && css`
-    &:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: ${props.color};
-    }
-  `}
-`;
-
-const GradientButton = styled.button`
-  ${mixins.flexCenter}
-  background: ${colors.gradients.button};
-  color: ${colors.text.primary};
-  border: none;
-  border-radius: ${borderRadius.md};
-  padding: ${spacing.sm} ${spacing.lg};
-  cursor: pointer;
-  transition: ${transitions.medium};
-  font-weight: ${typography.fontWeights.medium};
-  gap: ${spacing.sm};
-  box-shadow: ${shadows.sm};
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: ${shadows.md};
-  }
-  
-  &:active {
-    transform: translateY(-1px);
-  }
-  
-  svg {
-    font-size: ${typography.fontSizes.md};
-  }
-`;
-
-const EmptyStateIcon = styled.div`
-  ${mixins.flexCenter}
-  font-size: ${typography.fontSizes.xxl};
-  color: ${colors.accent.primary};
-  background: rgba(205, 62, 253, 0.1);
-  width: 80px;
-  height: 80px;
-  border-radius: ${borderRadius.round};
-  margin-bottom: ${spacing.md};
-`;
 
 const MoodContainer = styled.div`
   display: flex;
@@ -1277,11 +920,173 @@ const ActionIcon = styled.button`
   cursor: pointer;
   transition: ${transitions.medium};
   
+  svg {
+    font-size: 1.25rem;
+  }
+  
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: transparent;
     color: ${colors.accent.primary};
-    transform: rotate(15deg);
+    transform: scale(1.15);
   }
 `;
+
+// Custom filter tabs container without background
+const CustomFilterTabs = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+// Status filter tab with tooltip - no background styling
+const StatusFilterTab = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  position: relative;
+  transition: ${transitions.medium};
+  border: none;
+  cursor: pointer;
+  background: none !important; /* Force no background */
+  box-shadow: none !important; /* Force no shadow */
+  padding: 0;
+  color: ${props => {
+    if (props.active) {
+      switch(props.status) {
+        case 'inProgress': return '#4a6cf7'; // blue for in-progress
+        case 'done': return '#27ae60'; // green for done
+        case 'awaitingFeedback': return '#e74c3c'; // red for feedback
+        default: return '#666'; // gray for neutral
+      }
+    } else {
+      return colors.text.secondary;
+    }
+  }};
+  
+  svg {
+    font-size: 1.25rem;
+  }
+  
+  &:hover {
+    transform: scale(1.15);
+    background: none !important; /* Force no background on hover */
+    color: ${props => {
+      switch(props.status) {
+        case 'inProgress': return '#4a6cf7';
+        case 'done': return '#27ae60';
+        case 'awaitingFeedback': return '#e74c3c';
+        default: return colors.accent.primary;
+      }
+    }};
+    
+    &:after {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+  }
+  
+  &:after {
+    content: '${props => props.tooltip}';
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: ${colors.background.dark};
+    color: ${colors.text.primary};
+    padding: ${spacing.xs} ${spacing.sm};
+    border-radius: ${borderRadius.sm};
+    font-size: ${typography.fontSizes.xs};
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    box-shadow: ${shadows.md};
+    z-index: 10;
+    pointer-events: none;
+  }
+`;
+
+// Helper function to get status background colors
+const getStatusBackground = (status) => {
+  switch(status) {
+    case 'inProgress': return 'linear-gradient(90deg, #82a1bf, #5a8bbf)';
+    case 'done': return 'linear-gradient(90deg, #4CAF50, #2E7D32)';
+    case 'awaitingFeedback': return 'linear-gradient(90deg, #faaa93, #e57373)';
+    default: return 'linear-gradient(90deg, #9E9E9E, #616161)';
+  }
+};
+
+// Status indicator with tooltip
+const StatusIndicator = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  position: relative;
+  transition: ${transitions.medium};
+  color: ${props => {
+    switch(props.status) {
+      case 'inProgress': return '#4a6cf7'; 
+      case 'done': return '#27ae60'; 
+      case 'awaitingFeedback': return '#e74c3c'; 
+      default: return '#666'; 
+    }
+  }};
+  
+  svg {
+    font-size: 1.25rem;
+  }
+  
+  &:hover {
+    transform: scale(1.15);
+    
+    span {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const StatusTooltip = styled.span`
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: ${colors.background.dark};
+  color: ${colors.text.primary};
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.xs};
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  box-shadow: ${shadows.md};
+  z-index: 10;
+  pointer-events: none;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: ${colors.background.dark} transparent transparent transparent;
+  }
+`;
+
+// Using LoadingSkeleton from Common directory
 
 export default ProjectsPanel;

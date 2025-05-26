@@ -212,12 +212,18 @@ The interface supports right-to-left languages with the following adaptations:
 ### Icon Implementation
 - Icons use the `react-icons/fa` library for consistent styling
 - Action icons (delete, edit, view, etc.) use the reusable `IconButton` component
-- Icons appear without backgrounds for a cleaner, modern look
-- Icon interactions include scale transforms on hover (1.15x) for subtle feedback
+- **IMPORTANT**: Icons MUST appear without any backgrounds or containers for a cleaner, modern look
+- Icon interactions include scale transforms on hover (1.15x) for subtle feedback (never use background changes)
 - Color-coding for common actions:
   - Primary actions: #4a6cf7 (blue)
   - Secondary actions: #27ae60 (green)
   - Destructive actions: #e74c3c (red)
+  - Neutral actions: #666 (gray)
+- Icon buttons maintain consistent sizing (32px × 32px by default)
+- All icons MUST include title and aria-label attributes for accessibility
+- RTL support is implemented via conditional styling based on language context
+- When grouping icons, use a simple flex container with appropriate spacing (gap: 8px to 12px) without any background
+- Never use background colors behind icons as this reduces visual clarity and creates inconsistencies
 
 ### File Card Design
 - Cards feature a modern, clean design with subtle animations
