@@ -1,25 +1,44 @@
 const theme = {
   colors: {
+    background: '#feefc4', // Light cream background
     primaryBg: '#12142c', // Dark background base color
     primaryGradient: 'linear-gradient(135deg, #12142c 0%, #202253 50%, #3a1e65 100%)', // Purple gradient
     secondaryGradient: 'linear-gradient(45deg, #3a1e65 0%, #6031a8 100%)', // Secondary purple gradient
-    accent1: '#cd3efd', // Purple accent for buttons and highlights
-    accent2: '#b429e3', // Darker purple for secondary elements
+    accent1: '#faaa93', // Coral accent for primary actions
+    accent2: '#82a1bf', // Soft blue for secondary actions
     accent3: '#ff5b92', // Pink accent for highlights
     accent4: '#00e5bd', // Teal for decorative elements
-    dark: '#0a0a1a', // Extra dark color for contrast
+    dark: '#513a52', // Deep purple for text and important elements
     darkPurple: '#2a1252', // Dark purple for subtle elements
-    white: '#ffffff',
-    lightGray: '#e8e9fd',
+    success: '#4CAF50', // Success states
+    warning: '#FFC107', // Warning states
+    neutral: '#9E9E9E', // Neutral gray
+    white: '#FFFFFF',
+    lightGray: '#f7f9fc',
     darkGray: '#9194c6',
     cardBg: 'rgba(35, 38, 85, 0.6)', // Semi-transparent card background
     cardGradient: 'linear-gradient(to bottom, rgba(55, 42, 99, 0.7) 0%, rgba(37, 38, 89, 0.8) 100%)',
     overlay: 'rgba(18, 20, 44, 0.8)', // Overlay for modals
+    textPrimary: '#666',
+    textSecondary: '#888',
   },
   fonts: {
     main: "'Inter', 'Roboto', sans-serif",
     display: "'Poppins', sans-serif", // For headings and display text
     alt: "'Comic Neue', cursive", // For the cartoon-style elements
+  },
+  fontSizes: {
+    h1: '1.75rem',
+    h2: '1.5rem',
+    h3: '1.1rem',
+    body: '0.95rem',
+    small: '0.85rem',
+    badge: '0.75rem',
+  },
+  fontWeights: {
+    bold: 600,
+    regular: 400,
+    medium: 500,
   },
   breakpoints: {
     mobile: '576px',
