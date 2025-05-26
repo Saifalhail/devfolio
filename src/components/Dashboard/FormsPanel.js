@@ -363,14 +363,14 @@ const SearchAndSortContainer = styled.div`
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
-  background-color: white;
+  background: ${colors.background.card};
   border-radius: 8px;
   padding: 0.5rem 1rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 350px;
   transition: all 0.3s ease;
-  border: 1px solid transparent;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   
   &:focus-within {
     box-shadow: 0 3px 15px rgba(130, 161, 191, 0.15);
@@ -450,7 +450,7 @@ const FormCard = styled(Card)`
   &:hover {
     transform: translateY(-5px) scale(1.02);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-    background-color: #fafafa;
+    background: ${colors.background.hover};
   }
   
   &:active {
