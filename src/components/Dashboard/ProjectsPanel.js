@@ -114,10 +114,10 @@ const ProjectsPanel = () => {
       <PanelHeader>
         <PanelTitle>{t('projects.title', 'Projects')}</PanelTitle>
         <ControlsGroup>
-          <ActionButton>
+          <AddProjectButton>
             <FaPlus />
             {t('projects.addProject', 'Add Project')}
-          </ActionButton>
+          </AddProjectButton>
           <ViewToggle>
             <ToggleButton 
               active={isGridView} 
@@ -247,14 +247,20 @@ const ProjectsPanel = () => {
 };
 
 // Styled Components
+const AddProjectButton = styled(ActionButton)`
+  ${mixins.rtlMargin('0', spacing.md, '0', 0)};
+  box-shadow: ${shadows.md};
+`;
+
 const ControlsGroup = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: ${spacing.md};
-  
+
   @media (max-width: 768px) {
     justify-content: flex-start;
+    align-items: flex-start;
     width: 100%;
   }
   
@@ -320,6 +326,8 @@ const FilterIcon = styled.div`
   ${mixins.flexCenter}
   position: absolute;
   ${props => props.isRTL ? css`right: ${spacing.sm};` : css`left: ${spacing.sm};`}
+  top: 50%;
+  transform: translateY(-50%);
   color: ${colors.accent.primary};
   background-color: rgba(123, 44, 191, 0.1);
   border-radius: ${borderRadius.round};
