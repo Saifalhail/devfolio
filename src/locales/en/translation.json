@@ -392,6 +392,7 @@
       "success": "Thank you for your message! I'll get back to you soon.",
       "validationError": "Please fill in all required fields",
       "emailError": "Please enter a valid email address",
+      "projectTypeError": "Please select a project type",
       "errorMessage": "There was an error submitting your form. Please try again."
     },
     "seo": {

@@ -3,7 +3,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from './testUtils';
 import Dashboard from '../components/Dashboard/Dashboard';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+
 
 // Mock the useAuth hook
 const mockLogout = jest.fn();
@@ -33,39 +33,21 @@ describe('Dashboard Tests', () => {
   });
 
   test('Dashboard renders correctly for authenticated users', () => {
-    render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    render(<Dashboard />);
     
     // Check for dashboard elements
     expect(screen.getByText(/Dashboard/i) || screen.getByText(/Welcome/i)).toBeTruthy();
   });
   
   test('Dashboard displays user information', () => {
-    render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    render(<Dashboard />);
     
     // Check for user information
     expect(screen.getByText(/Test User/i) || screen.getByText(/test@example.com/i)).toBeTruthy();
   });
   
   test('Logout button calls logout function', async () => {
-    render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    render(<Dashboard />);
     
     // Find and click the logout button
     const logoutButton = screen.getByText(/Logout/i);
@@ -76,13 +58,7 @@ describe('Dashboard Tests', () => {
   });
   
   test('Dashboard has summary cards', () => {
-    render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    render(<Dashboard />);
     
     // Check for summary cards
     const summaryTexts = [
@@ -101,13 +77,7 @@ describe('Dashboard Tests', () => {
   });
   
   test('Dashboard has sidebar navigation if implemented', () => {
-    render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    render(<Dashboard />);
     
     // Check for sidebar
     const hasSidebar = screen.queryByTestId('sidebar') !== null || 
@@ -121,13 +91,7 @@ describe('Dashboard Tests', () => {
   test('Dashboard layout is responsive', () => {
     // This is a basic test that checks if the dashboard renders
     // In a real browser environment, we would test responsive behavior
-    render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    render(<Dashboard />);
     
     expect(document.body).toBeTruthy();
   });
