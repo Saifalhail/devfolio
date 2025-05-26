@@ -349,41 +349,20 @@ export const FeatureIcon = styled.div`
   width: 48px;
   height: 48px;
   border-radius: ${borderRadius.round};
-  background: ${colors.gradients.card};
-  box-shadow: ${shadows.md};
+  background: none;
   color: ${colors.accent.primary};
   transition: ${transitions.medium};
-  position: relative;
-  overflow: hidden;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: ${colors.gradients.accent};
-    opacity: 0;
-    border-radius: ${borderRadius.round};
-    transition: opacity 0.3s ease;
-  }
-  
+
   svg {
     font-size: ${typography.fontSizes.lg};
     position: relative;
-    z-index: 1;
     transition: ${transitions.medium};
+    z-index: 1;
   }
-  
+
   ${FeatureCard}:hover & {
     transform: scale(1.1);
     box-shadow: ${shadows.lg};
-    
-    &:before {
-      opacity: 0.2;
-    }
-    
     svg {
       color: ${colors.text.primary};
     }
