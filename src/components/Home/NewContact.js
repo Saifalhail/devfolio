@@ -82,6 +82,10 @@ const NewContact = () => {
       error = t('contact.form.validationError');
     }
 
+    if (field === 'projectType' && !formData.projectType.trim()) {
+      error = t('contact.form.projectTypeError', t('contact.form.validationError'));
+    }
+
     setFieldErrors(prev => ({ ...prev, [field]: error }));
     return error === '';
   };
@@ -288,6 +292,8 @@ const NewContact = () => {
                   onKeyDown={(e) => handleKeyDown(e, messageRef)}
                   ref={projectTypeRef}
                   isRTL={isRTL}
+                  aria-invalid={!!fieldErrors.projectType}
+                  aria-describedby={fieldErrors.projectType ? 'projectType-error' : undefined}
                 >
                   <option value="">{isRTL ? 'اختر نوع المشروع' : 'Select project type'}</option>
                   {projectTypes.map(type => (
@@ -296,6 +302,9 @@ const NewContact = () => {
                     </option>
                   ))}
                 </FormSelect>
+                {fieldErrors.projectType && (
+                  <FieldError id="projectType-error" isRTL={isRTL}>{fieldErrors.projectType}</FieldError>
+                )}
               </InputGroup>
               
               <InputGroup isRTL={isRTL}>
