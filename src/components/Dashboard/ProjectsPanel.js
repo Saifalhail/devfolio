@@ -1,7 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { FaThLarge, FaList, FaFilter, FaSort, FaClock, FaCheck, FaPencilAlt, FaSmile, FaMeh, FaFrown, FaPlus } from 'react-icons/fa';
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { 
+  FaThLarge, 
+  FaList, 
+  FaFilter, 
+  FaSort, 
+  FaClock, 
+  FaCheck, 
+  FaPencilAlt, 
+  FaSmile, 
+  FaMeh, 
+  FaFrown, 
+  FaPlus,
+  FaSearch,
+  FaMagic,
+  FaEllipsisV
+} from 'react-icons/fa';
+import { collection, query, where, orderBy, onSnapshot, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -13,18 +28,39 @@ import {
   PanelTitle,
   ActionButton,
   EmptyState,
-  Card
+  Card,
+  FilterButton,
+  SearchInput,
+  Badge,
+  IconButton
 } from '../../styles/GlobalComponents';
-import { colors, spacing, borderRadius, shadows, mixins, transitions, typography } from '../../styles/GlobalTheme';
+import { 
+  colors, 
+  spacing, 
+  borderRadius, 
+  shadows, 
+  mixins, 
+  transitions, 
+  typography,
+  breakpoints 
+} from '../../styles/GlobalTheme';
 
 const ProjectsPanel = () => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
   const [projects, setProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
   const [isGridView, setIsGridView] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortBy, setSortBy] = useState('deadline');
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [activePage, setActivePage] = useState(1);
+  const [itemsPerPage] = useState(9);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Fetch projects from Firestore
   useFirebaseListener(() => {
@@ -49,11 +85,7 @@ const ProjectsPanel = () => {
         id: doc.id,
         ...doc.data()
       }));
-
-      if (filterStatus !== 'all') {
-        projectsList = projectsList.filter(project => project.status === filterStatus);
-      }
-
+      
       setProjects(projectsList);
       setIsLoading(false);
     }, (error) => {
@@ -62,7 +94,37 @@ const ProjectsPanel = () => {
     });
 
     return unsubscribe;
-  }, [currentUser, filterStatus, sortBy]);
+  }, [currentUser, sortBy]);
+  
+  // Filter and search projects
+  useEffect(() => {
+    let result = [...projects];
+    
+    // Apply status filter
+    if (filterStatus !== 'all') {
+      result = result.filter(project => project.status === filterStatus);
+    }
+    
+    // Apply search filter
+    if (searchTerm.trim() !== '') {
+      const searchLower = searchTerm.toLowerCase();
+      result = result.filter(project => 
+        project.name?.toLowerCase().includes(searchLower) ||
+        project.client?.toLowerCase().includes(searchLower) ||
+        project.description?.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    setFilteredProjects(result);
+    
+    // Calculate total pages
+    setTotalPages(Math.max(1, Math.ceil(result.length / itemsPerPage)));
+    
+    // Reset to first page when filters change
+    if (activePage > 1) {
+      setActivePage(1);
+    }
+  }, [projects, filterStatus, searchTerm, itemsPerPage]);
 
   // Get emoji for status
   const getStatusEmoji = (status) => {
@@ -108,16 +170,66 @@ const ProjectsPanel = () => {
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
   };
+  
+  // Get current page items
+  const getCurrentPageItems = () => {
+    const indexOfLastItem = activePage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return filteredProjects.slice(indexOfFirstItem, indexOfLastItem);
+  };
+
+  // Pagination handlers
+  const handlePageChange = (pageNumber) => {
+    setActivePage(pageNumber);
+  };
+
+  // Open modal
+  const openAddProjectModal = () => {
+    setIsModalOpen(true);
+  };
+  
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setError(null);
+  };
+  
+  // Handle search input
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+  
+  // Handle form submission
+  const handleAddProject = async (projectData) => {
+    setIsSubmitting(true);
+    setError(null);
+    
+    try {
+      const projectsRef = collection(db, 'projects');
+      await addDoc(projectsRef, {
+        ...projectData,
+        userId: currentUser.uid,
+        createdAt: Timestamp.now()
+      });
+      
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error adding project:', error);
+      setError(t('projects.addError', 'Error adding project. Please try again.'));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <PanelContainer>
       <PanelHeader>
         <PanelTitle>{t('projects.title', 'Projects')}</PanelTitle>
         <ControlsGroup>
-          <ActionButton>
+          <AddProjectButton onClick={openAddProjectModal}>
             <FaPlus />
             {t('projects.addProject', 'Add Project')}
-          </ActionButton>
+          </AddProjectButton>
           <ViewToggle>
             <ToggleButton 
               active={isGridView} 
@@ -242,20 +354,52 @@ const ProjectsPanel = () => {
           ))}
         </ProjectsContainer>
       )}
+      
+      {/* Add Project Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={t('projects.addProject', 'Add Project')}
+        size="lg"
+        animation="zoom"
+        footer={
+          <>
+            <CancelButton onClick={closeModal} disabled={isSubmitting}>
+              {t('common.cancel', 'Cancel')}
+            </CancelButton>
+            <SubmitButton form="add-project-form" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? t('common.creating', 'Creating...') : t('common.create', 'Create')}
+            </SubmitButton>
+          </>
+        }
+      >
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        <ProjectForm 
+          onSubmit={handleAddProject} 
+          onCancel={closeModal}
+          id="add-project-form"
+        />
+      </Modal>
     </PanelContainer>
   );
 };
 
 // Styled Components
+const AddProjectButton = styled(ActionButton)`
+  ${mixins.rtlMargin('0', spacing.md, '0', 0)};
+  box-shadow: ${shadows.md};
+`;
+
 const ControlsGroup = styled.div`
-  display: flex;
-  align-items: center;
+  ${mixins.flexBetween}
   flex-wrap: wrap;
   gap: ${spacing.md};
-  
+
   @media (max-width: 768px) {
     justify-content: flex-start;
+    align-items: flex-start;
     width: 100%;
+    margin-top: ${spacing.md};
   }
   
   /* RTL Support */
@@ -320,6 +464,8 @@ const FilterIcon = styled.div`
   ${mixins.flexCenter}
   position: absolute;
   ${props => props.isRTL ? css`right: ${spacing.sm};` : css`left: ${spacing.sm};`}
+  top: 50%;
+  transform: translateY(-50%);
   color: ${colors.accent.primary};
   background-color: rgba(123, 44, 191, 0.1);
   border-radius: ${borderRadius.round};
@@ -568,6 +714,7 @@ const SkeletonBody = styled(ProjectDetails)`
 const ProjectEmptyState = styled(EmptyState)`
   padding: ${spacing.xl};
   margin: ${spacing.md} 0;
+  animation: ${fadeIn} 0.5s ease-out, ${slideUp} 0.5s ease-out;
   
   h3 {
     font-size: ${typography.fontSizes.xl};
@@ -578,6 +725,65 @@ const ProjectEmptyState = styled(EmptyState)`
   p {
     color: ${colors.text.secondary};
     margin-bottom: ${spacing.lg};
+  }
+`;
+
+const ErrorMessage = styled.div`
+  background: rgba(244, 67, 54, 0.1);
+  color: ${colors.status.error};
+  padding: ${spacing.md};
+  border-radius: ${borderRadius.md};
+  margin-bottom: ${spacing.md};
+  border-left: 4px solid ${colors.status.error};
+  font-size: ${typography.fontSizes.sm};
+`;
+
+const Button = styled.button`
+  padding: ${spacing.md} ${spacing.lg};
+  border-radius: ${borderRadius.md};
+  font-weight: ${typography.fontWeights.medium};
+  font-size: ${typography.fontSizes.sm};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const SubmitButton = styled(Button)`
+  background: ${colors.gradients.button};
+  color: ${colors.text.primary};
+  border: none;
+  box-shadow: ${shadows.sm};
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: ${shadows.md};
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+`;
+
+const CancelButton = styled(Button)`
+  background: transparent;
+  color: ${colors.text.secondary};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    color: ${colors.text.primary};
   }
 `;
 

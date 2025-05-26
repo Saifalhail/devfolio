@@ -100,6 +100,24 @@
       }
     ]
   },
+  "common": {
+    "cancel": "إلغاء",
+    "create": "إنشاء",
+    "creating": "جاري الإنشاء...",
+    "update": "تحديث",
+    "updating": "جاري التحديث...",
+    "save": "حفظ",
+    "delete": "حذف",
+    "close": "إغلاق"
+  },
+  
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "email": "البريد الإلكتروني غير صالح",
+    "minLength": "يجب أن يكون الحقل {{count}} أحرف على الأقل",
+    "maxLength": "يجب أن يكون الحقل {{count}} أحرف كحد أقصى"
+  },
+  
   "about": {
     "title": "نبذة عني",
     "subtitle": "من هو S.N.P؟",
@@ -246,7 +264,7 @@
       "emptyTodo": "لا توجد مهام حالية",
       "doing": "جاري العمل",
       "emptyDoing": "لا توجد مهام قيد التنفيذ",
-      "done": "منجز",
+      "done": "مكتمل",
       "emptyDone": "لا توجد مهام منجزة"
     }
   },
@@ -298,6 +316,45 @@
     }
   },
   
+  "modal": {
+    "close": "إغلاق"
+  },
+  
+  "projects": {
+    "title": "المشاريع",
+    "addProject": "إضافة مشروع",
+    "addError": "خطأ في إضافة المشروع. يرجى المحاولة مرة أخرى.",
+    "editProject": "تعديل المشروع",
+    "deleteProject": "حذف المشروع",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا المشروع؟",
+    "done": "مكتمل",
+    "namePlaceholder": "أدخل اسم المشروع",
+    "clientPlaceholder": "أدخل اسم العميل",
+    "descriptionPlaceholder": "أدخل وصف المشروع",
+    "noProjects": "لا توجد مشاريع حاليًا. قم بإضافة مشروع جديد للبدء.",
+    "filters": {
+      "all": "جميع المشاريع",
+      "active": "نشط",
+      "completed": "مكتمل",
+      "pending": "قيد الانتظار"
+    },
+    "sortOptions": {
+      "newest": "الأحدث",
+      "oldest": "الأقدم",
+      "deadline": "الموعد النهائي",
+      "alphabetical": "أبجدي"
+    },
+    "moods": {
+      "happy": "سعيد",
+      "neutral": "محايد",
+      "unhappy": "غير راضي"
+    },
+    "viewOptions": {
+      "grid": "شبكة",
+      "list": "قائمة"
+    }
+  },
+
   "forms": {
     "title": "النماذج والملاحظات",
     "createNew": "إنشاء نموذج جديد",

@@ -12,6 +12,12 @@ export const slideUp = keyframes`
   to { transform: translateY(0); opacity: 1; }
 `;
 
+// Slide down with fade
+export const slideDown = keyframes`
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+`;
+
 // Slide in from the right with fade
 export const slideInRight = keyframes`
   from { transform: translateX(20px); opacity: 0; }
