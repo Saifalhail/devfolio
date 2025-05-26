@@ -401,6 +401,20 @@ The Process section showcases the developer's 6-step workflow with a modern, vis
 - **Pseudo-elements**: For decorative accents and hover effects
 - **Text Overflow Control**: Using -webkit-line-clamp for consistent card heights
 
+### Tooltip Component
+
+The Tooltip component provides additional context when hovering over icons or buttons.
+
+- **Location**: `src/components/Common/Tooltip.js`
+- **Style**: Dark purple background with white text, matching the primary theme
+- **RTL Support**: Tooltip positioning flips automatically in Arabic mode
+- **Usage Example**:
+  ```jsx
+  <Tooltip content={t('info.more')}> 
+    <IconButton icon={<FaInfo />} />
+  </Tooltip>
+  ```
+
 ## Future Enhancements
 
 - Add more service pages with detailed information
