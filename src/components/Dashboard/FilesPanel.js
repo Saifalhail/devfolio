@@ -5,6 +5,7 @@ import { FaUpload, FaFilter, FaSearch, FaTags, FaDownload, FaEye, FaTrash, FaHis
 import FileCard from './FileCard';
 import Button from '../Common/Button';
 import {
+  Card,
   PanelContainer,
   PanelHeader,
   DashboardTitle,
@@ -202,11 +203,7 @@ const FilesPanel = () => {
 };
 
 // Using the shared PanelContainer component
-const FilesPanelContainer = styled(PanelContainer)`
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+const FilesPanelContainer = styled(Card)`
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
 `;
 
@@ -225,7 +222,7 @@ const FilesPanelHeader = styled(PanelHeader)`
 
 // Using the shared DashboardTitle component
 const PanelTitle = styled(DashboardTitle)`
-  color: #333;
+  color: #fff;
 `;
 
 // Using the shared PrimaryButton component
@@ -491,13 +488,11 @@ const FilesGrid = styled.div`
   position: relative;
   z-index: 1;
   background: none !important;
-  
+
   /* Add staggered animation for file cards */
   & > div {
     animation: fadeInUp 0.5s ease-out forwards;
     opacity: 0;
-    background-color: white !important;
-    background-image: none !important;
   }
   
   & > div:nth-child(1) { animation-delay: 0.1s; }

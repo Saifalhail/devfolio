@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Card as BaseCard } from '../../styles/dashboardStyles';
 import { useTranslation } from 'react-i18next';
 import { 
   FaCalendarAlt, 
@@ -205,14 +206,10 @@ const TaskCard = ({
 };
 
 // Styled Components
-const Card = styled.div`
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+const Card = styled(BaseCard)`
   padding: 1rem;
   margin-bottom: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   border-left: 4px solid ${props => getPriorityColor(props.priority)};
