@@ -20,6 +20,9 @@ const Sidebar = () => {
   const isRTL = i18n.language === 'ar';
   const location = useLocation();
   
+  const isItemActive = (path) =>
+    location.pathname === path || location.pathname.startsWith(`${path}/`);
+
   const menuItems = [
     { 
       icon: <FaHome />, 
@@ -73,14 +76,14 @@ const Sidebar = () => {
     <SidebarContainer isRTL={isRTL}>
       <NavMenu>
         {menuItems.map((item) => (
-          <NavItem 
-            key={item.path} 
-            isActive={location.pathname === item.path}
+          <NavItem
+            key={item.path}
+            isActive={isItemActive(item.path)}
             isHighlighted={item.isHighlighted}
             isRTL={isRTL}
             to={item.path}
           >
-            <IconWrapper isRTL={isRTL} isActive={location.pathname === item.path || item.isHighlighted}>
+            <IconWrapper isRTL={isRTL} isActive={isItemActive(item.path) || item.isHighlighted}>
               {item.icon}
             </IconWrapper>
             <span>{item.label}</span>
