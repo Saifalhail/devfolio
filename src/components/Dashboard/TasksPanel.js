@@ -27,74 +27,22 @@ import {
   EmptyColumnMessage,
   AddTaskButton
 } from '../../styles/dashboardStyles';
-
-// Mock tasks data
-const MOCK_TASKS = [
-  {
-    id: '1',
-    title: 'Design homepage mockup',
-    description: 'Create wireframes and high-fidelity mockups for the landing page',
-    status: 'todo',
-    priority: 'high',
-    dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-    assignedToName: 'You',
-    isClientTask: false
-  },
-  {
-    id: '2',
-    title: 'Implement authentication system',
-    description: 'Set up user registration, login, and password reset functionality',
-    status: 'doing',
-    priority: 'high',
-    dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
-    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
-    assignedToName: 'You',
-    isClientTask: false
-  },
-  {
-    id: '3',
-    title: 'Create responsive navigation',
-    description: 'Build a responsive navbar with mobile menu',
-    status: 'done',
-    priority: 'medium',
-    dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
-    completedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-    assignedToName: 'You',
-    isClientTask: false
-  },
-  {
-    id: '4',
-    title: 'Provide content for About section',
-    description: 'Write bio and list of services for the About page',
-    status: 'todo',
-    priority: 'low',
-    dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
-    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-    assignedToName: 'Client',
-    isClientTask: true
-  },
-  {
-    id: '5',
-    title: 'Set up contact form',
-    description: 'Create form with validation and email notification',
-    status: 'doing',
-    priority: 'medium',
-    dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days from now
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-    assignedToName: 'You',
-    isClientTask: false
-  }
-];
+import useTasks from '../../hooks/useTasks';
 
 const TasksPanel = () => {
   const { t } = useTranslation();
-  
+  const tasks = useTasks();
+
+  const parseDate = (d) => {
+    if (!d) return null;
+    if (typeof d.toDate === 'function') return d.toDate();
+    return new Date(d);
+  };
+
   // Filter tasks by status
-  const todoTasks = MOCK_TASKS.filter(task => task.status === 'todo');
-  const doingTasks = MOCK_TASKS.filter(task => task.status === 'doing');
-  const doneTasks = MOCK_TASKS.filter(task => task.status === 'done');
+  const todoTasks = tasks.filter(task => task.status === 'todo');
+  const doingTasks = tasks.filter(task => task.status === 'doing');
+  const doneTasks = tasks.filter(task => task.status === 'done');
 
   return (
     <TasksPanelContainer>
@@ -136,7 +84,7 @@ const TasksPanel = () => {
                 <TaskMeta>
                   <TaskMetaItem>
                     <FaCalendarAlt />
-                    <span>{task.dueDate.toLocaleDateString()}</span>
+                    <span>{parseDate(task.dueDate)?.toLocaleDateString()}</span>
                   </TaskMetaItem>
                   <TaskMetaItem>
                     <FaUserAlt />
@@ -177,7 +125,7 @@ const TasksPanel = () => {
                 <TaskMeta>
                   <TaskMetaItem>
                     <FaCalendarAlt />
-                    <span>{task.dueDate.toLocaleDateString()}</span>
+                    <span>{parseDate(task.dueDate)?.toLocaleDateString()}</span>
                   </TaskMetaItem>
                   <TaskMetaItem>
                     <FaUserAlt />
@@ -218,7 +166,7 @@ const TasksPanel = () => {
                 <TaskMeta>
                   <TaskMetaItem>
                     <FaCalendarAlt />
-                    <span>{task.dueDate.toLocaleDateString()}</span>
+                    <span>{parseDate(task.dueDate)?.toLocaleDateString()}</span>
                   </TaskMetaItem>
                   <TaskMetaItem>
                     <FaUserAlt />
