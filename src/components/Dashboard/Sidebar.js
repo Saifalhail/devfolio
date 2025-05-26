@@ -117,12 +117,10 @@ const Sidebar = ({ collapsed = false, onToggleCollapse }) => {
         isRTL={isRTL}
       >
         {collapsed
-          ? isRTL
-            ? <FaAngleDoubleLeft />
-            : <FaAngleDoubleRight />
-          : isRTL
-            ? <FaAngleDoubleRight />
-            : <FaAngleDoubleLeft />}
+
+          ? (isRTL ? <FaAngleDoubleLeft /> : <FaAngleDoubleRight />)
+          : (isRTL ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />)}
+
       </CollapseButton>
 
       <NavMenu role="menu" collapsed={collapsed}>
