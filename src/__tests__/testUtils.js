@@ -16,6 +16,7 @@ const i18n = {
   changeLanguage: jest.fn(),
   use: jest.fn().mockReturnThis(),
   init: jest.fn(),
+  services: { react: {} },
 };
 
 // Try to import theme, but don't fail if it doesn't exist

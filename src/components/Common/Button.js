@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { rtl } from '../../utils/rtl';
 
 /**
  * Reusable Button component with different variants and sizes
@@ -254,13 +255,15 @@ const IconWrapper = styled.span`
   align-items: center;
   justify-content: center;
   font-size: 1em;
-  
+
   ${props => props.position === 'left' && css`
     margin-right: ${props.children ? '0.25rem' : '0'};
+    ${rtl`margin-left: ${props.children ? '0.25rem' : '0'}; margin-right: 0;`}
   `}
-  
+
   ${props => props.position === 'right' && css`
     margin-left: ${props.children ? '0.25rem' : '0'};
+    ${rtl`margin-right: ${props.children ? '0.25rem' : '0'}; margin-left: 0;`}
   `}
 `;
 

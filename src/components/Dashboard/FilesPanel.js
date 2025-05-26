@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
+import { rtl } from '../../utils/rtl';
 import { useTranslation } from 'react-i18next';
 import { FaUpload, FaFilter, FaSearch, FaTags, FaDownload, FaEye, FaTrash, FaHistory } from 'react-icons/fa';
 import FileCard from './FileCard';
@@ -153,7 +154,7 @@ const FilesPanel = () => {
       </FilesPanelHeader>
       
       <FilesToolbar>
-        <SearchBar>
+        <SearchBar isRTL={isRTL}>
           <FaSearch />
           <input
             type="text"
@@ -229,10 +230,14 @@ const PanelTitle = styled(DashboardTitle)`
 const UploadButton = styled(PrimaryButton)`
   background-color: #4A6FA5;
   box-shadow: 0 2px 8px rgba(74, 111, 165, 0.2);
-  
+
   svg {
     margin-right: 0.5rem;
     font-size: 1.1rem;
+    ${rtl`
+      margin-right: 0;
+      margin-left: 0.5rem;
+    `}
   }
   
   &:hover {
@@ -242,10 +247,14 @@ const UploadButton = styled(PrimaryButton)`
   
   @media (max-width: 768px) {
     width: 100%;
-    
+
     svg {
       margin-right: 0;
       margin-left: 0.75rem;
+      ${rtl`
+        margin-right: 0.75rem;
+        margin-left: 0;
+      `}
     }
   }
 `;
