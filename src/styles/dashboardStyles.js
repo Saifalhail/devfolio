@@ -1,4 +1,16 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
+
+// Basic fade in animation used for panel and card entrances
+const fadeInUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 // Common Dashboard Styles
 
@@ -103,6 +115,7 @@ export const Card = styled.div`
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
+  animation: ${fadeInUp} 0.5s ease-out;
   
   &:before {
     content: '';
@@ -455,6 +468,7 @@ export const DashboardPanel = styled.div`
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  animation: ${fadeInUp} 0.6s ease-out;
   
   &:before {
     content: '';
@@ -544,6 +558,7 @@ export const TaskCard = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  animation: ${fadeInUp} 0.4s ease-out;
   
   &:hover {
     transform: translateY(-3px);
