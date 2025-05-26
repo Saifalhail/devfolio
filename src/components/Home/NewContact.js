@@ -1,9 +1,16 @@
 import React, { useState, useRef } from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../../firebase';
 import { logFirebaseFunctionError } from '../../utils/errorHandling';
+import {
+  FormLabel,
+  FormInput,
+  FormSelect,
+  FormTextarea,
+  InputGroup,
+} from '../Common/FormComponents';
 
 const NewContact = () => {
   const { t, i18n } = useTranslation();
@@ -774,92 +781,6 @@ const FormHeaderText = styled.h4`
   }
 `;
 
-const InputGroup = styled.div`
-  margin-bottom: 1.2rem;
-  position: relative;
-  transition: all 0.3s ease;
-
-  &:focus-within {
-    transform: translateY(-5px);
-  }
-
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: ${props => (props.isRTL ? 'auto' : '0')};
-    right: ${props => (props.isRTL ? '0' : 'auto')};
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #cd3efd, #82a1bf);
-    transition: all 0.3s ease;
-    opacity: 0;
-  }
-
-  &:focus-within:after {
-    bottom: 0;
-    width: 100%;
-    opacity: 1;
-  }
-`;
-
-const FormLabel = styled.label`
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--dark);
-  transition: color 0.3s ease;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
-  font-size: 0.9rem;
-`;
-
-const inputStyles = css`
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 2px solid ${props => (props.hasError ? '#c62828' : '#e0e0e0')};
-  border-radius: 10px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  background-color: #f9f9f9;
-
-  &:focus {
-    outline: none;
-    border-color: #cd3efd;
-    box-shadow: 0 0 0 3px rgba(205, 62, 253, 0.2);
-    background-color: white;
-  }
-
-  &:focus-visible {
-    outline: 2px dashed var(--accent-1);
-    outline-offset: 3px;
-  }
-`;
-
-const FormInput = styled.input`
-  ${inputStyles}
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-`;
-
-const FormSelect = styled.select`
-  ${inputStyles}
-  appearance: none;
-  background-image: ${props => props.isRTL 
-    ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`
-    : `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`};
-  background-repeat: no-repeat;
-  background-position: ${props => props.isRTL ? '1rem center' : 'calc(100% - 1rem) center'};
-  padding-right: ${props => props.isRTL ? '1.2rem' : '3rem'};
-  padding-left: ${props => props.isRTL ? '3rem' : '1.2rem'};
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-`;
-
-const FormTextarea = styled.textarea`
-  ${inputStyles}
-  resize: vertical;
-  min-height: 120px;
-  font-family: inherit;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-`;
 
 const SubmitButtonWrapper = styled.div`
   margin-top: 2rem;
