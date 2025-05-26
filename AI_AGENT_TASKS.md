@@ -2,8 +2,10 @@
 
 This document contains small, precise tasks for AI agents to complete. Each task is self-contained and focuses on bug fixes, small feature additions, testing, and code improvements. Each task includes references to relevant documentation files.
 
-## Authentication Tasks
+> **NOTE FOR CODEX AGENTS**: This project is undergoing UI modernization to match the dark purple theme with gradient effects found in the Overview dashboard page. All new components should match this style. White card components are being phased out in favor of dark purple gradient cards with subtle animations. Refer to UI_DESIGN_DOCUMENTATION.md for the complete style guide.
 
+## Authentication Tasks
+<!-- 
 1. ✅ **Fix Google Authentication**
    - File: `src/components/Common/AuthModal.js` and `src/firebase.js`
    - Task: Properly implement the signInWithGoogle function and handle potential errors
@@ -144,7 +146,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - File: `src/components/Dashboard/Sidebar.js`
     - Task: Add keyboard navigation support for the sidebar menu items for better accessibility
     - Docs: See WINDSURF_RULES.md (accessibility section) and DOCUMENTATION.md (Accessibility Features section)
-    - Priority: Low
+    - Priority: Low -->
 
 23. **Add Tooltip Components**
     - File: Create `src/components/Common/Tooltip.js`
@@ -158,45 +160,108 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and WINDSURF_RULES.md (responsive design section)
     - Priority: Medium
 
+## UI Modernization Tasks
+
+25. **Remove Purple Background from Icons**
+    - Files: `src/components/Dashboard/OverviewPanel.js` and related components
+    - Task: Update icons to display without purple backgrounds to match the design in UI_DESIGN_DOCUMENTATION.md
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Icon Implementation section)
+    - Priority: High
+    - **ASSIGN TO CODEX AGENT**
+
+26. **Standardize Dashboard Cards Styling**
+    - Files: Dashboard panel components (Forms, Projects, Files, etc.)
+    - Task: Update white card components to use dark purple gradient backgrounds with animations matching the Overview panel
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Dashboard Components section)
+    - Priority: High
+    - **ASSIGN TO CODEX AGENT**
+
+27. **Add Animation Effects to UI Components**
+    - Files: Various components throughout the application
+    - Task: Implement subtle animations for hovering, loading, and transitions as specified in UI_DESIGN_DOCUMENTATION.md
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section)
+    - Priority: Medium
+
+28. **Improve RTL Support for Arabic**
+    - Files: Multiple components with layout issues in RTL mode
+    - Task: Fix alignment, padding, and icon placement for RTL layout in Arabic language mode
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (RTL Support section) and WINDSURF_RULES.md (internationalization section)
+    - Priority: High
+    - **ASSIGN TO CODEX AGENT**
+
+29. **Enhance Mobile Responsiveness**
+    - Files: Multiple components with responsive design issues
+    - Task: Improve layout and component sizing for small screens
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Responsive Design section)
+    - Priority: High
+
+## Refactoring Tasks
+
+30. **Create Reusable Styled Components**
+    - File: Create `src/styles/components.js`
+    - Task: Extract common styled components into a reusable library (cards, buttons, form elements, etc.)
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section) and WINDSURF_RULES.md (styling section)
+    - Priority: High
+    - **ASSIGN TO CODEX AGENT**
+
+31. **Implement Centralized Theme**
+    - File: Update `src/styles/theme.js`
+    - Task: Enhance the theme object with additional tokens for consistent styling across components
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Color Palette section)
+    - Priority: High
+
+32. **Create Animation Library**
+    - File: Create `src/styles/animations.js`
+    - Task: Extract all animation keyframes and transitions into a reusable library
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section)
+    - Priority: Medium
+
+33. **Refactor Form Components**
+    - Files: Various form-related components
+    - Task: Create reusable form components with standardized styling and behavior
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Form Elements section) and WINDSURF_RULES.md (forms section)
+    - Priority: Medium
+    - **ASSIGN TO CODEX AGENT**
+
 ## Testing Tasks
 
-23. **Test AuthContext Provider**
+34. **Test AuthContext Provider**
     - File: Create `src/contexts/__tests__/AuthContext.test.js`
     - Task: Write tests for the AuthContext provider functionality
     - Docs: See DOCUMENTATION.md (Authentication System section) and package.json for testing setup
     - Priority: High
 
-24. **Test Contact Form Submission**
+35. **Test Contact Form Submission**
     - File: Create `src/components/Home/__tests__/NewContact.test.js`
     - Task: Write tests for the contact form submission functionality
     - Docs: See DOCUMENTATION.md (Contact Form Setup section) and package.json for testing setup
     - Priority: Medium
 
-25. **Add Form Validation Tests**
+36. **Add Form Validation Tests**
     - Files: Create test files for AuthModal and Contact components
     - Task: Add validation tests for form inputs in both components
     - Docs: See DOCUMENTATION.md (Form Validation section) and package.json for testing setup
     - Priority: Low
 
-26. **Create Snapshot Tests**
+37. **Create Snapshot Tests**
     - Files: Create test files for UI components
     - Task: Implement snapshot tests to detect unexpected visual changes
     - Docs: See package.json for testing setup
     - Priority: Low
 
-27. **Implement Integration Tests**
+38. **Implement Integration Tests**
     - File: Create `src/__tests__/authentication.test.js`
     - Task: Create integration tests for the complete authentication flow
     - Docs: See DOCUMENTATION.md (Authentication System section) and package.json for testing setup
     - Priority: Low
 
-28. **Test Dashboard Sidebar**
+39. **Test Dashboard Sidebar**
     - File: Create `src/components/Dashboard/__tests__/Sidebar.test.js`
     - Task: Write tests for the sidebar navigation functionality and responsive behavior
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and package.json for testing setup
     - Priority: Medium
 
-29. **Test Dashboard Layout**
+40. **Test Dashboard Layout**
     - File: Create `src/components/Dashboard/__tests__/Dashboard.test.js`
     - Task: Test the dashboard layout structure and responsive behavior
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and package.json for testing setup
