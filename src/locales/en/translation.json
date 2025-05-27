@@ -302,6 +302,23 @@
   }
   },
 
+  "invoices": {
+    "title": "Invoices",
+    "noInvoices": "No invoices available",
+    "fields": {
+      "id": "Invoice #",
+      "issueDate": "Issued",
+      "dueDate": "Due",
+      "amount": "Amount",
+      "status": "Status"
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    }
+  },
+
   "timeline": {
     "activityLog": "Activity Timeline",
     "search": "Search activities...",
