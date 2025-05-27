@@ -29,6 +29,7 @@ import StyleGuide from './DesignSection/StyleGuide';
 import AssetsLibrary from './DesignSection/AssetsLibrary';
 import PhaseTracker from './DesignSection/PhaseTracker';
 import DesignFeedback from './DesignSection/DesignFeedback';
+import { colors, spacing, borderRadius, transitions } from '../../styles/GlobalTheme';
 
 const DesignPanel = () => {
   const { t, i18n } = useTranslation();
@@ -223,10 +224,11 @@ const DesignPanel = () => {
       </Content>
       
       {/* Phase Tracker */}
-      <TrackerWrapper>
-        <PhaseTracker />
-      </TrackerWrapper>
 
+      <PhaseTrackerWrapper>
+        <PhaseTracker />
+      </PhaseTrackerWrapper>
+      
 
       {/* Design Feedback System */}
       <FeedbackWrapper>
@@ -397,6 +399,29 @@ const FigmaLinkButton = styled.a`
   }
 `;
 
+const ToolbarContainer = styled.div`
+  display: flex;
+  gap: ${spacing.sm};
+  align-items: center;
+`;
+
+const FigmaLinkButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.md};
+  background: ${colors.gradients.button};
+  color: ${colors.text.primary};
+  text-decoration: none;
+  font-weight: 500;
+  transition: ${transitions.fast};
+
+  &:hover {
+    background: ${colors.gradients.hover};
+  }
+`;
+
 const Content = styled.div`
   flex: 1;
   padding: 1.75rem;
@@ -426,14 +451,6 @@ const FigmaEmbedContainer = styled.div`
   overflow: hidden;
   position: relative;
   background: #f9f9f9;
-`;
-
-const FigmaFrame = styled.iframe`
-  width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 `;
 
 // Background container for the starry effect
@@ -812,6 +829,10 @@ const TimelineItemDescription = styled.p`
 
 const ShowcaseContent = styled.div`
   padding: 1rem;
+`;
+
+const PhaseTrackerWrapper = styled.div`
+  margin: 2rem 1rem;
 `;
 
 const LoadingIndicator = styled.div`

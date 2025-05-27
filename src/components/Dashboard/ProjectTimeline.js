@@ -70,7 +70,7 @@ const TimelineList = styled.ul`
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 12px;
+    left: ${spacing.md};
     width: 2px;
     background: rgba(255, 255, 255, 0.1);
   }
@@ -81,7 +81,7 @@ const TimelineList = styled.ul`
 
     &:before {
       left: auto;
-      right: 12px;
+      right: ${spacing.md};
     }
   }
 `;
@@ -97,8 +97,8 @@ const TimelineItem = styled.li`
 
 const Circle = styled.span`
   position: absolute;
-  top: 4px;
-  left: -${spacing.lg};
+  top: 2px;
+  left: calc(-${spacing.md} - 1px);
   width: 10px;
   height: 10px;
   background: ${colors.accent.primary};
@@ -107,7 +107,7 @@ const Circle = styled.span`
 
   [dir='rtl'] & {
     left: auto;
-    right: -${spacing.lg};
+    right: calc(-${spacing.md} - 1px);
   }
 `;
 
