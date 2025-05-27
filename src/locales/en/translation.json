@@ -297,10 +297,16 @@
       "uploadInfo": "Upload Information",
       "uploadedBy": "Uploaded By",
       "uploadDate": "Upload Date",
-      "tags": "Tags",
+      "tags": "Tags"
+    },
     "versions": "Version History"
-  }
   },
+  "design": {
+    "uploadMockups": "Upload Mockups",
+    "uploadPrompt": "Drag & drop mockups or click to browse",
+    "remove": "Remove"
+  },
+
 
   "timeline": {
     "activityLog": "Activity Timeline",
@@ -397,6 +403,18 @@
       "screenshotAnnotatorDesc": "Allow clients to upload screenshots with annotations",
       "exportData": "Export Data",
       "exportDataDesc": "Export form responses to CSV or PDF"
+    }
+  },
+
+  "design": {
+    "mockupGallery": {
+      "title": "Mockups",
+      "filters": {
+        "all": "All",
+        "mobile": "Mobile",
+        "desktop": "Desktop",
+        "tablet": "Tablet"
+      }
     }
   },
   
