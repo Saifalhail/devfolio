@@ -1,4 +1,12 @@
-import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  lazy,
+  Suspense,
+  useMemo,
+  useCallback
+} from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
@@ -288,8 +296,16 @@ const Dashboard = () => {
       
       <NavbarArea>
         <NavbarContent>
-          <MenuIconWrapper data-testid="menu-toggle" isRTL={isRTL} onClick={toggleSidebar}>
-            <FaBars />
+          <MenuIconWrapper
+            as="button"
+            type="button"
+            aria-label={t('dashboard.toggleSidebar', 'Toggle sidebar')}
+            aria-expanded={sidebarOpen}
+            data-testid="menu-toggle"
+            isRTL={isRTL}
+            onClick={toggleSidebar}
+          >
+            <FaBars aria-hidden="true" />
           </MenuIconWrapper>
           <Navbar hideMenu={true} />
         </NavbarContent>
@@ -307,7 +323,12 @@ const Dashboard = () => {
         </SidebarArea>
         
         {mobileView && sidebarOpen && (
-          <SidebarBackdrop data-testid="sidebar-backdrop" onClick={toggleSidebar} />
+          <SidebarBackdrop
+            type="button"
+            aria-label={t('dashboard.closeSidebar', 'Close sidebar')}
+            data-testid="sidebar-backdrop"
+            onClick={toggleSidebar}
+          />
         )}
         
         <ContentArea
@@ -571,7 +592,7 @@ const SidebarArea = styled.div`
   }
 `;
 
-const SidebarBackdrop = styled.div`
+const SidebarBackdrop = styled.button`
   position: fixed;
   top: 70px;
   left: 0;
@@ -580,6 +601,10 @@ const SidebarBackdrop = styled.div`
   background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   cursor: pointer;
+  border: none;
+  padding: 0;
+  margin: 0;
+
 
   @media (max-width: 768px) {
     top: 60px;
@@ -630,7 +655,9 @@ const MenuIconWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  
+  background: none;
+  border: none;
+
   svg {
     color: #fff;
     font-size: 1.2rem;

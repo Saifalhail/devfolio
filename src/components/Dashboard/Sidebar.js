@@ -178,6 +178,7 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
             <IconWrapper
               isRTL={isRTL}
               isActive={isItemActive(item.path) || item.isHighlighted}
+              aria-hidden="true"
             >
               {item.icon}
             </IconWrapper>
