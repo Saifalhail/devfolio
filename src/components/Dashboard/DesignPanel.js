@@ -238,79 +238,7 @@ const DesignPanel = () => {
 
 // Styled Components
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
-`;
-
-const Title = styled.h2`
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-`;
-
-const ToolbarContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-left: auto;
-`;
-
-const FigmaLinkButton = styled(ActionButton).attrs({ as: 'a' })`
-  text-decoration: none;
-`;
-
-const Content = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  overflow: auto;
-`;
-
-const FigmaEmbedContainer = styled.div`
-  flex: 1;
-  padding: 1rem;
-  overflow: hidden;
-  position: relative;
-  background: #f9f9f9;
-`;
-
-const FigmaFrame = styled.iframe`
-  width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-`;
-
-const StylePreferenceFormOverlay = styled.div`
-  position: fixed;
-
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  overflow: hidden;
-  opacity: 1;
-  pointer-events: none;
-`;
-
+// Main container styling
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -469,7 +397,70 @@ const FigmaLinkButton = styled.a`
   }
 `;
 
-const ActionButton = styled.button`
+const Content = styled.div`
+  flex: 1;
+  padding: 1.75rem;
+  overflow-y: auto;
+  background: rgba(18, 20, 44, 0.2);
+  backdrop-filter: blur(5px);
+  position: relative;
+  z-index: 2;
+  
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #faaa93, #ff5b92);
+    border-radius: 4px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1.25rem 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 0.75rem;
+  }
+`;
+
+const FigmaEmbedContainer = styled.div`
+  flex: 1;
+  padding: 1rem;
+  overflow: hidden;
+  position: relative;
+  background: #f9f9f9;
+`;
+
+const FigmaFrame = styled.iframe`
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+// Background container for the starry effect
+const BackgroundContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 1;
+  pointer-events: none;
+`;
+
+
+
+
+
+
+
+
+
+
+
+// Custom action button styling
+const CustomActionButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -535,28 +526,7 @@ const ActionButton = styled.button`
   }
 `;
 
-const Content = styled.div`
-  flex: 1;
-  padding: 1.75rem;
-  overflow-y: auto;
-  background: rgba(18, 20, 44, 0.2);
-  backdrop-filter: blur(5px);
-  position: relative;
-  z-index: 2;
-  
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #faaa93, #ff5b92);
-    border-radius: 4px;
-  }
-  
-  @media (max-width: 768px) {
-    padding: 1.25rem 1rem;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 1rem 0.75rem;
-  }
-`;
+
 
 const FigmaEmbedFrame = styled.iframe`
   width: 100%;
@@ -695,8 +665,29 @@ const FeedbackWrapper = styled.div`
   padding: 1rem;
 `;
 
-const ShowcaseMetaItem = styled.div`
+const TimelineTitle = styled.h3`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem 0;
+  padding-top: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(45deg, #faaa93, #ff5b92);
+    border-radius: 50%;
+    font-size: 0.75rem;
+  }
+`;
 
+const ShowcaseMetaItem = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
