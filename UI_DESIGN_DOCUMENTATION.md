@@ -26,8 +26,8 @@ This document outlines the UI design elements, animations, and interaction patte
 - **H3 (Card Title)**: 1.1rem, 600 weight, `#513a52` color
 
 ### Body Text
-- **Regular Text**: 0.95rem, 400 weight, `#666` color
-- **Small Text**: 0.85rem, 400 weight, `#888` color
+- **Regular Text**: 0.95rem, 400 weight, `#513a52` color
+- **Small Text**: 0.85rem, 400 weight, `#666` color
 - **Badge Text**: 0.75rem, 500 weight, white color
 
 ## Icons
