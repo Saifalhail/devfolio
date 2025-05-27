@@ -298,10 +298,33 @@
       "uploadedBy": "Uploaded By",
       "uploadDate": "Upload Date",
       "tags": "Tags",
-      "versions": "Version History"
-    }
+    "versions": "Version History"
+  }
   },
-  
+
+  "timeline": {
+    "activityLog": "Activity Timeline",
+    "search": "Search activities...",
+    "allActivities": "All Activities",
+    "files": "Files",
+    "tasks": "Tasks",
+    "comments": "Comments",
+    "milestones": "Milestones",
+    "export": "Export",
+    "exportAsPDF": "Export as PDF",
+    "exportAsCSV": "Export as CSV",
+    "noActivities": "No activities match your filters",
+    "tryDifferent": "Try a different filter or search term",
+    "fileUploaded": "{{user}} uploaded {{file}}",
+    "commentAdded": "{{user}} commented",
+    "taskCompleted": "{{user}} completed task: {{task}}",
+    "fileEdited": "{{user}} edited {{file}}",
+    "fileDeleted": "{{user}} deleted {{file}}",
+    "fileDownloaded": "{{user}} downloaded {{file}}",
+    "fileViewed": "{{user}} viewed {{file}}",
+    "milestoneReached": "{{milestone}}"
+  },
+
   "forms": {
     "title": "Feedback & Forms",
     "createNew": "Create New Form",
