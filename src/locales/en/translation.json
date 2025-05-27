@@ -7,7 +7,9 @@
     "contact": "Contact",
     "login": "Login",
     "dashboard": "Dashboard",
-    "language": "Arabic"
+    "language": "Arabic",
+    "switchToArabic": "Switch to Arabic",
+    "switchToEnglish": "Switch to English"
   },
   "hero": {
     "welcome": "Hello there!",
@@ -191,7 +193,9 @@
     "errorCodeExpired": "Verification code has expired. Please request a new code.",
     "errorVerifyFailed": "Verification failed. Please try again.",
     "errorInvalidEmail": "Please enter a valid email address",
-    "errorWeakPassword": "Password must contain letters and numbers"
+    "errorWeakPassword": "Password must contain letters and numbers",
+    "close": "Close",
+    "back": "Back"
   },
   
   "dashboard": {
