@@ -19,6 +19,7 @@ DevFolio is a responsive website built for a solo developer offering software de
   - Phone number verification
 - **User Dashboard**: Personalized dashboard for authenticated users
   - Tasks are loaded using the `useTasks` hook which syncs data from Firestore and stores a local copy in `localStorage` for offline access.
+- **Auto-generated PDF reports**: Generate "Your Software Project Summary" directly from the dashboard
 - **SEO Optimized**: Comprehensive SEO implementation including:
   - Semantic HTML structure with proper heading hierarchy (h1-h6)
   - Descriptive alt text for all images and icons
@@ -414,6 +415,25 @@ The Tooltip component provides additional context when hovering over icons or bu
     <IconButton icon={<FaInfo />} />
   </Tooltip>
   ```
+### Payment History Component
+
+A reusable component that lists invoice payments with status badges.
+
+- **Location**: `src/components/Dashboard/Invoicing/PaymentHistory.js`
+- **Reusability**: Can be used in any dashboard section to show transaction records.
+- **Features**: Supports RTL layout, uses shared Panel components, and status badges for payment states.
+
+### Style Preference Form
+
+Allows clients to choose preferred design styles and colors before work begins.
+- **Location**: `src/components/Dashboard/DesignSection/StylePreferenceForm.js`
+- **Usage**: Displays a modal with radio buttons for style (modern, corporate, playful, minimal) and color choices.
+- **RTL Support**: Layout and labels adapt automatically when Arabic is active.
+
+
+### MockupGallery Component
+Displays design mockups in a responsive grid with filters for **All**, **Mobile**, **Desktop**, and **Tablet** devices. Located at `src/components/Dashboard/DesignSection/MockupGallery.js`. This gallery can be reused anywhere a simple filterable image grid is required.
+
 
 ### HireAgain Component
 

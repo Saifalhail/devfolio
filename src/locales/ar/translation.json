@@ -319,6 +319,29 @@
       "versions": "سجل الإصدارات"
     }
   },
+  "design": {
+    "uploadMockups": "رفع نماذج",
+    "uploadPrompt": "اسحب وأسقط النماذج أو انقر للتصفح",
+    "remove": "حذف"
+  },
+
+
+  "invoices": {
+    "title": "الفواتير",
+    "noInvoices": "لا توجد فواتير",
+    "fields": {
+      "id": "رقم الفاتورة",
+      "issueDate": "تاريخ الإصدار",
+      "dueDate": "تاريخ الاستحقاق",
+      "amount": "المبلغ",
+      "status": "الحالة"
+    },
+    "status": {
+      "paid": "مدفوعة",
+      "pending": "قيد الدفع",
+      "overdue": "متأخرة"
+    }
+  },
 
   "timeline": {
     "activityLog": "سجل النشاط",
@@ -341,6 +364,19 @@
     "fileDownloaded": "{{user}} حمّل {{file}}",
     "fileViewed": "{{user}} استعرض {{file}}",
     "milestoneReached": "{{milestone}}"
+  },
+  "invoices": {
+    "paymentHistory": "سجل الدفعات",
+    "date": "التاريخ",
+    "description": "الوصف",
+    "amount": "المبلغ",
+    "status": "الحالة",
+    "noPayments": "لا توجد سجلات دفع",
+    "statuses": {
+      "paid": "مدفوع",
+      "pending": "قيد المعالجة",
+      "failed": "فشل"
+    }
   },
   
   "modal": {
@@ -456,7 +492,23 @@
       "exportDataDesc": "تصدير ردود النماذج إلى CSV أو PDF"
     }
   },
+  "invoices": {
+    "milestoneDelivery": {
+      "title": "تسليم المراحل",
+      "noMilestones": "لا توجد مراحل متاحة"
+    }
+  },
   
+  "designFeedback": {
+    "title": "ملاحظات التصميم",
+    "addComment": "إضافة تعليق",
+    "reply": "رد",
+    "commentPlaceholder": "اكتب ملاحظاتك...",
+    "resolve": "حل",
+    "reopen": "إعادة فتح",
+    "resolved": "تم الحل"
+  },
+
   "contact": {
     "title": "اتصل بنا",
     "subtitle": "تواصل معي الآن",
@@ -486,6 +538,22 @@
       "errorMessage": "حدث خطأ أثناء إرسال النموذج. حاول مرة أخرى"
     }
   },
+  "design": {
+    "styleGuide": "دليل الأنماط",
+    "colors": "الألوان",
+    "typography": "الخطوط",
+    "spacing": "التباعد",
+    "components": "المكوّنات"
+  },
+  "styleGuide": {
+    "sampleH1": "عنوان رئيسي",
+    "sampleH2": "عنوان ثانوي",
+    "sampleH3": "عنوان",
+    "sampleBody": "مثال على نص الفقرة بالحجم الافتراضي.",
+    "sampleSmall": "نص صغير",
+    "sampleButton": "زر رئيسي",
+    "sampleCard": "محتوى البطاقة هنا."
+  },
   "techStack": {
     "title": "التقنيات المستخدمة",
     "subtitle": "التقنيات والأدوات المتطورة التي أتقنها لتحويل أفكارك الإبداعية إلى تجارب رقمية استثنائية",
@@ -514,6 +582,17 @@
     "subtitle": "ما يقوله عملائي عن عملي",
     "iconAlt": "أيقونة شهادة العميل"
   },
+  "postLaunch": {
+    "maintenanceGuide": "دليل صيانة التطبيق",
+    "downloadPDF": "تحميل PDF",
+    "tips": {
+      "updateDependencies": "حافظ على تحديث الاعتمادات",
+      "monitorErrors": "راقب الأخطاء وقم بإصلاحها بسرعة",
+      "backupData": "انسخ بياناتك احتياطياً بانتظام",
+      "securityUpdates": "قم بتطبيق التحديثات الأمنية",
+      "collectFeedback": "اجمع آراء المستخدمين"
+    }
+  },
   "seo": {
     "alt": {
       "computer": "أيقونة كمبيوتر",
@@ -526,12 +605,22 @@
       "waving": "أيقونة يد تلوح"
     }
   },
+
   "postLaunch": {
     "hireAgain": {
       "title": "توظيفي مرة أخرى",
       "description": "هل لديك مشروع آخر؟ يسعدني العمل معك من جديد.",
       "button": "توظيفي مجدداً"
     }
+
+  "designPhaseTracker": {
+    "title": "مراحل التصميم",
+    "discovery": "الاستكشاف",
+    "wireframes": "إطارات مبدئية",
+    "mockups": "نماذج مصورة",
+    "prototypes": "نماذج أولية",
+    "implementation": "التنفيذ"
+
   },
   "footer": {
     "description": "خدمات تطوير برمجيات احترافية للمواقع الإلكترونية وتطبيقات الجوال ورموز QR وجميع التطبيقات المتعلقة بالتكنولوجيا",

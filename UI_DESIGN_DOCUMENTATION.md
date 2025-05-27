@@ -206,6 +206,10 @@ The dashboard implements a consistent dark theme with the following design chara
 - **QuickActionsContainer**: Grid of action buttons for common tasks with hover effects
 - **TaskItem**: List items with status indicators (done/pending) and appropriate visual styling
 - **ProgressBar/FocusProgressBar**: Visual indicators for completion status with gradient fills
+- **MaintenanceGuide**: Post-launch checklist component with PDF export capability
+
+- **MockupDetail**: Detailed view for design mockups with annotation tools, version history, and approval workflow
+- **MockupGallery**: Filterable gallery showcasing design mockups for mobile, desktop, and tablet views
 
 ### Buttons
 
