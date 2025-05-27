@@ -342,6 +342,19 @@
     "fileViewed": "{{user}} استعرض {{file}}",
     "milestoneReached": "{{milestone}}"
   },
+  "invoices": {
+    "paymentHistory": "سجل الدفعات",
+    "date": "التاريخ",
+    "description": "الوصف",
+    "amount": "المبلغ",
+    "status": "الحالة",
+    "noPayments": "لا توجد سجلات دفع",
+    "statuses": {
+      "paid": "مدفوع",
+      "pending": "قيد المعالجة",
+      "failed": "فشل"
+    }
+  },
   
   "modal": {
     "close": "إغلاق"

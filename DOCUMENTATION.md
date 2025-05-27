@@ -414,6 +414,14 @@ The Tooltip component provides additional context when hovering over icons or bu
     <IconButton icon={<FaInfo />} />
   </Tooltip>
   ```
+### Payment History Component
+
+A reusable component that lists invoice payments with status badges.
+
+- **Location**: `src/components/Dashboard/Invoicing/PaymentHistory.js`
+- **Reusability**: Can be used in any dashboard section to show transaction records.
+- **Features**: Supports RTL layout, uses shared Panel components, and status badges for payment states.
+
 
 ## Future Enhancements
 
