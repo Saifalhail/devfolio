@@ -209,7 +209,9 @@
     "errorCodeExpired": "انتهت صلاحية رمز التحقق. يرجى طلب رمز جديد.",
     "errorVerifyFailed": "فشل التحقق. يرجى المحاولة مرة أخرى.",
     "errorInvalidEmail": "يرجى إدخال بريد إلكتروني صالح",
-    "errorWeakPassword": "يجب أن تحتوي كلمة المرور على أحرف وأرقام"
+    "errorWeakPassword": "يجب أن تحتوي كلمة المرور على أحرف وأرقام",
+    "close": "إغلاق",
+    "back": "رجوع"
   },
   
   "dashboard": {
