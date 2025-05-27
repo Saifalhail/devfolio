@@ -514,6 +514,17 @@
     "subtitle": "ما يقوله عملائي عن عملي",
     "iconAlt": "أيقونة شهادة العميل"
   },
+  "postLaunch": {
+    "maintenanceGuide": "دليل صيانة التطبيق",
+    "downloadPDF": "تحميل PDF",
+    "tips": {
+      "updateDependencies": "حافظ على تحديث الاعتمادات",
+      "monitorErrors": "راقب الأخطاء وقم بإصلاحها بسرعة",
+      "backupData": "انسخ بياناتك احتياطياً بانتظام",
+      "securityUpdates": "قم بتطبيق التحديثات الأمنية",
+      "collectFeedback": "اجمع آراء المستخدمين"
+    }
+  },
   "seo": {
     "alt": {
       "computer": "أيقونة كمبيوتر",
