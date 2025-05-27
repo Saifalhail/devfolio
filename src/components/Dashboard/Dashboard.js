@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
@@ -53,14 +53,16 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import Navbar from '../Layout/Navbar';
 import Sidebar from './Sidebar';
-import ProjectsPanel from './ProjectsPanel';
-import ProjectNotes from './ProjectNotes';
-import AddProjectModal from './AddProjectModal';
-import TasksPanel from './TasksPanel';
-import FilesPanel from './FilesPanel';
-import FormsPanel from './FormsPanel';
-import TimelinePanel from './TimelinePanel';
-import DesignPanel from './DesignPanel';
+import VirtualizedList from '../Common/VirtualizedList';
+
+const ProjectsPanel = lazy(() => import('./ProjectsPanel'));
+const ProjectNotes = lazy(() => import('./ProjectNotes'));
+const AddProjectModal = lazy(() => import('./AddProjectModal'));
+const TasksPanel = lazy(() => import('./TasksPanel'));
+const FilesPanel = lazy(() => import('./FilesPanel'));
+const FormsPanel = lazy(() => import('./FormsPanel'));
+const TimelinePanel = lazy(() => import('./TimelinePanel'));
+const DesignPanel = lazy(() => import('./DesignPanel'));
 
 const Dashboard = () => {
   const { currentUser, logout, loading } = useAuth();
@@ -93,7 +95,14 @@ const Dashboard = () => {
       title: "Authentication System",
       progress: 75,
       tasks: 8,
-      completed: 6
+      completed: 6,
+      taskList: [
+        { id: 1, text: 'Update user authentication', status: 'done' },
+        { id: 2, text: 'Create password reset flow', status: 'done' },
+        { id: 3, text: 'Implement email verification', status: 'done' },
+        { id: 4, text: 'Design 2FA interface', status: 'pending' },
+        { id: 5, text: 'Integrate with OAuth providers', status: 'pending' }
+      ]
     }
   };
 
@@ -253,14 +262,16 @@ const Dashboard = () => {
     >
       {/* Add Project Modal */}
       {showAddProjectModal && (
-        <AddProjectModal 
-          isOpen={showAddProjectModal} 
-          onClose={() => setShowAddProjectModal(false)} 
-          onProjectAdded={() => {
-            // Refresh projects or handle new project added
-            setShowAddProjectModal(false);
-          }} 
-        />
+        <Suspense fallback={<LoadingSpinner />}>
+          <AddProjectModal
+            isOpen={showAddProjectModal}
+            onClose={() => setShowAddProjectModal(false)}
+            onProjectAdded={() => {
+              // Refresh projects or handle new project added
+              setShowAddProjectModal(false);
+            }}
+          />
+        </Suspense>
       )}
       
       <NavbarArea>
@@ -368,36 +379,19 @@ const Dashboard = () => {
                           </FocusProgressText>
                         </FocusProgress>
                         <FocusTasks>
-                          <TaskItem>
-                            <TaskStatus status="done">
-                              <FaCheck />
-                            </TaskStatus>
-                            <TaskText status="done">Update user authentication</TaskText>
-                          </TaskItem>
-                          <TaskItem>
-                            <TaskStatus status="done">
-                              <FaCheck />
-                            </TaskStatus>
-                            <TaskText status="done">Create password reset flow</TaskText>
-                          </TaskItem>
-                          <TaskItem>
-                            <TaskStatus status="done">
-                              <FaCheck />
-                            </TaskStatus>
-                            <TaskText status="done">Implement email verification</TaskText>
-                          </TaskItem>
-                          <TaskItem>
-                            <TaskStatus status="pending">
-                              <FaClock />
-                            </TaskStatus>
-                            <TaskText status="pending">Design 2FA interface</TaskText>
-                          </TaskItem>
-                          <TaskItem>
-                            <TaskStatus status="pending">
-                              <FaClock />
-                            </TaskStatus>
-                            <TaskText status="pending">Integrate with OAuth providers</TaskText>
-                          </TaskItem>
+                          <VirtualizedList
+                            items={mockData.weeklyFocus.taskList}
+                            itemHeight={40}
+                            height={200}
+                            renderItem={(task) => (
+                              <TaskItem key={task.id}>
+                                <TaskStatus status={task.status}>
+                                  {task.status === 'done' ? <FaCheck /> : <FaClock />}
+                                </TaskStatus>
+                                <TaskText status={task.status}>{task.text}</TaskText>
+                              </TaskItem>
+                            )}
+                          />
                         </FocusTasks>
                         <FocusTasksCompleted>
                           <FaClipboardCheck /> {mockData.weeklyFocus.completed} {t('dashboard.tasksCompleted', 'Tasks Completed')}
@@ -442,42 +436,54 @@ const Dashboard = () => {
                     {t('projects.addNew', 'Add New Project')}
                   </AddProjectButton>
                 </ProjectsHeader>
-                <ProjectsPanel />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <ProjectsPanel />
+                </Suspense>
               </ProjectsTabContainer>
             )}
             
             {/* Tasks Tab */}
             {activeTab === 'tasks' && (
               <TasksTabContainer>
-                <TasksPanel />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <TasksPanel />
+                </Suspense>
               </TasksTabContainer>
             )}
             
             {/* Files Tab */}
             {activeTab === 'files' && (
               <FilesTabContainer>
-                <FilesPanel />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <FilesPanel />
+                </Suspense>
               </FilesTabContainer>
             )}
             
             {/* Forms Tab */}
             {activeTab === 'forms' && (
               <FormsTabContainer>
-                <FormsPanel />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <FormsPanel />
+                </Suspense>
               </FormsTabContainer>
             )}
             
             {/* Activity Log Tab */}
             {activeTab === 'activity' && (
               <ActivityTabContainer>
-                <TimelinePanel />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <TimelinePanel />
+                </Suspense>
               </ActivityTabContainer>
             )}
             
             {/* Design & Prototype Tab */}
             {activeTab === 'design' && (
               <DesignTabContainer>
-                <DesignPanel />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <DesignPanel />
+                </Suspense>
               </DesignTabContainer>
             )}
           </DashboardContent>
