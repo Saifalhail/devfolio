@@ -55,6 +55,7 @@ import Navbar from '../Layout/Navbar';
 import Sidebar from './Sidebar';
 import VirtualizedList from '../Common/VirtualizedList';
 
+
 const ProjectsPanel = lazy(() => import('./ProjectsPanel'));
 const ProjectNotes = lazy(() => import('./ProjectNotes'));
 const AddProjectModal = lazy(() => import('./AddProjectModal'));
@@ -114,7 +115,7 @@ const Dashboard = () => {
     return t('dashboard.greeting.evening', 'Good Evening');
   };
   
-  const greeting = getGreeting();
+  const greeting = useMemo(() => getGreeting(), [i18n.language]);
   
   // Calculate time remaining until deadline
   const calculateTimeRemaining = () => {
@@ -129,7 +130,10 @@ const Dashboard = () => {
     return { days, hours, minutes };
   };
   
-  const timeRemaining = calculateTimeRemaining();
+  const timeRemaining = useMemo(
+    () => calculateTimeRemaining(),
+    [mockData.nextDeadline]
+  );
   
   // Update time remaining every minute
   useEffect(() => {
@@ -187,33 +191,33 @@ const Dashboard = () => {
     }
   }, [mobileView, sidebarOpen]);
   
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(prev => !prev);
+  }, []);
 
-  const toggleSidebarCollapse = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
+  const toggleSidebarCollapse = useCallback(() => {
+    setSidebarCollapsed(prev => !prev);
+  }, []);
   
-  const toggleChatbot = () => {
-    setShowChatbot(!showChatbot);
-  };
+  const toggleChatbot = useCallback(() => {
+    setShowChatbot(prev => !prev);
+  }, []);
 
   const touchStartX = useRef(null);
   const touchCurrentX = useRef(null);
 
-  const handlePageTouchStart = (e) => {
+  const handlePageTouchStart = useCallback((e) => {
     if (e.touches.length !== 1) return;
     touchStartX.current = e.touches[0].clientX;
     touchCurrentX.current = e.touches[0].clientX;
-  };
+  }, []);
 
-  const handlePageTouchMove = (e) => {
+  const handlePageTouchMove = useCallback((e) => {
     if (touchStartX.current === null) return;
     touchCurrentX.current = e.touches[0].clientX;
-  };
+  }, []);
 
-  const handlePageTouchEnd = () => {
+  const handlePageTouchEnd = useCallback(() => {
     if (touchStartX.current === null) return;
     const diff = touchCurrentX.current - touchStartX.current;
     const threshold = 50;
@@ -234,16 +238,16 @@ const Dashboard = () => {
 
     touchStartX.current = null;
     touchCurrentX.current = null;
-  };
+  }, [isRTL, sidebarOpen]);
   
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       await logout();
       navigate('/');
     } catch (error) {
       console.error('Failed to log out:', error);
     }
-  };
+  }, [logout, navigate]);
 
   if (loading) {
     return (
@@ -255,6 +259,14 @@ const Dashboard = () => {
   }
 
   return (
+    <Suspense
+      fallback={(
+        <DashboardLoading>
+          <LoadingSpinner />
+          <p>{t('dashboard.loading', 'Loading Dashboard...')}</p>
+        </DashboardLoading>
+      )}
+    >
     <DashboardPage
       onTouchStart={handlePageTouchStart}
       onTouchMove={handlePageTouchMove}
@@ -490,6 +502,7 @@ const Dashboard = () => {
         </ContentArea>
       </DashboardBody>
     </DashboardPage>
+    </Suspense>
   );
 };
 
@@ -1326,4 +1339,4 @@ const LoadingSpinner = styled.div`
   }
 `;
 
-export default Dashboard;
+export default React.memo(Dashboard);
