@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 import { Card as BaseCard } from '../../styles/dashboardStyles';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,7 @@ const TaskCard = ({
   const [menuOpen, setMenuOpen] = React.useState(false);
   
   // Format dates
-  const formatDate = (date) => {
+  const formatDate = useCallback((date) => {
     if (!date) return '';
     
     const dateObj = date.toDate ? date.toDate() : new Date(date);
@@ -36,10 +36,10 @@ const TaskCard = ({
       addSuffix: true,
       locale: isRTL ? ar : enUS
     });
-  };
+  }, [isRTL]);
   
   // Get priority color
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = useCallback((priority) => {
     switch (priority) {
       case 'high':
         return '#f44336';
@@ -50,10 +50,10 @@ const TaskCard = ({
       default:
         return '#ff9800';
     }
-  };
+  }, []);
   
   // Get priority label
-  const getPriorityLabel = (priority) => {
+  const getPriorityLabel = useCallback((priority) => {
     switch (priority) {
       case 'high':
         return t('tasks.priority.high', 'High');
@@ -64,16 +64,16 @@ const TaskCard = ({
       default:
         return t('tasks.priority.medium', 'Medium');
     }
-  };
+  }, [t]);
   
   // Handle menu toggle
-  const toggleMenu = (e) => {
+  const toggleMenu = useCallback((e) => {
     e.stopPropagation();
-    setMenuOpen(!menuOpen);
-  };
+    setMenuOpen(prev => !prev);
+  }, []);
   
   // Handle menu item click
-  const handleMenuItemClick = (e, action) => {
+  const handleMenuItemClick = useCallback((e, action) => {
     e.stopPropagation();
     setMenuOpen(false);
     
@@ -96,7 +96,7 @@ const TaskCard = ({
       default:
         break;
     }
-  };
+  }, [onEdit, onDelete, onStatusChange, task]);
   
   // Close menu when clicking outside
   React.useEffect(() => {
@@ -368,4 +368,4 @@ function getPriorityColor(priority) {
   }
 }
 
-export default TaskCard;
+export default React.memo(TaskCard);
