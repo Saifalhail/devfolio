@@ -225,10 +225,10 @@ const CloseButton = styled.button`
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #666;
+  color: white;
 
   &:hover {
-    color: #333;
+    color: #ddd;
   }
 `;
 

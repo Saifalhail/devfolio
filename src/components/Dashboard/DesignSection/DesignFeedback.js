@@ -143,6 +143,7 @@ const CommentActions = styled.div`
 `;
 
 const ActionButton = styled(Button)`
+  color: white;
   svg {
     margin-${({ dir }) => (dir === 'rtl' ? 'left' : 'right')}: 0.25rem;
   }

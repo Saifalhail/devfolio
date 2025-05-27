@@ -111,7 +111,7 @@ const NavItem = styled.button`
   padding: 0.85rem 1rem;
   width: 140px;
   background: ${props => props.active ? 'rgba(96, 49, 168, 0.6)' : 'transparent'};
-  color: ${props => props.active ? 'white' : 'rgba(255, 255, 255, 0.7)'};
+  color: white;
   border: none;
   border-radius: 10px;
   font-size: 0.9rem;
