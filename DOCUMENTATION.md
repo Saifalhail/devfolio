@@ -410,10 +410,21 @@ The Tooltip component provides additional context when hovering over icons or bu
 - **RTL Support**: Tooltip positioning flips automatically in Arabic mode
 - **Usage Example**:
   ```jsx
-  <Tooltip content={t('info.more')}> 
+  <Tooltip content={t('info.more')}>
     <IconButton icon={<FaInfo />} />
   </Tooltip>
   ```
+### Style Preference Form
+
+Allows clients to choose preferred design styles and colors before work begins.
+- **Location**: `src/components/Dashboard/DesignSection/StylePreferenceForm.js`
+- **Usage**: Displays a modal with radio buttons for style (modern, corporate, playful, minimal) and color choices.
+- **RTL Support**: Layout and labels adapt automatically when Arabic is active.
+
+
+### MockupGallery Component
+
+Displays design mockups in a responsive grid with filters for **All**, **Mobile**, **Desktop**, and **Tablet** devices. Located at `src/components/Dashboard/DesignSection/MockupGallery.js`. This gallery can be reused anywhere a simple filterable image grid is required.
 
 ## Future Enhancements
 

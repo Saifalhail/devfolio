@@ -297,9 +297,32 @@
       "uploadInfo": "Upload Information",
       "uploadedBy": "Uploaded By",
       "uploadDate": "Upload Date",
-      "tags": "Tags",
+      "tags": "Tags"
+    },
     "versions": "Version History"
-  }
+  },
+  "design": {
+    "uploadMockups": "Upload Mockups",
+    "uploadPrompt": "Drag & drop mockups or click to browse",
+    "remove": "Remove"
+  },
+
+
+  "invoices": {
+    "title": "Invoices",
+    "noInvoices": "No invoices available",
+    "fields": {
+      "id": "Invoice #",
+      "issueDate": "Issued",
+      "dueDate": "Due",
+      "amount": "Amount",
+      "status": "Status"
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    }
   },
 
   "timeline": {
@@ -399,13 +422,25 @@
       "exportDataDesc": "Export form responses to CSV or PDF"
     }
   },
+
   "invoices": {
     "milestoneDelivery": {
       "title": "Milestone Delivery",
       "noMilestones": "No milestones available"
     }
   },
-  
+
+
+  "designFeedback": {
+    "title": "Design Feedback",
+    "addComment": "Add Comment",
+    "reply": "Reply",
+    "commentPlaceholder": "Write your feedback...",
+    "resolve": "Resolve",
+    "reopen": "Reopen",
+    "resolved": "Resolved"
+  },
+
   "contact": {
     "title": "Contact",
     "subtitle": "Let's Build Something Together",
@@ -436,7 +471,23 @@
       "phone": "Phone icon",
       "location": "Location pin icon",
       "message": "Envelope icon"
-    }
+  }
+    },
+  "design": {
+    "styleGuide": "Style Guide",
+    "colors": "Colors",
+    "typography": "Typography",
+    "spacing": "Spacing",
+    "components": "Components"
+  },
+  "styleGuide": {
+    "sampleH1": "Heading 1",
+    "sampleH2": "Heading 2",
+    "sampleH3": "Heading 3",
+    "sampleBody": "Body text example showcasing the standard font size.",
+    "sampleSmall": "Small text",
+    "sampleButton": "Primary Button",
+    "sampleCard": "Card content goes here."
   },
   "techStack": {
     "title": "Powered By",
@@ -476,6 +527,14 @@
       "crystalBall": "Crystal ball icon",
       "waving": "Waving hand icon"
     }
+  },
+  "designPhaseTracker": {
+    "title": "Design Phases",
+    "discovery": "Discovery",
+    "wireframes": "Wireframes",
+    "mockups": "Mockups",
+    "prototypes": "Prototypes",
+    "implementation": "Implementation"
   },
   "footer": {
     "description": "Professional software development services for websites, mobile apps, QR codes and all tech-related applications.",
