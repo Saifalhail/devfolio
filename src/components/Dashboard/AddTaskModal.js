@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -67,25 +67,25 @@ const AddTaskModal = ({ isOpen, onClose, task = null, projectId = null, initialS
   }, [task, currentUser, projectId]);
   
   // Handle input changes
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-  };
+  }, []);
   
   // Handle date change
-  const handleDateChange = (e) => {
+  const handleDateChange = useCallback((e) => {
     const { value } = e.target;
     setFormData(prev => ({
       ...prev,
       dueDate: value ? new Date(value) : null
     }));
-  };
+  }, []);
   
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     
     // Validate form
@@ -135,7 +135,7 @@ const AddTaskModal = ({ isOpen, onClose, task = null, projectId = null, initialS
     } finally {
       setLoading(false);
     }
-  };
+  }, [t, currentUser, onClose, projectId, task]);
   
   if (!isOpen) return null;
   
@@ -568,4 +568,4 @@ const ErrorMessage = styled.div`
   }
 `;
 
-export default AddTaskModal;
+export default React.memo(AddTaskModal);
