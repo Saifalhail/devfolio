@@ -28,6 +28,10 @@ This document contains small, precise tasks for AI agents to complete. Each task
    - File: `src/components/Dashboard/DesignSection/StyleGuide.js`
    - Task: Implement proper tab styling with icons, white text, and correct background gradients
    - Docs: See UI_DESIGN_DOCUMENTATION.md (Tab Components section)
+   - Priority: High
+
+1.4. **Create a visual timeline component showing design phases (Discovery, Wireframes, Mockups, Prototypes, Implementation) with current status**
+   - File: `src/components/Dashboard/DesignPanel.js`
    - Task: Create a visual timeline component showing design phases (Discovery, Wireframes, Mockups, Prototypes, Implementation) with current status
    - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section, Dashboard Components section)
    - Priority: Medium
