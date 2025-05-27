@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import styled from 'styled-components';
+import { ActionButton } from '../../styles/GlobalComponents';
 import { useTranslation } from 'react-i18next';
 import { 
   FaFigma,
@@ -28,6 +29,7 @@ import AssetsLibrary from './DesignSection/AssetsLibrary';
 import PhaseTracker from './DesignSection/PhaseTracker';
 import DesignFeedback from './DesignSection/DesignFeedback';
 import DesignKit from './DesignSection/DesignKit';
+
 
 const DesignPanel = () => {
   const { t, i18n } = useTranslation();
@@ -142,7 +144,7 @@ const DesignPanel = () => {
         <CompactTimelineSection>
           <TimelineTitle>
             <GlowingIcon><FaRocket /></GlowingIcon>
-            {t('design.designPhases', 'Design Phases')}
+            {t('designPhaseTracker.title', 'Design Phases')}
           </TimelineTitle>
           <CompactTimeline>
             <CompactTimelineItem completed={true}>
@@ -181,11 +183,14 @@ const DesignPanel = () => {
             </CompactTimelineItem>
           </CompactTimeline>
         </CompactTimelineSection>
-        
+
+        {/* Detailed vertical timeline for design phases */}
+        <PhaseTracker currentPhase="prototypes" />
+
         {/* Use the DesignNavigation component for navigation */}
-        <DesignNavigation 
-          activeSection={activeSection} 
-          onSectionChange={setActiveSection} 
+        <DesignNavigation
+          activeSection={activeSection}
+          onSectionChange={setActiveSection}
         />
         
         {/* Render different sections based on activeSection */}
@@ -214,25 +219,24 @@ const DesignPanel = () => {
         </Suspense>
       </Content>
       
+      {/* Phase Tracker */}
+
+      <PhaseTrackerWrapper>
+        <PhaseTracker />
+      </PhaseTrackerWrapper>
+      
+
       {/* Design Feedback System */}
-      <DesignFeedback />
+      <FeedbackWrapper>
+        <DesignFeedback />
+      </FeedbackWrapper>
     </Container>
   );
 };
 
 // Styled Components
-const BackgroundContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  overflow: hidden;
-  opacity: 1;
-  pointer-events: none;
-`;
 
+// Main container styling
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -389,9 +393,64 @@ const FigmaLinkButton = styled.a`
     width: 100%;
     margin-bottom: 0.5rem;
   }
+`;  
+
+const Content = styled.div`
+  flex: 1;
+  padding: 1.75rem;
+  overflow-y: auto;
+  background: rgba(18, 20, 44, 0.2);
+  backdrop-filter: blur(5px);
+  position: relative;
+  z-index: 2;
+  
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #faaa93, #ff5b92);
+    border-radius: 4px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1.25rem 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 0.75rem;
+  }
 `;
 
-const ActionButton = styled.button`
+const FigmaEmbedContainer = styled.div`
+  flex: 1;
+  padding: 1rem;
+  overflow: hidden;
+  position: relative;
+  background: #f9f9f9;
+`;
+
+// Background container for the starry effect
+const BackgroundContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 1;
+  pointer-events: none;
+`;
+
+
+
+
+
+
+
+
+
+
+
+// Custom action button styling
+const CustomActionButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -457,28 +516,7 @@ const ActionButton = styled.button`
   }
 `;
 
-const Content = styled.div`
-  flex: 1;
-  padding: 1.75rem;
-  overflow-y: auto;
-  background: rgba(18, 20, 44, 0.2);
-  backdrop-filter: blur(5px);
-  position: relative;
-  z-index: 2;
-  
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #faaa93, #ff5b92);
-    border-radius: 4px;
-  }
-  
-  @media (max-width: 768px) {
-    padding: 1.25rem 1rem;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 1rem 0.75rem;
-  }
-`;
+
 
 const FigmaEmbedFrame = styled.iframe`
   width: 100%;
@@ -609,7 +647,37 @@ const CompactTimelineLabel = styled.div`
   text-overflow: ellipsis;
 `;
 
+const TrackerWrapper = styled.div`
+  padding: 1rem;
+`;
+
+const FeedbackWrapper = styled.div`
+  padding: 1rem;
+`;
+
 const TimelineTitle = styled.h3`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem 0;
+  padding-top: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(45deg, #faaa93, #ff5b92);
+    border-radius: 50%;
+    font-size: 0.75rem;
+  }
+`;
+
+const ShowcaseMetaItem = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -734,6 +802,10 @@ const TimelineItemDescription = styled.p`
 
 const ShowcaseContent = styled.div`
   padding: 1rem;
+`;
+
+const PhaseTrackerWrapper = styled.div`
+  margin: 2rem 1rem;
 `;
 
 const LoadingIndicator = styled.div`
