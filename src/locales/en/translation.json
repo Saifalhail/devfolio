@@ -401,9 +401,15 @@
   },
 
   "design": {
-    "currentDesign": "Current Design",
-    "styleGuide": "Style Guide",
-    "revisions": "Revisions"
+    "mockupGallery": {
+      "title": "Mockups",
+      "filters": {
+        "all": "All",
+        "mobile": "Mobile",
+        "desktop": "Desktop",
+        "tablet": "Tablet"
+      }
+    }
   },
   
   "contact": {
