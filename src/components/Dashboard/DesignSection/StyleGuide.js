@@ -131,48 +131,48 @@ const ContentWrapper = styled.div`
 const StyledTabs = styled(Tabs)`
   .tab-list {
     display: flex;
-    gap: ${spacing.sm};
-    margin-bottom: ${spacing.md};
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
     flex-wrap: wrap;
   }
-
+  
   .tab-button {
     display: flex;
     align-items: center;
-    gap: ${spacing.xs};
-    padding: ${spacing.sm} ${spacing.md};
-    background: ${colors.gradients.card};
-    color: ${colors.text.primary};
-    border-radius: ${borderRadius.md};
+    gap: 0.5rem;
+    padding: 0.65rem 1rem;
+    background: rgba(35, 38, 85, 0.6);
+    color: white;
+    border-radius: 6px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: ${typography.fontSizes.sm};
-    font-weight: ${typography.fontWeights.medium};
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: ${transitions.medium};
-    box-shadow: ${shadows.sm};
-
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    
     &:hover {
-      background: ${colors.gradients.hover};
+      background: rgba(96, 49, 168, 0.7);
       transform: translateY(-2px);
-      box-shadow: ${shadows.md};
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
     }
-
+    
     &[aria-selected="true"] {
-      background: ${colors.gradients.accent};
-      box-shadow: ${shadows.md};
-      color: ${colors.text.primary};
+      background: linear-gradient(45deg, #3a1e65 0%, #6031a8 100%);
+      color: white;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
     }
-
+    
     svg {
       font-size: 1rem;
-      color: inherit;
+      color: rgba(255, 255, 255, 0.8);
     }
   }
-
+  
   .tab-content {
-    background: ${colors.gradients.card};
-    padding: ${spacing.md};
-    border-radius: ${borderRadius.lg};
+    background: rgba(18, 20, 44, 0.2);
+    padding: 1.25rem;
+    border-radius: 8px;
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.05);
   }

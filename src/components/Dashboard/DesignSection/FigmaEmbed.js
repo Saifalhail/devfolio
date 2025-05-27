@@ -119,7 +119,7 @@ const TabButton = styled.button`
   padding: 0.85rem 1rem;
   width: calc(50% - 0.75rem);
   background: ${props => (props.active ? 'rgba(96, 49, 168, 0.6)' : 'rgba(35, 38, 85, 0.4)')};
-  color: white;
+  color: ${props => (props.active ? 'white' : 'rgba(255, 255, 255, 0.7)')};
   border: none;
   border-radius: 10px;
   cursor: pointer;

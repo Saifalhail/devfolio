@@ -184,9 +184,6 @@ const DesignPanel = () => {
           </CompactTimeline>
         </CompactTimelineSection>
 
-        {/* Detailed vertical timeline for design phases */}
-        <PhaseTracker currentPhase="prototypes" />
-
         {/* Use the DesignNavigation component for navigation */}
         <DesignNavigation
           activeSection={activeSection}
