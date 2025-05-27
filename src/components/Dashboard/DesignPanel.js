@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import styled from 'styled-components';
+import { ActionButton } from '../../styles/GlobalComponents';
 import { useTranslation } from 'react-i18next';
 import { 
   FaFigma, 
@@ -221,15 +222,85 @@ const DesignPanel = () => {
         </Suspense>
       </Content>
       
+      {/* Phase Tracker */}
+      <TrackerWrapper>
+        <PhaseTracker />
+      </TrackerWrapper>
+
+
       {/* Design Feedback System */}
-      <DesignFeedback />
+      <FeedbackWrapper>
+        <DesignFeedback />
+      </FeedbackWrapper>
     </Container>
   );
 };
 
 // Styled Components
-const BackgroundContainer = styled.div`
-  position: absolute;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+`;
+
+const Title = styled.h2`
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+`;
+
+const ToolbarContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+`;
+
+const FigmaLinkButton = styled(ActionButton).attrs({ as: 'a' })`
+  text-decoration: none;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  overflow: auto;
+`;
+
+const FigmaEmbedContainer = styled.div`
+  flex: 1;
+  padding: 1rem;
+  overflow: hidden;
+  position: relative;
+  background: #f9f9f9;
+`;
+
+const FigmaFrame = styled.iframe`
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const StylePreferenceFormOverlay = styled.div`
+  position: fixed;
+
   top: 0;
   left: 0;
   right: 0;
@@ -616,7 +687,16 @@ const CompactTimelineLabel = styled.div`
   text-overflow: ellipsis;
 `;
 
-const TimelineTitle = styled.h3`
+const TrackerWrapper = styled.div`
+  padding: 1rem;
+`;
+
+const FeedbackWrapper = styled.div`
+  padding: 1rem;
+`;
+
+const ShowcaseMetaItem = styled.div`
+
   display: flex;
   align-items: center;
   gap: 0.5rem;
