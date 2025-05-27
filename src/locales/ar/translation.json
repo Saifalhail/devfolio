@@ -596,15 +596,12 @@
       "contact": {
         "title": "اتصل بنا"
       },
-  }
-},
-"designFeedback": {
-  "title": "ملاحظات التصميم",
-  "addComment": "إضافة تعليق",
-  "reply": "رد",
-  "commentPlaceholder": "اكتب ملاحظاتك...",
-  "resolve": "حل",
-  "reopen": "إعادة فتح",
+      "social": {
+        "linkedin": "تواصل على لينكد إن",
+        "github": "عرض مشاريع جيتهاب"
+      },
+      "copyright": "جميع الحقوق محفوظة"
+    },
   "resolved": "تم الحل"
 },
 "contact": {

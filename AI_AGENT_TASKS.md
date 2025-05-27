@@ -2,58 +2,32 @@
 
 This document contains small, precise tasks for AI agents to complete. Each task is self-contained and focuses on bug fixes, small feature additions, testing, and code improvements. Each task includes references to relevant documentation files.
 
+> **IMPORTANT NOTE FOR ALL AGENTS**: When implementing or modifying components, ensure they are properly integrated into the Dashboard structure. If creating new components, they must be imported and used in the appropriate Dashboard sections. All components should follow the design system and be consistent with existing components.
+
 > **NOTE FOR CODEX AGENTS**: This project is undergoing UI modernization to match the dark purple theme with gradient effects. All new components must use white text on dark backgrounds for better visibility and accessibility. Components should use gradient backgrounds, subtle animations, and consistent hover effects as detailed in the UI documentation. Refer to UI_DESIGN_DOCUMENTATION.md for the complete style guide and GlobalComponents.js/GlobalTheme.js for implementation examples.
-<!-- 
-1. **Implement Design Tab Core Structure**
-   - File: Create `src/components/Dashboard/DesignSection/DesignTab.js`
-   - Task: Create the main container component for the Design tab with proper layout and navigation
-   - Docs: See PROJECT_BUILDING_TASKS.md (Design & Prototype section) and UI_DESIGN_DOCUMENTATION.md
+
+1. **Fix Design Tab UI Alignment Issues**
+   - File: `src/components/Dashboard/DesignPanel.js`
+   - Task: Fix alignment issues with buttons, cards, and timeline components in the Design tab
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Layout section)
    - Priority: High
 
-1.1. **Create Design Tab Navigation**
-   - File: Create `src/components/Dashboard/DesignSection/DesignNavigation.js`
-   - Task: Implement a tabbed navigation system for the Design tab with smooth transitions between sections (Mockups, Figma, Style Guide, Assets)
-   - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section, Animations section)
+1.1. **Improve Timeline Component Alignment**
+   - File: `src/components/Dashboard/DesignPanel.js`
+   - Task: Fix alignment of timeline icons, text, and lines to ensure proper visual hierarchy
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Timeline Components section)
    - Priority: High
 
-1.2. **Implement Figma Integration Component**
-   - File: Create `src/components/Dashboard/DesignSection/FigmaEmbed.js`
-   - Task: Create a component that embeds Figma designs with tabs for Current Design, Style Guide, and Revisions
-   - Docs: See PROJECT_BUILDING_TASKS.md (Design & Prototype section) and UI_DESIGN_DOCUMENTATION.md
+1.2. **Fix Button Styling in Design Tab**
+   - File: `src/components/Dashboard/DesignPanel.js` and related components
+   - Task: Ensure all buttons have white text and follow the correct UI theme with proper hover effects
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Button Styles section)
    - Priority: High
 
-1.3. **Develop Mockup Gallery Component**
-   - File: Create `src/components/Dashboard/DesignSection/MockupGallery.js`
-   - Task: Implement a gallery view for displaying design mockups with filtering options (All, Mobile, Desktop, Tablet)
-   - Docs: See UI_DESIGN_DOCUMENTATION.md (Dashboard Components section, Cards section)
-   - Priority: High
-
-1.4. **Create Mockup Upload Component**
-   - File: Create `src/components/Dashboard/DesignSection/MockupUpload.js`
-   - Task: Implement a drag-and-drop upload area for adding new mockups with preview functionality
-   - Docs: See UI_DESIGN_DOCUMENTATION.md (Form Elements section, Animations section)
-   - Priority: Medium
-
-1.5. **Implement Mockup Detail View**
-   - File: Create `src/components/Dashboard/DesignSection/MockupDetail.js`
-   - Task: Create a detailed view for individual mockups with annotation tools, version history, and approval workflow
-   - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section)
-   - Priority: Medium
-
-1.6. **Develop Design Assets Library**
-   - File: Create `src/components/Dashboard/DesignSection/AssetsLibrary.js`
-   - Task: Implement a component to display and manage design assets (logos, icons, images) with categories and search
-   - Docs: See UI_DESIGN_DOCUMENTATION.md (Dashboard Components section)
-   - Priority: Medium
-
-1.7. **Create Style Guide Component**
-   - File: Create `src/components/Dashboard/DesignSection/StyleGuide.js`
-   - Task: Implement an interactive style guide component displaying colors, typography, spacing, and component examples
-   - Docs: See UI_DESIGN_DOCUMENTATION.md (Color Palette section, Typography section, Components section)
-   - Priority: Medium
-
-1.8. **Implement Design Phase Tracker**
-   - File: Create `src/components/Dashboard/DesignSection/PhaseTracker.js`
+1.3. **Fix Style Guide Tab UI**
+   - File: `src/components/Dashboard/DesignSection/StyleGuide.js`
+   - Task: Implement proper tab styling with icons, white text, and correct background gradients
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Tab Components section)
    - Task: Create a visual timeline component showing design phases (Discovery, Wireframes, Mockups, Prototypes, Implementation) with current status
    - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section, Dashboard Components section)
    - Priority: Medium

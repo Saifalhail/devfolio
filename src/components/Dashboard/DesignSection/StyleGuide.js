@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Tabs from '../../Common/Tabs';
+import { FaPalette, FaFont, FaRuler, FaCubes } from 'react-icons/fa';
 import {
   PanelContainer,
   PanelHeader,
@@ -96,21 +97,86 @@ const StyleGuide = () => {
   );
 
   const tabs = [
-    { id: 'colors', label: t('design.colors', 'Colors'), content: renderColors },
-    { id: 'typography', label: t('design.typography', 'Typography'), content: renderTypography },
-    { id: 'spacing', label: t('design.spacing', 'Spacing'), content: renderSpacing },
-    { id: 'components', label: t('design.components', 'Components'), content: renderComponents }
+    { id: 'colors', label: t('design.colors', 'Colors'), icon: <FaPalette />, content: renderColors },
+    { id: 'typography', label: t('design.typography', 'Typography'), icon: <FaFont />, content: renderTypography },
+    { id: 'spacing', label: t('design.spacing', 'Spacing'), icon: <FaRuler />, content: renderSpacing },
+    { id: 'components', label: t('design.components', 'Components'), icon: <FaCubes />, content: renderComponents }
   ];
 
   return (
-    <PanelContainer>
+    <StyledContainer>
       <PanelHeader>
         <PanelTitle>{t('design.styleGuide', 'Style Guide')}</PanelTitle>
       </PanelHeader>
-      <Tabs tabs={tabs} />
-    </PanelContainer>
+      <ContentWrapper>
+        <StyledTabs tabs={tabs} initialTabId="colors" />
+      </ContentWrapper>
+    </StyledContainer>
   );
 };
+
+const StyledContainer = styled(PanelContainer)`
+  background: rgba(35, 38, 85, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+`;
+
+const ContentWrapper = styled.div`
+  padding: ${spacing.md} ${spacing.lg} ${spacing.lg};
+`;
+
+const StyledTabs = styled(Tabs)`
+  .tab-list {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .tab-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1rem;
+    background: rgba(35, 38, 85, 0.6);
+    color: white;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    
+    &:hover {
+      background: rgba(96, 49, 168, 0.7);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    &[aria-selected="true"] {
+      background: linear-gradient(45deg, #3a1e65 0%, #6031a8 100%);
+      color: white;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    svg {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+  
+  .tab-content {
+    background: rgba(18, 20, 44, 0.2);
+    padding: 1.25rem;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+`;
 
 const SwatchGrid = styled.div`
   display: grid;

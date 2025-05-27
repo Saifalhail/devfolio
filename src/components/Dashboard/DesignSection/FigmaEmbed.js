@@ -68,18 +68,41 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  background: rgba(18, 20, 44, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  z-index: 1;
 `;
 
 const TabsContainer = styled.div`
   display: flex;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
+  gap: 1.5rem;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(35, 38, 85, 0.6);
+  backdrop-filter: blur(8px);
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(250, 170, 147, 0.1), rgba(255, 91, 146, 0.1), rgba(167, 139, 250, 0.1));
+    z-index: -1;
+  }
 
   @media (max-width: 768px) {
-    overflow-x: auto;
     padding: 1rem;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
   /* RTL Support */
@@ -91,41 +114,122 @@ const TabsContainer = styled.div`
 const TabButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: ${props => (props.active ? 'rgba(110, 87, 224, 0.1)' : 'transparent')};
-  color: ${props => (props.active ? '#6e57e0' : '#666')};
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  width: calc(50% - 0.75rem);
+  background: ${props => (props.active ? 'rgba(96, 49, 168, 0.6)' : 'rgba(35, 38, 85, 0.4)')};
+  color: ${props => (props.active ? 'white' : 'rgba(255, 255, 255, 0.7)')};
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border-bottom: 2px solid ${props => (props.active ? '#6e57e0' : 'transparent')};
+  font-weight: ${props => (props.active ? '600' : '500')};
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  box-shadow: ${props => (props.active ? '0 2px 8px rgba(250, 170, 147, 0.5)' : 'none')};
+  animation: ${props => (props.active ? 'pulse 1.5s infinite' : 'none')};
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transition: all 0.6s;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 2px 8px rgba(250, 170, 147, 0.5); }
+    50% { box-shadow: 0 2px 12px rgba(250, 170, 147, 0.8); }
+    100% { box-shadow: 0 2px 8px rgba(250, 170, 147, 0.5); }
+  }
 
   svg {
-    font-size: 1rem;
+    font-size: 1.2rem;
+    color: ${props => (props.active ? '#ff5b92' : 'rgba(255, 255, 255, 0.7)')};
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    transition: all 0.3s ease;
   }
 
   &:hover {
-    background: ${props => (props.active ? 'rgba(110, 87, 224, 0.1)' : 'rgba(0, 0, 0, 0.03)')};
+    background: ${props => (props.active ? 'rgba(96, 49, 168, 0.7)' : 'rgba(35, 38, 85, 0.6)')};
+    color: white;
+    transform: translateY(-2px);
+    
+    &:before {
+      left: 100%;
+    }
+    
+    svg {
+      color: ${props => (props.active ? '#ff5b92' : 'white')};
+      transform: scale(1.1);
+    }
+  }
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: ${props => (props.active ? '40px' : '0')};
+    height: 3px;
+    background: linear-gradient(to right, #faaa93, #ff5b92);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+  }
+  
+  @media (max-width: 768px) {
+    width: calc(50% - 0.75rem);
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+    
+    svg {
+      font-size: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
   }
 `;
 
 const FigmaEmbedContainer = styled.div`
   flex: 1;
-  padding: 1rem;
-  overflow: hidden;
   position: relative;
-  background: #f9f9f9;
+  min-height: 500px;
+  background: rgba(18, 20, 44, 0.7);
+  z-index: 1;
 `;
 
 const EmbedFrame = styled.iframe`
   width: 100%;
   height: 100%;
+  min-height: 600px;
   border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px);
+  }
 `;
 
 export default FigmaEmbed;

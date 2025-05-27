@@ -105,6 +105,14 @@ const FilterButton = styled.button`
 
 const GalleryGrid = styled(CardGrid)`
   margin-bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
 `;
 
 const MockupCard = styled(Card)`
@@ -112,25 +120,52 @@ const MockupCard = styled(Card)`
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(35, 38, 85, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  height: 100%;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
 `;
 
 const ImageWrapper = styled.div`
   width: 100%;
-  height: 200px;
-  background: ${colors.background.hover};
+  height: 160px;
+  background: rgba(18, 20, 44, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  ${MockupCard}:hover & img {
+    transform: scale(1.05);
   }
 `;
 
 const MockupTitle = styled.h3`
-  padding: ${spacing.md};
-  color: ${colors.text.primary};
-  font-size: ${props => props.theme.typography.fontSizes.md};
+  padding: 0.75rem;
+  margin: 0;
+  color: white;
+  font-size: 0.9rem;
   text-align: center;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: rgba(35, 38, 85, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 `;
 
 
