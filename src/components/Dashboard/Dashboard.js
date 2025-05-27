@@ -10,6 +10,7 @@ import {
   PanelHeader as SharedPanelHeader,
   Card,
   Grid,
+  CardGrid,
   FlexContainer,
   IconButton,
   PrimaryButton,
@@ -54,6 +55,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import Navbar from '../Layout/Navbar';
 import Sidebar from './Sidebar';
 import VirtualizedList from '../Common/VirtualizedList';
+import SummaryCard from './SummaryCard';
 
 
 const ProjectsPanel = lazy(() => import('./ProjectsPanel'));
@@ -355,6 +357,29 @@ const Dashboard = () => {
                     </ProgressInfoContainer>
                   </WelcomeLayout>
                 </WelcomeSection>
+
+                <SummaryGrid>
+                  <SummaryCard
+                    icon={<FaProjectDiagram />}
+                    title={t('dashboard.activeProjects', 'Active Projects')}
+                    value={mockData.activeProjects}
+                  />
+                  <SummaryCard
+                    icon={<FaClipboardList />}
+                    title={t('dashboard.pendingActions', 'Pending Actions')}
+                    value={3}
+                  />
+                  <SummaryCard
+                    icon={<FaFileUpload />}
+                    title={t('dashboard.latestUploads', 'Latest Uploads')}
+                    value={2}
+                  />
+                  <SummaryCard
+                    icon={<FaCalendarAlt />}
+                    title={t('dashboard.projectDeadlines', 'Project Deadlines')}
+                    value={mockData.totalProjects}
+                  />
+                </SummaryGrid>
                 
                 {/* Dashboard Panels */}
                 <DashboardPanels>
@@ -830,6 +855,10 @@ const ProgressInfoContainer = styled.div`
     padding: 1rem;
     gap: 1rem;
   }
+`;
+
+const SummaryGrid = styled(CardGrid)`
+  margin-bottom: 2rem;
 `;
 
 const CompactProgressTitle = styled(ProgressTitle)`
