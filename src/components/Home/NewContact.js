@@ -332,14 +332,22 @@ const NewContact = () => {
               </InputGroup>
               
               {formSuccess && (
-                <SuccessMessage isRTL={isRTL}>
+                <SuccessMessage
+                  isRTL={isRTL}
+                  role="status"
+                  aria-live="polite"
+                >
                   <SuccessIcon>✓</SuccessIcon>
                   <SuccessText>{t('contact.form.success')}</SuccessText>
                 </SuccessMessage>
               )}
               
               {formError && (
-                <ErrorMessage isRTL={isRTL}>
+                <ErrorMessage
+                  isRTL={isRTL}
+                  role="alert"
+                  aria-live="assertive"
+                >
                   <ErrorIcon>⚠️</ErrorIcon>
                   <ErrorText>{formError}</ErrorText>
                 </ErrorMessage>
