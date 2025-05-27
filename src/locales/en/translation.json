@@ -297,9 +297,32 @@
       "uploadInfo": "Upload Information",
       "uploadedBy": "Uploaded By",
       "uploadDate": "Upload Date",
-      "tags": "Tags",
+      "tags": "Tags"
+    },
     "versions": "Version History"
-  }
+  },
+  "design": {
+    "uploadMockups": "Upload Mockups",
+    "uploadPrompt": "Drag & drop mockups or click to browse",
+    "remove": "Remove"
+  },
+
+
+  "invoices": {
+    "title": "Invoices",
+    "noInvoices": "No invoices available",
+    "fields": {
+      "id": "Invoice #",
+      "issueDate": "Issued",
+      "dueDate": "Due",
+      "amount": "Amount",
+      "status": "Status"
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    }
   },
 
   "timeline": {
@@ -323,6 +346,19 @@
     "fileDownloaded": "{{user}} downloaded {{file}}",
     "fileViewed": "{{user}} viewed {{file}}",
     "milestoneReached": "{{milestone}}"
+  },
+  "invoices": {
+    "paymentHistory": "Payment History",
+    "date": "Date",
+    "description": "Description",
+    "amount": "Amount",
+    "status": "Status",
+    "noPayments": "No payment records found",
+    "statuses": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "failed": "Failed"
+    }
   },
 
   "forms": {
@@ -399,7 +435,25 @@
       "exportDataDesc": "Export form responses to CSV or PDF"
     }
   },
-  
+
+  "invoices": {
+    "milestoneDelivery": {
+      "title": "Milestone Delivery",
+      "noMilestones": "No milestones available"
+    }
+  },
+
+
+  "designFeedback": {
+    "title": "Design Feedback",
+    "addComment": "Add Comment",
+    "reply": "Reply",
+    "commentPlaceholder": "Write your feedback...",
+    "resolve": "Resolve",
+    "reopen": "Reopen",
+    "resolved": "Resolved"
+  },
+
   "contact": {
     "title": "Contact",
     "subtitle": "Let's Build Something Together",
@@ -430,7 +484,23 @@
       "phone": "Phone icon",
       "location": "Location pin icon",
       "message": "Envelope icon"
-    }
+  }
+    },
+  "design": {
+    "styleGuide": "Style Guide",
+    "colors": "Colors",
+    "typography": "Typography",
+    "spacing": "Spacing",
+    "components": "Components"
+  },
+  "styleGuide": {
+    "sampleH1": "Heading 1",
+    "sampleH2": "Heading 2",
+    "sampleH3": "Heading 3",
+    "sampleBody": "Body text example showcasing the standard font size.",
+    "sampleSmall": "Small text",
+    "sampleButton": "Primary Button",
+    "sampleCard": "Card content goes here."
   },
   "techStack": {
     "title": "Powered By",
@@ -460,6 +530,7 @@
     "iconAlt": "Client testimonial icon"
   },
   "postLaunch": {
+
     "feedbackForm": {
       "title": "Share Your Feedback",
       "rating": "Rating",
@@ -467,6 +538,16 @@
       "submit": "Submit Feedback",
       "success": "Thank you for your feedback!",
       "error": "There was an error submitting your feedback. Please try again."
+
+    "maintenanceGuide": "Here's how to maintain your app",
+    "downloadPDF": "Download PDF",
+    "tips": {
+      "updateDependencies": "Keep dependencies updated",
+      "monitorErrors": "Monitor and fix errors promptly",
+      "backupData": "Backup your data regularly",
+      "securityUpdates": "Apply security updates",
+      "collectFeedback": "Collect user feedback"
+
     }
   },
   "seo": {
@@ -480,6 +561,23 @@
       "crystalBall": "Crystal ball icon",
       "waving": "Waving hand icon"
     }
+  },
+
+  "postLaunch": {
+    "hireAgain": {
+      "title": "Hire me again",
+      "description": "Have another project? I'd love to work together again!",
+      "button": "Hire me again"
+    }
+
+  "designPhaseTracker": {
+    "title": "Design Phases",
+    "discovery": "Discovery",
+    "wireframes": "Wireframes",
+    "mockups": "Mockups",
+    "prototypes": "Prototypes",
+    "implementation": "Implementation"
+
   },
   "footer": {
     "description": "Professional software development services for websites, mobile apps, QR codes and all tech-related applications.",
