@@ -326,6 +326,23 @@
   },
 
 
+  "invoices": {
+    "title": "الفواتير",
+    "noInvoices": "لا توجد فواتير",
+    "fields": {
+      "id": "رقم الفاتورة",
+      "issueDate": "تاريخ الإصدار",
+      "dueDate": "تاريخ الاستحقاق",
+      "amount": "المبلغ",
+      "status": "الحالة"
+    },
+    "status": {
+      "paid": "مدفوعة",
+      "pending": "قيد الدفع",
+      "overdue": "متأخرة"
+    }
+  },
+
   "timeline": {
     "activityLog": "سجل النشاط",
     "search": "ابحث في الأنشطة...",
