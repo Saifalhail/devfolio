@@ -347,6 +347,19 @@
     "fileViewed": "{{user}} viewed {{file}}",
     "milestoneReached": "{{milestone}}"
   },
+  "invoices": {
+    "paymentHistory": "Payment History",
+    "date": "Date",
+    "description": "Description",
+    "amount": "Amount",
+    "status": "Status",
+    "noPayments": "No payment records found",
+    "statuses": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "failed": "Failed"
+    }
+  },
 
   "forms": {
     "title": "Feedback & Forms",

@@ -415,6 +415,14 @@ The Tooltip component provides additional context when hovering over icons or bu
     <IconButton icon={<FaInfo />} />
   </Tooltip>
   ```
+### Payment History Component
+
+A reusable component that lists invoice payments with status badges.
+
+- **Location**: `src/components/Dashboard/Invoicing/PaymentHistory.js`
+- **Reusability**: Can be used in any dashboard section to show transaction records.
+- **Features**: Supports RTL layout, uses shared Panel components, and status badges for payment states.
+
 ### Style Preference Form
 
 Allows clients to choose preferred design styles and colors before work begins.
@@ -424,8 +432,8 @@ Allows clients to choose preferred design styles and colors before work begins.
 
 
 ### MockupGallery Component
-
 Displays design mockups in a responsive grid with filters for **All**, **Mobile**, **Desktop**, and **Tablet** devices. Located at `src/components/Dashboard/DesignSection/MockupGallery.js`. This gallery can be reused anywhere a simple filterable image grid is required.
+
 
 ## Future Enhancements
 
