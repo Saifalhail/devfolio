@@ -7,7 +7,9 @@
     "contact": "اتصل بنا",
     "login": "تسجيل الدخول",
     "dashboard": "لوحة التحكم",
-    "language": "English"
+    "language": "English",
+    "switchToArabic": "التبديل إلى العربية",
+    "switchToEnglish": "التبديل إلى الإنجليزية"
   },
   "hero": {
     "welcome": "مرحباً بك!",
