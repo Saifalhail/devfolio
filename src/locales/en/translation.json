@@ -423,6 +423,14 @@
     }
   },
 
+  "invoices": {
+    "milestoneDelivery": {
+      "title": "Milestone Delivery",
+      "noMilestones": "No milestones available"
+    }
+  },
+
+
   "designFeedback": {
     "title": "Design Feedback",
     "addComment": "Add Comment",
