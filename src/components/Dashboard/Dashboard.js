@@ -888,6 +888,8 @@ const SummaryGrid = styled(CardGrid)`
   margin-bottom: 2rem;
 `;
 
+// DashboardLoading component is defined below
+
 const CompactProgressTitle = styled(ProgressTitle)`
   margin: 0 0 0.5rem 0;
   font-size: 1rem;

@@ -194,7 +194,18 @@ export const PanelContainer = styled.div`
 // Card container for dashboard items
 export const Card = styled(BaseCard)`
   padding: 1.5rem;
+`;
+
+// Grid layout for cards
+export const CardGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 1.5rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
   
   /* Add specific decoration to cards */
   &:before {

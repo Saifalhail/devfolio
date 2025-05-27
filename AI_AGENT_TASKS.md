@@ -1,11 +1,351 @@
 # DevFolio AI Agent Tasks
 
+> **IMPORTANT: COMPONENT REUSE AND INTEGRATION GUIDELINES**
+> 
+> Before implementing any task, check if similar components already exist in the codebase. Many components have already been created and should be reused or extended rather than recreated from scratch. This includes:
+> 
+> - **UI Components**: Reuse existing styled components from `GlobalComponents.js`, `dashboardStyles.js`, and other style files
+> - **Theme Elements**: Use theme variables from `GlobalTheme.js` for colors, spacing, and typography
+> - **Common Components**: Extend existing components like `Modal.js`, `SkeletonLoader.js`, `EmptyState.js`, etc.
+> - **Utility Functions**: Leverage existing utilities in the `utils` directory
+> 
+> When creating new sections or components, ensure they are properly integrated with the existing application structure and documented in the appropriate files. Add comments in your code explaining how the component can be reused in other parts of the application.
+> 
+> After implementing a component, update the relevant documentation files to mention what reusable elements were created and how they can be utilized throughout the application.
+
 This document contains small, precise tasks for AI agents to complete. Each task is self-contained and focuses on bug fixes, small feature additions, testing, and code improvements. Each task includes references to relevant documentation files.
 
 > **NOTE FOR CODEX AGENTS**: This project is undergoing UI modernization to match the dark purple theme with gradient effects. All new components must use white text on dark backgrounds for better visibility and accessibility. Components should use gradient backgrounds, subtle animations, and consistent hover effects as detailed in the UI documentation. Refer to UI_DESIGN_DOCUMENTATION.md for the complete style guide and GlobalComponents.js/GlobalTheme.js for implementation examples.
 
+1. **Implement Design Tab Core Structure**
+   - File: Create `src/components/Dashboard/DesignSection/DesignTab.js`
+   - Task: Create the main container component for the Design tab with proper layout and navigation
+   - Docs: See PROJECT_BUILDING_TASKS.md (Design & Prototype section) and UI_DESIGN_DOCUMENTATION.md
+   - Priority: High
 
+1.1. **Create Design Tab Navigation**
+   - File: Create `src/components/Dashboard/DesignSection/DesignNavigation.js`
+   - Task: Implement a tabbed navigation system for the Design tab with smooth transitions between sections (Mockups, Figma, Style Guide, Assets)
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section, Animations section)
+   - Priority: High
 
+1.2. **Implement Figma Integration Component**
+   - File: Create `src/components/Dashboard/DesignSection/FigmaEmbed.js`
+   - Task: Create a component that embeds Figma designs with tabs for Current Design, Style Guide, and Revisions
+   - Docs: See PROJECT_BUILDING_TASKS.md (Design & Prototype section) and UI_DESIGN_DOCUMENTATION.md
+   - Priority: High
+
+1.3. **Develop Mockup Gallery Component**
+   - File: Create `src/components/Dashboard/DesignSection/MockupGallery.js`
+   - Task: Implement a gallery view for displaying design mockups with filtering options (All, Mobile, Desktop, Tablet)
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Dashboard Components section, Cards section)
+   - Priority: High
+
+1.4. **Create Mockup Upload Component**
+   - File: Create `src/components/Dashboard/DesignSection/MockupUpload.js`
+   - Task: Implement a drag-and-drop upload area for adding new mockups with preview functionality
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Form Elements section, Animations section)
+   - Priority: Medium
+
+1.5. **Implement Mockup Detail View**
+   - File: Create `src/components/Dashboard/DesignSection/MockupDetail.js`
+   - Task: Create a detailed view for individual mockups with annotation tools, version history, and approval workflow
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section)
+   - Priority: Medium
+
+1.6. **Develop Design Assets Library**
+   - File: Create `src/components/Dashboard/DesignSection/AssetsLibrary.js`
+   - Task: Implement a component to display and manage design assets (logos, icons, images) with categories and search
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Dashboard Components section)
+   - Priority: Medium
+
+1.7. **Create Style Guide Component**
+   - File: Create `src/components/Dashboard/DesignSection/StyleGuide.js`
+   - Task: Implement an interactive style guide component displaying colors, typography, spacing, and component examples
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Color Palette section, Typography section, Components section)
+   - Priority: Medium
+
+1.8. **Implement Design Phase Tracker**
+   - File: Create `src/components/Dashboard/DesignSection/PhaseTracker.js`
+   - Task: Create a visual timeline component showing design phases (Discovery, Wireframes, Mockups, Prototypes, Implementation) with current status
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section, Dashboard Components section)
+   - Priority: Medium
+
+1.9. **Develop Design Feedback System**
+   - File: Create `src/components/Dashboard/DesignSection/DesignFeedback.js`
+   - Task: Implement a system for collecting and displaying feedback on design mockups with threaded comments and resolution tracking
+   - Docs: See UI_DESIGN_DOCUMENTATION.md (Form Elements section, Components section)
+   - Priority: High
+
+2. **Create Design Kit Download Feature**
+   - File: Create `src/components/Dashboard/DesignSection/DesignKit.js`
+   - Task: Implement functionality to generate and download a zip file containing theme, fonts, logo, and colors
+   - Docs: See PROJECT_BUILDING_TASKS.md (Design & Prototype section)
+   - Priority: Medium
+
+3. **Develop Client Style Preference Form**
+   - File: Create `src/components/Dashboard/DesignSection/StylePreferenceForm.js`
+   - Task: Create a form for clients to select style preferences (modern, corporate, playful, etc.)
+   - Docs: See PROJECT_BUILDING_TASKS.md (Design & Prototype section) and UI_DESIGN_DOCUMENTATION.md
+   - Priority: Medium
+
+4. **Implement Invoice Display Component**
+   - File: Create `src/components/Dashboard/Invoicing/InvoiceDisplay.js`
+   - Task: Create a component to display invoice details and payment status
+   - Docs: See PROJECT_BUILDING_TASKS.md (Invoicing & Delivery section)
+   - Priority: High
+
+5. **Create Milestone-Based Delivery View**
+   - File: Create `src/components/Dashboard/Invoicing/MilestoneDelivery.js`
+   - Task: Implement a view that unlocks sections/files as invoices are paid
+   - Docs: See PROJECT_BUILDING_TASKS.md (Invoicing & Delivery section)
+   - Priority: High
+
+6. **Develop PDF Report Generator**
+   - File: Create `src/utils/reportGenerator.js` and `src/components/Dashboard/Invoicing/ProjectSummary.js`
+   - Task: Create functionality to generate "Your Software Project Summary" PDF reports
+   - Docs: See PROJECT_BUILDING_TASKS.md (Invoicing & Delivery section)
+   - Priority: Medium
+
+7. **Implement Payment History Component**
+   - File: Create `src/components/Dashboard/Invoicing/PaymentHistory.js`
+   - Task: Create a component to display payment history and transaction records
+   - Docs: See PROJECT_BUILDING_TASKS.md (Invoicing & Delivery section)
+   - Priority: Medium
+
+8. **Create Post-Launch Maintenance Guide**
+   - File: Create `src/components/Dashboard/PostLaunch/MaintenanceGuide.js`
+   - Task: Implement a component to display and generate "Here's how to maintain your app" PDF
+   - Docs: See PROJECT_BUILDING_TASKS.md (Post-Launch Section)
+   - Priority: Medium
+
+9. **Implement "Hire Again" Feature**
+   - File: Create `src/components/Dashboard/PostLaunch/HireAgain.js`
+   - Task: Create a component with a "Hire me again" button and functionality
+   - Docs: See PROJECT_BUILDING_TASKS.md (Post-Launch Section)
+   - Priority: Low
+
+10. **Develop Feedback and Review Form**
+    - File: Create `src/components/Dashboard/PostLaunch/FeedbackForm.js`
+    - Task: Create a form for clients to provide feedback and reviews after project completion
+    - Docs: See PROJECT_BUILDING_TASKS.md (Post-Launch Section)
+    - Priority: Medium
+
+11. **Implement Social Share Feature**
+    - File: Create `src/components/Dashboard/PostLaunch/SocialShare.js`
+    - Task: Create a component for sharing "Built by S.N.P" on social media
+    - Docs: See PROJECT_BUILDING_TASKS.md (Post-Launch Section)
+    - Priority: Low
+
+12. **Create Admin Dashboard Overview**
+    - File: Create `src/components/Admin/AdminDashboard.js`
+    - Task: Implement an admin dashboard with overview cards (total projects, overdue, files uploaded today)
+    - Docs: See PROJECT_BUILDING_TASKS.md (Admin Only section)
+    - Priority: High
+
+13. **Develop User/Project Management**
+    - File: Create `src/components/Admin/UserProjectList.js`
+    - Task: Create a component to display and manage all users and projects
+    - Docs: See PROJECT_BUILDING_TASKS.md (Admin Only section)
+    - Priority: High
+
+14. **Implement Internal Notes Feature**
+    - File: Create `src/components/Admin/InternalNotes.js`
+    - Task: Create a component for adding and viewing internal notes per project
+    - Docs: See PROJECT_BUILDING_TASKS.md (Admin Only section)
+    - Priority: Medium
+
+15. **Create Client Dashboard Simulator**
+    - File: Create `src/components/Admin/DashboardSimulator.js`
+    - Task: Implement a feature to preview what the client sees in their dashboard
+    - Docs: See PROJECT_BUILDING_TASKS.md (Admin Only section)
+    - Priority: Medium
+
+16. **Implement Consistent Modal System**
+    - File: Enhance `src/components/Common/Modal.js`
+    - Task: Create a standardized modal system with consistent styling, animations, and behavior across the application
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section)
+    - Priority: High
+
+17. **Create Global Toast Notification System**
+    - File: Create `src/components/Common/Toast.js` and `src/contexts/ToastContext.js`
+    - Task: Implement a reusable toast notification system for displaying success/error messages
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section)
+    - Priority: High
+
+18. **Develop Drag-and-Drop File Upload**
+    - File: Create `src/components/Common/FileUpload.js`
+    - Task: Create a reusable drag-and-drop file upload component with progress indicator
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Form Elements section)
+    - Priority: High
+
+19. **Implement Data Visualization Components**
+    - File: Create `src/components/Common/Charts.js`
+    - Task: Create reusable chart components (bar, line, pie) for displaying project statistics
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Dashboard Components section)
+    - Priority: Medium
+
+20. **Create Advanced Filter Component**
+    - File: Create `src/components/Common/AdvancedFilter.js`
+    - Task: Implement a reusable advanced filter component for filtering data in tables and lists
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Form Elements section)
+    - Priority: Medium
+
+21. **Develop Responsive Table Component**
+    - File: Create `src/components/Common/ResponsiveTable.js`
+    - Task: Create a reusable responsive table component that adapts to different screen sizes
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Dashboard Components section)
+    - Priority: High
+
+22. **Implement RTL Support**
+    - Files: Update global styles and layout components
+    - Task: Ensure all components support right-to-left text direction for Arabic language
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Internationalization section)
+    - Priority: High
+
+23. **Create Animated Onboarding Tour**
+    - File: Create `src/components/Common/OnboardingTour.js`
+    - Task: Implement an interactive onboarding tour for new users
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section)
+    - Priority: Medium
+
+24. **Develop Theme Switcher**
+    - File: Create `src/components/Common/ThemeSwitch.js` and enhance `src/contexts/ThemeContext.js`
+    - Task: Implement a theme switcher for toggling between light and dark modes
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Theme section)
+    - Priority: Medium
+
+25. **Create Custom Color Palette Selector**
+    - File: Create `src/components/Admin/ColorPaletteSelector.js`
+    - Task: Implement a component for selecting custom color palettes for white-labeled client dashboards
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Theme section)
+    - Priority: Low
+
+26. **Implement Keyboard Navigation**
+    - Files: Update interactive components
+    - Task: Ensure all interactive components are accessible via keyboard navigation
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Accessibility section)
+    - Priority: High
+
+27. **Create Screen Reader Announcements**
+    - File: Create `src/utils/accessibilityUtils.js`
+    - Task: Implement utility functions for screen reader announcements
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Accessibility section)
+    - Priority: Medium
+
+28. **Fix Color Contrast Issues**
+    - Files: Update global styles and components
+    - Task: Ensure all text has sufficient color contrast against backgrounds
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Accessibility section)
+    - Priority: High
+
+29. **Implement Form Validation**
+    - File: Create `src/utils/formValidation.js`
+    - Task: Create reusable form validation utilities with proper error messaging
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Form Elements section)
+    - Priority: High
+
+30. **Create Animated Progress Indicators**
+    - File: Create `src/components/Common/ProgressIndicators.js`
+    - Task: Implement various animated progress indicators (linear, circular, stepped)
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Animations section)
+    - Priority: Medium
+
+31. **Develop Notification Center**
+    - File: Create `src/components/Common/NotificationCenter.js` and `src/contexts/NotificationContext.js`
+    - Task: Create a notification center for displaying system notifications
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section)
+    - Priority: Medium
+
+32. **Implement User Profile Management**
+    - File: Create `src/components/User/ProfileManagement.js`
+    - Task: Create a component for users to manage their profile information
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (User section)
+    - Priority: High
+
+33. **Create Password Reset Flow**
+    - File: Create `src/components/Auth/PasswordReset.js`
+    - Task: Implement a password reset flow for users who forgot their password
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Authentication section)
+    - Priority: High
+
+34. **Develop Email Verification System**
+    - File: Create `src/components/Auth/EmailVerification.js`
+    - Task: Implement an email verification system for new user registrations
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Authentication section)
+    - Priority: High
+
+35. **Create User Roles and Permissions**
+    - File: Create `src/contexts/RoleContext.js` and `src/utils/permissionUtils.js`
+    - Task: Implement a system for managing user roles and permissions
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Authentication section)
+    - Priority: High
+
+36. **Implement File Preview System**
+    - File: Create `src/components/Common/FilePreview.js`
+    - Task: Create a component for previewing different file types (images, PDFs, documents)
+    - Docs: See UI_DESIGN_DOCUMENTATION.md (Components section)
+    - Priority: Medium
+
+37. **Develop Version Control for Files**
+    - File: Create `src/components/Dashboard/Files/VersionControl.js`
+    - Task: Implement a system for tracking file versions and history
+    - Docs: See PROJECT_BUILDING_TASKS.md (Files & Deliverables section)
+    - Priority: Medium
+
+38. **Create File Tagging System**
+    - File: Create `src/components/Dashboard/Files/FileTags.js`
+    - Task: Implement a system for tagging files (Design, Docs, Final, Feedback)
+    - Docs: See PROJECT_BUILDING_TASKS.md (Files & Deliverables section)
+    - Priority: Medium
+
+39. **Implement Watermarked Previews**
+    - File: Create `src/components/Dashboard/Files/WatermarkedPreview.js`
+    - Task: Create a component for displaying watermarked previews of non-final files
+    - Docs: See PROJECT_BUILDING_TASKS.md (Files & Deliverables section)
+    - Priority: Low
+
+40. **Develop Project Export Feature**
+    - File: Create `src/components/Dashboard/ProjectExport.js`
+    - Task: Implement functionality to export project data and files
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
+    - Priority: Medium
+
+41. **Create Project Import Feature**
+    - File: Create `src/components/Dashboard/ProjectImport.js`
+    - Task: Implement functionality to import project data and files
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
+    - Priority: Medium
+
+42. **Implement Project Archiving**
+    - File: Create `src/components/Dashboard/ProjectArchive.js`
+    - Task: Create functionality to archive completed projects
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
+    - Priority: Medium
+
+43. **Develop Project Duplication**
+    - File: Create `src/components/Dashboard/ProjectDuplication.js`
+    - Task: Implement functionality to duplicate existing projects as templates
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
+    - Priority: Low
+
+44. **Create Project Template System**
+    - File: Create `src/components/Dashboard/ProjectTemplates.js`
+    - Task: Implement a system for creating and using project templates
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
+    - Priority: Medium
+
+45. **Implement Project Sharing**
+    - File: Create `src/components/Dashboard/ProjectSharing.js`
+    - Task: Create functionality to share projects with other users
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
+    - Priority: Medium
+
+46. **Develop Project Collaboration**
+    - File: Create `src/components/Dashboard/ProjectCollaboration.js`
+    - Task: Implement real-time collaboration features for projects
+    - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section)
+    - Priority: High
 
 <!-- 23. **Refine ProjectsPanel UI**
     - File: `src/components/Dashboard/ProjectsPanel.js`
@@ -88,7 +428,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Docs: See FIREBASE_SETUP.md and WINDSURF_RULES.md (firebase section)
     - Priority: High -->
 
-## Accessibility Tasks
+<!-- ## Accessibility Tasks
 
 36. **Add ARIA Labels**
     - File: `src/components/Common/AuthModal.js`
@@ -162,7 +502,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - File: Create `src/components/Dashboard/EmptyState.js`
     - Task: Implement empty state components for dashboard sections when no data is available
     - Docs: See PROJECT_BUILDING_TASKS.md (Dashboard Implementation section) and WINDSURF_RULES.md (UI feedback section)
-    - Priority: Low
+    - Priority: Low -->
 
 ## Bug Fixes
 
