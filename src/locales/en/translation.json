@@ -399,7 +399,17 @@
       "exportDataDesc": "Export form responses to CSV or PDF"
     }
   },
-  
+
+  "designFeedback": {
+    "title": "Design Feedback",
+    "addComment": "Add Comment",
+    "reply": "Reply",
+    "commentPlaceholder": "Write your feedback...",
+    "resolve": "Resolve",
+    "reopen": "Reopen",
+    "resolved": "Resolved"
+  },
+
   "contact": {
     "title": "Contact",
     "subtitle": "Let's Build Something Together",
