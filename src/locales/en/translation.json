@@ -191,7 +191,9 @@
     "errorCodeExpired": "Verification code has expired. Please request a new code.",
     "errorVerifyFailed": "Verification failed. Please try again.",
     "errorInvalidEmail": "Please enter a valid email address",
-    "errorWeakPassword": "Password must contain letters and numbers"
+    "errorWeakPassword": "Password must contain letters and numbers",
+    "close": "Close",
+    "back": "Back"
   },
   
   "dashboard": {
