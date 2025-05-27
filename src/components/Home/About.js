@@ -33,8 +33,13 @@ const About = () => {
     }
   };
 
-  const skillsData = t('about.skills', { returnObjects: true });
-  const factsData = t('about.facts', { returnObjects: true });
+  // Get skills and facts data with fallback to empty array if not properly structured
+  const skillsData = t('about.skills', { returnObjects: true }) || [];
+  const factsData = t('about.facts', { returnObjects: true }) || [];
+  
+  // Ensure skillsData and factsData are arrays
+  const skillsArray = Array.isArray(skillsData) ? skillsData : [];
+  const factsArray = Array.isArray(factsData) ? factsData : [];
   
   return (
     <AboutSection>
@@ -89,7 +94,7 @@ const About = () => {
               </CardTitle>
               
               <SkillsList>
-                {skillsData.map((skill, index) => (
+                {skillsArray.map((skill, index) => (
                   <SkillItem key={index}>
                     <SkillIcon role="img" aria-label={t(`about.iconAlt.${index}`)}>{skill.icon}</SkillIcon>
                     <SkillInfo>
@@ -113,7 +118,7 @@ const About = () => {
               </CardTitle>
               
               <FactsGrid>
-                {factsData.map((fact, index) => (
+                {factsArray.map((fact, index) => (
                   <FactItem key={index}>
                     <FactIcon>{fact.icon}</FactIcon>
                     <FactValue>{fact.value}</FactValue>

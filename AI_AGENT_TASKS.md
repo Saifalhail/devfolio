@@ -1,18 +1,5 @@
 # DevFolio AI Agent Tasks
 
-> **IMPORTANT: COMPONENT REUSE AND INTEGRATION GUIDELINES**
-> 
-> Before implementing any task, check if similar components already exist in the codebase. Many components have already been created and should be reused or extended rather than recreated from scratch. This includes:
-> 
-> - **UI Components**: Reuse existing styled components from `GlobalComponents.js`, `dashboardStyles.js`, and other style files
-> - **Theme Elements**: Use theme variables from `GlobalTheme.js` for colors, spacing, and typography
-> - **Common Components**: Extend existing components like `Modal.js`, `SkeletonLoader.js`, `EmptyState.js`, etc.
-> - **Utility Functions**: Leverage existing utilities in the `utils` directory
-> 
-> When creating new sections or components, ensure they are properly integrated with the existing application structure and documented in the appropriate files. Add comments in your code explaining how the component can be reused in other parts of the application.
-> 
-> After implementing a component, update the relevant documentation files to mention what reusable elements were created and how they can be utilized throughout the application.
-
 This document contains small, precise tasks for AI agents to complete. Each task is self-contained and focuses on bug fixes, small feature additions, testing, and code improvements. Each task includes references to relevant documentation files.
 
 > **NOTE FOR CODEX AGENTS**: This project is undergoing UI modernization to match the dark purple theme with gradient effects. All new components must use white text on dark backgrounds for better visibility and accessibility. Components should use gradient backgrounds, subtle animations, and consistent hover effects as detailed in the UI documentation. Refer to UI_DESIGN_DOCUMENTATION.md for the complete style guide and GlobalComponents.js/GlobalTheme.js for implementation examples.

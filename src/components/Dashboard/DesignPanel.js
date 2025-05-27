@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -15,9 +15,21 @@ import {
   FaThumbsUp
 } from 'react-icons/fa';
 
+// Import Design Section components
+import DesignTab from './DesignSection/DesignTab';
+import DesignNavigation from './DesignSection/DesignNavigation';
+import FigmaEmbed from './DesignSection/FigmaEmbed';
+import MockupGallery from './DesignSection/MockupGallery';
+import MockupUpload from './DesignSection/MockupUpload';
+import StyleGuide from './DesignSection/StyleGuide';
+import AssetsLibrary from './DesignSection/AssetsLibrary';
+import PhaseTracker from './DesignSection/PhaseTracker';
+import DesignFeedback from './DesignSection/DesignFeedback';
+
 const DesignPanel = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
+  const [activeSection, setActiveSection] = useState('mockups');
   const [activeTab, setActiveTab] = useState('current');
   const [showStylePreferenceForm, setShowStylePreferenceForm] = useState(false);
   const [designKitInfo, setDesignKitInfo] = useState(null);
@@ -119,194 +131,47 @@ const DesignPanel = () => {
             <FaExternalLinkAlt />
             {t('design.openInFigma', 'Open in Figma')}
           </FigmaLinkButton>
-          <DownloadButton onClick={handleDownloadDesignKit}>
-            <FaDownload />
-            {t('design.downloadKit', 'Download Design Kit')}
-          </DownloadButton>
-          <StylePreferenceButton onClick={handleStylePreferenceToggle}>
-            <FaPalette />
-            {t('design.stylePreferences', 'Style Preferences')}
-          </StylePreferenceButton>
         </ToolbarContainer>
       </Header>
-
-      <TabsContainer>
-        <TabButton 
-          active={activeTab === 'current'} 
-          onClick={() => handleTabChange('current')}
-        >
-          <FaFigma />
-          {t('design.currentDesign', 'Current Design')}
-        </TabButton>
-        <TabButton 
-          active={activeTab === 'styleguide'} 
-          onClick={() => handleTabChange('styleguide')}
-        >
-          <FaPalette />
-          {t('design.styleGuide', 'Style Guide')}
-        </TabButton>
-        <TabButton 
-          active={activeTab === 'revisions'} 
-          onClick={() => handleTabChange('revisions')}
-        >
-          <FaHistory />
-          {t('design.revisions', 'Revisions')}
-        </TabButton>
-        <TabButton 
-          active={activeTab === 'showcase'} 
-          onClick={() => handleTabChange('showcase')}
-        >
-          <FaImage />
-          {t('design.showcase', 'Design Showcase')}
-        </TabButton>
-      </TabsContainer>
-
-      {activeTab === 'showcase' ? (
-        <ShowcaseContainer>
-          <ShowcaseGrid>
-            {showcaseExamples.map(example => (
-              <ShowcaseCard 
-                key={example.id} 
-                onClick={() => setSelectedShowcase(example)}
-                isSelected={selectedShowcase?.id === example.id}
-              >
-                <ShowcaseImage src={example.image} alt={example.title} />
-                <ShowcaseContent>
-                  <ShowcaseTitle>{example.title}</ShowcaseTitle>
-                  <ShowcaseDescription>{example.description}</ShowcaseDescription>
-                  <ShowcaseMeta>
-                    <ShowcaseMetaItem>
-                      <FaEye />
-                      {example.views}
-                    </ShowcaseMetaItem>
-                    <ShowcaseMetaItem>
-                      <FaThumbsUp />
-                      {example.likes}
-                    </ShowcaseMetaItem>
-                  </ShowcaseMeta>
-                </ShowcaseContent>
-              </ShowcaseCard>
-            ))}
-          </ShowcaseGrid>
-          
-          {selectedShowcase && (
-            <ShowcaseDetailOverlay onClick={() => setSelectedShowcase(null)}>
-              <ShowcaseDetail onClick={e => e.stopPropagation()}>
-                <ShowcaseDetailHeader>
-                  <ShowcaseDetailTitle>{selectedShowcase.title}</ShowcaseDetailTitle>
-                  <CloseButton onClick={() => setSelectedShowcase(null)}>×</CloseButton>
-                </ShowcaseDetailHeader>
-                <ShowcaseDetailImage src={selectedShowcase.image} alt={selectedShowcase.title} />
-                <ShowcaseDetailContent>
-                  <ShowcaseDetailDescription>{selectedShowcase.description}</ShowcaseDetailDescription>
-                  <ShowcaseDetailMeta>
-                    <ShowcaseMetaItem>
-                      <FaEye />
-                      {selectedShowcase.views} {t('design.views', 'views')}
-                    </ShowcaseMetaItem>
-                    <ShowcaseMetaItem>
-                      <FaThumbsUp />
-                      {selectedShowcase.likes} {t('design.likes', 'likes')}
-                    </ShowcaseMetaItem>
-                  </ShowcaseDetailMeta>
-                </ShowcaseDetailContent>
-              </ShowcaseDetail>
-            </ShowcaseDetailOverlay>
-          )}
-        </ShowcaseContainer>
-      ) : (
-        <FigmaEmbedContainer>
-          <FigmaEmbed 
-            src={`${getFigmaEmbedUrl()}?embed=true`}
-            allowFullScreen
-          />
-        </FigmaEmbedContainer>
-      )}
       
-      {showStylePreferenceForm && (
-        <StylePreferenceFormOverlay>
-          <StylePreferenceFormContainer>
-            <StylePreferenceFormHeader>
-              <h3>{t('design.stylePreferences', 'Style Preferences')}</h3>
-              <CloseButton onClick={handleStylePreferenceToggle}>×</CloseButton>
-            </StylePreferenceFormHeader>
-            
-            <StylePreferenceForm onSubmit={handleStylePreferenceSubmit}>
-              <FormGroup>
-                <Label>{t('design.overallStyle', 'Overall Style')}</Label>
-                <StyleOptions>
-                  <StyleOption>
-                    <input type="radio" name="style" id="modern" value="modern" defaultChecked />
-                    <StyleLabel htmlFor="modern">
-                      <StyleIcon><FaLayerGroup /></StyleIcon>
-                      {t('design.styles.modern', 'Modern')}
-                    </StyleLabel>
-                  </StyleOption>
-                  <StyleOption>
-                    <input type="radio" name="style" id="corporate" value="corporate" />
-                    <StyleLabel htmlFor="corporate">
-                      <StyleIcon><FaLink /></StyleIcon>
-                      {t('design.styles.corporate', 'Corporate')}
-                    </StyleLabel>
-                  </StyleOption>
-                  <StyleOption>
-                    <input type="radio" name="style" id="playful" value="playful" />
-                    <StyleLabel htmlFor="playful">
-                      <StyleIcon><FaPalette /></StyleIcon>
-                      {t('design.styles.playful', 'Playful')}
-                    </StyleLabel>
-                  </StyleOption>
-                  <StyleOption>
-                    <input type="radio" name="style" id="minimal" value="minimal" />
-                    <StyleLabel htmlFor="minimal">
-                      <StyleIcon><FaCode /></StyleIcon>
-                      {t('design.styles.minimal', 'Minimal')}
-                    </StyleLabel>
-                  </StyleOption>
-                </StyleOptions>
-              </FormGroup>
-              
-              <FormGroup>
-                <Label>{t('design.colorPreferences', 'Color Preferences')}</Label>
-                <ColorOptions>
-                  <ColorOption>
-                    <ColorSwatch color="#6e57e0" />
-                    <input type="radio" name="color" id="purple" value="purple" defaultChecked />
-                    <ColorLabel htmlFor="purple">{t('design.colors.purple', 'Purple')}</ColorLabel>
-                  </ColorOption>
-                  <ColorOption>
-                    <ColorSwatch color="#4a6cf7" />
-                    <input type="radio" name="color" id="blue" value="blue" />
-                    <ColorLabel htmlFor="blue">{t('design.colors.blue', 'Blue')}</ColorLabel>
-                  </ColorOption>
-                  <ColorOption>
-                    <ColorSwatch color="#27ae60" />
-                    <input type="radio" name="color" id="green" value="green" />
-                    <ColorLabel htmlFor="green">{t('design.colors.green', 'Green')}</ColorLabel>
-                  </ColorOption>
-                  <ColorOption>
-                    <ColorSwatch color="#e74c3c" />
-                    <input type="radio" name="color" id="red" value="red" />
-                    <ColorLabel htmlFor="red">{t('design.colors.red', 'Red')}</ColorLabel>
-                  </ColorOption>
-                </ColorOptions>
-              </FormGroup>
-              
-              <FormGroup>
-                <Label>{t('design.additionalNotes', 'Additional Notes')}</Label>
-                <TextArea 
-                  placeholder={t('design.additionalNotesPlaceholder', 'Any specific preferences or requirements...')}
-                  rows={4}
-                />
-              </FormGroup>
-              
-              <SubmitButton type="submit">
-                {t('design.submitPreferences', 'Submit Preferences')}
-              </SubmitButton>
-            </StylePreferenceForm>
-          </StylePreferenceFormContainer>
-        </StylePreferenceFormOverlay>
-      )}
+      <Content>
+        {/* Use the DesignNavigation component for navigation */}
+        <DesignNavigation 
+          activeSection={activeSection} 
+          onSectionChange={setActiveSection} 
+        />
+        
+        {/* Render different sections based on activeSection */}
+        <Suspense fallback={<LoadingIndicator />}>
+          {activeSection === 'mockups' && (
+            <>
+              <MockupGallery showcaseExamples={showcaseExamples} />
+              <MockupUpload />
+            </>
+          )}
+          
+          {activeSection === 'figma' && (
+            <FigmaEmbed 
+              figmaUrl={mockDesignData.figmaUrl} 
+              lastUpdated={mockDesignData.lastUpdated} 
+            />
+          )}
+          
+          {activeSection === 'styleGuide' && (
+            <StyleGuide />
+          )}
+          
+          {activeSection === 'assets' && (
+            <AssetsLibrary />
+          )}
+        </Suspense>
+      </Content>
+      
+      {/* Phase Tracker */}
+      <PhaseTracker />
+      
+      {/* Design Feedback System */}
+      <DesignFeedback />
     </Container>
   );
 };
@@ -334,130 +199,12 @@ const Title = styled.h2`
   color: #333;
 `;
 
-const ToolbarContainer = styled.div`
+const Content = styled.div`
+  flex: 1;
   display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-`;
-
-const FigmaLinkButton = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: #1e1e1e;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  
-  svg {
-    font-size: 0.9rem;
-  }
-  
-  &:hover {
-    background: #000;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-`;
-
-const DownloadButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(90deg, #6e57e0, #9b6dff);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  
-  svg {
-    font-size: 0.9rem;
-  }
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(110, 87, 224, 0.3);
-  }
-`;
-
-const StylePreferenceButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: white;
-  color: #333;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  
-  svg {
-    color: #6e57e0;
-    font-size: 0.9rem;
-  }
-  
-  &:hover {
-    background: #f9f9f9;
-    border-color: #6e57e0;
-    transform: translateY(-2px);
-  }
-`;
-
-const TabsContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
-  
-  @media (max-width: 768px) {
-    overflow-x: auto;
-    padding: 1rem;
-    gap: 0.5rem;
-  }
-`;
-
-const TabButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: ${props => props.active ? 'rgba(110, 87, 224, 0.1)' : 'transparent'};
-  color: ${props => props.active ? '#6e57e0' : '#666'};
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border-bottom: 2px solid ${props => props.active ? '#6e57e0' : 'transparent'};
-  
-  svg {
-    font-size: 1rem;
-  }
-  
-  &:hover {
-    background: ${props => props.active ? 'rgba(110, 87, 224, 0.1)' : 'rgba(0, 0, 0, 0.03)'};
-  }
+  flex-direction: column;
+  padding: 1rem;
+  overflow: auto;
 `;
 
 const FigmaEmbedContainer = styled.div`
@@ -802,6 +549,29 @@ const ShowcaseDetailMeta = styled.div`
   gap: 2rem;
   font-size: 0.9rem;
   color: #666;
+`;
+
+const LoadingIndicator = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  width: 100%;
+  
+  &:before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(110, 87, 224, 0.1);
+    border-top: 4px solid #6e57e0;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 `;
 
 export default DesignPanel;

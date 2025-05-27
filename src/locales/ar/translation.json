@@ -112,14 +112,12 @@
     "delete": "حذف",
     "close": "إغلاق"
   },
-  
   "validation": {
     "required": "هذا الحقل مطلوب",
     "email": "البريد الإلكتروني غير صالح",
     "minLength": "يجب أن يكون الحقل {{count}} أحرف على الأقل",
     "maxLength": "يجب أن يكون الحقل {{count}} أحرف كحد أقصى"
   },
-  
   "about": {
     "title": "نبذة عني",
     "subtitle": "من هو S.N.P؟",
@@ -215,7 +213,6 @@
     "close": "إغلاق",
     "back": "رجوع"
   },
-  
   "dashboard": {
     "welcome": "مرحباً بك في لوحة التحكم",
     "logout": "تسجيل الخروج",
@@ -231,9 +228,9 @@
       "files": "الملفات",
       "invoices": "الفواتير",
       "activity": "سجل النشاط",
-      "settings": "الإعدادات"
-      ,"collapse": "طي الشريط الجانبي"
-      ,"expand": "توسيع الشريط الجانبي"
+      "settings": "الإعدادات",
+      "collapse": "طي الشريط الجانبي",
+      "expand": "توسيع الشريط الجانبي"
     },
     "greeting": {
       "morning": "صباح الخير",
@@ -272,7 +269,6 @@
       "emptyDone": "لا توجد مهام منجزة"
     }
   },
-  
   "files": {
     "title": "الملفات والتسليمات",
     "upload": "رفع ملفات",
@@ -324,8 +320,6 @@
     "uploadPrompt": "اسحب وأسقط النماذج أو انقر للتصفح",
     "remove": "حذف"
   },
-
-
   "invoices": {
     "title": "الفواتير",
     "noInvoices": "لا توجد فواتير",
@@ -342,7 +336,6 @@
       "overdue": "متأخرة"
     }
   },
-
   "timeline": {
     "activityLog": "سجل النشاط",
     "search": "ابحث في الأنشطة...",
@@ -365,24 +358,9 @@
     "fileViewed": "{{user}} استعرض {{file}}",
     "milestoneReached": "{{milestone}}"
   },
-  "invoices": {
-    "paymentHistory": "سجل الدفعات",
-    "date": "التاريخ",
-    "description": "الوصف",
-    "amount": "المبلغ",
-    "status": "الحالة",
-    "noPayments": "لا توجد سجلات دفع",
-    "statuses": {
-      "paid": "مدفوع",
-      "pending": "قيد المعالجة",
-      "failed": "فشل"
-    }
-  },
-  
   "modal": {
     "close": "إغلاق"
   },
-  
   "projects": {
     "title": "المشاريع",
     "addProject": "إضافة مشروع",
@@ -417,7 +395,6 @@
       "list": "قائمة"
     }
   },
-
   "forms": {
     "title": "النماذج والملاحظات",
     "createNew": "إنشاء نموذج جديد",
@@ -492,13 +469,6 @@
       "exportDataDesc": "تصدير ردود النماذج إلى CSV أو PDF"
     }
   },
-  "invoices": {
-    "milestoneDelivery": {
-      "title": "تسليم المراحل",
-      "noMilestones": "لا توجد مراحل متاحة"
-    }
-  },
-  
   "designFeedback": {
     "title": "ملاحظات التصميم",
     "addComment": "إضافة تعليق",
@@ -508,7 +478,6 @@
     "reopen": "إعادة فتح",
     "resolved": "تم الحل"
   },
-
   "contact": {
     "title": "اتصل بنا",
     "subtitle": "تواصل معي الآن",
@@ -537,13 +506,6 @@
       "projectTypeError": "يرجى اختيار نوع المشروع",
       "errorMessage": "حدث خطأ أثناء إرسال النموذج. حاول مرة أخرى"
     }
-  },
-  "design": {
-    "styleGuide": "دليل الأنماط",
-    "colors": "الألوان",
-    "typography": "الخطوط",
-    "spacing": "التباعد",
-    "components": "المكوّنات"
   },
   "styleGuide": {
     "sampleH1": "عنوان رئيسي",
@@ -582,26 +544,14 @@
     "subtitle": "ما يقوله عملائي عن عملي",
     "iconAlt": "أيقونة شهادة العميل"
   },
-  "postLaunch": {
-
-    "feedbackForm": {
-      "title": "شاركنا تقييمك",
-      "rating": "التقييم",
-      "review": "المراجعة",
-      "submit": "إرسال الملاحظات",
-      "success": "شكرًا لملاحظاتك!",
-      "error": "حدث خطأ أثناء إرسال الملاحظات. حاول مرة أخرى."
-
-    "maintenanceGuide": "دليل صيانة التطبيق",
-    "downloadPDF": "تحميل PDF",
-    "tips": {
-      "updateDependencies": "حافظ على تحديث الاعتمادات",
-      "monitorErrors": "راقب الأخطاء وقم بإصلاحها بسرعة",
-      "backupData": "انسخ بياناتك احتياطياً بانتظام",
-      "securityUpdates": "قم بتطبيق التحديثات الأمنية",
-      "collectFeedback": "اجمع آراء المستخدمين"
-
-    }
+  "maintenanceGuide": "دليل صيانة التطبيق",
+  "downloadPDF": "تحميل PDF",
+  "tips": {
+    "updateDependencies": "حافظ على تحديث الاعتمادات",
+    "monitorErrors": "راقب الأخطاء وقم بإصلاحها بسرعة",
+    "backupData": "انسخ بياناتك احتياطياً بانتظام",
+    "securityUpdates": "قم بتطبيق التحديثات الأمنية",
+    "collectFeedback": "اجمع آراء المستخدمين"
   },
   "seo": {
     "alt": {
@@ -615,14 +565,141 @@
       "waving": "أيقونة يد تلوح"
     }
   },
-
   "postLaunch": {
     "hireAgain": {
       "title": "توظيفي مرة أخرى",
       "description": "هل لديك مشروع آخر؟ يسعدني العمل معك من جديد.",
       "button": "توظيفي مجدداً"
-    }
-
+    },
+    "designPhaseTracker": {
+      "title": "مراحل التصميم",
+      "discovery": "الاستكشاف",
+      "wireframes": "إطارات مبدئية",
+      "mockups": "نماذج مصورة",
+      "prototypes": "نماذج أولية",
+      "implementation": "التنفيذ"
+    },
+    "footer": {
+      "description": "خدمات تطوير برمجيات احترافية للمواقع الإلكترونية وتطبيقات الجوال ورموز QR وجميع التطبيقات المتعلقة بالتكنولوجيا",
+      "slogan": "برمجة ذكية. من فرد، للجميع.",
+      "links": {
+        "title": "روابط سريعة"
+      },
+      "services": {
+        "title": "الخدمات",
+        "webDev": "تطوير الويب",
+        "mobileApps": "تطبيقات الجوال",
+        "qrCodes": "رموز QR",
+        "uiUxDesign": "تصميم واجهة المستخدم",
+        "customSolutions": "حلول مخصصة"
+      },
+      "contact": {
+        "title": "اتصل بنا"
+      },
+  }
+},
+"designFeedback": {
+  "title": "ملاحظات التصميم",
+  "addComment": "إضافة تعليق",
+  "reply": "رد",
+  "commentPlaceholder": "اكتب ملاحظاتك...",
+  "resolve": "حل",
+  "reopen": "إعادة فتح",
+  "resolved": "تم الحل"
+},
+"contact": {
+  "title": "اتصل بنا",
+  "subtitle": "تواصل معي الآن",
+  "description": "هل لديك مشروع في ذهنك أو تريد مناقشة احتياجاتك التقنية؟ أنا على بعد رسالة!",
+  "info": {
+    "heading": "دعنا نتحدث عن مشروعك",
+    "text": "لا تتردد في التواصل إذا كان لديك أي أسئلة أو أفكار. أنا دائمًا منفتح لمناقشة المشاريع والفرص الجديدة"
+  },
+  "iconAlt": {
+    "email": "أيقونة البريد الإلكتروني",
+    "phone": "أيقونة الهاتف",
+    "location": "أيقونة الموقع",
+    "message": "أيقونة الظرف"
+  },
+  "form": {
+    "title": "أرسل رسالة",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "projectType": "نوع المشروع",
+    "message": "الرسالة",
+    "button": "أرسل الآن",
+    "sending": "جاري الإرسال...",
+    "success": "شكرًا لرسالتك! سأرد عليك قريبًا",
+    "validationError": "الرجاء ملء جميع الحقول المطلوبة",
+    "emailError": "الرجاء إدخال بريد إلكتروني صالح",
+    "projectTypeError": "يرجى اختيار نوع المشروع",
+    "errorMessage": "حدث خطأ أثناء إرسال النموذج. حاول مرة أخرى"
+  }
+},
+"styleGuide": {
+  "sampleH1": "عنوان رئيسي",
+  "sampleH2": "عنوان ثانوي",
+  "sampleH3": "عنوان",
+  "sampleBody": "مثال على نص الفقرة بالحجم الافتراضي.",
+  "sampleSmall": "نص صغير",
+  "sampleButton": "زر رئيسي",
+  "sampleCard": "محتوى البطاقة هنا."
+},
+"techStack": {
+  "title": "التقنيات المستخدمة",
+  "subtitle": "التقنيات والأدوات المتطورة التي أتقنها لتحويل أفكارك الإبداعية إلى تجارب رقمية استثنائية",
+  "altTexts": {
+    "react": "مطور رياكت في قطر",
+    "reactNative": "مطور رياكت نيتف في قطر",
+    "nextjs": "مطور نيكست جي إس في قطر",
+    "vue": "مطور فيو جي إس في قطر",
+    "typescript": "مطور تايب سكريبت في قطر",
+    "tailwind": "مطور تيلويند سي إس إس في قطر",
+    "python": "مطور بايثون في قطر",
+    "nodejs": "مطور نود جي إس في قطر",
+    "express": "مطور إكسبرس جي إس في قطر",
+    "graphql": "مطور جراف كيو إل في قطر",
+    "yolo": "مطور الذكاء الاصطناعي YOLO في قطر",
+    "django": "مطور جانغو في قطر",
+    "mongodb": "مطور مونجو دي بي في قطر",
+    "supabase": "مطور سوبابيس في قطر",
+    "firebase": "مطور فايربيس في قطر",
+    "vercel": "مطور فيرسل في قطر",
+    "aws": "مطور أمازون ويب سيرفسز في قطر"
+  }
+},
+"testimonials": {
+  "title": "آراء العملاء",
+  "subtitle": "ما يقوله عملائي عن عملي",
+  "iconAlt": "أيقونة شهادة العميل"
+},
+"maintenanceGuide": "دليل صيانة التطبيق",
+"downloadPDF": "تحميل PDF",
+"tips": {
+  "updateDependencies": "حافظ على تحديث الاعتمادات",
+  "monitorErrors": "راقب الأخطاء وقم بإصلاحها بسرعة",
+  "backupData": "انسخ بياناتك احتياطياً بانتظام",
+  "securityUpdates": "قم بتطبيق التحديثات الأمنية",
+  "collectFeedback": "اجمع آراء المستخدمين"
+},
+"seo": {
+  "alt": {
+    "computer": "أيقونة كمبيوتر",
+    "rocket": "أيقونة صاروخ",
+    "lightning": "أيقونة برق",
+    "sparkles": "أيقونة بريق",
+    "star": "أيقونة نجمة",
+    "magnifier": "أيقونة عدسة مكبرة",
+    "crystalBall": "أيقونة كرة بلورية",
+    "waving": "أيقونة يد تلوح"
+  }
+},
+"postLaunch": {
+  "hireAgain": {
+    "title": "توظيفي مرة أخرى",
+    "description": "هل لديك مشروع آخر؟ يسعدني العمل معك من جديد.",
+    "button": "توظيفي مجدداً"
+  },
   "designPhaseTracker": {
     "title": "مراحل التصميم",
     "discovery": "الاستكشاف",
@@ -630,7 +707,6 @@
     "mockups": "نماذج مصورة",
     "prototypes": "نماذج أولية",
     "implementation": "التنفيذ"
-
   },
   "footer": {
     "description": "خدمات تطوير برمجيات احترافية للمواقع الإلكترونية وتطبيقات الجوال ورموز QR وجميع التطبيقات المتعلقة بالتكنولوجيا",
@@ -655,4 +731,29 @@
     },
     "copyright": "جميع الحقوق محفوظة"
   }
+},
+"design": {
+  "designAndPrototype": "التصميم والنموذج الأولي",
+  "openInFigma": "فتح في فيجما",
+  "mockups": "نماذج تصميم",
+  "figma": "فيجما",
+  "styleGuide": "دليل الأسلوب",
+  "assets": "الأصول",
+  "phases": "المراحل",
+  "feedback": "التعليقات",
+  "downloadDesignKit": "تحميل حزمة التصميم",
+  "stylePreferences": "تفضيلات الأسلوب",
+  "styleCategories": "فئات الأسلوب",
+  "modern": "عصري",
+  "corporate": "مؤسسي",
+  "playful": "مرح",
+  "minimal": "بسيط",
+  "colorScheme": "نظام الألوان",
+  "additionalNotes": "ملاحظات إضافية",
+  "submit": "إرسال",
+  "cancel": "إلغاء",
+  "uploadMockup": "رفع نموذج",
+  "currentDesign": "التصميم الحالي",
+  "revisions": "المراجعات"
+}
 }
