@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import styled from 'styled-components';
+import { ActionButton } from '../../styles/GlobalComponents';
 import { useTranslation } from 'react-i18next';
 import { 
   FaFigma, 
@@ -168,10 +169,14 @@ const DesignPanel = () => {
       </Content>
       
       {/* Phase Tracker */}
-      <PhaseTracker />
-      
+      <TrackerWrapper>
+        <PhaseTracker />
+      </TrackerWrapper>
+
       {/* Design Feedback System */}
-      <DesignFeedback />
+      <FeedbackWrapper>
+        <DesignFeedback />
+      </FeedbackWrapper>
     </Container>
   );
 };
@@ -188,6 +193,9 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 1.5rem;
   border-bottom: 1px solid #f0f0f0;
 `;
@@ -197,6 +205,17 @@ const Title = styled.h2`
   font-size: 1.5rem;
   font-weight: 600;
   color: #333;
+`;
+
+const ToolbarContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+`;
+
+const FigmaLinkButton = styled(ActionButton).attrs({ as: 'a' })`
+  text-decoration: none;
 `;
 
 const Content = styled.div`
@@ -215,7 +234,7 @@ const FigmaEmbedContainer = styled.div`
   background: #f9f9f9;
 `;
 
-const FigmaEmbed = styled.iframe`
+const FigmaFrame = styled.iframe`
   width: 100%;
   height: 100%;
   border: none;
@@ -473,6 +492,14 @@ const ShowcaseMeta = styled.div`
   justify-content: space-between;
   font-size: 0.8rem;
   color: #888;
+`;
+
+const TrackerWrapper = styled.div`
+  padding: 1rem;
+`;
+
+const FeedbackWrapper = styled.div`
+  padding: 1rem;
 `;
 
 const ShowcaseMetaItem = styled.div`
