@@ -52,15 +52,15 @@ import {
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import Navbar from '../Layout/Navbar';
-import Sidebar from './Sidebar';
-import ProjectsPanel from './ProjectsPanel';
-import ProjectNotes from './ProjectNotes';
-import AddProjectModal from './AddProjectModal';
-import TasksPanel from './TasksPanel';
-import FilesPanel from './FilesPanel';
-import FormsPanel from './FormsPanel';
-import TimelinePanel from './TimelinePanel';
-import DesignPanel from './DesignPanel';
+const Sidebar = lazy(() => import('./Sidebar'));
+const ProjectsPanel = lazy(() => import('./ProjectsPanel'));
+const ProjectNotes = lazy(() => import('./ProjectNotes'));
+const AddProjectModal = lazy(() => import('./AddProjectModal'));
+const TasksPanel = lazy(() => import('./TasksPanel'));
+const FilesPanel = lazy(() => import('./FilesPanel'));
+const FormsPanel = lazy(() => import('./FormsPanel'));
+const TimelinePanel = lazy(() => import('./TimelinePanel'));
+const DesignPanel = lazy(() => import('./DesignPanel'));
 
 const Dashboard = () => {
   const { currentUser, logout, loading } = useAuth();
@@ -249,6 +249,14 @@ const Dashboard = () => {
   }
 
   return (
+    <Suspense
+      fallback={(
+        <DashboardLoading>
+          <LoadingSpinner />
+          <p>{t('dashboard.loading', 'Loading Dashboard...')}</p>
+        </DashboardLoading>
+      )}
+    >
     <DashboardPage
       onTouchStart={handlePageTouchStart}
       onTouchMove={handlePageTouchMove}
@@ -487,6 +495,7 @@ const Dashboard = () => {
         </ContentArea>
       </DashboardBody>
     </DashboardPage>
+    </Suspense>
   );
 };
 
