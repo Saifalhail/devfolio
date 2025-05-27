@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import GlobalAnimations from './HeroAnimations';
 import logoImage from '../../assets/logo_cropped.png';
+import LazyImage from '../Common/LazyImage';
 
 // Animation for floating effect
 const float = keyframes`
@@ -554,7 +555,7 @@ const Hero = () => {
         <HeroImageContainer isRTL={isRTL}>
           <div className="float-element">
             <LogoContainer>
-              <img src={logoImage} alt="S.N.P Logo" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <LazyImage src={logoImage} alt="S.N.P Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               
               {/* Floating bubbles */}
               <FloatingBubble style={{ top: '-30px', left: isRTL ? 'auto' : '-30px', right: isRTL ? '-30px' : 'auto', background: 'var(--accent-2)', opacity: 0.25, width: '60px', height: '60px', filter: 'blur(8px)' }} />
