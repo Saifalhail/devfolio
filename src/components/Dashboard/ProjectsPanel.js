@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { fadeIn, slideUp } from '../../styles/animations';
 import { 
@@ -200,45 +200,45 @@ const ProjectsPanel = () => {
   };
 
   // Handle filter change
-  const handleFilterChange = (e) => {
+  const handleFilterChange = useCallback((e) => {
     setFilterStatus(e.target.value);
-  };
+  }, []);
 
   // Handle sort change
-  const handleSortChange = (e) => {
+  const handleSortChange = useCallback((e) => {
     setSortBy(e.target.value);
-  };
+  }, []);
   
   // Get current page items
-  const getCurrentPageItems = () => {
+  const currentPageItems = useMemo(() => {
     const indexOfLastItem = activePage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     return filteredProjects.slice(indexOfFirstItem, indexOfLastItem);
-  };
+  }, [activePage, itemsPerPage, filteredProjects]);
 
   // Pagination handlers
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = useCallback((pageNumber) => {
     setActivePage(pageNumber);
-  };
+  }, []);
 
   // Open modal
-  const openAddProjectModal = () => {
+  const openAddProjectModal = useCallback(() => {
     setIsModalOpen(true);
-  };
+  }, []);
   
   // Close modal
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setError(null);
-  };
+  }, []);
   
   // Handle search input
-  const handleSearchChange = (e) => {
+  const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
-  };
+  }, []);
   
   // Handle form submission
-  const handleAddProject = async (projectData) => {
+  const handleAddProject = useCallback(async (projectData) => {
     setIsSubmitting(true);
     setError(null);
     
@@ -257,7 +257,7 @@ const ProjectsPanel = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [currentUser]);
 
   // Detect RTL direction
   const isRTL = i18n.language === 'ar';
@@ -430,7 +430,7 @@ const ProjectsPanel = () => {
       ) : (
         <>
           <ProjectsContainer isGrid={isGridView}>
-            {getCurrentPageItems().map(project => (
+            {currentPageItems.map(project => (
               <ProjectCard key={project.id} isGrid={isGridView}>
                 <ProjectCardInner>
                   <ProjectHeader>
@@ -1158,4 +1158,4 @@ const StatusTooltip = styled.span`
 
 // Using LoadingSkeleton from Common directory
 
-export default ProjectsPanel;
+export default React.memo(ProjectsPanel);
