@@ -399,6 +399,12 @@
       "exportDataDesc": "Export form responses to CSV or PDF"
     }
   },
+  "invoices": {
+    "milestoneDelivery": {
+      "title": "Milestone Delivery",
+      "noMilestones": "No milestones available"
+    }
+  },
   
   "contact": {
     "title": "Contact",

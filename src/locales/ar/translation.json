@@ -456,6 +456,12 @@
       "exportDataDesc": "تصدير ردود النماذج إلى CSV أو PDF"
     }
   },
+  "invoices": {
+    "milestoneDelivery": {
+      "title": "تسليم المراحل",
+      "noMilestones": "لا توجد مراحل متاحة"
+    }
+  },
   
   "contact": {
     "title": "اتصل بنا",
