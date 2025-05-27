@@ -270,7 +270,15 @@ const AuthModal = ({ isOpen, onClose }) => {
             <OverlaySpinner />
           </ModalLoadingOverlay>
         )}
-        <CloseText onClick={handleClose}>×</CloseText>
+        <CloseText
+          onClick={handleClose}
+          role="button"
+          tabIndex={0}
+          aria-label={t('auth.close', 'Close')}
+          onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleClose()}
+        >
+          ×
+        </CloseText>
         
         <ModalHeader>
           <ModalTitle>
@@ -292,7 +300,11 @@ const AuthModal = ({ isOpen, onClose }) => {
                 // Sign in options
                 <>
                   <AuthOptionsContainer>
-                    <SocialButton onClick={handleGoogleSignIn} disabled={loading}>
+                    <SocialButton
+                      onClick={handleGoogleSignIn}
+                      disabled={loading}
+                      aria-label={t('auth.continueWithGoogle', 'Continue with Google')}
+                    >
                       {loadingMethod === 'google' ? <ButtonSpinner /> : <FaGoogle />}
                       <span>
                         {loadingMethod === 'google'
@@ -301,12 +313,20 @@ const AuthModal = ({ isOpen, onClose }) => {
                       </span>
                     </SocialButton>
                     
-                    <SocialButton onClick={showEmailSignInForm} disabled={loading}>
+                    <SocialButton
+                      onClick={showEmailSignInForm}
+                      disabled={loading}
+                      aria-label={t('auth.continueWithEmail', 'Continue with Email')}
+                    >
                       <FaEnvelope />
                       <span>{t('auth.continueWithEmail', 'Continue with Email')}</span>
                     </SocialButton>
                     
-                    <SocialButton onClick={handlePhoneAuth} disabled={loading || isVerificationSent}>
+                    <SocialButton
+                      onClick={handlePhoneAuth}
+                      disabled={loading || isVerificationSent}
+                      aria-label={t('auth.continueWithPhone', 'Continue with Phone')}
+                    >
                       {loadingMethod === 'phone' ? <ButtonSpinner /> : <FaPhone />}
                       <span>
                         {loadingMethod === 'phone'
@@ -320,11 +340,16 @@ const AuthModal = ({ isOpen, onClose }) => {
                         <Input
                           type="text"
                           placeholder={t('auth.verificationCode', 'Verification Code')}
+                          aria-label={t('auth.verificationCode', 'Verification Code')}
                           value={verificationCode}
                           onChange={(e) => setVerificationCode(e.target.value)}
                           isRTL={isRTL}
                         />
-                        <PhoneButton onClick={handleVerifyCode} disabled={loading}>
+                        <PhoneButton
+                          onClick={handleVerifyCode}
+                          disabled={loading}
+                          aria-label={t('auth.verify', 'Verify')}
+                        >
                           {loadingMethod === 'verify' ? (
                             <>
                               <ButtonSpinner />
@@ -343,7 +368,15 @@ const AuthModal = ({ isOpen, onClose }) => {
               ) : (
                 // Email sign in form
                 <>
-                  <BackButton onClick={backToOptions}>←</BackButton>
+                  <BackButton
+                    onClick={backToOptions}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={t('auth.back', 'Back')}
+                    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && backToOptions()}
+                  >
+                    ←
+                  </BackButton>
                   
                   <Form onSubmit={handleEmailSignIn}>
                     <FormGroup>
@@ -353,6 +386,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <Input
                         type="email"
                         placeholder={t('auth.email', 'Email')}
+                        aria-label={t('auth.email', 'Email')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         isRTL={isRTL}
@@ -367,6 +401,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <Input
                         type="password"
                         placeholder={t('auth.password', 'Password')}
+                        aria-label={t('auth.password', 'Password')}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         isRTL={isRTL}
@@ -374,7 +409,11 @@ const AuthModal = ({ isOpen, onClose }) => {
                       />
                     </FormGroup>
                     
-                    <Button type="submit" disabled={loading}>
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      aria-label={t('auth.signIn', 'Sign In')}
+                    >
                       {loadingMethod === 'emailSignIn' ? (
                         <>
                           <ButtonSpinner />
@@ -390,7 +429,13 @@ const AuthModal = ({ isOpen, onClose }) => {
               
               <SignUpPrompt>
                 {t('auth.noAccount', "Don't have an account?")}{' '}
-                <SignUpLink onClick={toggleSignUpMode}>
+                <SignUpLink
+                  onClick={toggleSignUpMode}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={t('auth.signUp', 'Sign Up')}
+                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleSignUpMode()}
+                >
                   {t('auth.signUp', 'Sign Up')}
                 </SignUpLink>
               </SignUpPrompt>
@@ -402,7 +447,11 @@ const AuthModal = ({ isOpen, onClose }) => {
                 // Sign up options
                 <>
                   <AuthOptionsContainer>
-                    <SocialButton onClick={handleGoogleSignIn} disabled={loading}>
+                    <SocialButton
+                      onClick={handleGoogleSignIn}
+                      disabled={loading}
+                      aria-label={t('auth.signUpWithGoogle', 'Sign up with Google')}
+                    >
                       {loadingMethod === 'google' ? <ButtonSpinner /> : <FaGoogle />}
                       <span>
                         {loadingMethod === 'google'
@@ -411,12 +460,20 @@ const AuthModal = ({ isOpen, onClose }) => {
                       </span>
                     </SocialButton>
                     
-                    <SocialButton onClick={showEmailSignInForm} disabled={loading}>
+                    <SocialButton
+                      onClick={showEmailSignInForm}
+                      disabled={loading}
+                      aria-label={t('auth.signUpWithEmail', 'Sign up with Email')}
+                    >
                       <FaEnvelope />
                       <span>{t('auth.signUpWithEmail', 'Sign up with Email')}</span>
                     </SocialButton>
                     
-                    <SocialButton onClick={handlePhoneAuth} disabled={loading || isVerificationSent}>
+                    <SocialButton
+                      onClick={handlePhoneAuth}
+                      disabled={loading || isVerificationSent}
+                      aria-label={t('auth.signUpWithPhone', 'Sign up with Phone')}
+                    >
                       {loadingMethod === 'phone' ? <ButtonSpinner /> : <FaPhone />}
                       <span>
                         {loadingMethod === 'phone'
@@ -430,11 +487,16 @@ const AuthModal = ({ isOpen, onClose }) => {
                         <Input
                           type="text"
                           placeholder={t('auth.verificationCode', 'Verification Code')}
+                          aria-label={t('auth.verificationCode', 'Verification Code')}
                           value={verificationCode}
                           onChange={(e) => setVerificationCode(e.target.value)}
                           isRTL={isRTL}
                         />
-                        <PhoneButton onClick={handleVerifyCode} disabled={loading}>
+                        <PhoneButton
+                          onClick={handleVerifyCode}
+                          disabled={loading}
+                          aria-label={t('auth.verify', 'Verify')}
+                        >
                           {loadingMethod === 'verify' ? (
                             <>
                               <ButtonSpinner />
@@ -453,7 +515,15 @@ const AuthModal = ({ isOpen, onClose }) => {
               ) : (
                 // Email sign up form
                 <>
-                  <BackButton onClick={backToOptions}>←</BackButton>
+                  <BackButton
+                    onClick={backToOptions}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={t('auth.back', 'Back')}
+                    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && backToOptions()}
+                  >
+                    ←
+                  </BackButton>
                   
                   <Form onSubmit={handleEmailSignUp}>
                     <FormGroup>
@@ -463,6 +533,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <Input
                         type="text"
                         placeholder={t('auth.name', 'Full Name')}
+                        aria-label={t('auth.name', 'Full Name')}
                         value={displayName}
                         onChange={(e) => setDisplayName(e.target.value)}
                         isRTL={isRTL}
@@ -477,6 +548,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <Input
                         type="email"
                         placeholder={t('auth.email', 'Email')}
+                        aria-label={t('auth.email', 'Email')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         isRTL={isRTL}
@@ -491,6 +563,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <Input
                         type="password"
                         placeholder={t('auth.password', 'Password')}
+                        aria-label={t('auth.password', 'Password')}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         isRTL={isRTL}
@@ -498,7 +571,11 @@ const AuthModal = ({ isOpen, onClose }) => {
                       />
                     </FormGroup>
                     
-                    <Button type="submit" disabled={loading}>
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      aria-label={t('auth.createAccount', 'Create Account')}
+                    >
                       {loadingMethod === 'emailSignUp' ? (
                         <>
                           <ButtonSpinner />
@@ -514,7 +591,13 @@ const AuthModal = ({ isOpen, onClose }) => {
               
               <SignUpPrompt>
                 {t('auth.haveAccount', 'Already have an account?')}{' '}
-                <SignUpLink onClick={toggleSignUpMode}>
+                <SignUpLink
+                  onClick={toggleSignUpMode}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={t('auth.signIn', 'Sign In')}
+                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleSignUpMode()}
+                >
                   {t('auth.signIn', 'Sign In')}
                 </SignUpLink>
               </SignUpPrompt>

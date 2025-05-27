@@ -12,8 +12,25 @@ const LanguageSwitcher = ({ className }) => {
     setDocumentDirection(newLanguage);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleLanguageChange();
+    }
+  };
+
   return (
-    <SwitcherIconButton className={className} onClick={handleLanguageChange} title={i18n.language === 'en' ? 'العربية' : 'English'}>
+    <SwitcherIconButton
+      className={className}
+      onClick={handleLanguageChange}
+      onKeyDown={handleKeyDown}
+      aria-label={
+        i18n.language === 'en'
+          ? t('navbar.switchToArabic', 'Switch to Arabic')
+          : t('navbar.switchToEnglish', 'Switch to English')
+      }
+      title={i18n.language === 'en' ? 'العربية' : 'English'}
+    >
       {i18n.language === 'en' ? 'AR' : 'EN'}
     </SwitcherIconButton>
   );
@@ -35,11 +52,16 @@ const SwitcherIconButton = styled.button`
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
   outline: none;
-  
+
   &:hover {
     background: var(--accent-1);
     color: var(--dark);
     box-shadow: 0 4px 16px rgba(250,170,147,0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px dashed var(--accent-1);
+    outline-offset: 3px;
   }
 `;
 

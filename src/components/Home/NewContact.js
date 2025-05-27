@@ -250,6 +250,7 @@ const NewContact = () => {
                   isRTL={isRTL}
                   aria-invalid={!!fieldErrors.name}
                   aria-describedby={fieldErrors.name ? 'name-error' : undefined}
+                  aria-errormessage={fieldErrors.name ? 'name-error' : undefined}
                   hasError={!!fieldErrors.name}
                 />
                 {fieldErrors.name && (
@@ -273,6 +274,7 @@ const NewContact = () => {
                   isRTL={isRTL}
                   aria-invalid={!!fieldErrors.email}
                   aria-describedby={fieldErrors.email ? 'email-error' : undefined}
+                  aria-errormessage={fieldErrors.email ? 'email-error' : undefined}
                   hasError={!!fieldErrors.email}
                 />
                 {fieldErrors.email && (
@@ -295,6 +297,7 @@ const NewContact = () => {
                   isRTL={isRTL}
                   aria-invalid={!!fieldErrors.projectType}
                   aria-describedby={fieldErrors.projectType ? 'projectType-error' : undefined}
+                  aria-errormessage={fieldErrors.projectType ? 'projectType-error' : undefined}
                 >
                   <option value="">{isRTL ? 'اختر نوع المشروع' : 'Select project type'}</option>
                   {projectTypes.map(type => (
@@ -324,6 +327,7 @@ const NewContact = () => {
                   isRTL={isRTL}
                   aria-invalid={!!fieldErrors.message}
                   aria-describedby={fieldErrors.message ? 'message-error' : undefined}
+                  aria-errormessage={fieldErrors.message ? 'message-error' : undefined}
                   hasError={!!fieldErrors.message}
                 />
                 {fieldErrors.message && (
@@ -901,13 +905,19 @@ const MessageBase = styled.div`
   ${rtlStyles}
 `;
 
-const SuccessMessage = styled(MessageBase)`
+const SuccessMessage = styled(MessageBase).attrs({
+  role: 'status',
+  'aria-live': 'polite',
+})`
   background-color: rgba(46, 125, 50, 0.1);
   color: #2e7d32;
   border-${props => (props.isRTL ? 'right' : 'left')}: 4px solid #2e7d32;
 `;
 
-const ErrorMessage = styled(MessageBase)`
+const ErrorMessage = styled(MessageBase).attrs({
+  role: 'alert',
+  'aria-live': 'assertive',
+})`
   background-color: rgba(198, 40, 40, 0.1);
   color: #c62828;
   border-${props => (props.isRTL ? 'right' : 'left')}: 4px solid #c62828;
@@ -937,7 +947,10 @@ const SuccessText = styled.span``;
 
 const ErrorText = styled.span``;
 
-const FieldError = styled.span`
+const FieldError = styled.span.attrs({
+  role: 'alert',
+  'aria-live': 'assertive',
+})`
   color: #c62828;
   font-size: 0.85rem;
   margin-top: 0.25rem;
