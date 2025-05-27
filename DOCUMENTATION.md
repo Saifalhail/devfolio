@@ -414,6 +414,13 @@ The Tooltip component provides additional context when hovering over icons or bu
     <IconButton icon={<FaInfo />} />
   </Tooltip>
   ```
+### Style Preference Form
+
+Allows clients to choose preferred design styles and colors before work begins.
+- **Location**: `src/components/Dashboard/DesignSection/StylePreferenceForm.js`
+- **Usage**: Displays a modal with radio buttons for style (modern, corporate, playful, minimal) and color choices.
+- **RTL Support**: Layout and labels adapt automatically when Arabic is active.
+
 
 ### MockupGallery Component
 
