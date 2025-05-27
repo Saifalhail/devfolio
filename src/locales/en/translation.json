@@ -448,7 +448,23 @@
       "phone": "Phone icon",
       "location": "Location pin icon",
       "message": "Envelope icon"
-    }
+  }
+    },
+  "design": {
+    "styleGuide": "Style Guide",
+    "colors": "Colors",
+    "typography": "Typography",
+    "spacing": "Spacing",
+    "components": "Components"
+  },
+  "styleGuide": {
+    "sampleH1": "Heading 1",
+    "sampleH2": "Heading 2",
+    "sampleH3": "Heading 3",
+    "sampleBody": "Body text example showcasing the standard font size.",
+    "sampleSmall": "Small text",
+    "sampleButton": "Primary Button",
+    "sampleCard": "Card content goes here."
   },
   "techStack": {
     "title": "Powered By",
