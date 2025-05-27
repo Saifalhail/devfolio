@@ -140,7 +140,7 @@ const DesignKit = () => {
   return (
     <Button onClick={handleDownload}>
       <FaDownload />
-      {t('design.downloadKit', 'Download Design Kit')}
+      {t('design.downloadDesignKit', 'Download Design Kit')}
     </Button>
   );
 };

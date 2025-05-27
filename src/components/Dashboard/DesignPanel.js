@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import { ActionButton } from '../../styles/GlobalComponents';
 import { useTranslation } from 'react-i18next';
 import { 
-  FaFigma, 
-  FaDownload, 
-  FaPalette, 
+  FaFigma,
+  FaPalette,
   FaLayerGroup, 
   FaCode, 
   FaHistory,
@@ -29,7 +28,8 @@ import StyleGuide from './DesignSection/StyleGuide';
 import AssetsLibrary from './DesignSection/AssetsLibrary';
 import PhaseTracker from './DesignSection/PhaseTracker';
 import DesignFeedback from './DesignSection/DesignFeedback';
-import { colors, spacing, borderRadius, transitions } from '../../styles/GlobalTheme';
+import DesignKit from './DesignSection/DesignKit';
+
 
 const DesignPanel = () => {
   const { t, i18n } = useTranslation();
@@ -93,10 +93,6 @@ const DesignPanel = () => {
       .catch(error => console.error('Error fetching design kit info:', error));
   }, []);
   
-  const handleDownloadDesignKit = () => {
-    // In a real implementation, this would trigger a download
-    alert('Downloading Design Kit...');
-  };
   
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -139,10 +135,7 @@ const DesignPanel = () => {
             <FaFigma />
             {t('design.openInFigma', 'Open in Figma')}
           </FigmaLinkButton>
-          <FigmaLinkButton href="#" onClick={handleDownloadDesignKit}>
-            <FaDownload />
-            {t('design.downloadKit', 'Download Design Kit')}
-          </FigmaLinkButton>
+          <DesignKit />
         </ToolbarContainer>
       </Header>
       
