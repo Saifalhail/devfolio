@@ -471,6 +471,13 @@
       "waving": "Waving hand icon"
     }
   },
+  "postLaunch": {
+    "hireAgain": {
+      "title": "Hire me again",
+      "description": "Have another project? I'd love to work together again!",
+      "button": "Hire me again"
+    }
+  },
   "footer": {
     "description": "Professional software development services for websites, mobile apps, QR codes and all tech-related applications.",
     "slogan": "Smart Native Programming. Built by One, Delivered to Many.",

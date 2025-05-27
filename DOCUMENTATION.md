@@ -410,10 +410,15 @@ The Tooltip component provides additional context when hovering over icons or bu
 - **RTL Support**: Tooltip positioning flips automatically in Arabic mode
 - **Usage Example**:
   ```jsx
-  <Tooltip content={t('info.more')}> 
+  <Tooltip content={t('info.more')}>
     <IconButton icon={<FaInfo />} />
   </Tooltip>
   ```
+
+### HireAgain Component
+
+- **Location**: `src/components/Dashboard/PostLaunch/HireAgain.js`
+- **Purpose**: Displays a call-to-action button for clients to hire the developer again after project completion.
 
 ## Future Enhancements
 
