@@ -399,6 +399,18 @@
       "exportDataDesc": "Export form responses to CSV or PDF"
     }
   },
+
+  "design": {
+    "mockupGallery": {
+      "title": "Mockups",
+      "filters": {
+        "all": "All",
+        "mobile": "Mobile",
+        "desktop": "Desktop",
+        "tablet": "Tablet"
+      }
+    }
+  },
   
   "contact": {
     "title": "Contact",
