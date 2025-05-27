@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { FaCheck } from 'react-icons/fa';
+import StarryBackground from '../Common/StarryBackground';
 import {
   DashboardTitle,
   PanelContainer,
@@ -339,6 +340,10 @@ const Dashboard = () => {
           isRTL={isRTL}
           collapsed={sidebarCollapsed}
         >
+          {/* Starry background effect for all tabs */}
+          <BackgroundWrapper>
+            <StarryBackground color="#a78bfa" starCount={200} blurAmount={8} opacity={1} />
+          </BackgroundWrapper>
           
           <DashboardContent>
             
@@ -548,6 +553,18 @@ const Dashboard = () => {
   );
 };
 
+const BackgroundWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 1;
+`;
+
 const DashboardPage = styled.div`
   display: flex;
   flex-direction: column;
@@ -647,13 +664,13 @@ const ContentArea = styled.main`
   margin-right: ${props => props.isRTL && (props.sidebarOpen || !props.isMobile) ? (props.collapsed ? '60px' : '240px') : '0'};
   transition: all 0.3s ease;
   min-height: calc(100vh - 70px);
-  background-color: #12121a;
-  background-image: radial-gradient(circle at 15% 50%, rgba(123, 44, 191, 0.05) 0%, transparent 40%),
-                    radial-gradient(circle at 85% 30%, rgba(205, 62, 253, 0.05) 0%, transparent 40%);
+  background-color: transparent;
   overflow-x: hidden;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   color: #fff;
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 768px) {
     width: 100%;
@@ -695,7 +712,7 @@ const DashboardContent = styled.div`
   margin: 0 auto;
   padding: 1rem;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   
   @media (max-width: 768px) {
     padding: 0.5rem;

@@ -1,4 +1,38 @@
+// Main theme object with all styling properties
 const theme = {
+  // Typography properties
+  typography: {
+    fontSizes: {
+      xs: '0.75rem',    // 12px
+      sm: '0.875rem',   // 14px
+      md: '1rem',       // 16px
+      lg: '1.125rem',   // 18px
+      xl: '1.25rem',    // 20px
+      xxl: '1.5rem',    // 24px
+      h1: '1.75rem',    // 28px
+      h2: '1.5rem',     // 24px
+      h3: '1.25rem',    // 20px
+    },
+    fontWeights: {
+      light: 300,
+      regular: 400,
+      medium: 500,
+      semiBold: 600,
+      bold: 700,
+    },
+    lineHeights: {
+      tight: 1.2,
+      normal: 1.5,
+      loose: 1.8,
+    },
+    fontFamily: {
+      primary: "'Inter', 'Roboto', sans-serif",
+      heading: "'Poppins', sans-serif",
+      alt: "'Comic Neue', cursive",
+    },
+  },
+  
+  // Color palette
   colors: {
     background: '#feefc4', // Light cream background
     primaryBg: '#12142c', // Dark background base color
@@ -22,24 +56,7 @@ const theme = {
     textPrimary: '#513a52',
     textSecondary: '#666',
   },
-  fonts: {
-    main: "'Inter', 'Roboto', sans-serif",
-    display: "'Poppins', sans-serif", // For headings and display text
-    alt: "'Comic Neue', cursive", // For the cartoon-style elements
-  },
-  fontSizes: {
-    h1: '1.75rem',
-    h2: '1.5rem',
-    h3: '1.1rem',
-    body: '0.95rem',
-    small: '0.85rem',
-    badge: '0.75rem',
-  },
-  fontWeights: {
-    bold: 600,
-    regular: 400,
-    medium: 500,
-  },
+  // Fonts moved to typography object
   breakpoints: {
     mobile: '576px',
     tablet: '768px',

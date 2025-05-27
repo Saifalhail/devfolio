@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeContext } from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useContext } from 'react';
 import { fadeIn, slideUp } from '../../styles/animations';
-import { colors, spacing, borderRadius, transitions, typography } from '../../styles/GlobalTheme';
+import { colors, spacing, borderRadius, transitions } from '../../styles/GlobalTheme';
 
 /**
  * Animated Tabs component for switching between multiple panels.
@@ -74,8 +75,8 @@ const TabButton = styled.button`
   border: none;
   color: ${(props) => (props.active ? colors.accent.primary : colors.text.secondary)};
   padding: ${spacing.sm} ${spacing.md};
-  font-size: ${typography.fontSizes.md};
-  font-weight: ${typography.fontWeights.medium};
+  font-size: ${props => props.theme.typography && props.theme.typography.fontSizes ? props.theme.typography.fontSizes.md : '1rem'};
+  font-weight: ${props => props.theme.typography && props.theme.typography.fontWeights ? props.theme.typography.fontWeights.medium : 500};
   cursor: pointer;
   border-bottom: 3px solid ${(props) => (props.active ? colors.accent.primary : 'transparent')};
   transition: ${transitions.medium};
