@@ -68,7 +68,7 @@ export const shadows = {
   inner: 'inset 0 2px 5px rgba(0, 0, 0, 0.15)',
 };
 
-// Typography system
+// Typography system with default values to prevent undefined errors
 export const typography = {
   fontSizes: {
     xs: '0.75rem',    // 12px
