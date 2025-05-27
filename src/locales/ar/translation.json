@@ -315,6 +315,29 @@
       "versions": "سجل الإصدارات"
     }
   },
+
+  "timeline": {
+    "activityLog": "سجل النشاط",
+    "search": "ابحث في الأنشطة...",
+    "allActivities": "كل الأنشطة",
+    "files": "الملفات",
+    "tasks": "المهام",
+    "comments": "التعليقات",
+    "milestones": "المعالم",
+    "export": "تصدير",
+    "exportAsPDF": "تصدير PDF",
+    "exportAsCSV": "تصدير CSV",
+    "noActivities": "لا توجد أنشطة مطابقة للفلترة",
+    "tryDifferent": "جرب بحثاً أو فلترة مختلفة",
+    "fileUploaded": "{{user}} قام برفع {{file}}",
+    "commentAdded": "{{user}} أضاف تعليقاً",
+    "taskCompleted": "{{user}} أكمل المهمة: {{task}}",
+    "fileEdited": "{{user}} عدل {{file}}",
+    "fileDeleted": "{{user}} حذف {{file}}",
+    "fileDownloaded": "{{user}} حمّل {{file}}",
+    "fileViewed": "{{user}} استعرض {{file}}",
+    "milestoneReached": "{{milestone}}"
+  },
   
   "modal": {
     "close": "إغلاق"
