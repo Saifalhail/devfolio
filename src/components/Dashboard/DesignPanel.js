@@ -149,7 +149,7 @@ const DesignPanel = () => {
         <CompactTimelineSection>
           <TimelineTitle>
             <GlowingIcon><FaRocket /></GlowingIcon>
-            {t('design.designPhases', 'Design Phases')}
+            {t('designPhaseTracker.title', 'Design Phases')}
           </TimelineTitle>
           <CompactTimeline>
             <CompactTimelineItem completed={true}>
@@ -188,11 +188,14 @@ const DesignPanel = () => {
             </CompactTimelineItem>
           </CompactTimeline>
         </CompactTimelineSection>
-        
+
+        {/* Detailed vertical timeline for design phases */}
+        <PhaseTracker currentPhase="prototypes" />
+
         {/* Use the DesignNavigation component for navigation */}
-        <DesignNavigation 
-          activeSection={activeSection} 
-          onSectionChange={setActiveSection} 
+        <DesignNavigation
+          activeSection={activeSection}
+          onSectionChange={setActiveSection}
         />
         
         {/* Render different sections based on activeSection */}
