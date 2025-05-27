@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
+import { mixins } from '../../styles/GlobalTheme';
 import { useTranslation } from 'react-i18next';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../../firebase';
@@ -398,6 +399,12 @@ const rotate = keyframes`
   to { transform: rotate(360deg); }
 `;
 
+// Reusable RTL styles for direction and alignment
+const rtlStyles = css`
+  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
+  text-align: ${props => (props.isRTL ? 'right' : 'left')};
+`;
+
 // Styled Components
 const ContactSection = styled.section`
   position: relative;
@@ -462,7 +469,7 @@ const Container = styled.div`
 const SectionHeader = styled.div`
   text-align: center;
   margin-bottom: 2.5rem;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  ${rtlStyles}
 `;
 
 const SectionTitle = styled.h2`
@@ -492,10 +499,8 @@ const SectionSubtitle = styled.h3`
   font-weight: 700;
   color: var(--dark);
   margin-bottom: 1.5rem;
-  background: linear-gradient(90deg, #cd3efd, #82a1bf);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  ${mixins.gradientText};
+  ${rtlStyles}
   
   @media (max-width: 768px) {
     font-size: 2rem;
@@ -512,8 +517,7 @@ const SectionDescription = styled.p`
   color: var(--dark-gray);
   font-size: 1.1rem;
   line-height: 1.6;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  ${rtlStyles}
   
   @media (max-width: 768px) {
     font-size: 1rem;
@@ -525,7 +529,7 @@ const ContactWrapper = styled.div`
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
   gap: 2rem;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  ${rtlStyles}
   max-width: 1000px;
   margin: 0 auto;
   
@@ -579,8 +583,7 @@ const InfoContent = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
-  text-align: ${props => (props.isRTL ? 'right' : 'left')};
+  ${rtlStyles}
 
   @media (max-width: 576px) {
     padding: 1.5rem;
@@ -591,11 +594,8 @@ const InfoHeading = styled.h4`
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  background: linear-gradient(90deg, #cd3efd, #82a1bf);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
-  text-align: ${props => (props.isRTL ? 'right' : 'left')};
+  ${mixins.gradientText};
+  ${rtlStyles}
 `;
 
 const InfoText = styled.p`
@@ -603,8 +603,7 @@ const InfoText = styled.p`
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
-  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
-  text-align: ${props => (props.isRTL ? 'right' : 'left')};
+  ${rtlStyles}
 `;
 
 const ContactMethods = styled.div`
@@ -759,7 +758,7 @@ const FormContainer = styled.div`
 
 const ContactForm = styled.form`
   padding: 2.5rem;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  ${rtlStyles}
   
   @media (max-width: 576px) {
     padding: 1.5rem;
@@ -783,7 +782,7 @@ const FormHeaderText = styled.h4`
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--dark);
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  ${rtlStyles}
   
   @media (max-width: 480px) {
     font-size: 1.3rem;
@@ -891,8 +890,7 @@ const MessageBase = styled.div`
   display: flex;
   align-items: center;
   animation: ${pulse} 2s ease-in-out;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
-  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
+  ${rtlStyles}
 `;
 
 const SuccessMessage = styled(MessageBase)`
@@ -936,8 +934,7 @@ const FieldError = styled.span`
   font-size: 0.85rem;
   margin-top: 0.25rem;
   display: block;
-  text-align: ${props => (props.isRTL ? 'right' : 'left')};
-  direction: ${props => (props.isRTL ? 'rtl' : 'ltr')};
+  ${rtlStyles}
 `;
 
 // Shape divider for the top of the section
