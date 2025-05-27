@@ -50,7 +50,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Priority: Low --> -->
 
 
-## Performance Optimization Tasks
+<!-- ## Performance Optimization Tasks
 
 30. **Optimize Image Loading**
     - File: Hero section component
@@ -86,7 +86,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - Files: All components using Firebase
     - Task: Optimize Firebase queries to minimize reads and writes
     - Docs: See FIREBASE_SETUP.md and WINDSURF_RULES.md (firebase section)
-    - Priority: High
+    - Priority: High -->
 
 ## Accessibility Tasks
 
