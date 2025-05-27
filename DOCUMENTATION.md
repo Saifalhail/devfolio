@@ -435,6 +435,11 @@ Allows clients to choose preferred design styles and colors before work begins.
 Displays design mockups in a responsive grid with filters for **All**, **Mobile**, **Desktop**, and **Tablet** devices. Located at `src/components/Dashboard/DesignSection/MockupGallery.js`. This gallery can be reused anywhere a simple filterable image grid is required.
 
 
+### HireAgain Component
+
+- **Location**: `src/components/Dashboard/PostLaunch/HireAgain.js`
+- **Purpose**: Displays a call-to-action button for clients to hire the developer again after project completion.
+
 ## Future Enhancements
 
 - Add more service pages with detailed information

@@ -552,6 +552,14 @@
       "waving": "Waving hand icon"
     }
   },
+
+  "postLaunch": {
+    "hireAgain": {
+      "title": "Hire me again",
+      "description": "Have another project? I'd love to work together again!",
+      "button": "Hire me again"
+    }
+
   "designPhaseTracker": {
     "title": "Design Phases",
     "discovery": "Discovery",
@@ -559,6 +567,7 @@
     "mockups": "Mockups",
     "prototypes": "Prototypes",
     "implementation": "Implementation"
+
   },
   "footer": {
     "description": "Professional software development services for websites, mobile apps, QR codes and all tech-related applications.",
