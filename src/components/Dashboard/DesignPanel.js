@@ -25,6 +25,7 @@ import StyleGuide from './DesignSection/StyleGuide';
 import AssetsLibrary from './DesignSection/AssetsLibrary';
 import PhaseTracker from './DesignSection/PhaseTracker';
 import DesignFeedback from './DesignSection/DesignFeedback';
+import { colors, spacing, borderRadius, transitions } from '../../styles/GlobalTheme';
 
 const DesignPanel = () => {
   const { t, i18n } = useTranslation();
@@ -168,7 +169,9 @@ const DesignPanel = () => {
       </Content>
       
       {/* Phase Tracker */}
-      <PhaseTracker />
+      <PhaseTrackerWrapper>
+        <PhaseTracker />
+      </PhaseTrackerWrapper>
       
       {/* Design Feedback System */}
       <DesignFeedback />
@@ -199,6 +202,29 @@ const Title = styled.h2`
   color: #333;
 `;
 
+const ToolbarContainer = styled.div`
+  display: flex;
+  gap: ${spacing.sm};
+  align-items: center;
+`;
+
+const FigmaLinkButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.md};
+  background: ${colors.gradients.button};
+  color: ${colors.text.primary};
+  text-decoration: none;
+  font-weight: 500;
+  transition: ${transitions.fast};
+
+  &:hover {
+    background: ${colors.gradients.hover};
+  }
+`;
+
 const Content = styled.div`
   flex: 1;
   display: flex;
@@ -215,13 +241,6 @@ const FigmaEmbedContainer = styled.div`
   background: #f9f9f9;
 `;
 
-const FigmaEmbed = styled.iframe`
-  width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-`;
 
 const StylePreferenceFormOverlay = styled.div`
   position: fixed;
@@ -549,6 +568,10 @@ const ShowcaseDetailMeta = styled.div`
   gap: 2rem;
   font-size: 0.9rem;
   color: #666;
+`;
+
+const PhaseTrackerWrapper = styled.div`
+  margin: 2rem 1rem;
 `;
 
 const LoadingIndicator = styled.div`

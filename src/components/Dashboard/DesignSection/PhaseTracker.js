@@ -63,7 +63,7 @@ const TimelineList = styled.ul`
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 12px;
+    left: ${spacing.md};
     width: 2px;
     background: rgba(255, 255, 255, 0.1);
   }
@@ -74,7 +74,7 @@ const TimelineList = styled.ul`
 
     &:before {
       left: auto;
-      right: 12px;
+      right: ${spacing.md};
     }
   }
 `;
@@ -111,8 +111,8 @@ const Circle = styled.span`
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 2px;
-  left: -${spacing.lg};
+  top: 0;
+  left: calc(-${spacing.md} - 1px);
   width: 14px;
   height: 14px;
   border-radius: ${borderRadius.round};
@@ -123,14 +123,14 @@ const Circle = styled.span`
 
   [dir='rtl'] & {
     left: auto;
-    right: -${spacing.lg};
+    right: calc(-${spacing.md} - 1px);
   }
 `;
 
 const PhaseLabel = styled.span`
   font-size: ${typography.fontSizes.sm};
   color: ${props => (props.status === 'upcoming' ? colors.text.secondary : colors.text.primary)};
-  margin-left: ${spacing.md};
+  margin-left: ${spacing.sm};
   text-transform: capitalize;
 
   [dir='rtl'] & {
