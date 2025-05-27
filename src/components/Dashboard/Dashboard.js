@@ -437,10 +437,6 @@ const Dashboard = () => {
               <ProjectsTabContainer>
                 <ProjectsHeader>
                   <h2>{t('projects.yourProjects', 'Your Projects')}</h2>
-                  <AddProjectButton onClick={() => setShowAddProjectModal(true)}>
-                    <FaPlus />
-                    {t('projects.addNew', 'Add New Project')}
-                  </AddProjectButton>
                 </ProjectsHeader>
                 <ProjectsPanel />
               </ProjectsTabContainer>

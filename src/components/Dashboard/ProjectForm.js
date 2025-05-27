@@ -198,19 +198,23 @@ const ProjectForm = ({ onSubmit, initialData, onCancel }) => {
       </FormRow>
       
       <FormActions>
-        <CancelButton 
-          type="button" 
-          onClick={onCancel}
-          data-testid="cancel-button"
-        >
-          {t('common.cancel', 'Cancel')}
-        </CancelButton>
-        <SubmitButton 
-          type="submit"
-          data-testid="submit-button"
-        >
-          {initialData ? t('common.update', 'Update') : t('common.create', 'Create')}
-        </SubmitButton>
+        <div>
+          <CancelButton 
+            type="button" 
+            onClick={onCancel}
+            data-testid="cancel-button"
+          >
+            {t('common.cancel', 'Cancel')}
+          </CancelButton>
+        </div>
+        <div>
+          <SubmitButton 
+            type="submit"
+            data-testid="submit-button"
+          >
+            {initialData ? t('common.update', 'Update') : t('common.create', 'Create')}
+          </SubmitButton>
+        </div>
       </FormActions>
     </FormContainer>
   );
@@ -223,12 +227,46 @@ const FormContainer = styled.form`
   gap: ${spacing.lg};
   width: 100%;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: ${spacing.md};
+  
+  /* Custom scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: ${borderRadius.sm};
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: ${borderRadius.sm};
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  /* RTL scrollbar positioning */
+  [dir="rtl"] & {
+    padding-right: 0;
+    padding-left: ${spacing.md};
+    
+    &::-webkit-scrollbar {
+      position: absolute;
+      left: 0;
+    }
+  }
 `;
 
 const FormRow = styled.div`
   display: flex;
-  gap: ${spacing.lg};
+  gap: ${spacing.xl};
   width: 100%;
+  margin-bottom: ${spacing.lg};
   
   @media (max-width: 768px) {
     flex-direction: column;
@@ -237,28 +275,31 @@ const FormRow = styled.div`
 `;
 
 const FormGroup = styled.div`
+  flex: ${props => props.isFullWidth ? '1 0 100%' : '1'};
   display: flex;
   flex-direction: column;
-  gap: ${spacing.xs};
-  flex: ${props => props.isFullWidth ? 1 : '1 1 0'};
+  gap: ${spacing.sm};
+  position: relative;
 `;
 
 const Label = styled.label`
   font-size: ${typography.fontSizes.sm};
-  font-weight: ${typography.fontWeights.medium};
-  color: ${colors.text.secondary};
+  font-weight: ${typography.fontWeights.semiBold};
+  color: ${colors.text.primary};
   display: flex;
   align-items: center;
   gap: ${spacing.xs};
+  margin-bottom: ${spacing.sm};
+  letter-spacing: 0.5px;
   
   svg {
+    font-size: ${typography.fontSizes.md};
     color: ${colors.accent.primary};
-    font-size: ${typography.fontSizes.sm};
   }
 `;
 
 const Input = styled.input`
-  background: ${colors.background.card};
+  background: ${colors.background.secondary};
   border: 1px solid ${props => props.hasError ? colors.status.error : 'rgba(255, 255, 255, 0.1)'};
   border-radius: ${borderRadius.md};
   padding: ${spacing.md};
@@ -267,6 +308,8 @@ const Input = styled.input`
   font-size: ${typography.fontSizes.sm};
   transition: ${transitions.medium};
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  height: 48px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   
   &:focus {
     outline: none;
@@ -276,11 +319,12 @@ const Input = styled.input`
   
   &::placeholder {
     color: ${colors.text.disabled};
+    opacity: 0.7;
   }
 `;
 
 const TextArea = styled.textarea`
-  background: ${colors.background.card};
+  background: ${colors.background.secondary};
   border: 1px solid ${props => props.hasError ? colors.status.error : 'rgba(255, 255, 255, 0.1)'};
   border-radius: ${borderRadius.md};
   padding: ${spacing.md};
@@ -289,9 +333,11 @@ const TextArea = styled.textarea`
   font-size: ${typography.fontSizes.sm};
   transition: ${transitions.medium};
   resize: vertical;
-  min-height: 100px;
+  min-height: 120px;
   font-family: inherit;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  line-height: 1.5;
   
   &:focus {
     outline: none;
@@ -301,11 +347,12 @@ const TextArea = styled.textarea`
   
   &::placeholder {
     color: ${colors.text.disabled};
+    opacity: 0.7;
   }
 `;
 
 const Select = styled.select`
-  background: ${colors.background.card};
+  background: ${colors.background.secondary};
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: ${borderRadius.md};
   padding: ${spacing.md};
@@ -321,6 +368,8 @@ const Select = styled.select`
   padding-left: ${props => props.isRTL ? '2rem' : '0.5rem'};
   cursor: pointer;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  height: 48px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   
   &:focus {
     outline: none;
@@ -336,30 +385,55 @@ const Select = styled.select`
 
 const MoodSelector = styled.div`
   display: flex;
-  gap: ${spacing.xs};
+  gap: ${spacing.md};
   align-items: center;
+  justify-content: flex-start;
+  margin-top: ${spacing.xs};
   
   @media (max-width: 480px) {
-    flex-wrap: wrap;
+    justify-content: space-around;
   }
 `;
 
 const MoodOption = styled.button`
-  ${mixins.flexCenter}
-  gap: ${spacing.xs};
-  background: ${props => props.isSelected ? colors.accent.primary : colors.background.card};
-  color: ${colors.text.primary};
-  padding: ${spacing.sm} ${spacing.md};
-  border-radius: ${borderRadius.md};
-  border: 1px solid ${props => props.isSelected ? colors.accent.primary : 'rgba(255, 255, 255, 0.1)'};
-  transition: ${transitions.medium};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  border-radius: 0;
+  width: 48px;
+  height: 48px;
   cursor: pointer;
-  flex: 1;
+  transition: ${transitions.medium};
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: ${props => props.isSelected ? '24px' : '0'};
+    height: 2px;
+    background: ${props => {
+      switch(props.title) {
+        case 'Happy': return '#4CAF50';
+        case 'Neutral': return '#FFC107';
+        case 'Unhappy': return '#F44336';
+        default: return colors.accent.primary;
+      }
+    }};
+    transition: width 0.2s ease;
+  }
   
   svg {
-    font-size: ${typography.fontSizes.md};
+    font-size: 1.75rem;
     color: ${props => {
-      if (props.isSelected) return colors.text.primary;
+      if (!props.isSelected) return colors.text.secondary;
       
       switch(props.title) {
         case 'Happy': return '#4CAF50';
@@ -371,18 +445,30 @@ const MoodOption = styled.button`
   }
   
   &:hover {
-    background: ${colors.accent.secondary};
     transform: translateY(-2px);
+    
+    &::before {
+      width: 24px;
+    }
+    
+    svg {
+      color: ${props => {
+        switch(props.title) {
+          case 'Happy': return '#4CAF50';
+          case 'Neutral': return '#FFC107';
+          case 'Unhappy': return '#F44336';
+          default: return colors.text.secondary;
+        }
+      }};
+    }
   }
   
   &:active {
-    transform: scale(0.98);
+    transform: scale(0.95);
   }
   
-  @media (max-width: 768px) {
-    span {
-      display: none;
-    }
+  span {
+    display: none;
   }
 `;
 
@@ -390,7 +476,9 @@ const FormActions = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: ${spacing.md};
-  margin-top: ${spacing.md};
+  margin-top: ${spacing.xl};
+  padding-top: ${spacing.md};
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   
   /* RTL Support */
   [dir="rtl"] & {
@@ -398,17 +486,24 @@ const FormActions = styled.div`
   }
   
   @media (max-width: 768px) {
-    flex-direction: column;
+    flex-direction: column-reverse;
+    gap: ${spacing.sm};
   }
 `;
 
 const Button = styled.button`
   padding: ${spacing.md} ${spacing.lg};
   border-radius: ${borderRadius.md};
-  font-weight: ${typography.fontWeights.medium};
+  font-weight: ${typography.fontWeights.semiBold};
   font-size: ${typography.fontSizes.sm};
   cursor: pointer;
   transition: ${transitions.medium};
+  letter-spacing: 0.5px;
+  min-width: 120px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   
   &:disabled {
     opacity: 0.6;
@@ -421,18 +516,36 @@ const Button = styled.button`
 `;
 
 const SubmitButton = styled(Button)`
-  background: ${colors.gradients.button};
+  background: ${colors.accent.primary};
   color: ${colors.text.primary};
   border: none;
   box-shadow: ${shadows.sm};
+  position: relative;
+  overflow: hidden;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
   
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: ${shadows.md};
+    
+    &:before {
+      transform: translateX(100%);
+    }
   }
   
   &:active:not(:disabled) {
-    transform: translateY(-1px);
+    transform: translateY(0);
   }
 `;
 
@@ -440,17 +553,37 @@ const CancelButton = styled(Button)`
   background: transparent;
   color: ${colors.text.secondary};
   border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-right: ${spacing.md};
   
   &:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.05);
     color: ${colors.text.primary};
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    margin-right: 0;
+    margin-left: ${spacing.md};
   }
 `;
 
 const ErrorMessage = styled.p`
   font-size: ${typography.fontSizes.xs};
   color: ${colors.status.error};
-  margin: 0;
+  margin: 4px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  
+  &::before {
+    content: '⚠️';
+    font-size: 10px;
+  }
 `;
 
 export default ProjectForm;

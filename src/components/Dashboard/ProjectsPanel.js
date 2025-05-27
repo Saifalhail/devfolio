@@ -84,7 +84,7 @@ import {
 } from '../../styles/GlobalTheme';
 
 const ProjectsPanel = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
@@ -259,8 +259,11 @@ const ProjectsPanel = () => {
     }
   };
 
+  // Detect RTL direction
+  const isRTL = i18n.language === 'ar';
+  
   return (
-    <PanelContainer>
+    <PanelContainer dir={isRTL ? 'rtl' : 'ltr'}>
       <DashboardHeader>
         <HeaderContent>
           <TitleSection>
@@ -268,24 +271,38 @@ const ProjectsPanel = () => {
               {t('projects.title', 'Projects')}
             </PanelTitle>
             <Subtitle>
-              {filteredProjects.length} {filteredProjects.length === 1 
-                ? t('projects.project', 'Project') 
-                : t('projects.projects', 'Projects')}
+              {isRTL ? 
+                `${t('projects.projects', '\u0627\u0644\u0645\u0634\u0627\u0631\u064a\u0639')} ${filteredProjects.length}` : 
+                `${filteredProjects.length} ${filteredProjects.length === 1 
+                  ? t('projects.project', 'Project') 
+                  : t('projects.projects', 'Projects')}`
+              }
             </Subtitle>
           </TitleSection>
           
-          <SearchContainer>
-            <SearchInputWrapper>
-              <SearchIcon><FaSearch /></SearchIcon>
-              <StyledSearchInput 
-                type="text" 
-                placeholder={t('projects.searchPlaceholder', 'Search projects...')} 
-                value={searchTerm}
-                onChange={handleSearchChange}
-                aria-label={t('projects.searchAriaLabel', 'Search projects')}
-              />
-            </SearchInputWrapper>
-          </SearchContainer>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <SearchContainer>
+              <SearchInputWrapper>
+                <SearchIcon><FaSearch /></SearchIcon>
+                <StyledSearchInput 
+                  type="text" 
+                  placeholder={t('projects.searchPlaceholder', 'Search projects...')} 
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  aria-label={t('projects.searchAriaLabel', 'Search projects')}
+                />
+              </SearchInputWrapper>
+            </SearchContainer>
+            
+            <GradientButton 
+              onClick={openAddProjectModal}
+              style={{ marginLeft: spacing.md }}
+              aria-label={t('projects.addProject', 'Add New Project')}
+            >
+              <FaPlus />
+              {t('projects.addProject', 'Add New Project')}
+            </GradientButton>
+          </div>
         </HeaderContent>
         
         <ActionsRow>
@@ -367,11 +384,6 @@ const ProjectsPanel = () => {
               </Select>
             </SortContainer>
           </FilterGroup>
-          
-          <GradientButton onClick={openAddProjectModal}>
-            <FaPlus />
-            <span>{t('projects.createNew', 'Create New Project')}</span>
-          </GradientButton>
         </ActionsRow>
       </DashboardHeader>
       
@@ -411,10 +423,7 @@ const ProjectsPanel = () => {
               <EmptyStateIcon><FaPlus /></EmptyStateIcon>
               <h3>{t('projects.noProjects', 'No projects yet')}</h3>
               <p>{t('projects.emptyStateMessage', 'Create your first project to get started')}</p>
-              <GradientButton onClick={openAddProjectModal}>
-                <FaPlus />
-                {t('projects.createNew', 'Create New Project')}
-              </GradientButton>
+              <p>{t('projects.useButtonAbove', 'Use the + button above to create a new project')}</p>
             </>
           )}
         </ProjectEmptyState>
@@ -589,10 +598,11 @@ const ControlsGroup = styled.div`
 
 const ViewToggle = styled.div`
   display: flex;
-  border-radius: ${borderRadius.md};
-  overflow: hidden;
-  background: ${colors.background.secondary};
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  gap: ${spacing.sm};
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
   
   /* RTL Support */
   [dir="rtl"] & {
@@ -601,22 +611,62 @@ const ViewToggle = styled.div`
 `;
 
 const ToggleButton = styled.button`
-  ${mixins.flexCenter}
-  background: ${props => props.active ? colors.accent.secondary : 'transparent'};
-  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
-  border: none;
-  padding: ${spacing.sm} ${spacing.md};
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  position: relative;
   transition: ${transitions.medium};
-  font-size: ${typography.fontSizes.sm};
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  color: ${props => props.active ? colors.accent.primary : colors.text.secondary};
+  
+  /* Remove any potential background or decoration */
+  &::before, &::after {
+    display: none;
+  }
   
   svg {
-    font-size: ${typography.fontSizes.sm};
+    font-size: 1.25rem;
   }
   
   &:hover {
-    background: ${colors.background.hover};
-    color: ${props => props.active ? colors.accent.primary : colors.text.secondary};
+    transform: scale(1.15);
+    background: transparent;
+    color: ${colors.accent.primary};
+  }
+  
+  /* Add tooltip */
+  &:after {
+    content: '${props => props.tooltip || (props.active ? "Active" : "")}'; 
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: ${colors.background.dark};
+    color: ${colors.text.primary};
+    padding: ${spacing.xs} ${spacing.sm};
+    border-radius: ${borderRadius.sm};
+    font-size: ${typography.fontSizes.xs};
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    box-shadow: ${shadows.md};
+    z-index: 10;
+    pointer-events: none;
+    display: block;
+  }
+  
+  &:hover:after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
   }
 `;
 
@@ -624,10 +674,9 @@ const FilterContainer = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-  background: ${colors.background.secondary};
-  border-radius: ${borderRadius.md};
-  padding: 0 ${spacing.sm};
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: transparent;
+  padding: 0;
+  border: none;
   
   /* RTL Support */
   [dir="rtl"] & {
@@ -640,21 +689,21 @@ const SortContainer = styled(FilterContainer)`
 `;
 
 const FilterIcon = styled.div`
-  ${mixins.flexCenter}
-  position: absolute;
-  ${props => props.isRTL ? css`right: ${spacing.sm};` : css`left: ${spacing.sm};`}
-  top: 50%;
-  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: ${colors.accent.primary};
-  background-color: rgba(123, 44, 191, 0.1);
-  border-radius: ${borderRadius.round};
-  width: 24px;
-  height: 24px;
-  z-index: 1;
-  pointer-events: none;
+  background: transparent;
+  width: 32px;
+  height: 32px;
+  transition: ${transitions.medium};
   
   svg {
-    font-size: ${typography.fontSizes.xs};
+    font-size: 1.25rem;
+  }
+  
+  &:hover {
+    transform: scale(1.15);
   }
 `;
 
@@ -663,31 +712,30 @@ const SortIcon = styled(FilterIcon)`
 `;
 
 const Select = styled.select`
-  background: ${colors.background.secondary};
-  color: ${colors.text.primary}; /* Brighter text for better contrast */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: ${borderRadius.md};
-  padding: ${spacing.sm} ${spacing.md} ${spacing.sm} ${spacing.xl};
+  background: transparent;
+  color: ${colors.text.primary};
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: ${spacing.xs} ${spacing.sm};
   appearance: none;
   cursor: pointer;
   transition: ${transitions.medium};
   font-size: ${typography.fontSizes.sm};
-  min-width: 150px;
+  min-width: 120px;
   font-weight: ${typography.fontWeights.medium};
   
   &:focus {
     outline: none;
-    border-color: rgba(205, 62, 253, 0.5);
-    box-shadow: ${shadows.sm};
+    border-bottom-color: ${colors.accent.primary};
   }
   
   &:hover {
-    border-color: rgba(205, 62, 253, 0.3);
+    border-bottom-color: ${colors.accent.primary};
   }
   
   /* RTL Support */
   [dir="rtl"] & {
-    padding: ${spacing.sm} ${spacing.xl} ${spacing.sm} ${spacing.md};
+    padding: ${spacing.xs} ${spacing.sm};
   }
   
   @media (max-width: 768px) {
@@ -931,11 +979,16 @@ const ActionIcon = styled.button`
   }
 `;
 
-// Custom filter tabs container without background
+// Custom filter tabs container - completely clean implementation
 const CustomFilterTabs = styled.div`
   display: flex;
   align-items: center;
   gap: ${spacing.sm};
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  border: none;
+  box-shadow: none;
   
   /* RTL Support */
   [dir="rtl"] & {
@@ -943,7 +996,7 @@ const CustomFilterTabs = styled.div`
   }
 `;
 
-// Status filter tab with tooltip - no background styling
+// Status filter tab with tooltip - completely clean implementation
 const StatusFilterTab = styled.button`
   display: inline-flex;
   align-items: center;
@@ -954,9 +1007,16 @@ const StatusFilterTab = styled.button`
   transition: ${transitions.medium};
   border: none;
   cursor: pointer;
-  background: none !important; /* Force no background */
-  box-shadow: none !important; /* Force no shadow */
+  background: transparent;
   padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  
+  /* Remove any potential background or decoration */
+  &::before, &::after {
+    display: none;
+  }
+  
   color: ${props => {
     if (props.active) {
       switch(props.status) {
@@ -976,7 +1036,7 @@ const StatusFilterTab = styled.button`
   
   &:hover {
     transform: scale(1.15);
-    background: none !important; /* Force no background on hover */
+    background: transparent;
     color: ${props => {
       switch(props.status) {
         case 'inProgress': return '#4a6cf7';
@@ -985,14 +1045,9 @@ const StatusFilterTab = styled.button`
         default: return colors.accent.primary;
       }
     }};
-    
-    &:after {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
   }
   
+  /* Tooltip implementation */
   &:after {
     content: '${props => props.tooltip}';
     position: absolute;
@@ -1011,6 +1066,13 @@ const StatusFilterTab = styled.button`
     box-shadow: ${shadows.md};
     z-index: 10;
     pointer-events: none;
+    display: block;
+  }
+  
+  &:hover:after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
   }
 `;
 
@@ -1033,27 +1095,34 @@ const StatusIndicator = styled.div`
   height: 32px;
   position: relative;
   transition: ${transitions.medium};
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
   color: ${props => {
     switch(props.status) {
-      case 'inProgress': return '#4a6cf7'; 
-      case 'done': return '#27ae60'; 
-      case 'awaitingFeedback': return '#e74c3c'; 
-      default: return '#666'; 
+      case 'inProgress': return '#4a6cf7'; // blue for in-progress
+      case 'done': return '#27ae60'; // green for done
+      case 'awaitingFeedback': return '#e74c3c'; // red for feedback
+      case 'edit': return '#FFC107'; // yellow for edit
+      case 'delete': return '#e74c3c'; // red for delete
+      case 'view': return '#4a6cf7'; // blue for view
+      default: return '#666'; // gray for neutral
     }
   }};
-  
+
   svg {
     font-size: 1.25rem;
   }
-  
+
   &:hover {
     transform: scale(1.15);
-    
-    span {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
+  }
+
+  span {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
 `;
 

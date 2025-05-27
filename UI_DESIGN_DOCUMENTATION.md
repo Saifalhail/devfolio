@@ -30,6 +30,137 @@ This document outlines the UI design elements, animations, and interaction patte
 - **Small Text**: 0.85rem, 400 weight, `#888` color
 - **Badge Text**: 0.75rem, 500 weight, white color
 
+## Icons
+
+### Icon Implementation
+- **Clean Design**: All icons must be implemented without backgrounds or decorative elements
+- **Size Standard**: 32px × 32px for interactive icons, 24px × 24px for inline icons
+- **Color Coding**: Icons use semantic colors to indicate status and actions:
+  - In Progress: `#4a6cf7` (blue)
+  - Done: `#27ae60` (green)
+  - Awaiting Feedback: `#e74c3c` (red)
+  - Edit: `#FFC107` (yellow)
+  - Delete: `#e74c3c` (red)
+  - View: `#4a6cf7` (blue)
+  - Neutral/Default: `#666` (gray)
+
+### Icon Styling Guidelines
+- **Base Implementation**: Icons should be rendered directly without any container elements that might add unwanted styling
+- **CSS Requirements**:
+  ```css
+  /* Icon button styling */
+  const IconButton = styled.button`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+    width: 32px;
+    height: 32px;
+    
+    /* Explicitly remove any potential background or decoration */
+    &::before, &::after {
+      display: none;
+    }
+    
+    /* Icon sizing */
+    svg {
+      font-size: 1.25rem;
+    }
+    
+    /* Hover effect */
+    &:hover {
+      transform: scale(1.15);
+      background: transparent;
+    }
+  `;
+  ```
+
+### Layout and Filter Controls
+- **Clean Implementation**: Layout toggles, filter buttons, and sort controls must follow the same clean icon implementation
+- **Container Styling**:
+  ```css
+  /* Container for icon groups */
+  const ControlGroup = styled.div`
+    display: flex;
+    gap: ${spacing.sm};
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+  `;
+  ```
+
+- **Toggle Button Styling**:
+  ```css
+  /* Toggle button for layout switching */
+  const ToggleButton = styled.button`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    position: relative;
+    transition: ${transitions.medium};
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+    color: ${props => props.active ? colors.accent.primary : colors.text.secondary};
+    
+    /* Remove any potential background or decoration */
+    &::before, &::after {
+      display: none;
+    }
+    
+    svg {
+      font-size: 1.25rem;
+    }
+    
+    &:hover {
+      transform: scale(1.15);
+      background: transparent;
+    }
+  `;
+  ```
+
+- **Select Control Styling**:
+  ```css
+  /* Clean select dropdown */
+  const Select = styled.select`
+    background: transparent;
+    color: ${colors.text.primary};
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: ${spacing.xs} ${spacing.sm};
+    appearance: none;
+    cursor: pointer;
+    transition: ${transitions.medium};
+    font-size: ${typography.fontSizes.sm};
+    min-width: 120px;
+    
+    &:focus {
+      outline: none;
+      border-bottom-color: ${colors.accent.primary};
+    }
+    
+    &:hover {
+      border-bottom-color: ${colors.accent.primary};
+    }
+  `;
+  ```
+
+### Accessibility
+- All icons must include `title` and `aria-label` attributes
+- Interactive icons should have tooltips for better usability
+- Tooltip implementation should be consistent across the application
+
 ## Animations
 
 ### Keyframes

@@ -448,9 +448,19 @@ export const Subtitle = styled.span`
 // Search container
 export const SearchContainer = styled.div`
   width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: ${spacing.sm};
   
   @media (max-width: 768px) {
     width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
   }
 `;
 
@@ -458,6 +468,13 @@ export const SearchContainer = styled.div`
 export const SearchInputWrapper = styled.div`
   position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
 `;
 
 // Search icon
@@ -467,6 +484,9 @@ export const SearchIcon = styled.div`
   top: 50%;
   transform: translateY(-50%);
   color: ${colors.text.secondary};
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   [dir="rtl"] & {
     left: auto;
@@ -477,18 +497,18 @@ export const SearchIcon = styled.div`
 // Styled search input
 export const StyledSearchInput = styled.input`
   width: 100%;
-  background: ${colors.background.secondary};
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: ${borderRadius.md};
   padding: ${spacing.sm} ${spacing.sm} ${spacing.sm} ${spacing.xl};
+  border-radius: ${borderRadius.md};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${colors.background.secondary};
   color: ${colors.text.primary};
   font-size: ${typography.fontSizes.sm};
   transition: ${transitions.medium};
   
   &:focus {
     outline: none;
-    border-color: ${colors.accent.primary};
-    box-shadow: 0 0 0 2px rgba(205, 62, 253, 0.2);
+    border-color: rgba(205, 62, 253, 0.5);
+    box-shadow: ${shadows.sm};
   }
   
   &::placeholder {
@@ -497,6 +517,16 @@ export const StyledSearchInput = styled.input`
   
   [dir="rtl"] & {
     padding: ${spacing.sm} ${spacing.xl} ${spacing.sm} ${spacing.sm};
+    text-align: right;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: ${typography.fontSizes.xs};
+    padding: ${spacing.xs} ${spacing.xs} ${spacing.xs} ${spacing.lg};
+    
+    [dir="rtl"] & {
+      padding: ${spacing.xs} ${spacing.lg} ${spacing.xs} ${spacing.xs};
+    }
   }
 `;
 
