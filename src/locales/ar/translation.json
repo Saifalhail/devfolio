@@ -319,6 +319,29 @@
       "versions": "سجل الإصدارات"
     }
   },
+  "design": {
+    "uploadMockups": "رفع نماذج",
+    "uploadPrompt": "اسحب وأسقط النماذج أو انقر للتصفح",
+    "remove": "حذف"
+  },
+
+
+  "invoices": {
+    "title": "الفواتير",
+    "noInvoices": "لا توجد فواتير",
+    "fields": {
+      "id": "رقم الفاتورة",
+      "issueDate": "تاريخ الإصدار",
+      "dueDate": "تاريخ الاستحقاق",
+      "amount": "المبلغ",
+      "status": "الحالة"
+    },
+    "status": {
+      "paid": "مدفوعة",
+      "pending": "قيد الدفع",
+      "overdue": "متأخرة"
+    }
+  },
 
   "timeline": {
     "activityLog": "سجل النشاط",
@@ -469,7 +492,23 @@
       "exportDataDesc": "تصدير ردود النماذج إلى CSV أو PDF"
     }
   },
+  "invoices": {
+    "milestoneDelivery": {
+      "title": "تسليم المراحل",
+      "noMilestones": "لا توجد مراحل متاحة"
+    }
+  },
   
+  "designFeedback": {
+    "title": "ملاحظات التصميم",
+    "addComment": "إضافة تعليق",
+    "reply": "رد",
+    "commentPlaceholder": "اكتب ملاحظاتك...",
+    "resolve": "حل",
+    "reopen": "إعادة فتح",
+    "resolved": "تم الحل"
+  },
+
   "contact": {
     "title": "اتصل بنا",
     "subtitle": "تواصل معي الآن",
@@ -498,6 +537,22 @@
       "projectTypeError": "يرجى اختيار نوع المشروع",
       "errorMessage": "حدث خطأ أثناء إرسال النموذج. حاول مرة أخرى"
     }
+  },
+  "design": {
+    "styleGuide": "دليل الأنماط",
+    "colors": "الألوان",
+    "typography": "الخطوط",
+    "spacing": "التباعد",
+    "components": "المكوّنات"
+  },
+  "styleGuide": {
+    "sampleH1": "عنوان رئيسي",
+    "sampleH2": "عنوان ثانوي",
+    "sampleH3": "عنوان",
+    "sampleBody": "مثال على نص الفقرة بالحجم الافتراضي.",
+    "sampleSmall": "نص صغير",
+    "sampleButton": "زر رئيسي",
+    "sampleCard": "محتوى البطاقة هنا."
   },
   "techStack": {
     "title": "التقنيات المستخدمة",
@@ -538,6 +593,14 @@
       "crystalBall": "أيقونة كرة بلورية",
       "waving": "أيقونة يد تلوح"
     }
+  },
+  "designPhaseTracker": {
+    "title": "مراحل التصميم",
+    "discovery": "الاستكشاف",
+    "wireframes": "إطارات مبدئية",
+    "mockups": "نماذج مصورة",
+    "prototypes": "نماذج أولية",
+    "implementation": "التنفيذ"
   },
   "footer": {
     "description": "خدمات تطوير برمجيات احترافية للمواقع الإلكترونية وتطبيقات الجوال ورموز QR وجميع التطبيقات المتعلقة بالتكنولوجيا",
