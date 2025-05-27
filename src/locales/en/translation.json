@@ -530,6 +530,15 @@
     "iconAlt": "Client testimonial icon"
   },
   "postLaunch": {
+
+    "feedbackForm": {
+      "title": "Share Your Feedback",
+      "rating": "Rating",
+      "review": "Review",
+      "submit": "Submit Feedback",
+      "success": "Thank you for your feedback!",
+      "error": "There was an error submitting your feedback. Please try again."
+
     "maintenanceGuide": "Here's how to maintain your app",
     "downloadPDF": "Download PDF",
     "tips": {
@@ -538,6 +547,7 @@
       "backupData": "Backup your data regularly",
       "securityUpdates": "Apply security updates",
       "collectFeedback": "Collect user feedback"
+
     }
   },
   "seo": {
