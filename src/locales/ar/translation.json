@@ -319,6 +319,12 @@
       "versions": "سجل الإصدارات"
     }
   },
+  "design": {
+    "uploadMockups": "رفع نماذج",
+    "uploadPrompt": "اسحب وأسقط النماذج أو انقر للتصفح",
+    "remove": "حذف"
+  },
+
 
   "timeline": {
     "activityLog": "سجل النشاط",
