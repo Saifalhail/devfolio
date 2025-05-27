@@ -462,20 +462,17 @@
       "exportDataDesc": "تصدير ردود النماذج إلى CSV أو PDF"
     }
   },
-
-  "design": {
-    "mockupGallery": {
-      "title": "نماذج التصميم",
-      "filters": {
-        "all": "الكل",
-        "mobile": "جوال",
-        "desktop": "سطح المكتب",
-        "tablet": "جهاز لوحي"
-      }
-    }
-
-  },
   
+  "designFeedback": {
+    "title": "ملاحظات التصميم",
+    "addComment": "إضافة تعليق",
+    "reply": "رد",
+    "commentPlaceholder": "اكتب ملاحظاتك...",
+    "resolve": "حل",
+    "reopen": "إعادة فتح",
+    "resolved": "تم الحل"
+  },
+
   "contact": {
     "title": "اتصل بنا",
     "subtitle": "تواصل معي الآن",
