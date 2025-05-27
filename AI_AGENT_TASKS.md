@@ -3,7 +3,7 @@
 This document contains small, precise tasks for AI agents to complete. Each task is self-contained and focuses on bug fixes, small feature additions, testing, and code improvements. Each task includes references to relevant documentation files.
 
 > **NOTE FOR CODEX AGENTS**: This project is undergoing UI modernization to match the dark purple theme with gradient effects. All new components must use white text on dark backgrounds for better visibility and accessibility. Components should use gradient backgrounds, subtle animations, and consistent hover effects as detailed in the UI documentation. Refer to UI_DESIGN_DOCUMENTATION.md for the complete style guide and GlobalComponents.js/GlobalTheme.js for implementation examples.
-
+<!-- 
 1. **Implement Design Tab Core Structure**
    - File: Create `src/components/Dashboard/DesignSection/DesignTab.js`
    - Task: Create the main container component for the Design tab with proper layout and navigation
@@ -116,7 +116,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - File: Create `src/components/Dashboard/PostLaunch/FeedbackForm.js`
     - Task: Create a form for clients to provide feedback and reviews after project completion
     - Docs: See PROJECT_BUILDING_TASKS.md (Post-Launch Section)
-    - Priority: Medium
+    - Priority: Medium -->
 
 11. **Implement Social Share Feature**
     - File: Create `src/components/Dashboard/PostLaunch/SocialShare.js`
