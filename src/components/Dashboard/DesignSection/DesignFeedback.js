@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FaReply } from 'react-icons/fa';
 import { PanelContainer, PanelHeader, PanelTitle } from '../../../styles/GlobalComponents';
+import { colors, spacing, mixins } from '../../../styles/GlobalTheme';
 import Button from '../../Common/Button';
 import { FormTextarea } from '../../Common/FormComponents';
 
@@ -10,9 +11,34 @@ const DesignFeedback = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
+  const STORAGE_KEY = 'designFeedback';
   const [comments, setComments] = useState([]);
   const [text, setText] = useState('');
   const [replyTo, setReplyTo] = useState(null);
+
+  // Load saved comments on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setComments(parsed);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to parse stored feedback', err);
+    }
+  }, []);
+
+  // Persist comments when changed
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(comments));
+    } catch (err) {
+      console.error('Failed to store feedback', err);
+    }
+  }, [comments]);
 
   const addComment = (parentId = null) => {
     if (!text.trim()) return;
@@ -20,6 +46,7 @@ const DesignFeedback = () => {
       id: Date.now(),
       parentId,
       text,
+      createdAt: Date.now(),
       resolved: false,
     };
     setComments([...comments, newComment]);
@@ -41,6 +68,14 @@ const DesignFeedback = () => {
       .map((c) => (
         <Comment key={c.id} level={level} dir={isRTL ? 'rtl' : 'ltr'}>
           <CommentText resolved={c.resolved}>{c.text}</CommentText>
+          <CommentMeta>
+            <span>{new Date(c.createdAt).toLocaleString()}</span>
+            {c.resolved && (
+              <ResolvedTag dir={isRTL ? 'rtl' : 'ltr'}>
+                {t('designFeedback.resolved', 'Resolved')}
+              </ResolvedTag>
+            )}
+          </CommentMeta>
           <CommentActions>
             <ActionButton
               size="small"
@@ -118,28 +153,41 @@ const DesignFeedback = () => {
 };
 
 const CommentsList = styled.div`
-  margin-top: 1rem;
+  margin-top: ${spacing.md};
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: ${spacing.sm};
 `;
 
 const Comment = styled.div`
-  border-left: 3px solid #6e57e0;
-  padding-left: 1rem;
+  border-left: 3px solid ${colors.accent.primary};
+  padding-left: ${spacing.sm};
   margin-left: ${({ level }) => level * 1}rem;
 `;
 
 const CommentText = styled.p`
-  margin: 0 0 0.5rem 0;
-  color: ${({ resolved }) => (resolved ? '#999' : '#333')};
+  margin: 0 0 ${spacing.xs} 0;
+  color: ${({ resolved }) =>
+    resolved ? colors.text.muted : colors.text.primary};
   text-decoration: ${({ resolved }) => (resolved ? 'line-through' : 'none')};
+`;
+
+const CommentMeta = styled.div`
+  ${mixins.truncate};
+  font-size: 0.8rem;
+  color: ${colors.text.muted};
+  margin-bottom: ${spacing.xs};
+`;
+
+const ResolvedTag = styled.span`
+  ${mixins.statusBadge('success')};
+  margin-${({ dir }) => (dir === 'rtl' ? 'right' : 'left')}: ${spacing.xs};
 `;
 
 const CommentActions = styled.div`
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: ${spacing.xs};
+  margin-bottom: ${spacing.xs};
 `;
 
 const ActionButton = styled(Button)`
@@ -152,7 +200,7 @@ const ActionButton = styled(Button)`
 const CommentForm = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: ${spacing.xs};
 `;
 
 const ReplyForm = styled(CommentForm)`
