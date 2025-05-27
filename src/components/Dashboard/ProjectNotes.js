@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import SkeletonLoader from '../Common/SkeletonLoader';
 import { FaRegStickyNote, FaMicrophone, FaPaperPlane, FaStop, FaTrash } from 'react-icons/fa';
-import { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, query, where, orderBy, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import useFirebaseListener from '../../hooks/useFirebaseListener';
 
 const ProjectNotes = ({ projectId, projectName }) => {
   const { t } = useTranslation();
@@ -21,37 +22,37 @@ const ProjectNotes = ({ projectId, projectName }) => {
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
 
-  // Fetch notes from Firestore
-  useEffect(() => {
-    const fetchNotes = async () => {
-      setIsLoading(true);
-      try {
-        const notesRef = collection(db, 'projectNotes');
-        const q = query(
-          notesRef, 
-          where('projectId', '==', projectId),
-          orderBy('createdAt', 'desc')
-        );
-        
-        const querySnapshot = await getDocs(q);
-        const notesList = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data().createdAt?.toDate()
-        }));
-        
-        setNotes(notesList);
-      } catch (error) {
-        console.error('Error fetching notes:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+// Listen for notes in real-time
+useFirebaseListener(() => {
+  if (!projectId) return () => {};
 
-    if (projectId) {
-      fetchNotes();
+  setIsLoading(true);
+  const notesRef = collection(db, 'projectNotes');
+  const q = query(
+    notesRef,
+    where('projectId', '==', projectId),
+    orderBy('createdAt', 'desc')
+  );
+
+  const unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      const notesList = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate(),
+      }));
+      setNotes(notesList);
+      setIsLoading(false);
+    },
+    (error) => {
+      console.error('Error fetching notes:', error);
+      setIsLoading(false);
     }
-  }, [projectId]);
+  );
+
+  return unsubscribe;
+}, [projectId]);
 
   // Handle recording timer
   useEffect(() => {
@@ -134,22 +135,7 @@ const ProjectNotes = ({ projectId, projectName }) => {
         createdAt: serverTimestamp()
       });
       
-      // Refresh notes
-      const notesRef = collection(db, 'projectNotes');
-      const q = query(
-        notesRef, 
-        where('projectId', '==', projectId),
-        orderBy('createdAt', 'desc')
-      );
-      
-      const querySnapshot = await getDocs(q);
-      const notesList = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate()
-      }));
-      
-      setNotes(notesList);
+      // Listener will update notes state
     } catch (error) {
       console.error('Error saving audio note:', error);
     } finally {
@@ -176,23 +162,7 @@ const ProjectNotes = ({ projectId, projectName }) => {
       });
       
       setNewNote('');
-      
-      // Refresh notes
-      const notesRef = collection(db, 'projectNotes');
-      const q = query(
-        notesRef, 
-        where('projectId', '==', projectId),
-        orderBy('createdAt', 'desc')
-      );
-      
-      const querySnapshot = await getDocs(q);
-      const notesList = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate()
-      }));
-      
-      setNotes(notesList);
+      // Listener will update notes state
     } catch (error) {
       console.error('Error adding text note:', error);
     } finally {
