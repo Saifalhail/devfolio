@@ -554,7 +554,9 @@ const ProjectsPanel = () => {
         centered={true}
         closeOnClickOutside={true}
       >
-        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {error && (
+          <ErrorMessage role="alert" aria-live="assertive">{error}</ErrorMessage>
+        )}
         
         <ProjectForm
           onSubmit={handleAddProject}

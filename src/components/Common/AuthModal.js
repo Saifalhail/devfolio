@@ -287,7 +287,11 @@ const AuthModal = ({ isOpen, onClose }) => {
         </ModalHeader>
         
         <ModalContent>
-          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {error && (
+            <ErrorMessage role="alert" aria-live="assertive">
+              {error}
+            </ErrorMessage>
+          )}
           
           {!isSignUp ? (
             // SIGN IN VIEW

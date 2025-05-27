@@ -160,7 +160,7 @@ const AddTaskModal = ({ isOpen, onClose, task = null, projectId = null, initialS
         <ModalBody>
           <Form onSubmit={handleSubmit}>
             {error && (
-              <ErrorMessage>
+              <ErrorMessage role="alert" aria-live="assertive">
                 <FaExclamationTriangle />
                 <span>{error}</span>
               </ErrorMessage>
