@@ -397,30 +397,7 @@ const FigmaLinkButton = styled.a`
     width: 100%;
     margin-bottom: 0.5rem;
   }
-`;
-
-const ToolbarContainer = styled.div`
-  display: flex;
-  gap: ${spacing.sm};
-  align-items: center;
-`;
-
-const FigmaLinkButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: ${spacing.xs};
-  padding: ${spacing.xs} ${spacing.sm};
-  border-radius: ${borderRadius.md};
-  background: ${colors.gradients.button};
-  color: ${colors.text.primary};
-  text-decoration: none;
-  font-weight: 500;
-  transition: ${transitions.fast};
-
-  &:hover {
-    background: ${colors.gradients.hover};
-  }
-`;
+`;  
 
 const Content = styled.div`
   flex: 1;
