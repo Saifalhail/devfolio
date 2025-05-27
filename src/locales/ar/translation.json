@@ -456,6 +456,11 @@
       "exportDataDesc": "تصدير ردود النماذج إلى CSV أو PDF"
     }
   },
+  "design": {
+    "currentDesign": "التصميم الحالي",
+    "styleGuide": "دليل الأنماط",
+    "revisions": "التعديلات"
+  },
   
   "contact": {
     "title": "اتصل بنا",

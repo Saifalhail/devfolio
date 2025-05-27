@@ -399,6 +399,12 @@
       "exportDataDesc": "Export form responses to CSV or PDF"
     }
   },
+
+  "design": {
+    "currentDesign": "Current Design",
+    "styleGuide": "Style Guide",
+    "revisions": "Revisions"
+  },
   
   "contact": {
     "title": "Contact",
