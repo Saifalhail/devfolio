@@ -19,8 +19,8 @@ const theme = {
     cardBg: 'rgba(35, 38, 85, 0.6)', // Semi-transparent card background
     cardGradient: 'linear-gradient(to bottom, rgba(55, 42, 99, 0.7) 0%, rgba(37, 38, 89, 0.8) 100%)',
     overlay: 'rgba(18, 20, 44, 0.8)', // Overlay for modals
-    textPrimary: '#666',
-    textSecondary: '#888',
+    textPrimary: '#513a52',
+    textSecondary: '#666',
   },
   fonts: {
     main: "'Inter', 'Roboto', sans-serif",
