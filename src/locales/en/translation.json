@@ -529,6 +529,17 @@
     "subtitle": "What my clients say about my work",
     "iconAlt": "Client testimonial icon"
   },
+  "postLaunch": {
+    "maintenanceGuide": "Here's how to maintain your app",
+    "downloadPDF": "Download PDF",
+    "tips": {
+      "updateDependencies": "Keep dependencies updated",
+      "monitorErrors": "Monitor and fix errors promptly",
+      "backupData": "Backup your data regularly",
+      "securityUpdates": "Apply security updates",
+      "collectFeedback": "Collect user feedback"
+    }
+  },
   "seo": {
     "alt": {
       "computer": "Computer icon",
