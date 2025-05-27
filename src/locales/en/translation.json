@@ -471,6 +471,14 @@
       "waving": "Waving hand icon"
     }
   },
+  "designPhaseTracker": {
+    "title": "Design Phases",
+    "discovery": "Discovery",
+    "wireframes": "Wireframes",
+    "mockups": "Mockups",
+    "prototypes": "Prototypes",
+    "implementation": "Implementation"
+  },
   "footer": {
     "description": "Professional software development services for websites, mobile apps, QR codes and all tech-related applications.",
     "slogan": "Smart Native Programming. Built by One, Delivered to Many.",
