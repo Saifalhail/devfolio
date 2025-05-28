@@ -80,6 +80,95 @@ This document outlines the UI design elements, animations, and interaction patte
   `;
   ```
 
+### Tab Design Implementation
+- **Minimalist Approach**: Tabs use a clean, icon-only design with minimal visual elements
+- **Selection Indicators**: Active tabs are indicated by a colored border and icon color change only
+- **No Background Effects**: Tabs have transparent backgrounds with no gradients or highlights
+
+#### Tab Container Implementation
+```jsx
+const TabsList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(${props => props.itemCount}, 1fr);
+  width: 100%;
+  margin-bottom: ${spacing.md};
+  background: transparent;
+  gap: ${spacing.xs};
+`;
+```
+
+#### Tab Button Implementation
+```jsx
+const TabButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: ${props => props.active ? `2px solid ${colors.accent.primary}` : '2px solid transparent'};
+  padding: ${spacing.sm};
+  box-shadow: none;
+  border-radius: ${borderRadius.md};
+  width: 100%;
+  height: 70px;
+  cursor: pointer;
+  transition: all ${transitions.fast};
+  position: relative;
+  
+  /* No pseudo-elements for clean design */
+  &:before, &:after {
+    display: none;
+  }
+  
+  &:hover {
+    border: 2px solid ${props => props.active ? colors.accent.primary : 'rgba(255, 255, 255, 0.2)'};
+    background: transparent;
+  }
+`;
+```
+
+#### Tab Icon Implementation
+```jsx
+const TabIconWrapper = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: ${props => props.active ? colors.accent.primary : 'rgba(255, 255, 255, 0.7)'};
+  transition: all ${transitions.fast};
+  
+  /* Icon sizing */
+  svg {
+    font-size: 1.8rem;
+  }
+  
+  ${TabButton}:hover & {
+    color: ${props => props.active ? colors.accent.primary : 'white'};
+  }
+`;
+```
+
+#### Tab Usage Example
+```jsx
+<TabsList itemCount={tabItems.length}>
+  {tabItems.map(tab => (
+    <TabButton
+      key={tab.id}
+      active={activeTab === tab.id}
+      onClick={() => setActiveTab(tab.id)}
+      aria-selected={activeTab === tab.id}
+      role="tab"
+      id={`${tab.id}-tab`}
+      aria-controls={`${tab.id}-panel`}
+    >
+      <TabIconWrapper active={activeTab === tab.id}>
+        {tab.icon}
+      </TabIconWrapper>
+    </TabButton>
+  ))}
+</TabsList>
+```
+
 ### Layout and Filter Controls
 - **Clean Implementation**: Layout toggles, filter buttons, and sort controls must follow the same clean icon implementation
 - **Container Styling**:

@@ -182,36 +182,10 @@ const DesignPanel = () => {
             </CompactTimelineItem>
           </CompactTimeline>
         </CompactTimelineSection>
-
-        {/* Use the DesignNavigation component for navigation */}
-        <DesignNavigation
-          activeSection={activeSection}
-          onSectionChange={setActiveSection}
-        />
         
-        {/* Render different sections based on activeSection */}
+        {/* Use the enhanced DesignTab component with integrated tabs */}
         <Suspense fallback={<LoadingIndicator />}>
-          {activeSection === 'mockups' && (
-            <>
-              <MockupGallery showcaseExamples={showcaseExamples} />
-              <MockupUpload />
-            </>
-          )}
-          
-          {activeSection === 'figma' && (
-            <FigmaEmbed 
-              figmaUrl={mockDesignData.figmaUrl} 
-              lastUpdated={mockDesignData.lastUpdated} 
-            />
-          )}
-          
-          {activeSection === 'styleGuide' && (
-            <StyleGuide />
-          )}
-          
-          {activeSection === 'assets' && (
-            <AssetsLibrary />
-          )}
+          <DesignTab />
         </Suspense>
       </Content>
       
