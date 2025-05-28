@@ -1,10 +1,10 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import styled from 'styled-components';
+import { ActionButton } from '../../styles/GlobalComponents';
 import { useTranslation } from 'react-i18next';
 import { 
-  FaFigma, 
-  FaDownload, 
-  FaPalette, 
+  FaFigma,
+  FaPalette,
   FaLayerGroup, 
   FaCode, 
   FaHistory,
@@ -26,8 +26,9 @@ import MockupGallery from './DesignSection/MockupGallery';
 import MockupUpload from './DesignSection/MockupUpload';
 import StyleGuide from './DesignSection/StyleGuide';
 import AssetsLibrary from './DesignSection/AssetsLibrary';
-import PhaseTracker from './DesignSection/PhaseTracker';
 import DesignFeedback from './DesignSection/DesignFeedback';
+import DesignKit from './DesignSection/DesignKit';
+
 
 const DesignPanel = () => {
   const { t, i18n } = useTranslation();
@@ -91,10 +92,6 @@ const DesignPanel = () => {
       .catch(error => console.error('Error fetching design kit info:', error));
   }, []);
   
-  const handleDownloadDesignKit = () => {
-    // In a real implementation, this would trigger a download
-    alert('Downloading Design Kit...');
-  };
   
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -137,10 +134,7 @@ const DesignPanel = () => {
             <FaFigma />
             {t('design.openInFigma', 'Open in Figma')}
           </FigmaLinkButton>
-          <FigmaLinkButton href="#" onClick={handleDownloadDesignKit}>
-            <FaDownload />
-            {t('design.downloadKit', 'Download Design Kit')}
-          </FigmaLinkButton>
+          <DesignKit />
         </ToolbarContainer>
       </Header>
       
@@ -149,7 +143,7 @@ const DesignPanel = () => {
         <CompactTimelineSection>
           <TimelineTitle>
             <GlowingIcon><FaRocket /></GlowingIcon>
-            {t('design.designPhases', 'Design Phases')}
+            {t('designPhaseTracker.title', 'Design Phases')}
           </TimelineTitle>
           <CompactTimeline>
             <CompactTimelineItem completed={true}>
@@ -188,11 +182,11 @@ const DesignPanel = () => {
             </CompactTimelineItem>
           </CompactTimeline>
         </CompactTimelineSection>
-        
+
         {/* Use the DesignNavigation component for navigation */}
-        <DesignNavigation 
-          activeSection={activeSection} 
-          onSectionChange={setActiveSection} 
+        <DesignNavigation
+          activeSection={activeSection}
+          onSectionChange={setActiveSection}
         />
         
         {/* Render different sections based on activeSection */}
@@ -222,24 +216,16 @@ const DesignPanel = () => {
       </Content>
       
       {/* Design Feedback System */}
-      <DesignFeedback />
+      <FeedbackWrapper>
+        <DesignFeedback />
+      </FeedbackWrapper>
     </Container>
   );
 };
 
 // Styled Components
-const BackgroundContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  overflow: hidden;
-  opacity: 1;
-  pointer-events: none;
-`;
 
+// Main container styling
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -396,9 +382,64 @@ const FigmaLinkButton = styled.a`
     width: 100%;
     margin-bottom: 0.5rem;
   }
+`;  
+
+const Content = styled.div`
+  flex: 1;
+  padding: 1.75rem;
+  overflow-y: auto;
+  background: rgba(18, 20, 44, 0.2);
+  backdrop-filter: blur(5px);
+  position: relative;
+  z-index: 2;
+  
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #faaa93, #ff5b92);
+    border-radius: 4px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1.25rem 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 0.75rem;
+  }
 `;
 
-const ActionButton = styled.button`
+const FigmaEmbedContainer = styled.div`
+  flex: 1;
+  padding: 1rem;
+  overflow: hidden;
+  position: relative;
+  background: #f9f9f9;
+`;
+
+// Background container for the starry effect
+const BackgroundContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 1;
+  pointer-events: none;
+`;
+
+
+
+
+
+
+
+
+
+
+
+// Custom action button styling
+const CustomActionButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -464,28 +505,7 @@ const ActionButton = styled.button`
   }
 `;
 
-const Content = styled.div`
-  flex: 1;
-  padding: 1.75rem;
-  overflow-y: auto;
-  background: rgba(18, 20, 44, 0.2);
-  backdrop-filter: blur(5px);
-  position: relative;
-  z-index: 2;
-  
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #faaa93, #ff5b92);
-    border-radius: 4px;
-  }
-  
-  @media (max-width: 768px) {
-    padding: 1.25rem 1rem;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 1rem 0.75rem;
-  }
-`;
+
 
 const FigmaEmbedFrame = styled.iframe`
   width: 100%;
@@ -515,7 +535,7 @@ const SectionContainer = styled.div`
 
 // New compact timeline components
 const CompactTimelineSection = styled.div`
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.25rem;
   background: rgba(35, 38, 85, 0.4);
   border-radius: 8px;
   margin-bottom: 1.5rem;
@@ -526,7 +546,7 @@ const CompactTimelineSection = styled.div`
   z-index: 3;
   
   @media (max-width: 768px) {
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
   }
 `;
 
@@ -535,7 +555,8 @@ const CompactTimeline = styled.div`
   align-items: center;
   justify-content: space-between;
   position: relative;
-  margin-top: 0.25rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
   
   &:before {
     content: '';
@@ -543,10 +564,11 @@ const CompactTimeline = styled.div`
     top: 50%;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 3px;
     background: linear-gradient(to right, #faaa93, #ff5b92, #a78bfa);
     transform: translateY(-50%);
     z-index: 1;
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
   }
   
   @media (max-width: 768px) {
@@ -582,41 +604,73 @@ const CompactTimelineItem = styled.div`
 `;
 
 const CompactTimelinePoint = styled.div`
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   background: ${props => props.active ? 'linear-gradient(45deg, #ff5b92, #a78bfa)' : 
-    props.completed ? 'linear-gradient(45deg, #4CAF50, #8BC34A)' : 'rgba(35, 38, 85, 0.6)'};
+    props.completed ? 'linear-gradient(45deg, #4CAF50, #8BC34A)' : 'linear-gradient(45deg, #3a1e65, #6031a8)'};
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 0.8rem;
+  font-size: 1rem;
   box-shadow: ${props => props.active ? '0 0 15px rgba(255, 91, 146, 0.7)' : 
-    props.completed ? '0 0 10px rgba(76, 175, 80, 0.5)' : 'none'};
-  margin-bottom: 0.5rem;
+    props.completed ? '0 0 10px rgba(76, 175, 80, 0.5)' : '0 0 10px rgba(58, 30, 101, 0.5)'};
+  margin-bottom: 0.75rem;
   transition: all 0.3s ease;
   z-index: 2;
   position: relative;
-  top: -2px;
+  top: -8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   
   &:hover {
     transform: scale(1.1);
+    box-shadow: 0 0 18px rgba(167, 139, 250, 0.7);
   }
 `;
 
 const CompactTimelineLabel = styled.div`
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: white;
   text-align: center;
-  max-width: 70px;
+  max-width: 90px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
+const TrackerWrapper = styled.div`
+  padding: 1rem;
+`;
+
+const FeedbackWrapper = styled.div`
+  padding: 1rem;
+`;
+
 const TimelineTitle = styled.h3`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem 0;
+  padding-top: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(45deg, #faaa93, #ff5b92);
+    border-radius: 50%;
+    font-size: 0.75rem;
+  }
+`;
+
+const ShowcaseMetaItem = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -741,6 +795,10 @@ const TimelineItemDescription = styled.p`
 
 const ShowcaseContent = styled.div`
   padding: 1rem;
+`;
+
+const PhaseTrackerWrapper = styled.div`
+  margin: 2rem 1rem;
 `;
 
 const LoadingIndicator = styled.div`

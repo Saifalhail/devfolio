@@ -135,7 +135,7 @@ const Header = styled.div`
 const CloseButton = styled.button`
   background: none;
   border: none;
-  color: #513a52;
+  color: white;
   font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.2s ease;

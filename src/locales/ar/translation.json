@@ -315,30 +315,7 @@
       "versions": "سجل الإصدارات"
     }
   },
-  "design": {
-    "designAndPrototype": "التصميم والنموذج الأولي",
-    "openInFigma": "فتح في فيجما",
-    "mockups": "نماذج تصميم",
-    "figma": "فيجما",
-    "styleGuide": "دليل الأسلوب",
-    "assets": "الأصول",
-    "phases": "المراحل",
-    "feedback": "التعليقات",
-    "downloadDesignKit": "تحميل حزمة التصميم",
-    "stylePreferences": "تفضيلات الأسلوب",
-    "styleCategories": "فئات الأسلوب",
-    "modern": "عصري",
-    "corporate": "مؤسسي",
-    "playful": "مرح",
-    "minimal": "بسيط",
-    "colorScheme": "نظام الألوان",
-    "additionalNotes": "ملاحظات إضافية",
-    "submit": "إرسال",
-    "cancel": "إلغاء",
-    "uploadMockup": "رفع نموذج",
-    "currentDesign": "التصميم الحالي",
-    "revisions": "المراجعات"
-  },
+
   "invoices": {
     "title": "الفواتير",
     "noInvoices": "لا توجد فواتير",
@@ -356,6 +333,7 @@
       "pending": "قيد الدفع",
       "overdue": "متأخرة"
     },
+
     "paymentHistory": "سجل المدفوعات",
     "date": "التاريخ",
     "description": "الوصف",
@@ -366,6 +344,7 @@
     "milestoneDelivery": {
       "title": "تسليم المعالم",
       "noMilestones": "لا توجد معالم"
+
     }
   },
   "timeline": {
@@ -510,6 +489,45 @@
     "reopen": "إعادة فتح",
     "resolved": "تم الحل"
   },
+  "postLaunch": {
+    "hireAgain": {
+      "title": "توظيفي مرة أخرى",
+      "description": "هل لديك مشروع آخر؟ يسعدني العمل معك من جديد.",
+      "button": "توظيفي مجدداً"
+    },
+    "designPhaseTracker": {
+      "title": "مراحل التصميم",
+      "discovery": "الاستكشاف",
+      "wireframes": "إطارات مبدئية",
+      "mockups": "نماذج مصورة",
+      "prototypes": "نماذج أولية",
+      "implementation": "التنفيذ"
+    },
+    "footer": {
+      "description": "خدمات تطوير برمجيات احترافية للمواقع الإلكترونية وتطبيقات الجوال ورموز QR وجميع التطبيقات المتعلقة بالتكنولوجيا",
+      "slogan": "برمجة ذكية. من فرد، للجميع.",
+      "links": {
+        "title": "روابط سريعة"
+      },
+      "services": {
+        "title": "الخدمات",
+        "webDev": "تطوير الويب",
+        "mobileApps": "تطبيقات الجوال",
+        "qrCodes": "رموز QR",
+        "uiUxDesign": "تصميم واجهة المستخدم",
+        "customSolutions": "حلول مخصصة"
+      },
+      "contact": {
+        "title": "اتصل بنا"
+      },
+      "social": {
+        "linkedin": "تواصل على لينكد إن",
+        "github": "عرض مشاريع جيتهاب"
+      },
+      "copyright": "جميع الحقوق محفوظة"
+    },
+    "resolved": "تم الحل"
+  },
   "contact": {
     "title": "اتصل بنا",
     "subtitle": "تواصل معي الآن",
@@ -597,42 +615,3 @@
       "waving": "أيقونة يد تلوح"
     }
   },
-  "postLaunch": {
-    "hireAgain": {
-      "title": "توظيفي مرة أخرى",
-      "description": "هل لديك مشروع آخر؟ يسعدني العمل معك من جديد.",
-      "button": "توظيفي مجدداً"
-    },
-    "designPhaseTracker": {
-      "title": "مراحل التصميم",
-      "discovery": "الاستكشاف",
-      "wireframes": "إطارات مبدئية",
-      "mockups": "نماذج مصورة",
-      "prototypes": "نماذج أولية",
-      "implementation": "التنفيذ"
-    },
-    "footer": {
-      "description": "خدمات تطوير برمجيات احترافية للمواقع الإلكترونية وتطبيقات الجوال ورموز QR وجميع التطبيقات المتعلقة بالتكنولوجيا",
-      "slogan": "برمجة ذكية. من فرد، للجميع.",
-      "links": {
-        "title": "روابط سريعة"
-      },
-      "services": {
-        "title": "الخدمات",
-        "webDev": "تطوير الويب",
-        "mobileApps": "تطبيقات الجوال",
-        "qrCodes": "رموز QR",
-        "uiUxDesign": "تصميم واجهة المستخدم",
-        "customSolutions": "حلول مخصصة"
-      },
-      "contact": {
-        "title": "اتصل بنا"
-      },
-      "social": {
-        "linkedin": "تواصل على لينكد إن",
-        "github": "عرض مشاريع جيتهاب"
-      },
-      "copyright": "جميع الحقوق محفوظة"
-    }
-  }
-}

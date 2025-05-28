@@ -408,15 +408,18 @@
       "issueDate": "Issued",
       "dueDate": "Due",
       "amount": "Amount",
+
       "status": "Status",
       "project": "Project",
       "client": "Client"
+
     },
     "status": {
       "paid": "Paid",
       "pending": "Pending",
       "overdue": "Overdue"
     },
+
     "paymentHistory": "Payment History",
     "date": "Date",
     "description": "Description",
@@ -424,9 +427,12 @@
     "projectSummaryTitle": "Your Software Project Summary",
     "downloadSummary": "Download PDF",
     "noSummary": "No summary available.",
+
     "milestoneDelivery": {
       "title": "Milestone Delivery",
-      "noMilestones": "No milestones available"
+      "noMilestones": "No milestones available",
+      "locked": "Unlocks after payment",
+      "files": "Files"
     }
   },
   "designFeedback": {
