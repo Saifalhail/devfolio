@@ -516,6 +516,15 @@
       "title": "Hire me again",
       "description": "Have another project? I'd love to work together again!",
       "button": "Hire me again"
+    },
+    "maintenanceGuide": "Here's how to maintain your app",
+    "downloadPDF": "Download PDF",
+    "tips": {
+      "updateDependencies": "Keep dependencies updated",
+      "monitorErrors": "Monitor and fix errors promptly",
+      "backupData": "Backup your data regularly",
+      "securityUpdates": "Apply security updates",
+      "collectFeedback": "Collect user feedback"
     }
   },
   "designPhaseTracker": {
