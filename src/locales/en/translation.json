@@ -403,7 +403,9 @@
   "invoices": {
     "milestoneDelivery": {
       "title": "Milestone Delivery",
-      "noMilestones": "No milestones available"
+      "noMilestones": "No milestones available",
+      "locked": "Unlocks after payment",
+      "files": "Files"
     }
   },
   "designFeedback": {
