@@ -516,6 +516,13 @@
       "title": "Hire me again",
       "description": "Have another project? I'd love to work together again!",
       "button": "Hire me again"
+    },
+    "feedbackForm": {
+      "rating": "Rating",
+      "review": "Review",
+      "submit": "Submit Feedback",
+      "success": "Thank you for your feedback!",
+      "error": "Failed to submit feedback. Please try again."
     }
   },
   "designPhaseTracker": {

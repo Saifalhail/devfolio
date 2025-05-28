@@ -565,11 +565,18 @@
       "waving": "أيقونة يد تلوح"
     }
   },
-  "postLaunch": {
+"postLaunch": {
     "hireAgain": {
       "title": "توظيفي مرة أخرى",
       "description": "هل لديك مشروع آخر؟ يسعدني العمل معك من جديد.",
       "button": "توظيفي مجدداً"
+    },
+    "feedbackForm": {
+      "rating": "التقييم",
+      "review": "مراجعة",
+      "submit": "إرسال التقييم",
+      "success": "شكراً لملاحظاتك!",
+      "error": "حدث خطأ أثناء إرسال التقييم. حاول مرة أخرى."
     },
     "designPhaseTracker": {
       "title": "مراحل التصميم",
@@ -691,11 +698,18 @@
     "waving": "أيقونة يد تلوح"
   }
 },
-"postLaunch": {
-  "hireAgain": {
-    "title": "توظيفي مرة أخرى",
-    "description": "هل لديك مشروع آخر؟ يسعدني العمل معك من جديد.",
-    "button": "توظيفي مجدداً"
+  "postLaunch": {
+    "hireAgain": {
+      "title": "توظيفي مرة أخرى",
+      "description": "هل لديك مشروع آخر؟ يسعدني العمل معك من جديد.",
+      "button": "توظيفي مجدداً"
+  },
+  "feedbackForm": {
+    "rating": "التقييم",
+    "review": "مراجعة",
+    "submit": "إرسال التقييم",
+    "success": "شكراً لملاحظاتك!",
+    "error": "حدث خطأ أثناء إرسال التقييم. حاول مرة أخرى."
   },
   "designPhaseTracker": {
     "title": "مراحل التصميم",
