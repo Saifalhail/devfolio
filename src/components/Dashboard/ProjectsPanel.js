@@ -548,8 +548,9 @@ const ProjectsPanel = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         title={t('projects.addProject', 'Add New Project')}
+        icon={<FaPlus />}
         size="lg"
-        theme="dark"
+        theme="todo"
         animation="zoom"
         centered={true}
         closeOnClickOutside={true}

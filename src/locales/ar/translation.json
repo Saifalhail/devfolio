@@ -110,6 +110,8 @@
     "updating": "جاري التحديث...",
     "save": "حفظ",
     "delete": "حذف",
+    "submit": "إرسال",
+    "confirm": "تأكيد",
     "close": "إغلاق"
   },
   "validation": {
@@ -336,8 +338,8 @@
       "pending": "قيد الدفع",
       "overdue": "متأخرة"
     },
-
-    "statuses": {
+    
+    "paymentStatuses": {
       "paid": "مدفوعة",
       "pending": "قيد الدفع",
       "overdue": "متأخرة"

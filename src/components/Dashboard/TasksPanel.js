@@ -21,7 +21,8 @@ import {
   ActionButton,
   EmptyState,
   Card,
-  StatusBadge
+  StatusBadge,
+  IconContainer
 } from '../../styles/GlobalComponents';
 import StarryBackground from '../Common/StarryBackground';
 import DashboardCard from '../Common/CardSystem';
@@ -50,19 +51,80 @@ const TasksPanel = () => {
   const doingTasks = tasks.filter(task => task.status === 'doing');
   const doneTasks = tasks.filter(task => task.status === 'done');
 
+  // Function to get colored icons based on status with enhanced styling
+  const getColoredStatusIcon = (status) => {
+    switch(status) {
+      case 'done':
+        return (
+          <IconContainer 
+            icon={FaCheck} 
+            color="white" 
+            size="1.2em" 
+            background="#00c27a" 
+            padding="8px" 
+            round={true} 
+          />
+        );
+      case 'doing':
+        return (
+          <IconContainer 
+            icon={FaClock} 
+            color="white" 
+            size="1.2em" 
+            background="#ffb100" 
+            padding="8px" 
+            round={true} 
+          />
+        );
+      case 'todo':
+        return (
+          <IconContainer 
+            icon={FaListUl} 
+            color="white" 
+            size="1.2em" 
+            background="#6a1fd0" 
+            padding="8px" 
+            round={true} 
+          />
+        );
+      case 'blocked':
+        return (
+          <IconContainer 
+            icon={FaExclamationCircle} 
+            color="white" 
+            size="1.2em" 
+            background="#d01f48" 
+            padding="8px" 
+            round={true} 
+          />
+        );
+      default:
+        return (
+          <IconContainer 
+            icon={FaListUl} 
+            color="white" 
+            size="1.2em" 
+            background="#6a1fd0" 
+            padding="8px" 
+            round={true} 
+          />
+        );
+    }
+  };
+
   return (
     <PanelContainer>
       <StarryBackground intensity={0.5} />
       
       <PanelHeader>
         <PanelTitle>
-          <FaClipboardList style={{ marginRight: spacing.sm }} />
+          <IconContainer icon={FaClipboardList} color="#8338ec" size="1.2em" margin={`0 ${spacing.sm} 0 0`} />
           {t('dashboard.tasks.title', 'Tasks & Milestones')}
         </PanelTitle>
         
         <ActionButtonWrapper>
           <ActionButton glow>
-            <FaPlus />
+            <IconContainer icon={FaPlus} size="1em" margin={`0 ${spacing.xs} 0 0`} />
             {t('dashboard.tasks.actions.addTask', 'Add Task')}
           </ActionButton>
         </ActionButtonWrapper>
@@ -73,35 +135,36 @@ const TasksPanel = () => {
           variant="summary" 
           title={t('dashboard.tasks.summary.total', 'Total Tasks')} 
           value={tasks.length} 
-          icon={<FaTasks />}
+          icon={<IconContainer icon={FaTasks} color="white" size="1.5em" background="#6a1fd0" padding="12px" round={true} />} 
           glow
+          glowColor="rgba(106, 31, 208, 0.25)"
         />
         <DashboardCard 
           variant="summary" 
           title={t('dashboard.tasks.summary.inProgress', 'In Progress')} 
           value={doingTasks.length} 
-          icon={<FaSpinner />}
+          icon={<IconContainer icon={FaSpinner} color="white" size="1.5em" background="#ffb100" padding="12px" round={true} />}
           status="doing"
           glow
-          glowColor="rgba(247, 184, 1, 0.3)"
+          glowColor="rgba(255, 177, 0, 0.25)"
         />
         <DashboardCard 
           variant="summary" 
           title={t('dashboard.tasks.summary.completed', 'Completed')} 
           value={doneTasks.length} 
-          icon={<FaCheck />}
+          icon={<IconContainer icon={FaCheck} color="white" size="1.5em" background="#00c27a" padding="12px" round={true} />}
           status="done"
           glow
-          glowColor="rgba(76, 201, 240, 0.3)"
+          glowColor="rgba(0, 194, 122, 0.25)"
         />
         <DashboardCard 
           variant="summary" 
           title={t('dashboard.tasks.summary.blocked', 'Blocked')} 
           value={tasks.filter(t => t.status === 'blocked').length} 
-          icon={<FaExclamationTriangle />}
+          icon={<IconContainer icon={FaExclamationTriangle} color="white" size="1.5em" background="#d01f48" padding="12px" round={true} />}
           status="blocked"
           glow
-          glowColor="rgba(239, 71, 111, 0.3)"
+          glowColor="rgba(208, 31, 72, 0.25)"
         />
       </SummaryCardsContainer>
       
@@ -110,7 +173,7 @@ const TasksPanel = () => {
         <KanbanColumn>
           <ColumnHeader status="todo">
             <ColumnTitle status="todo">
-              <FaListUl />
+              {getColoredStatusIcon('todo')}
               <h3>{t('dashboard.tasks.todo', 'To Do')}</h3>
             </ColumnTitle>
             <TaskCount status="todo">{todoTasks.length}</TaskCount>
@@ -137,14 +200,14 @@ const TasksPanel = () => {
                 status="todo"
                 priority={task.priority}
                 dueDate={parseDate(task.dueDate)?.toLocaleDateString()}
-                dueDateIcon={<FaCalendarAlt />}
+                dueDateIcon={<FaCalendarAlt style={{ color: '#6a1fd0' }} />}
                 assignee={task.assignedToName}
-                assigneeIcon={<FaUserAlt />}
-                statusIcon={<FaListUl />}
+                assigneeIcon={<FaUserAlt style={{ color: '#6a1fd0' }} />}
+                statusIcon={getColoredStatusIcon('todo')}
                 statusText={t('dashboard.tasks.todo', 'To Do')}
                 interactive
                 glow
-                glowColor="rgba(131, 56, 236, 0.3)"
+                glowColor="rgba(106, 31, 208, 0.25)"
                 gradient={task.priority === 'high'}
                 onClick={() => console.log(`Task clicked: ${task.title}`)}
               />
@@ -162,7 +225,7 @@ const TasksPanel = () => {
         <KanbanColumn>
           <ColumnHeader status="doing">
             <ColumnTitle status="doing">
-              <FaClock />
+              {getColoredStatusIcon('doing')}
               <h3>{t('dashboard.tasks.doing', 'In Progress')}</h3>
             </ColumnTitle>
             <TaskCount status="doing">{doingTasks.length}</TaskCount>
@@ -189,14 +252,14 @@ const TasksPanel = () => {
                 status="doing"
                 priority={task.priority}
                 dueDate={parseDate(task.dueDate)?.toLocaleDateString()}
-                dueDateIcon={<FaCalendarAlt />}
+                dueDateIcon={<FaCalendarAlt style={{ color: '#ffb100' }} />}
                 assignee={task.assignedToName}
-                assigneeIcon={<FaUserAlt />}
-                statusIcon={<FaClock />}
+                assigneeIcon={<FaUserAlt style={{ color: '#ffb100' }} />}
+                statusIcon={getColoredStatusIcon('doing')}
                 statusText={t('dashboard.tasks.doing', 'In Progress')}
                 interactive
                 glow
-                glowColor="rgba(247, 184, 1, 0.3)"
+                glowColor="rgba(255, 177, 0, 0.25)"
                 gradient={task.priority === 'high'}
                 onClick={() => console.log(`Task clicked: ${task.title}`)}
               />
@@ -214,7 +277,7 @@ const TasksPanel = () => {
         <KanbanColumn>
           <ColumnHeader status="done">
             <ColumnTitle status="done">
-              <FaCheck />
+              {getColoredStatusIcon('done')}
               <h3>{t('dashboard.tasks.done', 'Done')}</h3>
             </ColumnTitle>
             <TaskCount status="done">{doneTasks.length}</TaskCount>
@@ -241,14 +304,14 @@ const TasksPanel = () => {
                 status="done"
                 priority={task.priority}
                 dueDate={parseDate(task.dueDate)?.toLocaleDateString()}
-                dueDateIcon={<FaCalendarAlt />}
+                dueDateIcon={<FaCalendarAlt style={{ color: '#00c27a' }} />}
                 assignee={task.assignedToName}
-                assigneeIcon={<FaUserAlt />}
-                statusIcon={<FaCheck />}
+                assigneeIcon={<FaUserAlt style={{ color: '#00c27a' }} />}
+                statusIcon={getColoredStatusIcon('done')}
                 statusText={t('dashboard.tasks.done', 'Done')}
                 interactive
                 glow
-                glowColor="rgba(76, 201, 240, 0.3)"
+                glowColor="rgba(0, 194, 122, 0.25)"
                 gradient={task.priority === 'high'}
                 onClick={() => console.log(`Task clicked: ${task.title}`)}
               />

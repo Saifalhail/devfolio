@@ -82,7 +82,7 @@ const ProjectForm = ({ onSubmit, initialData, onCancel }) => {
       <FormRow>
         <FormGroup isFullWidth>
           <Label htmlFor="name">
-            <FaFileAlt />
+            <span className="icon-wrapper"><FaFileAlt /></span>
             {t('projects.name', 'Project Name')}
           </Label>
           <Input
@@ -101,7 +101,7 @@ const ProjectForm = ({ onSubmit, initialData, onCancel }) => {
       <FormRow>
         <FormGroup>
           <Label htmlFor="client">
-            <FaUser />
+            <span className="icon-wrapper"><FaUser /></span>
             {t('projects.client', 'Client')}
           </Label>
           <Input
@@ -118,7 +118,7 @@ const ProjectForm = ({ onSubmit, initialData, onCancel }) => {
         
         <FormGroup>
           <Label htmlFor="deadline">
-            <FaCalendarAlt />
+            <span className="icon-wrapper"><FaCalendarAlt /></span>
             {t('projects.deadline', 'Deadline')}
           </Label>
           <Input
@@ -137,7 +137,7 @@ const ProjectForm = ({ onSubmit, initialData, onCancel }) => {
       <FormRow>
         <FormGroup isFullWidth>
           <Label htmlFor="description">
-            <FaFileAlt />
+            <span className="icon-wrapper"><FaFileAlt /></span>
             {t('projects.description', 'Description')}
           </Label>
           <TextArea
@@ -157,7 +157,7 @@ const ProjectForm = ({ onSubmit, initialData, onCancel }) => {
       <FormRow>
         <FormGroup>
           <Label htmlFor="status">
-            <FaBuilding />
+            <span className="icon-wrapper"><FaBuilding /></span>
             {t('projects.status', 'Status')}
           </Label>
           <Select
@@ -177,6 +177,7 @@ const ProjectForm = ({ onSubmit, initialData, onCancel }) => {
         
         <FormGroup>
           <Label>
+            <span className="icon-wrapper"><FaSmile /></span>
             {t('projects.clientMood', 'Client Mood')}
           </Label>
           <MoodSelector>
@@ -224,12 +225,12 @@ const ProjectForm = ({ onSubmit, initialData, onCancel }) => {
 const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
-  gap: ${spacing.lg};
+  gap: ${spacing.sm};
   width: 100%;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   max-height: 60vh;
   overflow-y: auto;
-  padding-right: ${spacing.md};
+  padding-right: ${spacing.sm};
   
   /* Custom scrollbar styling */
   &::-webkit-scrollbar {
@@ -237,7 +238,7 @@ const FormContainer = styled.form`
   }
   
   &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
     border-radius: ${borderRadius.sm};
   }
   
@@ -246,14 +247,14 @@ const FormContainer = styled.form`
     border-radius: ${borderRadius.sm};
     
     &:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.15);
     }
   }
   
   /* RTL scrollbar positioning */
   [dir="rtl"] & {
     padding-right: 0;
-    padding-left: ${spacing.md};
+    padding-left: ${spacing.sm};
     
     &::-webkit-scrollbar {
       position: absolute;
@@ -264,13 +265,13 @@ const FormContainer = styled.form`
 
 const FormRow = styled.div`
   display: flex;
-  gap: ${spacing.xl};
+  gap: ${spacing.md};
   width: 100%;
-  margin-bottom: ${spacing.lg};
+  margin-bottom: ${spacing.xs};
   
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: ${spacing.md};
+    gap: ${spacing.sm};
   }
 `;
 
@@ -283,18 +284,30 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-  font-size: ${typography.fontSizes.sm};
-  font-weight: ${typography.fontWeights.semiBold};
+  font-size: ${typography.fontSizes.lg};
+  font-weight: ${typography.fontWeights.bold};
   color: ${colors.text.primary};
+  margin-bottom: ${spacing.xs};
+  letter-spacing: 0.5px;
+  background: linear-gradient(90deg, #fff, #8338ec);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px rgba(131, 56, 236, 0.2);
   display: flex;
   align-items: center;
-  gap: ${spacing.xs};
-  margin-bottom: ${spacing.sm};
-  letter-spacing: 0.5px;
   
+  /* Icon wrapper styling */
+  .icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: ${spacing.md};
+  }
+  
+  /* Style for the icon */
   svg {
-    font-size: ${typography.fontSizes.md};
-    color: ${colors.accent.primary};
+    font-size: ${typography.fontSizes.lg};
+    color: #8338ec;
   }
 `;
 
@@ -474,8 +487,8 @@ const MoodOption = styled.button`
 
 const FormActions = styled.div`
   display: flex;
-  justify-content: flex-end;
-  gap: ${spacing.md};
+  justify-content: center;
+  gap: ${spacing.lg};
   margin-top: ${spacing.xl};
   padding-top: ${spacing.md};
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -494,16 +507,18 @@ const FormActions = styled.div`
 const Button = styled.button`
   padding: ${spacing.md} ${spacing.lg};
   border-radius: ${borderRadius.md};
-  font-weight: ${typography.fontWeights.semiBold};
-  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.bold};
+  font-size: ${typography.fontSizes.md};
   cursor: pointer;
   transition: ${transitions.medium};
   letter-spacing: 0.5px;
-  min-width: 120px;
+  min-width: 140px;
   height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
   
   &:disabled {
     opacity: 0.6;
@@ -516,10 +531,10 @@ const Button = styled.button`
 `;
 
 const SubmitButton = styled(Button)`
-  background: ${colors.accent.primary};
-  color: ${colors.text.primary};
+  background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+  color: #ffffff;
   border: none;
-  box-shadow: ${shadows.sm};
+  box-shadow: 0 4px 12px rgba(123, 44, 191, 0.3);
   position: relative;
   overflow: hidden;
   
@@ -537,7 +552,7 @@ const SubmitButton = styled(Button)`
   
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: ${shadows.md};
+    box-shadow: 0 6px 16px rgba(123, 44, 191, 0.4);
     
     &:before {
       transform: translateX(100%);
@@ -545,24 +560,28 @@ const SubmitButton = styled(Button)`
   }
   
   &:active:not(:disabled) {
-    transform: translateY(0);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(123, 44, 191, 0.3);
   }
 `;
 
 const CancelButton = styled(Button)`
-  background: transparent;
-  color: ${colors.text.secondary};
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-right: ${spacing.md};
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.05);
-    color: ${colors.text.primary};
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
   
   &:active:not(:disabled) {
-    transform: scale(0.98);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   }
   
   /* RTL Support */

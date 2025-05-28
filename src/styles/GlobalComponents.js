@@ -1377,6 +1377,52 @@ export const PaginationButton = styled.button`
   
   &:hover {
     background: ${props => props.active ? colors.accent.secondary : colors.background.hover};
-    transform: translateY(-2px);
   }
 `;
+
+// Global Icon Container - Reusable styled icon wrapper
+const IconContainerWrapper = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  font-size: ${props => props.size || '1em'};
+  color: ${props => props.color || 'currentColor'};
+  background: ${props => props.background || 'transparent'};
+  border-radius: ${props => props.round ? '50%' : '0'};
+  padding: ${props => props.padding || '0'};
+  margin: ${props => props.margin || '0'};
+  opacity: ${props => props.disabled ? '0.5' : '1'};
+  transition: all 0.2s ease;
+  cursor: ${props => props.onClick ? 'pointer' : 'inherit'};
+  
+  &:hover {
+    transform: ${props => props.onClick ? 'scale(1.1)' : 'none'};
+  }
+  
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+// Global Icon Component - Reusable component for all icons
+export const IconContainer = ({ icon: Icon, color, size, background, round, padding, margin, onClick, disabled, className, ...props }) => {
+  return (
+    <IconContainerWrapper
+      color={color}
+      size={size}
+      background={background}
+      round={round}
+      padding={padding}
+      margin={margin}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      className={className}
+      {...props}
+    >
+      {typeof Icon === 'function' ? <Icon /> : Icon}
+    </IconContainerWrapper>
+  );
+};

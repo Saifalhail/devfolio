@@ -387,3 +387,88 @@ The interface supports right-to-left languages with the following adaptations:
   - Proper color scheme adherence using the project's color palette
   - Improved component structure with cleaner, more maintainable code
   - Enhanced user experience with consistent hover effects and transitions
+
+## Reusable Components
+
+### IconContainer Component
+
+The IconContainer is a reusable component designed to provide consistent icon styling across the application. It follows the same design pattern as the invoice icons, with colored backgrounds and white icons.
+
+#### Usage
+
+```jsx
+<IconContainer 
+  icon={FaCheck} 
+  color="white" 
+  size="1.2em" 
+  background="#00c27a" 
+  padding="8px" 
+  round={true} 
+/>
+```
+
+#### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | React Component or JSX | required | The icon component to render |
+| `color` | String | "currentColor" | Color of the icon |
+| `size` | String | "1em" | Size of the icon (e.g., "1.2em", "24px") |
+| `background` | String | "transparent" | Background color of the icon container |
+| `round` | Boolean | false | Whether to make the container round |
+| `padding` | String | "0" | Padding around the icon |
+| `margin` | String | "0" | Margin around the container |
+| `onClick` | Function | undefined | Click handler for interactive icons |
+| `disabled` | Boolean | false | Whether the icon is disabled |
+| `className` | String | undefined | Custom class name |
+
+#### Implementation
+
+The IconContainer component is implemented in `GlobalComponents.js` and can be imported and used throughout the application. It provides consistent styling for all icons, including:
+
+- Status icons in task cards
+- Dashboard summary card icons
+- Panel header icons
+- Action button icons
+
+### Enhanced Modal Component
+
+The Modal component has been enhanced to improve reusability, mobile responsiveness, and RTL support for Arabic.
+
+#### Key Enhancements
+
+1. **Mobile Responsiveness**: 
+   - Added `fullScreenOnMobile` prop to control whether the modal takes up the full screen on mobile devices
+   - Improved responsive styling with better handling of different screen sizes
+   - Added proper overflow handling for mobile views
+
+2. **RTL Support for Arabic**:
+   - Enhanced RTL support with proper text alignment and direction
+   - Fixed icon placement in RTL mode
+   - Adjusted margins and paddings to work correctly in both LTR and RTL modes
+   - Ensured header elements are properly aligned in RTL mode
+
+3. **Reusability Improvements**:
+   - Added comprehensive documentation and usage examples
+   - Enhanced ModalButton component with better styling and theme support
+   - Added support for custom styles via the `customStyles` prop
+   - Improved accessibility with proper ARIA attributes
+
+#### Usage Example
+
+```jsx
+<Modal
+  isOpen={isModalOpen}
+  onClose={closeModal}
+  title={t('yourModule.modalTitle', 'Your Modal Title')}
+  icon={<FaPlus />}
+  size="lg"
+  theme="todo"
+  animation="zoom"
+  centered={true}
+  closeOnClickOutside={true}
+  fullScreenOnMobile={true}
+>
+  {/* Modal content */}
+</Modal>
+```
