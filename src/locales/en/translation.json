@@ -401,6 +401,20 @@
     }
   },
   "invoices": {
+    "title": "Invoices",
+    "noInvoices": "No invoices available",
+    "fields": {
+      "id": "Invoice #",
+      "issueDate": "Issued",
+      "dueDate": "Due",
+      "amount": "Amount",
+      "status": "Status"
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
     "milestoneDelivery": {
       "title": "Milestone Delivery",
       "noMilestones": "No milestones available"

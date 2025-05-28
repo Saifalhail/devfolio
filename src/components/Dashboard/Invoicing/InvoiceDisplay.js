@@ -22,8 +22,10 @@ const InvoiceDisplay = ({ invoice }) => {
 
   const { label, color } = React.useMemo(() => {
 
-    const status = invoice ? invoice.status : 'pending';
-    switch (status) {
+    if (!invoice) {
+      return { label: '', color: 'neutral' };
+    }
+    switch (invoice.status) {
 
       case 'paid':
         return { label: t('invoices.status.paid', 'Paid'), color: 'success' };
@@ -33,9 +35,9 @@ const InvoiceDisplay = ({ invoice }) => {
         return { label: t('invoices.status.overdue', 'Overdue'), color: 'error' };
       default:
 
-        return { label: status, color: 'neutral' };
+        return { label: invoice.status, color: 'neutral' };
     }
-  }, [invoice ? invoice.status : null, t]);
+  }, [invoice?.status, t]);
 
 
   if (!invoice) {
@@ -55,7 +57,6 @@ const InvoiceDisplay = ({ invoice }) => {
     const d = date instanceof Date ? date : new Date(date);
     return format(d, 'PPP', { locale: isRTL ? ar : enUS });
   };
-
 
 
 
