@@ -21,10 +21,12 @@ const InvoiceDisplay = ({ invoice }) => {
   const isRTL = i18n.language === 'ar';
 
   const { label, color } = React.useMemo(() => {
+
     if (!invoice) {
       return { label: t('invoices.status.unknown', 'Unknown'), color: 'neutral' };
     }
     switch (invoice.status) {
+
       case 'paid':
         return { label: t('invoices.status.paid', 'Paid'), color: 'success' };
       case 'pending':
@@ -32,9 +34,11 @@ const InvoiceDisplay = ({ invoice }) => {
       case 'overdue':
         return { label: t('invoices.status.overdue', 'Overdue'), color: 'error' };
       default:
+
         return { label: invoice.status, color: 'neutral' };
     }
   }, [invoice?.status, t]);
+
 
   if (!invoice) {
     return (

@@ -157,12 +157,12 @@
     ],
     "cta": "Ready to work together?",
     "iconAlt": {
-      "skills": "Flexed bicep icon for skills",
       "0": "AI and Machine Learning icon",
       "1": "Full-Stack Development icon",
       "2": "Python and Data Science icon",
       "3": "React and Modern Frontend icon",
-      "4": "DevOps and Cloud icon"
+      "4": "DevOps and Cloud icon",
+      "skills": "Flexed bicep icon for skills"
     }
   },
   "auth": {
@@ -401,9 +401,40 @@
     }
   },
   "invoices": {
+    "title": "Invoices",
+    "noInvoices": "No invoices available",
+
+    "paymentHistory": "Payment History",
+    "noPayments": "No payment records found",
+
+    "fields": {
+      "id": "Invoice #",
+      "issueDate": "Issued",
+      "dueDate": "Due",
+      "amount": "Amount",
+
+      "status": "Status",
+      "date": "Date",
+      "description": "Description"
+
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
+
+    "statuses": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
+
     "milestoneDelivery": {
       "title": "Milestone Delivery",
-      "noMilestones": "No milestones available"
+      "noMilestones": "No milestones available",
+      "locked": "Unlocks after payment",
+      "files": "Files"
     }
   },
   "designFeedback": {
