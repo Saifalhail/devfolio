@@ -173,12 +173,12 @@
     ],
     "cta": "مستعد للعمل معًا؟",
     "iconAlt": {
-      "skills": "أيقونة عضلة للمهارات",
       "0": "أيقونة الذكاء الاصطناعي والتعلم الآلي",
       "1": "أيقونة تطوير الويب المتكامل",
       "2": "أيقونة بايثون وعلوم البيانات",
       "3": "أيقونة رياكت وواجهات المستخدم الحديثة",
-      "4": "أيقونة التطوير السحابي"
+      "4": "أيقونة التطوير السحابي",
+      "skills": "أيقونة عضلة للمهارات"
     }
   },
   "auth": {
@@ -315,26 +315,36 @@
       "versions": "سجل الإصدارات"
     }
   },
+
   "invoices": {
     "title": "الفواتير",
     "noInvoices": "لا توجد فواتير",
     "fields": {
       "id": "رقم الفاتورة",
-      "issueDate": "تاريخ الإصدار",
+      "issueDate": "تاريخ الاصدار",
       "dueDate": "تاريخ الاستحقاق",
       "amount": "المبلغ",
-      "status": "الحالة"
+      "status": "الحالة",
+      "project": "المشروع",
+      "client": "العميل"
     },
     "status": {
       "paid": "مدفوعة",
       "pending": "قيد الدفع",
       "overdue": "متأخرة"
     },
+
+    "paymentHistory": "سجل المدفوعات",
+    "date": "التاريخ",
+    "description": "الوصف",
+    "noPayments": "لا يوجد سجل مدفوعات",
+    "projectSummaryTitle": "ملخص مشروعك البرمجي",
+    "downloadSummary": "تحميل PDF",
+    "noSummary": "لا يوجد ملخص.",
     "milestoneDelivery": {
-      "title": "تسليم المراحل",
-      "noMilestones": "لا توجد مراحل متاحة",
-      "locked": "سيتم فتحها بعد الدفع",
-      "files": "الملفات"
+      "title": "تسليم المعالم",
+      "noMilestones": "لا توجد معالم"
+
     }
   },
   "timeline": {
@@ -605,30 +615,3 @@
       "waving": "أيقونة يد تلوح"
     }
   },
-
-  "design": {
-    "designAndPrototype": "التصميم والنموذج الأولي",
-    "openInFigma": "فتح في فيجما",
-    "mockups": "نماذج تصميم",
-    "figma": "فيجما",
-    "styleGuide": "دليل الأسلوب",
-    "assets": "الأصول",
-    "phases": "المراحل",
-    "feedback": "التعليقات",
-    "downloadDesignKit": "تحميل حزمة التصميم",
-    "stylePreferences": "تفضيلات الأسلوب",
-    "styleCategories": "فئات الأسلوب",
-    "modern": "عصري",
-    "corporate": "مؤسسي",
-    "playful": "مرح",
-    "minimal": "بسيط",
-    "colorScheme": "نظام الألوان",
-    "additionalNotes": "ملاحظات إضافية",
-    "submit": "إرسال",
-    "cancel": "إلغاء",
-    "uploadMockup": "رفع نموذج",
-    "currentDesign": "التصميم الحالي",
-    "revisions": "المراجعات"
-  }
-}
-

@@ -37,7 +37,7 @@ const InvoiceDisplay = ({ invoice }) => {
 
         return { label: invoice.status, color: 'neutral' };
     }
-  }, [invoice?.status, t]);
+  }, [invoice ? invoice.status : null, t]);
 
 
   if (!invoice) {
@@ -58,22 +58,6 @@ const InvoiceDisplay = ({ invoice }) => {
     return format(d, 'PPP', { locale: isRTL ? ar : enUS });
   };
 
-
-
-  const getStatusMeta = (status) => {
-    switch (status) {
-      case 'paid':
-        return { label: t('invoices.status.paid', 'Paid'), color: 'success' };
-      case 'pending':
-        return { label: t('invoices.status.pending', 'Pending'), color: 'warning' };
-      case 'overdue':
-        return { label: t('invoices.status.overdue', 'Overdue'), color: 'error' };
-      default:
-        return { label: status, color: 'neutral' };
-    }
-  };
-
-  const { label, color } = getStatusMeta(invoice.status);
 
   return (
     <PanelContainer>
