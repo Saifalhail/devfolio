@@ -20,6 +20,26 @@ const InvoiceDisplay = ({ invoice }) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
+  const { label, color } = React.useMemo(() => {
+
+    if (!invoice) {
+      return { label: '', color: 'neutral' };
+    }
+    switch (invoice.status) {
+
+      case 'paid':
+        return { label: t('invoices.status.paid', 'Paid'), color: 'success' };
+      case 'pending':
+        return { label: t('invoices.status.pending', 'Pending'), color: 'warning' };
+      case 'overdue':
+        return { label: t('invoices.status.overdue', 'Overdue'), color: 'error' };
+      default:
+
+        return { label: invoice.status, color: 'neutral' };
+    }
+  }, [invoice?.status, t]);
+
+
   if (!invoice) {
     return (
       <PanelContainer>
@@ -38,8 +58,10 @@ const InvoiceDisplay = ({ invoice }) => {
     return format(d, 'PPP', { locale: isRTL ? ar : enUS });
   };
 
-  const { label, color } = React.useMemo(() => {
-    switch (invoice.status) {
+
+
+  const getStatusMeta = (status) => {
+    switch (status) {
       case 'paid':
         return { label: t('invoices.status.paid', 'Paid'), color: 'success' };
       case 'pending':
@@ -47,9 +69,11 @@ const InvoiceDisplay = ({ invoice }) => {
       case 'overdue':
         return { label: t('invoices.status.overdue', 'Overdue'), color: 'error' };
       default:
-        return { label: invoice.status, color: 'neutral' };
+        return { label: status, color: 'neutral' };
     }
-  }, [invoice.status, t]);
+  };
+
+  const { label, color } = getStatusMeta(invoice.status);
 
   return (
     <PanelContainer>
