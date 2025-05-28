@@ -14,7 +14,8 @@ import {
   FaPalette,
   FaFigma,
   FaAngleDoubleLeft,
-  FaAngleDoubleRight
+  FaAngleDoubleRight,
+  FaRocket
 } from 'react-icons/fa';
 
 const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
@@ -72,6 +73,16 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
       icon: <FaFigma />, 
       label: t('dashboard.sidebar.design', 'Design'), 
       path: '/dashboard/design' 
+    },
+    { 
+      icon: <FaRocket />, 
+      label: t('dashboard.sidebar.postLaunch', 'Post-Launch'), 
+      path: '/dashboard/post-launch' 
+    },
+    { 
+      icon: <FaClipboardList />, 
+      label: t('dashboard.sidebar.cardDemo', 'Card Demo'), 
+      path: '/dashboard/card-demo' 
     },
     { 
       icon: <FaCog />, 

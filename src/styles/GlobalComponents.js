@@ -1,8 +1,42 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { BaseCard, BaseButton, BaseInput } from './dashboardStyles';
 import { colors, spacing, shadows, borderRadius, typography, mixins, transitions, breakpoints } from './GlobalTheme';
 import { shine } from './animations';
+
+// Additional animations for card effects
+const float = keyframes`
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+`;
+
+const pulse = keyframes`
+  0% {
+    box-shadow: 0 0 0 0 rgba(205, 62, 253, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(205, 62, 253, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(205, 62, 253, 0);
+  }
+`;
+
+const shimmer = keyframes`
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+`;
 
 // Panel Container - Consistent container for all dashboard panels
 export const PanelContainer = styled(BaseCard)`
@@ -232,7 +266,7 @@ export const CardGrid = styled.div`
   }
 `;
 
-// Card - Consistent card styling
+// Card - Enhanced card styling with customizable options
 export const Card = styled(BaseCard)`
   display: flex;
   flex-direction: column;
@@ -242,12 +276,51 @@ export const Card = styled(BaseCard)`
   overflow: hidden;
   animation: fadeIn 0.5s ease-out, slideUp 0.5s ease-out;
   animation-fill-mode: both;
+  background: ${props => props.gradient ? 'linear-gradient(135deg, rgba(35, 38, 85, 0.7) 0%, rgba(58, 30, 101, 0.8) 100%)' : 'rgba(35, 38, 85, 0.4)'};
+  border: 1px solid ${props => props.borderColor || 'rgba(255, 255, 255, 0.05)'};
+  backdrop-filter: blur(5px);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: ${props => props.accentColor ? 
+      `linear-gradient(90deg, ${props.accentColor}, transparent)` : 
+      'linear-gradient(90deg, #cd3efd, transparent)'};
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
   
   &:hover {
     transform: translateY(-5px);
     box-shadow: ${shadows.lg};
-    border-color: rgba(205, 62, 253, 0.3);
+    border-color: ${props => props.hoverBorderColor || 'rgba(205, 62, 253, 0.3)'};
+    
+    &::before {
+      opacity: 1;
+    }
   }
+  
+  ${props => props.interactive && css`
+    cursor: pointer;
+    
+    &:active {
+      transform: translateY(-2px);
+    }
+  `}
+  
+  ${props => props.glow && css`
+    &:hover {
+      box-shadow: 0 8px 32px ${props.glowColor || 'rgba(205, 62, 253, 0.3)'};
+    }
+  `}
+  
+  ${props => props.floating && css`
+    animation: float 6s ease-in-out infinite;
+  `}
   
   /* Optional decorative element on the side */
   ${props => props.withAccent && css`
@@ -842,6 +915,399 @@ export const DetailIcon = styled.div`
 `;
 
 // Detail content container
+// Summary Card - For displaying summary information with icon
+export const SummaryCard = styled(Card)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: ${spacing.md};
+  padding: ${spacing.md};
+  min-height: 100px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+`;
+
+// Summary Card Icon - Styled icon container for summary cards
+export const SummaryCardIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: ${props => {
+    switch(props.status) {
+      case 'success': return 'linear-gradient(135deg, #4cc9f0, #4361ee)';
+      case 'warning': return 'linear-gradient(135deg, #f7b801, #f18701)';
+      case 'error': return 'linear-gradient(135deg, #ef476f, #b5179e)';
+      case 'info': return 'linear-gradient(135deg, #8338ec, #3a0ca3)';
+      default: return 'linear-gradient(135deg, #4cc9f0, #4361ee)';
+    }
+  }};
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  svg {
+    font-size: 1.5rem;
+    color: white;
+  }
+`;
+
+// Summary Card Content - Container for text content in summary cards
+export const SummaryCardContent = styled.div`
+  flex: 1;
+`;
+
+// Summary Card Title - Title styling for summary cards
+export const SummaryCardTitle = styled.h4`
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #a0a0a0;
+  margin: 0 0 0.3rem 0;
+`;
+
+// Summary Card Value - Value styling for summary cards
+export const SummaryCardValue = styled.div`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  
+  ${props => props.gradient && css`
+    background: linear-gradient(90deg, #fff, #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(76, 201, 240, 0.3);
+  `}
+`;
+
+// Task Card - Enhanced specialized card for task items
+export const TaskCard = styled(Card)`
+  padding: ${spacing.md} ${spacing.lg};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: ${props => {
+      switch(props.status) {
+        case 'done': return 'linear-gradient(to bottom, #4cc9f0, #4361ee)';
+        case 'doing': return 'linear-gradient(to bottom, #f7b801, #f18701)';
+        case 'todo': return 'linear-gradient(to bottom, #8338ec, #3a0ca3)';
+        case 'blocked': return 'linear-gradient(to bottom, #ef476f, #b5179e)';
+        default: return 'linear-gradient(to bottom, #8338ec, #3a0ca3)';
+      }
+    }};
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: ${shadows.md};
+    border-color: ${props => {
+      switch(props.status) {
+        case 'done': return 'rgba(76, 201, 240, 0.5)';
+        case 'doing': return 'rgba(247, 184, 1, 0.5)';
+        case 'todo': return 'rgba(131, 56, 236, 0.5)';
+        case 'blocked': return 'rgba(239, 71, 111, 0.5)';
+        default: return 'rgba(205, 62, 253, 0.3)';
+      }
+    }};
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  /* Add subtle background color based on status */
+  ${props => props.status && css`
+    background: ${() => {
+      switch(props.status) {
+        case 'done': return 'rgba(76, 201, 240, 0.05)';
+        case 'doing': return 'rgba(247, 184, 1, 0.05)';
+        case 'todo': return 'rgba(131, 56, 236, 0.05)';
+        case 'blocked': return 'rgba(239, 71, 111, 0.05)';
+        default: return 'rgba(35, 38, 85, 0.4)';
+      }
+    }};
+  `}
+`;
+
+// Icon Feature Card - Card with prominent centered icon for feature highlights
+export const IconFeatureCard = styled(Card)`
+  padding: ${spacing.xl};
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-8px);
+  }
+`;
+
+// Icon Feature Card Icon - Icon container for icon feature cards
+export const IconFeatureCardIcon = styled.div`
+  width: 64px;
+  height: 64px;
+  margin: 0 auto ${spacing.lg};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: ${props => props.background || 'linear-gradient(135deg, #4cc9f0, #4361ee)'};
+  box-shadow: 0 8px 24px rgba(76, 201, 240, 0.3);
+  
+  svg {
+    font-size: 2rem;
+    color: white;
+  }
+`;
+
+// Animated Card - Card with pulsing animation effect
+export const AnimatedCard = styled(Card)`
+  animation: ${pulse} 2s infinite;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    animation: none;
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(205, 62, 253, 0.3);
+  }
+`;
+
+// Gradient Border Card - Card with animated gradient border
+export const GradientBorderCard = styled(Card)`
+  position: relative;
+  border: none;
+  padding: ${spacing.lg};
+  z-index: 1;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: ${borderRadius.lg};
+    padding: 2px;
+    background: linear-gradient(90deg, #cd3efd, #4cc9f0, #cd3efd);
+    background-size: 200% 100%;
+    animation: ${shimmer} 3s linear infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+  }
+  
+  &:hover::before {
+    animation-duration: 1.5s;
+  }
+`;
+
+// Floating Card - Card with floating animation
+export const FloatingCard = styled(Card)`
+  animation: ${float} 6s ease-in-out infinite;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    animation-play-state: paused;
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+// Interactive Card - Card with interactive hover effects
+export const InteractiveCard = styled(Card)`
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  
+  &:hover {
+    transform: rotateX(5deg) rotateY(5deg) translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  &:active {
+    transform: rotateX(0) rotateY(0) translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+// Task Card Components
+export const TaskCardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${spacing.sm};
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+export const TaskTitle = styled.h4`
+  margin: 0;
+  font-size: ${typography.fontSizes.md};
+  font-weight: ${typography.fontWeights.medium};
+  color: ${colors.text.primary};
+  ${mixins.truncate}
+`;
+
+export const TaskDescription = styled.p`
+  margin: ${spacing.sm} 0;
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.secondary};
+  flex-grow: 1;
+  line-height: 1.5;
+`;
+
+export const TaskMeta = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: ${spacing.sm};
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+export const TaskMetaItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  color: ${colors.text.muted};
+  font-size: ${typography.fontSizes.xs};
+  
+  svg {
+    font-size: ${typography.fontSizes.sm};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+export const TaskStatusBadge = styled.span`
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.xs};
+  font-weight: ${typography.fontWeights.medium};
+  display: inline-flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  
+  ${props => {
+    switch(props.status) {
+      case 'done':
+        return css`
+          background-color: rgba(76, 201, 240, 0.15);
+          color: #4cc9f0;
+        `;
+      case 'doing':
+        return css`
+          background-color: rgba(247, 184, 1, 0.15);
+          color: #f7b801;
+        `;
+      case 'todo':
+        return css`
+          background-color: rgba(131, 56, 236, 0.15);
+          color: #8338ec;
+        `;
+      case 'blocked':
+        return css`
+          background-color: rgba(239, 71, 111, 0.15);
+          color: #ef476f;
+        `;
+      default:
+        return css`
+          background-color: rgba(131, 56, 236, 0.15);
+          color: #8338ec;
+        `;
+    }
+  }}
+`;
+
+export const TaskPriorityBadge = styled.span`
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.xs};
+  font-weight: ${typography.fontWeights.medium};
+  
+  ${props => {
+    switch(props.priority) {
+      case 'high':
+        return css`
+          background-color: rgba(239, 71, 111, 0.15);
+          color: #ef476f;
+        `;
+      case 'medium':
+        return css`
+          background-color: rgba(247, 184, 1, 0.15);
+          color: #f7b801;
+        `;
+      case 'low':
+        return css`
+          background-color: rgba(76, 201, 240, 0.15);
+          color: #4cc9f0;
+        `;
+      default:
+        return css`
+          background-color: rgba(131, 56, 236, 0.15);
+          color: #8338ec;
+        `;
+    }
+  }}
+`;
+
+export const TaskDueDate = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  color: ${props => props.overdue ? '#ef476f' : colors.text.muted};
+  font-size: ${typography.fontSizes.xs};
+  
+  svg {
+    font-size: ${typography.fontSizes.sm};
+  }
+`;
+
+export const TaskAssignee = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  
+  img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  span {
+    font-size: ${typography.fontSizes.xs};
+    color: ${colors.text.muted};
+  }
+`;
+
 export const DetailContent = styled.div`
   display: flex;
   flex-direction: column;

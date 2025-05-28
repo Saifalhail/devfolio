@@ -8,7 +8,11 @@ import {
   FaCheck, 
   FaClock, 
   FaListUl,
-  FaClipboardList
+  FaClipboardList,
+  FaExclamationCircle,
+  FaTasks,
+  FaSpinner,
+  FaExclamationTriangle
 } from 'react-icons/fa';
 import { 
   PanelContainer, 
@@ -19,6 +23,8 @@ import {
   Card,
   StatusBadge
 } from '../../styles/GlobalComponents';
+import StarryBackground from '../Common/StarryBackground';
+import DashboardCard from '../Common/CardSystem';
 import { colors, spacing, borderRadius, shadows, mixins, transitions, typography } from '../../styles/GlobalTheme';
 import useTasks from '../../hooks/useTasks';
 import SkeletonLoader from '../Common/SkeletonLoader';
@@ -46,6 +52,8 @@ const TasksPanel = () => {
 
   return (
     <PanelContainer>
+      <StarryBackground intensity={0.5} />
+      
       <PanelHeader>
         <PanelTitle>
           <FaClipboardList style={{ marginRight: spacing.sm }} />
@@ -53,22 +61,59 @@ const TasksPanel = () => {
         </PanelTitle>
         
         <ActionButtonWrapper>
-          <ActionButton>
+          <ActionButton glow>
             <FaPlus />
             {t('dashboard.tasks.actions.addTask', 'Add Task')}
           </ActionButton>
         </ActionButtonWrapper>
       </PanelHeader>
       
+      <SummaryCardsContainer>
+        <DashboardCard 
+          variant="summary" 
+          title={t('dashboard.tasks.summary.total', 'Total Tasks')} 
+          value={tasks.length} 
+          icon={<FaTasks />}
+          glow
+        />
+        <DashboardCard 
+          variant="summary" 
+          title={t('dashboard.tasks.summary.inProgress', 'In Progress')} 
+          value={doingTasks.length} 
+          icon={<FaSpinner />}
+          status="doing"
+          glow
+          glowColor="rgba(247, 184, 1, 0.3)"
+        />
+        <DashboardCard 
+          variant="summary" 
+          title={t('dashboard.tasks.summary.completed', 'Completed')} 
+          value={doneTasks.length} 
+          icon={<FaCheck />}
+          status="done"
+          glow
+          glowColor="rgba(76, 201, 240, 0.3)"
+        />
+        <DashboardCard 
+          variant="summary" 
+          title={t('dashboard.tasks.summary.blocked', 'Blocked')} 
+          value={tasks.filter(t => t.status === 'blocked').length} 
+          icon={<FaExclamationTriangle />}
+          status="blocked"
+          glow
+          glowColor="rgba(239, 71, 111, 0.3)"
+        />
+      </SummaryCardsContainer>
+      
       <KanbanBoard>
         {/* Todo Column */}
         <KanbanColumn>
-          <ColumnHeader>
-            <ColumnTitle>
+          <ColumnHeader status="todo">
+            <ColumnTitle status="todo">
               <FaListUl />
               <h3>{t('dashboard.tasks.todo', 'To Do')}</h3>
             </ColumnTitle>
-            <TaskCount status="neutral">{todoTasks.length}</TaskCount>
+            <TaskCount status="todo">{todoTasks.length}</TaskCount>
           </ColumnHeader>
           
           <ColumnContent>
@@ -84,25 +129,25 @@ const TasksPanel = () => {
                 </TaskCard>
               ))
             ) : todoTasks.map(task => (
-              <TaskCard key={task.id}>
-                <TaskCardHeader>
-                  <TaskTitle>{task.title}</TaskTitle>
-                  <PriorityBadge priority={task.priority}>
-                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                  </PriorityBadge>
-                </TaskCardHeader>
-                <TaskDescription>{task.description}</TaskDescription>
-                <TaskMeta>
-                  <TaskMetaItem>
-                    <FaCalendarAlt />
-                    <span>{parseDate(task.dueDate)?.toLocaleDateString()}</span>
-                  </TaskMetaItem>
-                  <TaskMetaItem>
-                    <FaUserAlt />
-                    <span>{task.assignedToName}</span>
-                  </TaskMetaItem>
-                </TaskMeta>
-              </TaskCard>
+              <DashboardCard
+                key={task.id}
+                variant="task"
+                title={task.title}
+                description={task.description}
+                status="todo"
+                priority={task.priority}
+                dueDate={parseDate(task.dueDate)?.toLocaleDateString()}
+                dueDateIcon={<FaCalendarAlt />}
+                assignee={task.assignedToName}
+                assigneeIcon={<FaUserAlt />}
+                statusIcon={<FaListUl />}
+                statusText={t('dashboard.tasks.todo', 'To Do')}
+                interactive
+                glow
+                glowColor="rgba(131, 56, 236, 0.3)"
+                gradient={task.priority === 'high'}
+                onClick={() => console.log(`Task clicked: ${task.title}`)}
+              />
             ))}
 
             {!isLoading && todoTasks.length === 0 && (
@@ -115,12 +160,12 @@ const TasksPanel = () => {
         
         {/* Doing Column */}
         <KanbanColumn>
-          <ColumnHeader>
-            <ColumnTitle>
+          <ColumnHeader status="doing">
+            <ColumnTitle status="doing">
               <FaClock />
               <h3>{t('dashboard.tasks.doing', 'In Progress')}</h3>
             </ColumnTitle>
-            <TaskCount status="info">{doingTasks.length}</TaskCount>
+            <TaskCount status="doing">{doingTasks.length}</TaskCount>
           </ColumnHeader>
           
           <ColumnContent>
@@ -136,25 +181,25 @@ const TasksPanel = () => {
                 </TaskCard>
               ))
             ) : doingTasks.map(task => (
-              <TaskCard key={task.id}>
-                <TaskCardHeader>
-                  <TaskTitle>{task.title}</TaskTitle>
-                  <PriorityBadge priority={task.priority}>
-                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                  </PriorityBadge>
-                </TaskCardHeader>
-                <TaskDescription>{task.description}</TaskDescription>
-                <TaskMeta>
-                  <TaskMetaItem>
-                    <FaCalendarAlt />
-                    <span>{parseDate(task.dueDate)?.toLocaleDateString()}</span>
-                  </TaskMetaItem>
-                  <TaskMetaItem>
-                    <FaUserAlt />
-                    <span>{task.assignedToName}</span>
-                  </TaskMetaItem>
-                </TaskMeta>
-              </TaskCard>
+              <DashboardCard
+                key={task.id}
+                variant="task"
+                title={task.title}
+                description={task.description}
+                status="doing"
+                priority={task.priority}
+                dueDate={parseDate(task.dueDate)?.toLocaleDateString()}
+                dueDateIcon={<FaCalendarAlt />}
+                assignee={task.assignedToName}
+                assigneeIcon={<FaUserAlt />}
+                statusIcon={<FaClock />}
+                statusText={t('dashboard.tasks.doing', 'In Progress')}
+                interactive
+                glow
+                glowColor="rgba(247, 184, 1, 0.3)"
+                gradient={task.priority === 'high'}
+                onClick={() => console.log(`Task clicked: ${task.title}`)}
+              />
             ))}
 
             {!isLoading && doingTasks.length === 0 && (
@@ -167,12 +212,12 @@ const TasksPanel = () => {
         
         {/* Done Column */}
         <KanbanColumn>
-          <ColumnHeader>
-            <ColumnTitle>
+          <ColumnHeader status="done">
+            <ColumnTitle status="done">
               <FaCheck />
               <h3>{t('dashboard.tasks.done', 'Done')}</h3>
             </ColumnTitle>
-            <TaskCount status="success">{doneTasks.length}</TaskCount>
+            <TaskCount status="done">{doneTasks.length}</TaskCount>
           </ColumnHeader>
           
           <ColumnContent>
@@ -188,25 +233,25 @@ const TasksPanel = () => {
                 </TaskCard>
               ))
             ) : doneTasks.map(task => (
-              <TaskCard key={task.id}>
-                <TaskCardHeader>
-                  <TaskTitle>{task.title}</TaskTitle>
-                  <PriorityBadge priority={task.priority}>
-                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                  </PriorityBadge>
-                </TaskCardHeader>
-                <TaskDescription>{task.description}</TaskDescription>
-                <TaskMeta>
-                  <TaskMetaItem>
-                    <FaCalendarAlt />
-                    <span>{parseDate(task.dueDate)?.toLocaleDateString()}</span>
-                  </TaskMetaItem>
-                  <TaskMetaItem>
-                    <FaUserAlt />
-                    <span>{task.assignedToName}</span>
-                  </TaskMetaItem>
-                </TaskMeta>
-              </TaskCard>
+              <DashboardCard
+                key={task.id}
+                variant="task"
+                title={task.title}
+                description={task.description}
+                status="done"
+                priority={task.priority}
+                dueDate={parseDate(task.dueDate)?.toLocaleDateString()}
+                dueDateIcon={<FaCalendarAlt />}
+                assignee={task.assignedToName}
+                assigneeIcon={<FaUserAlt />}
+                statusIcon={<FaCheck />}
+                statusText={t('dashboard.tasks.done', 'Done')}
+                interactive
+                glow
+                glowColor="rgba(76, 201, 240, 0.3)"
+                gradient={task.priority === 'high'}
+                onClick={() => console.log(`Task clicked: ${task.title}`)}
+              />
             ))}
 
             {!isLoading && doneTasks.length === 0 && (
@@ -222,6 +267,19 @@ const TasksPanel = () => {
 };
 
 // Custom styled components extending from centralized styles
+const SummaryCardsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: ${spacing.lg};
+  margin-bottom: ${spacing.xl};
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
 const ActionButtonWrapper = styled.div`
   display: flex;
   gap: ${spacing.md};
@@ -253,8 +311,16 @@ const KanbanColumn = styled(Card)`
   max-height: 600px;
   overflow-y: hidden;
   padding: 0;
+  background: rgba(35, 38, 85, 0.4);
+  border-radius: ${borderRadius.lg};
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+  box-shadow: ${shadows.md};
+  transition: all 0.3s ease;
   
   &:hover {
+    transform: translateY(-5px);
+    box-shadow: ${shadows.lg};
     overflow-y: auto;
     &::-webkit-scrollbar {
       width: 6px;
@@ -264,6 +330,11 @@ const KanbanColumn = styled(Card)`
       border-radius: 10px;
     }
   }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    direction: rtl;
+  }
 `;
 
 const ColumnHeader = styled.div`
@@ -272,8 +343,33 @@ const ColumnHeader = styled.div`
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   position: sticky;
   top: 0;
-  background: ${colors.background.card};
   z-index: 10;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.15;
+    z-index: 0;
+    
+    ${props => {
+      switch(props.status) {
+        case 'done':
+          return 'background: linear-gradient(135deg, rgba(76, 201, 240, 0.3), transparent);';
+        case 'doing':
+          return 'background: linear-gradient(135deg, rgba(247, 184, 1, 0.3), transparent);';
+        case 'todo':
+          return 'background: linear-gradient(135deg, rgba(131, 56, 236, 0.3), transparent);';
+        default:
+          return 'background: linear-gradient(135deg, rgba(131, 56, 236, 0.3), transparent);';
+      }
+    }}
+  }
   
   /* RTL Support */
   [dir="rtl"] & {
@@ -284,16 +380,55 @@ const ColumnHeader = styled.div`
 const ColumnTitle = styled.div`
   ${mixins.flexCenter}
   gap: ${spacing.sm};
+  position: relative;
+  z-index: 1;
   
   h3 {
     margin: 0;
     font-size: ${typography.fontSizes.lg};
-    font-weight: ${typography.fontWeights.medium};
-    color: ${colors.text.primary};
+    font-weight: ${typography.fontWeights.semibold};
+    position: relative;
+    z-index: 1;
+    
+    ${props => {
+      switch(props.status) {
+        case 'done':
+          return `
+            background: linear-gradient(90deg, #fff, #4cc9f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          `;
+        case 'doing':
+          return `
+            background: linear-gradient(90deg, #fff, #f7b801);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          `;
+        case 'todo':
+          return `
+            background: linear-gradient(90deg, #fff, #8338ec);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          `;
+        default:
+          return `color: ${colors.text.primary};`;
+      }
+    }}
   }
   
   svg {
-    color: ${colors.accent.primary};
+    ${props => {
+      switch(props.status) {
+        case 'done':
+          return 'color: #4cc9f0;';
+        case 'doing':
+          return 'color: #f7b801;';
+        case 'todo':
+          return 'color: #8338ec;';
+        default:
+          return `color: ${colors.accent.primary};`;
+      }
+    }}
   }
   
   /* RTL Support */
@@ -302,8 +437,43 @@ const ColumnTitle = styled.div`
   }
 `;
 
-const TaskCount = styled(StatusBadge)`
+const TaskCount = styled.span`
+  padding: 4px 10px;
+  border-radius: 12px;
   font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.semibold};
+  position: relative;
+  z-index: 1;
+  
+  ${props => {
+    switch(props.status) {
+      case 'done':
+        return `
+          background-color: rgba(76, 201, 240, 0.15);
+          color: #4cc9f0;
+        `;
+      case 'doing':
+        return `
+          background-color: rgba(247, 184, 1, 0.15);
+          color: #f7b801;
+        `;
+      case 'todo':
+        return `
+          background-color: rgba(131, 56, 236, 0.15);
+          color: #8338ec;
+        `;
+      case 'blocked':
+        return `
+          background-color: rgba(239, 71, 111, 0.15);
+          color: #ef476f;
+        `;
+      default:
+        return `
+          background-color: rgba(255, 255, 255, 0.1);
+          color: #e0e0e0;
+        `;
+    }
+  }}
 `;
 
 const ColumnContent = styled.div`

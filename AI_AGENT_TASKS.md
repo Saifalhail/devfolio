@@ -5,7 +5,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
 > **IMPORTANT NOTE FOR ALL AGENTS**: When implementing or modifying components, ensure they are properly integrated into the Dashboard structure. If creating new components, they must be imported and used in the appropriate Dashboard sections. All components should follow the design system and be consistent with existing components.
 
 > **NOTE FOR CODEX AGENTS**: This project is undergoing UI modernization to match the dark purple theme with gradient effects. All new components must use white text on dark backgrounds for better visibility and accessibility. Components should use gradient backgrounds, subtle animations, and consistent hover effects as detailed in the UI documentation. Refer to UI_DESIGN_DOCUMENTATION.md for the complete style guide and GlobalComponents.js/GlobalTheme.js for implementation examples.
-
+<!-- 
 1. **Fix Design Tab UI Alignment Issues**
    - File: `src/components/Dashboard/DesignPanel.js`
    - Task: Fix alignment issues with buttons, cards, and timeline components in the Design tab
@@ -94,7 +94,7 @@ This document contains small, precise tasks for AI agents to complete. Each task
     - File: Create `src/components/Dashboard/PostLaunch/FeedbackForm.js`
     - Task: Create a form for clients to provide feedback and reviews after project completion
     - Docs: See PROJECT_BUILDING_TASKS.md (Post-Launch Section)
-    - Priority: Medium -->
+    - Priority: Medium --> -->
 
 11. **Implement Social Share Feature**
     - File: Create `src/components/Dashboard/PostLaunch/SocialShare.js`

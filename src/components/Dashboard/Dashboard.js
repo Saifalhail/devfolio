@@ -75,6 +75,9 @@ const FilesPanel = lazy(() => import('./FilesPanel'));
 const FormsPanel = lazy(() => import('./FormsPanel'));
 const TimelinePanel = lazy(() => import('./TimelinePanel'));
 const DesignPanel = lazy(() => import('./DesignPanel'));
+const InvoicingPanel = lazy(() => import('./InvoicingPanel'));
+const PostLaunchPanel = lazy(() => import('./PostLaunchPanel'));
+const TaskCardDemo = lazy(() => import('../Common/TaskCardDemo'));
 
 const Dashboard = () => {
   const { currentUser, logout, loading } = useAuth();
@@ -169,6 +172,12 @@ const Dashboard = () => {
       setActiveTab('activity');
     } else if (location.pathname.includes('/dashboard/design')) {
       setActiveTab('design');
+    } else if (location.pathname.includes('/dashboard/invoices')) {
+      setActiveTab('invoices');
+    } else if (location.pathname.includes('/dashboard/post-launch')) {
+      setActiveTab('post-launch');
+    } else if (location.pathname.includes('/dashboard/card-demo')) {
+      setActiveTab('card-demo');
     } else {
       setActiveTab('overview');
     }
@@ -545,6 +554,33 @@ const Dashboard = () => {
                 </Suspense>
               </DesignTabContainer>
             )}
+            
+            {/* Invoicing Tab */}
+            {activeTab === 'invoices' && (
+              <InvoicingTabContainer>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <InvoicingPanel />
+                </Suspense>
+              </InvoicingTabContainer>
+            )}
+            
+            {/* Post-Launch Tab */}
+            {activeTab === 'post-launch' && (
+              <PostLaunchTabContainer>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <PostLaunchPanel />
+                </Suspense>
+              </PostLaunchTabContainer>
+            )}
+            
+            {/* Card Demo Tab */}
+            {activeTab === 'card-demo' && (
+              <CardDemoTabContainer>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <TaskCardDemo />
+                </Suspense>
+              </CardDemoTabContainer>
+            )}
           </DashboardContent>
         </ContentArea>
       </DashboardBody>
@@ -781,6 +817,52 @@ const FilesTabContainer = styled.div`
 const FormsTabContainer = styled.div`
   width: 100%;
   height: 100%;
+  
+  h2 {
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
+
+const InvoicingTabContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 1rem 0;
+  
+  h2 {
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`;
+
+const PostLaunchTabContainer = styled.div`
+  width: 100%;
+`;
+
+const CardDemoTabContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 1rem 0;
+  
+  h2 {
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 `;
 
 const ActivityTabContainer = styled.div`

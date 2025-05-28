@@ -199,12 +199,8 @@
   },
   "dashboard": {
     "welcome": "Welcome to your Dashboard",
-    "logout": "Logout",
-    "activeProjects": "Active Projects",
-    "pendingActions": "Pending Actions",
-    "latestUploads": "Latest Uploads",
-    "projectDeadlines": "Project Deadlines",
     "sidebar": {
+      "postLaunch": "Post-Launch",
       "overview": "Overview",
       "projects": "Projects",
       "forms": "Forms",
@@ -400,36 +396,31 @@
       "exportDataDesc": "Export form responses to CSV or PDF"
     }
   },
+
   "invoices": {
     "title": "Invoices",
     "noInvoices": "No invoices available",
-
     "paymentHistory": "Payment History",
     "noPayments": "No payment records found",
-
     "fields": {
       "id": "Invoice #",
       "issueDate": "Issued",
       "dueDate": "Due",
       "amount": "Amount",
-
       "status": "Status",
       "date": "Date",
       "description": "Description"
-
     },
     "status": {
       "paid": "Paid",
       "pending": "Pending",
       "overdue": "Overdue"
     },
-
     "statuses": {
       "paid": "Paid",
       "pending": "Pending",
       "overdue": "Overdue"
     },
-
     "milestoneDelivery": {
       "title": "Milestone Delivery",
       "noMilestones": "No milestones available",
@@ -521,15 +512,7 @@
     "subtitle": "What my clients say about my work",
     "iconAlt": "Client testimonial icon"
   },
-  "maintenanceGuide": "Here's how to maintain your app",
-  "downloadPDF": "Download PDF",
-  "tips": {
-    "updateDependencies": "Keep dependencies updated",
-    "monitorErrors": "Monitor and fix errors promptly",
-    "backupData": "Backup your data regularly",
-    "securityUpdates": "Apply security updates",
-    "collectFeedback": "Collect user feedback"
-  },
+
   "seo": {
     "alt": {
       "computer": "Computer icon",
@@ -548,14 +531,13 @@
       "description": "Have another project? I'd love to work together again!",
       "button": "Hire me again"
     },
-
     "feedbackForm": {
       "rating": "Rating",
       "review": "Review",
       "submit": "Submit Feedback",
       "success": "Thank you for your feedback!",
       "error": "Failed to submit feedback. Please try again."
-
+    },
     "maintenanceGuide": "Here's how to maintain your app",
     "downloadPDF": "Download PDF",
     "tips": {
@@ -564,7 +546,6 @@
       "backupData": "Backup your data regularly",
       "securityUpdates": "Apply security updates",
       "collectFeedback": "Collect user feedback"
-
     }
   },
   "designPhaseTracker": {
