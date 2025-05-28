@@ -157,12 +157,12 @@
     ],
     "cta": "Ready to work together?",
     "iconAlt": {
-      "skills": "Flexed bicep icon for skills",
       "0": "AI and Machine Learning icon",
       "1": "Full-Stack Development icon",
       "2": "Python and Data Science icon",
       "3": "React and Modern Frontend icon",
-      "4": "DevOps and Cloud icon"
+      "4": "DevOps and Cloud icon",
+      "skills": "Flexed bicep icon for skills"
     }
   },
   "auth": {
@@ -401,9 +401,40 @@
     }
   },
   "invoices": {
+    "title": "Invoices",
+    "noInvoices": "No invoices available",
+
+    "paymentHistory": "Payment History",
+    "noPayments": "No payment records found",
+
+    "fields": {
+      "id": "Invoice #",
+      "issueDate": "Issued",
+      "dueDate": "Due",
+      "amount": "Amount",
+
+      "status": "Status",
+      "date": "Date",
+      "description": "Description"
+
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
+
+    "statuses": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
+
     "milestoneDelivery": {
       "title": "Milestone Delivery",
-      "noMilestones": "No milestones available"
+      "noMilestones": "No milestones available",
+      "locked": "Unlocks after payment",
+      "files": "Files"
     }
   },
   "designFeedback": {
@@ -517,12 +548,23 @@
       "description": "Have another project? I'd love to work together again!",
       "button": "Hire me again"
     },
+
     "feedbackForm": {
       "rating": "Rating",
       "review": "Review",
       "submit": "Submit Feedback",
       "success": "Thank you for your feedback!",
       "error": "Failed to submit feedback. Please try again."
+
+    "maintenanceGuide": "Here's how to maintain your app",
+    "downloadPDF": "Download PDF",
+    "tips": {
+      "updateDependencies": "Keep dependencies updated",
+      "monitorErrors": "Monitor and fix errors promptly",
+      "backupData": "Backup your data regularly",
+      "securityUpdates": "Apply security updates",
+      "collectFeedback": "Collect user feedback"
+
     }
   },
   "designPhaseTracker": {

@@ -25,13 +25,13 @@ const ProjectSummary = ({ project }) => {
   return (
     <PanelContainer dir={isRTL ? 'rtl' : 'ltr'}>
       <PanelHeader>
-        <PanelTitle>{t('invoicing.projectSummaryTitle', 'Your Software Project Summary')}</PanelTitle>
+        <PanelTitle>{t('invoices.projectSummaryTitle', 'Your Software Project Summary')}</PanelTitle>
         <ActionButton onClick={handleDownload} small>
-          {t('invoicing.downloadSummary', 'Download PDF')}
+          {t('invoices.downloadSummary', 'Download PDF')}
         </ActionButton>
       </PanelHeader>
       <SummaryContent>
-        {project?.description || t('invoicing.noSummary', 'No summary available.')}
+        {project?.description || t('invoices.noSummary', 'No summary available.')}
       </SummaryContent>
     </PanelContainer>
   );

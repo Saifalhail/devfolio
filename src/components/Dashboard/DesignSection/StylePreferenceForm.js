@@ -2,6 +2,15 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { FaLayerGroup, FaLink, FaPalette, FaCode, FaTimes } from 'react-icons/fa';
+import {
+  colors,
+  spacing,
+  borderRadius,
+  shadows,
+  transitions,
+  mixins,
+  zIndex,
+} from '../../../styles/GlobalTheme';
 
 /**
  * StylePreferenceForm - Allows clients to select preferred design styles and colors.
@@ -187,36 +196,38 @@ const Overlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: ${zIndex.modal};
 `;
 
 const FormContainer = styled.div`
-  background: white;
-  border-radius: 16px;
+  background: ${colors.gradients.card};
+  color: ${colors.text.primary};
+  border-radius: ${borderRadius.lg};
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: ${shadows.lg};
   direction: ${props => props.dir};
+  border: 1px solid rgba(255, 255, 255, 0.05);
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
+  padding: ${spacing.lg};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
   h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: ${spacing.lg};
     font-weight: 600;
-    color: #333;
+    color: ${colors.text.primary};
   }
 `;
 
@@ -225,26 +236,29 @@ const CloseButton = styled.button`
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #666;
+
+  color: ${colors.text.secondary};
+  transition: ${transitions.fast};
 
   &:hover {
-    color: #333;
+    color: ${colors.text.primary};
+
   }
 `;
 
 const Form = styled.form`
-  padding: 1.5rem;
+  padding: ${spacing.lg};
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: ${spacing.lg};
 `;
 
 const Label = styled.label`
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: ${spacing.sm};
   font-weight: 500;
-  color: #333;
+  color: ${colors.text.primary};
 `;
 
 const OptionsGrid = styled.div`
@@ -263,12 +277,12 @@ const Option = styled.div`
     height: 0;
 
     &:checked + label {
-      background: rgba(110, 87, 224, 0.1);
-      border-color: #6e57e0;
-      color: #6e57e0;
+      background: rgba(205, 62, 253, 0.15);
+      border-color: ${colors.accent.primary};
+      color: ${colors.accent.primary};
 
       svg {
-        color: #6e57e0;
+        color: ${colors.accent.primary};
       }
     }
   }
@@ -278,34 +292,34 @@ const OptionLabel = styled.label`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  gap: ${spacing.sm};
+  padding: ${spacing.md};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: ${borderRadius.md};
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: ${transitions.fast};
 
   &:hover {
-    background: #f9f9f9;
+    background: ${colors.background.hover};
     transform: translateY(-2px);
   }
 `;
 
 const OptionIcon = styled.div`
   font-size: 1.5rem;
-  color: #666;
+  color: ${colors.text.secondary};
 `;
 
 const ColorsGrid = styled.div`
   display: flex;
-  gap: 1.5rem;
+  gap: ${spacing.lg};
   flex-wrap: wrap;
 `;
 
 const ColorOption = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: ${spacing.sm};
   position: relative;
 
   input {
@@ -316,7 +330,7 @@ const ColorOption = styled.div`
 
     &:checked + label {
       font-weight: 500;
-      color: #333;
+      color: ${colors.accent.primary};
     }
   }
 `;
@@ -326,46 +340,39 @@ const ColorSwatch = styled.div`
   height: 24px;
   border-radius: 50%;
   background: ${props => props.color};
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: ${shadows.sm};
 `;
 
 const ColorLabel = styled.label`
   cursor: pointer;
+  color: ${colors.text.secondary};
 `;
 
 const NotesArea = styled.textarea`
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  padding: ${spacing.md};
+  background: ${colors.background.card};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: ${borderRadius.md};
+  color: ${colors.text.primary};
   font-family: inherit;
   font-size: 0.9rem;
   resize: vertical;
 
   &:focus {
     outline: none;
-    border-color: #6e57e0;
-    box-shadow: 0 0 0 2px rgba(110, 87, 224, 0.1);
+    border-color: ${colors.accent.primary};
+    box-shadow: 0 0 0 2px rgba(205, 62, 253, 0.2);
   }
 `;
 
 const SubmitButton = styled.button`
   display: block;
   width: 100%;
-  padding: 0.75rem;
-  background: linear-gradient(90deg, #6e57e0, #9b6dff);
-  color: white;
-  border: none;
-  border-radius: 8px;
+  padding: ${spacing.md};
+  ${mixins.gradientButton};
   font-size: 1rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(110, 87, 224, 0.3);
-  }
 `;
 
 export default StylePreferenceForm;

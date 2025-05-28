@@ -8,12 +8,12 @@ export const generateProjectSummaryPDF = async (project = {}, t = (key, def) => 
     console.warn('jsPDF library not found, falling back to plain text PDF.');
   }
 
-  const title = t('invoicing.projectSummaryTitle', 'Your Software Project Summary');
+  const title = t('invoices.projectSummaryTitle', 'Your Software Project Summary');
   const lines = [
     title,
-    `Project: ${project.name || ''}`,
-    `Client: ${project.client || ''}`,
-    `Status: ${project.status || ''}`,
+    `${t('invoices.fields.project', 'Project')}: ${project.name || ''}`,
+    `${t('invoices.fields.client', 'Client')}: ${project.client || ''}`,
+    `${t('invoices.fields.status', 'Status')}: ${project.status || ''}`,
     '',
     project.description || ''
   ];
