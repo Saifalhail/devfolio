@@ -157,12 +157,12 @@
     ],
     "cta": "Ready to work together?",
     "iconAlt": {
-      "skills": "Flexed bicep icon for skills",
       "0": "AI and Machine Learning icon",
       "1": "Full-Stack Development icon",
       "2": "Python and Data Science icon",
       "3": "React and Modern Frontend icon",
-      "4": "DevOps and Cloud icon"
+      "4": "DevOps and Cloud icon",
+      "skills": "Flexed bicep icon for skills"
     }
   },
   "auth": {
@@ -401,6 +401,29 @@
     }
   },
   "invoices": {
+    "title": "Invoices",
+    "noInvoices": "No invoices available",
+    "fields": {
+      "id": "Invoice #",
+      "issueDate": "Issued",
+      "dueDate": "Due",
+      "amount": "Amount",
+      "status": "Status",
+      "project": "Project",
+      "client": "Client"
+    },
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
+    "paymentHistory": "Payment History",
+    "date": "Date",
+    "description": "Description",
+    "noPayments": "No payment records found",
+    "projectSummaryTitle": "Your Software Project Summary",
+    "downloadSummary": "Download PDF",
+    "noSummary": "No summary available.",
     "milestoneDelivery": {
       "title": "Milestone Delivery",
       "noMilestones": "No milestones available"
