@@ -26,6 +26,14 @@ const PaymentHistory = ({ transactions = [] }) => {
     return d.toLocaleDateString(i18n.language);
   };
 
+  const formatAmount = (amount) => {
+    const formatter = new Intl.NumberFormat(i18n.language, {
+      style: 'currency',
+      currency: 'USD'
+    });
+    return formatter.format(amount);
+  };
+
   return (
     <PanelContainer dir={isRTL ? 'rtl' : 'ltr'}>
       <PanelHeader>
@@ -35,18 +43,21 @@ const PaymentHistory = ({ transactions = [] }) => {
         <StyledTable>
           <thead>
             <tr>
-              <Th>{t('invoices.date', 'Date')}</Th>
-              <Th>{t('invoices.description', 'Description')}</Th>
-              <Th>{t('invoices.amount', 'Amount')}</Th>
-              <Th>{t('invoices.status', 'Status')}</Th>
+              <Th>{t('invoices.fields.date', 'Date')}</Th>
+              <Th>{t('invoices.fields.description', 'Description')}</Th>
+              <Th>{t('invoices.fields.amount', 'Amount')}</Th>
+              <Th>{t('invoices.fields.status', 'Status')}</Th>
             </tr>
           </thead>
           <tbody>
-            {transactions.map(tx => (
+            {transactions
+              .slice()
+              .sort((a, b) => new Date(b.date) - new Date(a.date))
+              .map(tx => (
               <tr key={tx.id}>
                 <Td>{formatDate(tx.date)}</Td>
                 <Td>{tx.description}</Td>
-                <Td>{tx.amount}</Td>
+                <Td>{formatAmount(tx.amount)}</Td>
                 <Td>
                   <StatusBadge status={tx.status}>
                     {t(`invoices.statuses.${tx.status}`, tx.status)}
