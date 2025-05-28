@@ -17,8 +17,11 @@ const HireAgain = () => {
   const navigate = useNavigate();
   const isRTL = i18n.language === 'ar';
 
+  /**
+   * Navigate user to the contact section so they can start a new project.
+   */
   const handleHire = () => {
-    navigate('/#contact');
+    navigate('/contact');
   };
 
   return (
