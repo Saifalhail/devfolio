@@ -318,30 +318,34 @@
   "invoices": {
     "title": "الفواتير",
     "noInvoices": "لا توجد فواتير",
+    "paymentHistory": "سجل الدفعات",
+    "noPayments": "لا توجد سجلات دفع",
     "fields": {
       "id": "رقم الفاتورة",
       "issueDate": "تاريخ الاصدار",
       "dueDate": "تاريخ الاستحقاق",
       "amount": "المبلغ",
       "status": "الحالة",
-      "project": "المشروع",
-      "client": "العميل"
+
+      "date": "التاريخ",
+      "description": "الوصف"
+
     },
     "status": {
       "paid": "مدفوعة",
       "pending": "قيد الدفع",
       "overdue": "متأخرة"
     },
-    "paymentHistory": "سجل المدفوعات",
-    "date": "التاريخ",
-    "description": "الوصف",
-    "noPayments": "لا يوجد سجل مدفوعات",
-    "projectSummaryTitle": "ملخص مشروعك البرمجي",
-    "downloadSummary": "تحميل PDF",
-    "noSummary": "لا يوجد ملخص.",
+
+    "statuses": {
+      "paid": "مدفوعة",
+      "pending": "قيد الدفع",
+      "overdue": "متأخرة"
+    },
     "milestoneDelivery": {
-      "title": "تسليم المعالم",
-      "noMilestones": "لا توجد معالم"
+      "title": "تسليم المراحل",
+      "noMilestones": "لا توجد مراحل متاحة"
+
     }
   },
   "timeline": {

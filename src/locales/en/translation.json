@@ -403,6 +403,10 @@
   "invoices": {
     "title": "Invoices",
     "noInvoices": "No invoices available",
+
+    "paymentHistory": "Payment History",
+    "noPayments": "No payment records found",
+
     "fields": {
       "id": "Invoice #",
       "issueDate": "Issued",
@@ -410,8 +414,8 @@
       "amount": "Amount",
 
       "status": "Status",
-      "project": "Project",
-      "client": "Client"
+      "date": "Date",
+      "description": "Description"
 
     },
     "status": {
@@ -420,13 +424,11 @@
       "overdue": "Overdue"
     },
 
-    "paymentHistory": "Payment History",
-    "date": "Date",
-    "description": "Description",
-    "noPayments": "No payment records found",
-    "projectSummaryTitle": "Your Software Project Summary",
-    "downloadSummary": "Download PDF",
-    "noSummary": "No summary available.",
+    "statuses": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "overdue": "Overdue"
+    },
 
     "milestoneDelivery": {
       "title": "Milestone Delivery",
