@@ -236,11 +236,13 @@ const CloseButton = styled.button`
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+
   color: ${colors.text.secondary};
   transition: ${transitions.fast};
 
   &:hover {
     color: ${colors.text.primary};
+
   }
 `;
 
