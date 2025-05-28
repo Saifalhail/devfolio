@@ -23,7 +23,7 @@ const InvoiceDisplay = ({ invoice }) => {
   const { label, color } = React.useMemo(() => {
 
     if (!invoice) {
-      return { label: '', color: 'neutral' };
+      return { label: t('invoices.status.unknown', 'Unknown'), color: 'neutral' };
     }
     switch (invoice.status) {
 
@@ -37,7 +37,7 @@ const InvoiceDisplay = ({ invoice }) => {
 
         return { label: invoice.status, color: 'neutral' };
     }
-  }, [invoice ? invoice.status : null, t]);
+  }, [invoice?.status, t]);
 
 
   if (!invoice) {
@@ -57,7 +57,6 @@ const InvoiceDisplay = ({ invoice }) => {
     const d = date instanceof Date ? date : new Date(date);
     return format(d, 'PPP', { locale: isRTL ? ar : enUS });
   };
-
 
   return (
     <PanelContainer>
