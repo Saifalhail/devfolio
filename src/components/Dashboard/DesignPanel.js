@@ -26,7 +26,6 @@ import MockupGallery from './DesignSection/MockupGallery';
 import MockupUpload from './DesignSection/MockupUpload';
 import StyleGuide from './DesignSection/StyleGuide';
 import AssetsLibrary from './DesignSection/AssetsLibrary';
-import PhaseTracker from './DesignSection/PhaseTracker';
 import DesignFeedback from './DesignSection/DesignFeedback';
 import DesignKit from './DesignSection/DesignKit';
 
@@ -216,13 +215,6 @@ const DesignPanel = () => {
         </Suspense>
       </Content>
       
-      {/* Phase Tracker */}
-
-      <PhaseTrackerWrapper>
-        <PhaseTracker />
-      </PhaseTrackerWrapper>
-      
-
       {/* Design Feedback System */}
       <FeedbackWrapper>
         <DesignFeedback />
@@ -543,7 +535,7 @@ const SectionContainer = styled.div`
 
 // New compact timeline components
 const CompactTimelineSection = styled.div`
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.25rem;
   background: rgba(35, 38, 85, 0.4);
   border-radius: 8px;
   margin-bottom: 1.5rem;
@@ -554,7 +546,7 @@ const CompactTimelineSection = styled.div`
   z-index: 3;
   
   @media (max-width: 768px) {
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
   }
 `;
 
@@ -563,7 +555,8 @@ const CompactTimeline = styled.div`
   align-items: center;
   justify-content: space-between;
   position: relative;
-  margin-top: 0.25rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
   
   &:before {
     content: '';
@@ -571,10 +564,11 @@ const CompactTimeline = styled.div`
     top: 50%;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 3px;
     background: linear-gradient(to right, #faaa93, #ff5b92, #a78bfa);
     transform: translateY(-50%);
     z-index: 1;
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
   }
   
   @media (max-width: 768px) {
@@ -610,35 +604,37 @@ const CompactTimelineItem = styled.div`
 `;
 
 const CompactTimelinePoint = styled.div`
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   background: ${props => props.active ? 'linear-gradient(45deg, #ff5b92, #a78bfa)' : 
-    props.completed ? 'linear-gradient(45deg, #4CAF50, #8BC34A)' : 'rgba(35, 38, 85, 0.6)'};
+    props.completed ? 'linear-gradient(45deg, #4CAF50, #8BC34A)' : 'linear-gradient(45deg, #3a1e65, #6031a8)'};
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 0.8rem;
+  font-size: 1rem;
   box-shadow: ${props => props.active ? '0 0 15px rgba(255, 91, 146, 0.7)' : 
-    props.completed ? '0 0 10px rgba(76, 175, 80, 0.5)' : 'none'};
-  margin-bottom: 0.5rem;
+    props.completed ? '0 0 10px rgba(76, 175, 80, 0.5)' : '0 0 10px rgba(58, 30, 101, 0.5)'};
+  margin-bottom: 0.75rem;
   transition: all 0.3s ease;
   z-index: 2;
   position: relative;
-  top: -2px;
+  top: -8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   
   &:hover {
     transform: scale(1.1);
+    box-shadow: 0 0 18px rgba(167, 139, 250, 0.7);
   }
 `;
 
 const CompactTimelineLabel = styled.div`
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: white;
   text-align: center;
-  max-width: 70px;
+  max-width: 90px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
