@@ -29,6 +29,7 @@ import {
 } from '../../../styles/GlobalComponents';
 import { Card, BaseCard } from '../../../styles/dashboardStyles';
 import WorkflowStatus from './WorkflowStatus';
+import DesignWizard from './DesignWizard';
 import {
   FaRocket,
   FaLightbulb,
@@ -344,6 +345,7 @@ const DesignTab = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const [activeTab, setActiveTab] = useState('overview');
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
 
   // Main navigation tabs
   // Define translations for Arabic
@@ -415,9 +417,30 @@ const DesignTab = () => {
     }
   ];
 
+  const openDesignWizard = () => {
+    setIsWizardOpen(true);
+  };
+
+  const closeDesignWizard = () => {
+    setIsWizardOpen(false);
+  };
+
   return (
     <PanelContainer dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Tabs without Generate button */}
+      {/* Header with Generate Design button */}
+      <HeaderWrapper>
+        <TabTitle>
+          {tabItems.find(tab => tab.id === activeTab)?.label}
+        </TabTitle>
+        <HeaderActions>
+          <GenerateDesignButton onClick={openDesignWizard}>
+            <FaMagic style={{ marginRight: isRTL ? '0' : '8px', marginLeft: isRTL ? '8px' : '0' }} />
+            {isRTL ? translations.ar.generateDesign : translations.en.generateDesign}
+          </GenerateDesignButton>
+        </HeaderActions>
+      </HeaderWrapper>
+
+      {/* Tabs */}
       <TabsList itemCount={tabItems.length}>
         {tabItems.map(tab => (
           <TabButton
@@ -447,6 +470,12 @@ const DesignTab = () => {
       >
         {tabItems.find(tab => tab.id === activeTab)?.content}
       </TabPanel>
+
+      {/* Design Wizard Modal */}
+      <DesignWizard 
+        isOpen={isWizardOpen} 
+        onClose={closeDesignWizard} 
+      />
     </PanelContainer>
   );
 };
