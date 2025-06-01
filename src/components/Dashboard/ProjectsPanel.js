@@ -31,7 +31,8 @@ import useFirebaseListener from '../../hooks/useFirebaseListener';
 import SkeletonLoader from '../Common/SkeletonLoader';
 import Modal from '../Common/Modal';
 import LoadingSkeleton from '../Common/LoadingSkeleton';
-import ProjectForm from './ProjectForm';
+
+import ProjectWizard from './ProjectWizard';
 import {
   PanelContainer,
   PanelHeader,
@@ -559,10 +560,10 @@ const ProjectsPanel = () => {
           <ErrorMessage role="alert" aria-live="assertive">{error}</ErrorMessage>
         )}
         
-        <ProjectForm
-          onSubmit={handleAddProject}
-          onCancel={closeModal}
-          isSubmitting={isSubmitting}
+        <ProjectWizard
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onProjectAdded={handleAddProject}
         />
       </Modal>
     </PanelContainer>
