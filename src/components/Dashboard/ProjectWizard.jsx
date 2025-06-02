@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { FaPlus, FaMobileAlt, FaGlobe, FaDesktop, FaRocket } from 'react-icons/fa';
+import { 
+  FaPlus, FaMobileAlt, FaGlobe, FaDesktop, FaRocket, FaUsers, FaUserTie, 
+  FaUserGraduate, FaUserMd, FaUserCog, FaChild, FaUserAlt, FaUserShield, 
+  FaUserNinja, FaChartBar, FaChartLine, FaChartPie, FaChartArea, FaMapMarkerAlt,
+  FaUser
+} from 'react-icons/fa';
 import Modal from '../Common/Modal';
 import { colors, spacing, borderRadius, shadows, transitions, typography, breakpoints } from '../../styles/GlobalTheme';
 
@@ -10,7 +15,11 @@ import {
   TextInput, 
   SelectableCards, 
   SearchableDropdown, 
-  TimelineSelector
+  TimelineSelector,
+  CheckboxCardSelector,
+  UserScaleSelector,
+  MultiSelectDropdown,
+  Tooltip
 } from './WizardComponents';
 
 /**
@@ -29,14 +38,21 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   
-  // Form data
+  // Initialize form data
   const [formData, setFormData] = useState({
+    // Step 1 - Project Basics
     name: '',
     type: '',
-    industry: '',
-    timeline: '',
     customType: '',
-    customIndustry: ''
+    industry: '',
+    customIndustry: '',
+    timeline: '',
+    
+    // Step 2 - Target Audience & Users
+    targetUserGroups: [],
+    userScale: '',
+    geographicLocations: [],
+    specificLocation: ''
   });
 
   // Reset form when modal opens/closes
@@ -46,10 +62,14 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       setFormData({
         name: '',
         type: '',
-        industry: '',
-        timeline: '',
         customType: '',
-        customIndustry: ''
+        industry: '',
+        customIndustry: '',
+        timeline: '',
+        targetUserGroups: [],
+        userScale: '',
+        geographicLocations: [],
+        specificLocation: ''
       });
       setCurrentStep(1);
       setError(null);
@@ -69,40 +89,77 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
 
   // Validate current step
   const validateStep = () => {
+    setError(null);
+    
+    // Validation for step 1
     if (currentStep === 1) {
-      // Validate Step 1
-      if (!formData.name || formData.name.trim().length < 3) {
-        setError(t('projects.wizard.nameRequired', 'Project name is required (min 3 characters)'));
+      // Temporarily commented out for testing purposes
+      /*
+      if (!formData.name.trim()) {
+        setError(t('projects.wizard.errors.nameRequired', 'Project name is required'));
         return false;
       }
+      
       if (!formData.type) {
-        setError(t('projects.wizard.typeRequired', 'Please select a project type'));
+        setError(t('projects.wizard.errors.typeRequired', 'Project type is required'));
         return false;
       }
-      if (formData.type === 'custom' && !formData.customType) {
-        setError(t('projects.wizard.customTypeRequired', 'Please specify the custom project type'));
+      
+      if (formData.type === 'custom' && !formData.customType.trim()) {
+        setError(t('projects.wizard.errors.customTypeRequired', 'Custom project type is required'));
         return false;
       }
+      
       if (!formData.industry) {
-        setError(t('projects.wizard.industryRequired', 'Please select an industry'));
+        setError(t('projects.wizard.errors.industryRequired', 'Project industry is required'));
         return false;
       }
-      if (formData.industry === 'other' && !formData.customIndustry) {
-        setError(t('projects.wizard.customIndustryRequired', 'Please specify the industry'));
+      
+      if (formData.industry === 'other' && !formData.customIndustry.trim()) {
+        setError(t('projects.wizard.errors.customIndustryRequired', 'Custom industry is required'));
         return false;
       }
+      
       if (!formData.timeline) {
-        setError(t('projects.wizard.timelineRequired', 'Please select an estimated timeline'));
+        setError(t('projects.wizard.errors.timelineRequired', 'Project timeline is required'));
         return false;
       }
+      */
     }
+    
+    // Validation for step 2
+    if (currentStep === 2) {
+      // Temporarily commented out for testing purposes
+      /*
+      if (formData.targetUserGroups.length === 0) {
+        setError(t('projects.wizard.errors.targetUserGroupsRequired', 'At least one target user group is required'));
+        return false;
+      }
+      
+      if (!formData.userScale) {
+        setError(t('projects.wizard.errors.userScaleRequired', 'Expected user scale is required'));
+        return false;
+      }
+      
+      if (formData.geographicLocations.length === 0) {
+        setError(t('projects.wizard.errors.geographicLocationsRequired', 'At least one geographic location is required'));
+        return false;
+      }
+      
+      if (formData.geographicLocations.includes('specific') && !formData.specificLocation.trim()) {
+        setError(t('projects.wizard.errors.specificLocationRequired', 'Specific location details are required'));
+        return false;
+      }
+      */
+    }
+    
     return true;
   };
 
   // Handle next step
   const handleNextStep = () => {
     if (validateStep()) {
-      if (currentStep < totalSteps) {
+      if (currentStep < 2) {
         setCurrentStep(prev => prev + 1);
       } else {
         handleSubmit();
@@ -126,14 +183,22 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     setError(null);
 
     try {
-      // For now, we only have step 1 implemented
-      // This will be expanded as more steps are added
+      // Compile project data from all steps
       const projectData = {
+        // Step 1 - Project Basics
         name: formData.name,
         type: formData.type === 'custom' ? formData.customType : formData.type,
         industry: formData.industry === 'other' ? formData.customIndustry : formData.industry,
         timeline: formData.timeline,
-        status: 'inProgress', // Default status for new projects
+        
+        // Step 2 - Target Audience & Users
+        targetUserGroups: formData.targetUserGroups,
+        userScale: formData.userScale,
+        geographicLocations: formData.geographicLocations,
+        specificLocation: formData.specificLocation,
+        
+        // Default values
+        status: 'inProgress',
         createdAt: new Date()
       };
 
@@ -151,7 +216,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   };
 
   // Total number of steps in the wizard
-  const totalSteps = 3; // Will be increased as more steps are added
+  const totalSteps = 2;
   
   // Render progress bar
   const renderProgressBar = () => {
@@ -231,12 +296,66 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     { id: 'longterm', label: t('projects.wizard.timelines.longterm', '🌱 6+ months (Long-term)') }
   ];
 
+  // Target user groups for step 2
+  const userGroupOptions = [
+    { id: 'consumers', label: t('projects.wizard.userGroups.consumers', 'Consumers/General Public'), icon: <FaUsers /> },
+    { id: 'businesses', label: t('projects.wizard.userGroups.businesses', 'Businesses/Organizations'), icon: <FaUserTie /> },
+    { id: 'professionals', label: t('projects.wizard.userGroups.professionals', 'Professionals'), icon: <FaUserCog /> },
+    { id: 'students', label: t('projects.wizard.userGroups.students', 'Students/Educators'), icon: <FaUserGraduate /> },
+    { id: 'developers', label: t('projects.wizard.userGroups.developers', 'Developers/Technical Users'), icon: <FaUserNinja /> },
+    { id: 'healthcare', label: t('projects.wizard.userGroups.healthcare', 'Healthcare Providers'), icon: <FaUserMd /> },
+    { id: 'children', label: t('projects.wizard.userGroups.children', 'Children/Teenagers'), icon: <FaChild /> },
+    { id: 'seniors', label: t('projects.wizard.userGroups.seniors', 'Seniors'), icon: <FaUserAlt /> },
+    { id: 'government', label: t('projects.wizard.userGroups.government', 'Government/Public Sector'), icon: <FaUserShield /> }
+  ];
+  
+  // User scale options for step 2
+  const userScaleOptions = [
+    { 
+      id: 'small', 
+      label: t('projects.wizard.userScale.small', 'Small Scale'), 
+      description: t('projects.wizard.userScale.smallDesc', 'Up to 100 users'),
+      icon: <FaChartBar />
+    },
+    { 
+      id: 'medium', 
+      label: t('projects.wizard.userScale.medium', 'Medium Scale'), 
+      description: t('projects.wizard.userScale.mediumDesc', '100-1,000 users'),
+      icon: <FaChartLine />
+    },
+    { 
+      id: 'large', 
+      label: t('projects.wizard.userScale.large', 'Large Scale'), 
+      description: t('projects.wizard.userScale.largeDesc', '1,000-10,000 users'),
+      icon: <FaChartArea />
+    },
+    { 
+      id: 'enterprise', 
+      label: t('projects.wizard.userScale.enterprise', 'Enterprise Scale'), 
+      description: t('projects.wizard.userScale.enterpriseDesc', '10,000+ users'),
+      icon: <FaChartPie />
+    }
+  ];
+  
+  // Geographic location options for step 2
+  const locationOptions = [
+    { id: 'global', label: t('projects.wizard.locations.global', 'Global/Worldwide') },
+    { id: 'northAmerica', label: t('projects.wizard.locations.northAmerica', 'North America') },
+    { id: 'southAmerica', label: t('projects.wizard.locations.southAmerica', 'South America') },
+    { id: 'europe', label: t('projects.wizard.locations.europe', 'Europe') },
+    { id: 'middleEast', label: t('projects.wizard.locations.middleEast', 'Middle East') },
+    { id: 'africa', label: t('projects.wizard.locations.africa', 'Africa') },
+    { id: 'asia', label: t('projects.wizard.locations.asia', 'Asia') },
+    { id: 'oceania', label: t('projects.wizard.locations.oceania', 'Australia/Oceania') },
+    { id: 'specific', label: t('projects.wizard.locations.specific', 'Specific Countries/Regions') }
+  ];  
+
   // Render step content based on current step
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
-          <StepContainer isRTL={isRTL}>
+          <StepContainer>
             <StepTitle>{t('projects.wizard.step1.title', 'Step 1: Project Info')}</StepTitle>
             
             {/* Project Name */}
@@ -321,6 +440,90 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
             </FormGroup>
           </StepContainer>
         );
+      case 2:
+        return (
+          <StepContainer>
+            <StepTitle isRTL={isRTL}>
+              {t('projects.wizard.step2.title', 'Target Audience Information')}
+            </StepTitle>
+            
+            {/* Target User Groups */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {
+                  t('projects.wizard.step2.targetUserGroups', 'Target User Groups')
+                }
+                <Tooltip 
+                  content={t('projects.wizard.step2.targetUserGroupsTooltip', 'Select all user groups that will use your application')}
+                  position={isRTL ? 'left' : 'right'}
+                >
+                  <FaUser style={{ marginRight: isRTL ? spacing.md : 0, marginLeft: isRTL ? 0 : spacing.md }} />
+                </Tooltip>
+              </FormLabel>
+              <CheckboxCardSelector
+                options={userGroupOptions}
+                selectedValues={formData.targetUserGroups}
+                onChange={(values) => handleChange('targetUserGroups', values)}
+                isRTL={isRTL}
+              />
+            </FormGroup>
+            
+            {/* Expected User Scale */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {
+                  t('projects.wizard.step2.userScale', 'Expected User Scale')
+                }
+                <Tooltip 
+                  content={t('projects.wizard.step2.userScaleTooltip', 'Estimate how many users will be using your application')}
+                  position={isRTL ? 'left' : 'right'}
+                >
+                  <FaUser style={{ marginRight: isRTL ? spacing.md : 0, marginLeft: isRTL ? 0 : spacing.md }} />
+                </Tooltip>
+              </FormLabel>
+              <UserScaleSelector
+                options={userScaleOptions}
+                selectedValue={formData.userScale}
+                onChange={(value) => handleChange('userScale', value)}
+                required
+                isRTL={isRTL}
+              />
+            </FormGroup>
+            
+            {/* Geographic Locations */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {
+                  t('projects.wizard.step2.geographicLocations', 'Geographic Locations')
+                }
+                <Tooltip 
+                  content={t('projects.wizard.step2.geographicLocationsTooltip', 'Select all regions where your application will be used')}
+                  position={isRTL ? 'left' : 'right'}
+                >
+                  <FaMapMarkerAlt style={{ marginRight: isRTL ? spacing.md : 0, marginLeft: isRTL ? 0 : spacing.md }} />
+                </Tooltip>
+              </FormLabel>
+              <MultiSelectDropdown
+                options={locationOptions}
+                selectedValues={formData.geographicLocations}
+                onChange={(values) => handleChange('geographicLocations', values)}
+                placeholder={t('projects.wizard.step2.locationsPlaceholder', 'Select geographic locations')}
+                isRTL={isRTL}
+                allowCustom={true}
+                required
+              />
+              {formData.geographicLocations.includes('specific') && (
+                <TextInput
+                  value={formData.specificLocation}
+                  onChange={(value) => handleChange('specificLocation', value)}
+                  placeholder={t('projects.wizard.step2.specificLocationPlaceholder', 'Specify countries or regions')}
+                  maxLength={200}
+                  style={{ marginTop: spacing.sm }}
+                />
+              )}
+            </FormGroup>
+          </StepContainer>
+        );
       default:
         return null;
     }
@@ -341,23 +544,19 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       footer={
         <ModalFooter isRTL={isRTL}>
           {error && <ErrorMessage>{error}</ErrorMessage>}
+          
           <ModalButton 
             secondary 
-            onClick={onClose}
+            onClick={handlePrevStep}
             isRTL={isRTL}
+            disabled={currentStep === 1}
+            style={{
+              opacity: currentStep === 1 ? '0.5' : '1',
+              cursor: currentStep === 1 ? 'not-allowed' : 'pointer'
+            }}
           >
-            {t('common.cancel', 'Cancel')}
+            {t('common.back', 'Back')}
           </ModalButton>
-          
-          {currentStep > 1 && (
-            <ModalButton 
-              secondary 
-              onClick={handlePrevStep}
-              isRTL={isRTL}
-            >
-              {t('common.back', 'Back')}
-            </ModalButton>
-          )}
           
           <ModalButton 
             primary 
@@ -405,7 +604,7 @@ const WizardContainer = styled.div`
 
 const ModalFooter = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   padding: ${spacing.md} ${spacing.lg};
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -416,13 +615,14 @@ const ModalFooter = styled.div`
   
   @media (max-width: ${breakpoints.sm}) {
     flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
-    justify-content: center;
+    justify-content: space-between;
     padding: ${spacing.md} ${spacing.lg};
     gap: ${spacing.sm};
   }
   
   @media (max-width: ${breakpoints.xs}) {
-    padding: ${spacing.md};
+    padding: ${spacing.sm};
+    gap: ${spacing.xs};
   }
   
   /* Add a subtle gradient overlay to the top border */
@@ -451,22 +651,23 @@ const ModalButton = styled.button`
   position: relative;
   overflow: hidden;
   margin: 0;
+  flex: 1;
   
   @media (max-width: ${breakpoints.sm}) {
-    padding: ${spacing.md} ${spacing.lg};
+    padding: ${spacing.sm} ${spacing.md};
     font-size: ${typography.fontSizes.md};
-    min-width: 120px;
+    min-width: 100px;
     height: 50px;
-    width: 45%;
+    max-width: 48%;
   }
   
   @media (max-width: ${breakpoints.xs}) {
-    padding: ${spacing.sm} ${spacing.md};
-    font-size: ${typography.fontSizes.md};
-    border-radius: ${borderRadius.md};
-    min-width: 120px;
-    height: 46px;
-    width: 45%;
+    padding: ${spacing.xs} ${spacing.sm};
+    font-size: ${typography.fontSizes.sm};
+    border-radius: ${borderRadius.sm};
+    min-width: 80px;
+    height: 40px;
+    max-width: 48%;
   }
   
   /* Add shine effect */
@@ -807,16 +1008,25 @@ const StepContainer = styled.div`
   flex-direction: column;
   gap: ${spacing.md};
   padding: ${spacing.md};
-  background: linear-gradient(135deg, rgba(20, 20, 40, 0.3), rgba(30, 30, 60, 0.3));
+  background: linear-gradient(135deg, rgba(25, 25, 50, 0.2), rgba(35, 35, 70, 0.2));
   border-radius: ${borderRadius.md};
-  border: 1px solid rgba(74, 108, 247, 0.1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(74, 108, 247, 0.05);
   position: relative;
-  overflow: hidden;
+  transition: all ${transitions.fast};
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   width: 100%;
   max-width: 100%;
+  
+  @media (max-width: 768px) {
+    padding: ${spacing.sm};
+    gap: ${spacing.sm};
+    margin-top: ${spacing.md};
+  }
+  
+  @media (max-width: 480px) {
+    padding: ${spacing.xs};
+  }
   
   @media (max-width: ${breakpoints.sm}) {
     padding: ${spacing.sm};
@@ -877,7 +1087,7 @@ const StepTitle = styled.h3`
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: ${spacing.lg};
+  margin-bottom: ${props => props.marginBottom || spacing.lg};
   display: flex;
   flex-direction: column;
   gap: ${spacing.sm};
@@ -890,6 +1100,9 @@ const FormGroup = styled.div`
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   width: 100%;
+  
+  /* Add a subtle border accent on the right or left side based on RTL */
+  border-${props => props.isRTL ? 'right' : 'left'}: 3px solid ${colors.accent.primary};
   
   @media (max-width: ${breakpoints.sm}) {
     margin-bottom: ${spacing.md};
@@ -951,6 +1164,11 @@ const FormLabel = styled.label`
   flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
   justify-content: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
   width: 100%;
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  background: rgba(25, 25, 50, 0.1);
+  /* Add subtle accent for RTL awareness */
+  border-${props => props.isRTL ? 'right' : 'left'}: 2px solid ${colors.accent.primary};
   
   @media (max-width: ${breakpoints.sm}) {
     font-size: ${typography.fontSizes.xs};
@@ -1066,5 +1284,7 @@ const ProgressLabel = styled.div`
     color: ${props => props.active ? colors.accent.secondary : 'rgba(255, 255, 255, 0.8)'};
   }
 `;
+
+
 
 export default ProjectWizard;

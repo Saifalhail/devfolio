@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 /**
  * Tooltip - A component that displays additional information when hovered

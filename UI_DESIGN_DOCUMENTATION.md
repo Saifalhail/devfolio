@@ -184,6 +184,203 @@ const TabIconWrapper = styled.span`
   `;
   ```
 
+## Modal Design
+
+### Modal Structure
+- **Clean, Minimalist Design**: Modals use a dark background with clean lines and minimal visual elements
+- **Responsive Sizing**: Modals adjust their size based on screen dimensions
+- **Centered Content**: All content and buttons are centered for better visual balance
+
+### Modal Header
+- **Padding**: Adequate padding to prevent overlap with close button
+- **Title Alignment**: Centered on mobile, left-aligned on desktop
+- **Close Button**: Positioned in the top-right corner with adequate touch target size
+
+```jsx
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${spacing.md} ${spacing.lg};
+  padding-right: ${spacing.xl}; /* Extra padding to prevent overlap with close button */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  @media (max-width: ${breakpoints.sm}) {
+    padding: ${spacing.sm} ${spacing.md};
+    padding-right: ${spacing.lg};
+  }
+`;
+```
+
+### Modal Footer
+- **Button Alignment**: Centered for better visual balance and mobile usability
+- **Button Spacing**: Consistent gap between buttons using theme spacing variables
+- **RTL Support**: Proper direction handling for right-to-left languages
+
+```jsx
+const ModalFooter = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.md} ${spacing.lg};
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  width: 100%;
+  gap: ${spacing.md};
+  
+  @media (max-width: ${breakpoints.sm}) {
+    flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+    justify-content: center;
+    padding: ${spacing.md} ${spacing.lg};
+    gap: ${spacing.sm};
+  }
+  
+  @media (max-width: ${breakpoints.xs}) {
+    padding: ${spacing.md};
+  }
+`;
+```
+
+### Modal Buttons
+- **Mobile-Optimized**: Larger touch targets on mobile devices
+- **Consistent Styling**: Follows the application's button styling guidelines
+- **Visual Hierarchy**: Primary actions are visually distinct from secondary actions
+
+```jsx
+const ModalButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${spacing.sm} ${spacing.md};
+  border-radius: ${borderRadius.sm};
+  font-weight: 500;
+  cursor: pointer;
+  transition: all ${transitions.fast};
+  min-width: 100px;
+  
+  @media (max-width: ${breakpoints.sm}) {
+    min-width: 120px;
+    height: 44px;
+    padding: ${spacing.xs} ${spacing.sm};
+  }
+`;
+```
+
+## SelectableCards Component
+
+### Design Principles
+- **Clean Card Design**: Cards use a minimalist design with subtle gradients and borders
+- **Mobile-First Approach**: Optimized for touch interactions on small screens
+- **Native Scrolling**: Uses browser's native horizontal scrolling for better performance
+
+### Card Container
+- **Responsive Layout**: Adjusts spacing and scrolling behavior based on screen size
+- **Touch-Optimized**: Enhanced for smooth touch scrolling on mobile devices
+
+```jsx
+const CardsContainer = styled.div`
+  position: relative;
+  width: 100%;
+  margin: ${spacing.md} 0;
+  
+  @media (max-width: 768px) {
+    margin: ${spacing.sm} 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+`;
+```
+
+### Cards Wrapper
+- **Horizontal Scrolling**: Enables smooth horizontal scrolling of cards
+- **No Scrollbars**: Hidden scrollbars for cleaner appearance while maintaining functionality
+- **Flexible Layout**: Adapts to different screen sizes with appropriate spacing
+
+```jsx
+const CardsWrapper = styled.div`
+  display: flex;
+  gap: ${spacing.md};
+  padding: ${spacing.md} 0;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  position: relative;
+  width: 100%;
+  
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+  
+  /* Prevent text selection during drag */
+  user-select: none;
+  
+  @media (max-width: 768px) {
+    gap: ${spacing.sm};
+    padding: ${spacing.sm} 0;
+    margin-bottom: ${props => props.isMobile ? spacing.xs : '0'};
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: none; /* Remove snap on mobile to improve scrolling */
+    flex-wrap: nowrap;
+  }
+`;
+```
+
+### Individual Card
+- **Consistent Sizing**: Fixed width and height for uniform appearance
+- **Visual Feedback**: Subtle hover and active states for better interaction feedback
+- **Selection State**: Clear visual indication of selected state with gradient background
+
+```jsx
+const Card = styled.div`
+  width: 140px;
+  height: 180px;
+  padding: ${spacing.md};
+  border-radius: ${borderRadius.md};
+  background: ${props => props.selected 
+    ? 'linear-gradient(135deg, rgba(74, 108, 247, 0.3), rgba(138, 43, 226, 0.3))'
+    : 'linear-gradient(135deg, rgba(74, 108, 247, 0.05), rgba(255, 255, 255, 0.05))'};
+  border: 2px solid ${props => props.selected 
+    ? 'rgba(138, 43, 226, 0.8)' 
+    : 'rgba(255, 255, 255, 0.1)'};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: ${spacing.sm};
+  cursor: pointer;
+  transition: all ${transitions.fast};
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  touch-action: pan-x; /* Improve touch scrolling */
+  
+  @media (max-width: 768px) {
+    width: 160px;
+    height: 200px;
+    padding: ${spacing.md} ${spacing.sm};
+  }
+  
+  /* Left border accent removed */
+  
+  &:hover {
+    transform: translateY(-5px);
+    border-color: rgba(138, 43, 226, 0.5);
+    box-shadow: ${shadows.md};
+  }
+`;
+```
+
+### Mobile Optimization
+- **No Scroll Arrows**: Removed arrow buttons on mobile for cleaner UI
+- **No Blue Left Lines**: Removed vertical accent lines on cards for mobile
+- **Larger Touch Targets**: Increased card size on mobile for better touch interaction
+- **Native Scrolling**: Uses browser's native touch scrolling for better performance
+- **Scroll Indicators**: Visual feedback when scrolling with smooth fade-in/out
+
 - **Toggle Button Styling**:
   ```css
   /* Toggle button for layout switching */
