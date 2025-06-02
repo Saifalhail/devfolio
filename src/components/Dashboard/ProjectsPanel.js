@@ -545,27 +545,15 @@ const ProjectsPanel = () => {
       )}
       
       {/* Add Project Modal */}
-      <Modal
+      {error && isModalOpen && (
+        <ErrorMessage role="alert" aria-live="assertive">{error}</ErrorMessage>
+      )}
+      
+      <ProjectWizard
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={t('projects.addProject', 'Add New Project')}
-        icon={<FaPlus />}
-        size="lg"
-        theme="todo"
-        animation="zoom"
-        centered={true}
-        closeOnClickOutside={true}
-      >
-        {error && (
-          <ErrorMessage role="alert" aria-live="assertive">{error}</ErrorMessage>
-        )}
-        
-        <ProjectWizard
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          onProjectAdded={handleAddProject}
-        />
-      </Modal>
+        onProjectAdded={handleAddProject}
+      />
     </PanelContainer>
   );
 };

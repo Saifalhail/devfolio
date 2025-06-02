@@ -759,6 +759,7 @@ const Header = styled.h1`
   font-size: 2rem; /* Significantly larger size */
   font-weight: ${typography.fontWeights.bold};
   padding-bottom: ${spacing.md};
+  padding-right: 50px; /* Add padding to prevent overlap with close button */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   z-index: 1;
@@ -767,6 +768,12 @@ const Header = styled.h1`
   display: flex;
   align-items: center;
   line-height: 1.2;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    padding-right: 40px;
+    margin-top: ${spacing.xs};
+  }
   
   ${props => {
     switch(props.theme) {
@@ -883,7 +890,7 @@ const Header = styled.h1`
 
 const Footer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   margin-top: ${spacing.xs};
   padding-top: ${spacing.xs};
