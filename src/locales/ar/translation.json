@@ -112,7 +112,9 @@
     "delete": "حذف",
     "submit": "إرسال",
     "confirm": "تأكيد",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "back": "رجوع",
+    "next": "التالي"
   },
   "validation": {
     "required": "هذا الحقل مطلوب",
@@ -211,9 +213,227 @@
     "errorCodeExpired": "انتهت صلاحية رمز التحقق. يرجى طلب رمز جديد.",
     "errorVerifyFailed": "فشل التحقق. يرجى المحاولة مرة أخرى.",
     "errorInvalidEmail": "يرجى إدخال بريد إلكتروني صالح",
-    "errorWeakPassword": "يجب أن تحتوي كلمة المرور على أحرف وأرقام",
-    "close": "إغلاق",
-    "back": "رجوع"
+    "errorWeakPassword": "يجب أن تحتوي كلمة المرور على أحرف وأرقام"
+  },
+  "projects": {
+    "title": "المشاريع",
+    "addProject": "إضافة مشروع",
+    "addError": "خطأ في إضافة المشروع. يرجى المحاولة مرة أخرى.",
+    "editProject": "تعديل المشروع",
+    "deleteProject": "حذف المشروع",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا المشروع؟",
+    "done": "مكتمل",
+    "namePlaceholder": "أدخل اسم المشروع",
+    "clientPlaceholder": "أدخل اسم العميل",
+    "descriptionPlaceholder": "أدخل وصف المشروع",
+    "noProjects": "لا توجد مشاريع حاليًا. قم بإضافة مشروع جديد للبدء.",
+    "filters": {
+      "all": "جميع المشاريع",
+      "active": "نشط",
+      "completed": "مكتمل",
+      "pending": "قيد الانتظار"
+    },
+    "sortOptions": {
+      "newest": "الأحدث",
+      "oldest": "الأقدم",
+      "deadline": "الموعد النهائي",
+      "alphabetical": "أبجدي"
+    },
+    "moods": {
+      "happy": "سعيد",
+      "neutral": "محايد",
+      "unhappy": "غير راضي"
+    },
+    "viewOptions": {
+      "grid": "شبكة",
+      "list": "قائمة"
+    },
+    "wizard": {
+      "title": "إنشاء مشروع جديد",
+      "continue": "متابعة",
+      "submit": "إرسال",
+      "submitError": "خطأ في إنشاء المشروع. يرجى المحاولة مرة أخرى.",
+      "step1Label": "الخطوة 1",
+      "step2Label": "الخطوة 2",
+      "step3Label": "الخطوة 3",
+      "back": "رجوع",
+      "next": "التالي",
+      "errors": {
+        "nameRequired": "اسم المشروع مطلوب",
+        "typeRequired": "نوع المشروع مطلوب",
+        "industryRequired": "مجال المشروع مطلوب",
+        "userGroupsRequired": "يجب تحديد مجموعة مستخدمين واحدة على الأقل",
+        "userScaleRequired": "حجم المستخدمين المتوقع مطلوب",
+        "geographicLocationsRequired": "يجب تحديد موقع جغرافي واحد على الأقل",
+        "specificLocationRequired": "تفاصيل الموقع المحدد مطلوبة",
+        "authFeaturesRequired": "يجب تحديد ميزة مصادقة واحدة على الأقل",
+        "dataStorageFeaturesRequired": "يجب تحديد ميزة تخزين بيانات واحدة على الأقل",
+        "coreFeaturesRequired": "يجب تحديد ميزة أساسية واحدة على الأقل",
+        "otherFeatureTextRequired": "يرجى تحديد الميزة الأخرى"
+      },
+      "step1": {
+        "title": "الخطوة 1: معلومات المشروع",
+        "projectName": "اسم المشروع",
+        "projectNameSubtext": "أدخل اسمًا فريدًا يحدد مشروعك بوضوح",
+        "projectNamePlaceholder": "أدخل اسم المشروع (مثال: تطبيقي الرائع)",
+        "projectType": "نوع المشروع",
+        "projectTypeSubtext": "حدد الفئة التي تصف مشروعك بشكل أفضل",
+        "customTypePlaceholder": "صف نوع مشروعك المخصص",
+        "projectIndustry": "مجال المشروع",
+        "projectIndustrySubtext": "اختر المجال أو القطاع الذي يخدمه مشروعك",
+        "industryPlaceholder": "اختر مجال مشروعك",
+        "otherIndustryPlaceholder": "يرجى تحديد المجال",
+        "estimatedTimeline": "الجدول الزمني المتوقع",
+        "estimatedTimelineSubtext": "حدد الإطار الزمني المتوقع لإكمال مشروعك"
+      },
+      "step2": {
+        "title": "الخطوة 2: جمهور المشروع",
+        "userGroups": "مجموعات المستخدمين",
+        "userGroupsSubtext": "حدد الفئات الرئيسية للمستخدمين المستهدفين",
+        "targetUserGroups": "مجموعات المستخدمين المستهدفة",
+        "targetUserGroupsTooltip": "حدد جميع مجموعات المستخدمين التي ستستخدم تطبيقك",
+        "userScale": "حجم المستخدمين",
+        "userScaleSubtext": "ما هو العدد المتوقع للمستخدمين النشطين؟",
+        "userScaleTooltip": "قم بتقدير عدد المستخدمين الذين سيستخدمون تطبيقك",
+        "projectLocation": "موقع المشروع",
+        "projectLocationSubtext": "أين سيتم استخدام مشروعك بشكل أساسي؟",
+        "geographicLocations": "المواقع الجغرافية",
+        "geographicLocationsTooltip": "حدد جميع المناطق التي سيتم استخدام تطبيقك فيها",
+        "locationsPlaceholder": "حدد المواقع الجغرافية",
+        "specificLocationPlaceholder": "حدد الدول أو المناطق"
+      },
+      "step3": {
+        "title": "الخطوة 3: ميزات المشروع",
+        "timeline": "الجدول الزمني",
+        "timelineSubtext": "ما هو الإطار الزمني المفضل لديك لإكمال هذا المشروع؟",
+        "authFeatures": "المصادقة وإدارة المستخدمين",
+        "authFeaturesSubtext": "حدد ميزات المصادقة وإدارة المستخدمين التي يحتاجها مشروعك",
+        "authFeaturesTooltip": "حدد ميزات المصادقة وإدارة المستخدمين التي يحتاجها مشروعك",
+        "dataStorage": "البيانات والتخزين",
+        "dataStorageSubtext": "ما هي احتياجات البيانات والتخزين لمشروعك؟",
+        "coreFeatures": "الميزات الأساسية للتطبيق",
+        "coreFeaturesSubtext": "حدد الميزات الأساسية التي يحتاجها مشروعك",
+        "coreFeaturesToolTip": "حدد الميزات الوظيفية الرئيسية التي سيحتاجها تطبيقك",
+        "otherFeaturePlaceholder": "يرجى تحديد الميزات الأخرى التي تحتاجها"
+      },
+      "step4": {
+        "title": "الخطوة 4: التفضيلات التقنية والبنية التحتية",
+        "platforms": "منصات التطبيق المفضلة",
+        "platformsTooltip": "أين يجب أن يكون تطبيقك متاحًا؟",
+        "techStack": "تفضيل التقنيات البرمجية",
+        "techStackTooltip": "التقنيات المفضلة المستخدمة لبناء تطبيقك",
+        "hosting": "الاستضافة والبنية التحتية المفضلة",
+        "hostingTooltip": "أين تفضل استضافة تطبيقك؟",
+        "customStackPlaceholder": "حدد التقنيات البرمجية المفضلة لديك"
+      },
+      "platforms": {
+        "ios": "آي أو إس (الجوال)",
+        "android": "أندرويد (الجوال)",
+        "web": "الويب (متصفح الإنترنت)",
+        "desktop": "سطح المكتب (ويندوز/ماك/لينكس)",
+        "crossPlatform": "متعدد المنصات (منصات متعددة)"
+      },
+      "techStack": {
+        "recommended": "موصى به من قبل المطور",
+        "javascript": "جافاسكريبت (رياكت، نود جي إس، إكسبريس)",
+        "python": "بايثون (جانغو، فلاسك)",
+        "mobile": "تطوير الجوال (فلاتر، رياكت نيتف)",
+        "custom": "مخصص"
+      },
+      "hosting": {
+        "recommended": "موصى به من قبل المطور",
+        "cloud": "سحابي (AWS، Azure، GCP، Firebase)",
+        "selfHosted": "استضافة ذاتية / محلية"
+      },
+      "types": {
+        "mobile": "تطبيق جوال",
+        "web": "تطبيق ويب",
+        "desktop": "برنامج سطح المكتب",
+        "custom": "مشروع مخصص"
+      },
+      "industries": {
+        "ecommerce": "التجارة الإلكترونية",
+        "education": "التعليم",
+        "healthcare": "الرعاية الصحية",
+        "finance": "التمويل",
+        "entertainment": "الترفيه",
+        "social": "وسائل التواصل الاجتماعي",
+        "productivity": "الإنتاجية",
+        "other": "أخرى"
+      },
+      "timeline": {
+        "urgent": "عاجل (< شهر واحد)",
+        "short": "قصير (1-3 أشهر)",
+        "medium": "متوسط (3-6 أشهر)",
+        "long": "طويل (6+ أشهر)",
+        "flexible": "مرن"
+      },
+      "userGroups": {
+        "general": "عامة الناس",
+        "professionals": "المحترفون",
+        "students": "الطلاب",
+        "seniors": "كبار السن",
+        "children": "الأطفال",
+        "specialized": "مجموعة متخصصة"
+      },
+      "userScale": {
+        "small": "صغير (< 100 مستخدم)",
+        "medium": "متوسط (100-1,000 مستخدم)",
+        "large": "كبير (1,000-10,000 مستخدم)",
+        "enterprise": "مؤسسة (10,000+ مستخدم)"
+      },
+      "location": {
+        "local": "محلي",
+        "regional": "إقليمي",
+        "national": "وطني",
+        "international": "دولي",
+        "online": "عبر الإنترنت فقط"
+      }
+    },
+    "features": {
+      "auth": {
+        "basicAuth": "المصادقة الأساسية",
+        "basicAuthDesc": "تسجيل الدخول باسم المستخدم/كلمة المرور",
+        "socialAuth": "تسجيل الدخول الاجتماعي",
+        "socialAuthDesc": "تسجيل الدخول عبر جوجل، فيسبوك، إلخ",
+        "userRoles": "أدوار وصلاحيات المستخدمين",
+        "userRolesDesc": "مستويات وصول مختلفة",
+        "passwordRecovery": "استعادة كلمة المرور",
+        "passwordRecoveryDesc": "إعادة تعيين كلمات المرور المنسية"
+      },
+      "data": {
+        "database": "تخزين قاعدة البيانات",
+        "databaseDesc": "تخزين البيانات المنظمة",
+        "realtime": "بيانات في الوقت الفعلي",
+        "realtimeDesc": "تحديثات ومزامنة مباشرة",
+        "offlineData": "الوصول للبيانات دون اتصال",
+        "offlineDataDesc": "العمل بدون إنترنت",
+        "fileUploads": "رفع الملفات",
+        "fileUploadsDesc": "رفع ملفات المستخدم",
+        "cloudStorage": "التخزين السحابي",
+        "cloudStorageDesc": "تخزين الملفات في السحابة"
+      },
+      "core": {
+        "payments": "معالجة المدفوعات",
+        "paymentsDesc": "قبول المدفوعات عبر الإنترنت",
+        "messaging": "المراسلة/الدردشة",
+        "messagingDesc": "التواصل بين المستخدمين",
+        "notifications": "الإشعارات",
+        "notificationsDesc": "تنبيهات الدفع، البريد الإلكتروني، أو داخل التطبيق",
+        "maps": "الخرائط والموقع",
+        "mapsDesc": "ميزات جغرافية",
+        "calendar": "التقويم/الجدولة",
+        "calendarDesc": "ميزات تعتمد على التاريخ",
+        "analytics": "التحليلات/التقارير",
+        "analyticsDesc": "رؤى البيانات والتقارير",
+        "api": "تكامل API",
+        "apiDesc": "الاتصال بالخدمات الخارجية",
+        "sharing": "المشاركة الاجتماعية",
+        "sharingDesc": "مشاركة المحتوى على وسائل التواصل الاجتماعي",
+        "other": "أخرى (حدد)",
+        "otherDesc": "وظائف مخصصة"
+      }
+    }
   },
   "dashboard": {
     "welcome": "مرحباً بك في لوحة التحكم",
@@ -375,9 +595,6 @@
   "modal": {
     "close": "إغلاق"
   },
-  "projects": {
-    "title": "المشاريع",
-    "addProject": "إضافة مشروع",
     "addError": "خطأ في إضافة المشروع. يرجى المحاولة مرة أخرى.",
     "editProject": "تعديل المشروع",
     "deleteProject": "حذف المشروع",
@@ -408,7 +625,7 @@
       "grid": "شبكة",
       "list": "قائمة"
     }
-  },
+  ,
   "forms": {
     "title": "النماذج والملاحظات",
     "createNew": "إنشاء نموذج جديد",

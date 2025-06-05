@@ -125,8 +125,8 @@ const Modal = ({
     if (!title) return null;
 
     return (
-      <Header theme={theme} className="modal-header">
-        {icon && <IconContainer className="header-icon">{icon}</IconContainer>}
+      <Header theme={theme} className="modal-header" isRTL={isRTL}>
+        {icon && <IconContainer className="header-icon" isRTL={isRTL}>{icon}</IconContainer>}
         <span className="header-title">{title}</span>
       </Header>
     );
@@ -137,12 +137,8 @@ const Modal = ({
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-right: ${spacing.sm};
-    
-    [dir="rtl"] & {
-      margin-right: 0;
-      margin-left: ${spacing.sm};
-    }
+    margin-right: ${props => props.isRTL ? '0' : spacing.sm};
+    margin-left: ${props => props.isRTL ? spacing.sm : '0'};
   `;
 
   // Use createPortal to render the modal outside the normal DOM hierarchy
@@ -759,15 +755,17 @@ const Header = styled.h1`
   font-size: 2rem; /* Significantly larger size */
   font-weight: ${typography.fontWeights.bold};
   padding-bottom: ${spacing.md};
-  padding-right: 50px; /* Add padding to prevent overlap with close button */
+  padding-right: ${props => props.isRTL ? '0' : '50px'}; /* Add padding to prevent overlap with close button */
+  padding-left: ${props => props.isRTL ? '50px' : '0'}; /* Add padding for RTL layout */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   z-index: 1;
   letter-spacing: 0.5px;
-  text-align: left;
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
   display: flex;
   align-items: center;
   line-height: 1.2;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 768px) {
     font-size: 1.5rem;
@@ -868,23 +866,20 @@ const Header = styled.h1`
     100% { opacity: 0.7; }
   }
   
-  /* RTL Support */
-  [dir="rtl"] & {
-    text-align: right;
-    
-    &:after {
-      left: auto;
-      right: 0;
-      background: ${props => {
-        switch(props.theme) {
-          case 'todo': return 'linear-gradient(270deg, #8338ec, rgba(131, 56, 236, 0.1))';
-          case 'doing': return 'linear-gradient(270deg, #ffb100, rgba(255, 177, 0, 0.1))';
-          case 'done': return 'linear-gradient(270deg, #00c27a, rgba(0, 194, 122, 0.1))';
-          case 'blocked': return 'linear-gradient(270deg, #d01f48, rgba(208, 31, 72, 0.1))';
-          default: return 'linear-gradient(270deg, #8338ec, rgba(131, 56, 236, 0.1))';
-        }
-      }};
-    }
+  /* RTL Support handled directly with props instead of CSS selectors */
+  &:after {
+    left: ${props => props.isRTL ? 'auto' : '0'};
+    right: ${props => props.isRTL ? '0' : 'auto'};
+    background: ${props => {
+      const direction = props.isRTL ? '270deg' : '90deg';
+      switch(props.theme) {
+        case 'todo': return `linear-gradient(${direction}, #8338ec, rgba(131, 56, 236, 0.1))`;
+        case 'doing': return `linear-gradient(${direction}, #ffb100, rgba(255, 177, 0, 0.1))`;
+        case 'done': return `linear-gradient(${direction}, #00c27a, rgba(0, 194, 122, 0.1))`;
+        case 'blocked': return `linear-gradient(${direction}, #d01f48, rgba(208, 31, 72, 0.1))`;
+        default: return `linear-gradient(${direction}, #8338ec, rgba(131, 56, 236, 0.1))`;
+      }
+    }};
   }
 `;
 

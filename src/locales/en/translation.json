@@ -646,5 +646,194 @@
       "background": "Background",
       "text": "Text"
     }
+  },
+  "projects": {
+    "wizard": {
+      "title": "Create New Project",
+      "subtitle": "Let's gather some information about your project",
+      "continue": "Continue",
+      "back": "Back",
+      "submit": "Submit",
+      "step1": {
+        "title": "Step 1: Project Info",
+        "projectName": "Project Name",
+        "projectNameSubtext": "Enter a unique name that clearly identifies your project",
+        "projectNamePlaceholder": "Enter project name (e.g., MyAwesomeApp)",
+        "projectType": "Project Type",
+        "projectTypeSubtext": "Select the type of project you want to create",
+        "customTypePlaceholder": "Describe your custom project type",
+        "projectIndustry": "Project Industry",
+        "projectIndustrySubtext": "Choose the industry or sector your project serves",
+        "industryPlaceholder": "Select your project industry",
+        "otherIndustryPlaceholder": "Please specify the industry",
+        "estimatedTimeline": "Estimated Timeline",
+        "estimatedTimelineSubtext": "Select the expected timeframe for completing your project"
+      },
+      "step2": {
+        "title": "Step 2: Target Audience",
+        "userGroups": "User Groups",
+        "userGroupsSubtext": "Select the primary categories of target users",
+        "targetUserGroups": "Target User Groups",
+        "targetUserGroupsTooltip": "Select all user groups that will use your application",
+        "userScale": "User Scale",
+        "userScaleSubtext": "What is the expected number of active users?",
+        "userScaleTooltip": "Estimate how many users will be using your application",
+        "projectLocation": "Project Location",
+        "projectLocationSubtext": "Where will your project primarily be used?",
+        "geographicLocations": "Geographic Locations",
+        "geographicLocationsTooltip": "Select all regions where your application will be used",
+        "locationsPlaceholder": "Select geographic locations",
+        "specificLocationPlaceholder": "Specify countries or regions"
+      },
+      "step3": {
+        "title": "Step 3: Functional Requirements",
+        "timeline": "Timeline",
+        "timelineSubtext": "What is your preferred timeframe for completing this project?",
+        "authFeatures": "Authentication & User Management",
+        "authFeaturesSubtext": "Select the authentication and user management features your project needs",
+        "authFeaturesTooltip": "Select the authentication and user management features needed for your project",
+        "dataStorage": "Data & Storage",
+        "dataStorageSubtext": "What are the data and storage needs for your project?",
+        "coreFeatures": "Core Application Features",
+        "coreFeaturesSubtext": "Select the core features your project needs",
+        "coreFeaturesToolTip": "Select the main functional features your application will need",
+        "otherFeaturePlaceholder": "Please specify the other feature(s) you need"
+      },
+      "step4": {
+        "title": "Step 4: Technical Preferences & Infrastructure",
+        "platforms": "Preferred Application Platforms",
+        "platformsTooltip": "Where should your application be available?",
+        "techStack": "Technology Stack Preference",
+        "techStackTooltip": "Preferred technologies used to build your app",
+        "hosting": "Preferred Hosting & Infrastructure",
+        "hostingTooltip": "Where would you prefer your application to be hosted?",
+        "customStackPlaceholder": "Specify your preferred technology stack"
+      },
+      "platforms": {
+        "ios": "iOS (Mobile)",
+        "android": "Android (Mobile)",
+        "web": "Web (Browser-based)",
+        "desktop": "Desktop (Windows/macOS/Linux)",
+        "crossPlatform": "Cross-platform (Multiple Platforms)"
+      },
+      "techStack": {
+        "recommended": "Recommended by Developer",
+        "javascript": "JavaScript (React, Node.js, Express)",
+        "python": "Python (Django, Flask)",
+        "mobile": "Mobile-focused (Flutter, React Native)",
+        "custom": "Custom"
+      },
+      "hosting": {
+        "recommended": "Recommended by Developer",
+        "cloud": "Cloud-based (AWS, Azure, GCP, Firebase)",
+        "selfHosted": "Self-hosted / On-premises"
+      },
+      "types": {
+        "mobile": "Mobile App",
+        "web": "Web App",
+        "desktop": "Desktop Software",
+        "custom": "Custom Project"
+      },
+      "industries": {
+        "ecommerce": "E-commerce",
+        "education": "Education",
+        "healthcare": "Healthcare",
+        "finance": "Finance",
+        "entertainment": "Entertainment",
+        "social": "Social Media",
+        "productivity": "Productivity",
+        "other": "Other"
+      },
+      "timeline": {
+        "urgent": "Urgent (< 1 month)",
+        "short": "Short (1-3 months)",
+        "medium": "Medium (3-6 months)",
+        "long": "Long (6+ months)",
+        "flexible": "Flexible"
+      },
+      "userGroups": {
+        "general": "General Public",
+        "professionals": "Professionals",
+        "students": "Students",
+        "seniors": "Seniors",
+        "children": "Children",
+        "specialized": "Specialized Group"
+      },
+      "userScale": {
+        "small": "Small (< 100 users)",
+        "medium": "Medium (100-1,000 users)",
+        "large": "Large (1,000-10,000 users)",
+        "enterprise": "Enterprise (10,000+ users)"
+      },
+      "location": {
+        "local": "Local",
+        "regional": "Regional",
+        "national": "National",
+        "international": "International",
+        "online": "Online Only"
+      },
+      "errors": {
+        "nameRequired": "Project name is required",
+        "typeRequired": "Project type is required",
+        "customTypeRequired": "Custom project type description is required",
+        "industryRequired": "Project industry is required",
+        "customIndustryRequired": "Custom industry description is required",
+        "timelineRequired": "Estimated timeline is required",
+        "targetUserGroupsRequired": "At least one target user group is required",
+        "userScaleRequired": "User scale is required",
+        "geographicLocationsRequired": "At least one geographic location is required",
+        "authFeaturesRequired": "At least one authentication feature is required",
+        "dataStorageFeaturesRequired": "At least one data storage feature is required",
+        "coreFeaturesRequired": "At least one core application feature is required",
+        "otherFeatureTextRequired": "Please specify the other feature",
+        "platformsRequired": "At least one application platform is required",
+        "customTechStackRequired": "Please specify your preferred technology stack",
+        "hostingRequired": "Hosting preference is required"
+      }
+    },
+    "features": {
+      "auth": {
+        "basicAuth": "Basic Authentication",
+        "basicAuthDesc": "Username/password login",
+        "socialAuth": "Social Login",
+        "socialAuthDesc": "Login with Google, Facebook, etc.",
+        "userRoles": "User Roles & Permissions",
+        "userRolesDesc": "Different access levels",
+        "passwordRecovery": "Password Recovery",
+        "passwordRecoveryDesc": "Reset forgotten passwords"
+      },
+      "data": {
+        "database": "Database Storage",
+        "databaseDesc": "Structured data storage",
+        "realtime": "Real-time Data",
+        "realtimeDesc": "Live updates and sync",
+        "offlineData": "Offline Data Access",
+        "offlineDataDesc": "Work without internet",
+        "fileUploads": "File Uploads",
+        "fileUploadsDesc": "User file uploads",
+        "cloudStorage": "Cloud Storage",
+        "cloudStorageDesc": "Store files in the cloud"
+      },
+      "core": {
+        "payments": "Payment Processing",
+        "paymentsDesc": "Accept online payments",
+        "messaging": "Messaging/Chat",
+        "messagingDesc": "User-to-user communication",
+        "notifications": "Notifications",
+        "notificationsDesc": "Push, email, or in-app alerts",
+        "maps": "Maps & Location",
+        "mapsDesc": "Geographic features",
+        "calendar": "Calendar/Scheduling",
+        "calendarDesc": "Date-based features",
+        "analytics": "Analytics/Reporting",
+        "analyticsDesc": "Data insights and reports",
+        "api": "API Integration",
+        "apiDesc": "Connect with external services",
+        "sharing": "Social Sharing",
+        "sharingDesc": "Share content to social media",
+        "other": "Other (Specify)",
+        "otherDesc": "Custom functionality"
+      }
+    }
   }
 }

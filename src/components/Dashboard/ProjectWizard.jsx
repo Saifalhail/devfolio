@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { 
   FaPlus, FaMobileAlt, FaGlobe, FaDesktop, FaRocket, FaUsers, FaUserTie, 
   FaUserGraduate, FaUserMd, FaUserCog, FaChild, FaUserAlt, FaUserShield, 
   FaUserNinja, FaChartBar, FaChartLine, FaChartPie, FaChartArea, FaMapMarkerAlt,
-  FaUser
+  FaUser, FaKey, FaSignInAlt, FaUsersCog, FaUndo, FaDatabase, FaBolt, 
+  FaMobile, FaFileUpload, FaCloud, FaCreditCard, FaComments, 
+  FaBell, FaMapMarked, FaCalendarAlt, FaLink, FaShareAlt, FaPlus as FaPlusCircle, FaInfoCircle,
+  FaShoppingCart, FaGraduationCap, FaMedkit, FaMoneyBillAlt, FaFilm, FaTasks, FaEllipsisH,
+  FaClock, FaMapMarker, FaFlag, FaApple, FaAndroid, FaLayerGroup, FaStar, FaJs, FaPython, FaCode, FaServer
 } from 'react-icons/fa';
 import Modal from '../Common/Modal';
 import { colors, spacing, borderRadius, shadows, transitions, typography, breakpoints } from '../../styles/GlobalTheme';
@@ -52,7 +56,19 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     targetUserGroups: [],
     userScale: '',
     geographicLocations: [],
-    specificLocation: ''
+    specificLocation: '',
+    
+    // Step 3 - Functional Requirements
+    authFeatures: [],
+    dataStorageFeatures: [],
+    coreFeatures: [],
+    otherFeatureText: '',
+    
+    // Step 4 - Technical Preferences & Infrastructure
+    platforms: [],
+    techStack: 'recommended',
+    customTechStack: '',
+    hosting: 'recommended'
   });
 
   // Reset form when modal opens/closes
@@ -69,7 +85,11 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         targetUserGroups: [],
         userScale: '',
         geographicLocations: [],
-        specificLocation: ''
+        specificLocation: '',
+        authFeatures: [],
+        dataStorageFeatures: [],
+        coreFeatures: [],
+        otherFeatureText: ''
       });
       setCurrentStep(1);
       setError(null);
@@ -153,14 +173,99 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       */
     }
     
+    // Validation for step 3
+    if (currentStep === 3) {
+      // Temporarily commented out for testing purposes
+      /*
+      if (formData.authFeatures.length === 0) {
+        setError(t('projects.wizard.errors.authFeaturesRequired', 'At least one authentication feature is required'));
+        return false;
+      }
+      
+      if (formData.dataStorageFeatures.length === 0) {
+        setError(t('projects.wizard.errors.dataStorageFeaturesRequired', 'At least one data storage feature is required'));
+        return false;
+      }
+      
+      if (formData.coreFeatures.length === 0) {
+        setError(t('projects.wizard.errors.coreFeaturesRequired', 'At least one core application feature is required'));
+        return false;
+      }
+      
+      if (formData.coreFeatures.includes('other') && !formData.otherFeatureText.trim()) {
+        setError(t('projects.wizard.errors.otherFeatureTextRequired', 'Please specify the other feature'));
+        return false;
+      }
+      */
+    }
+    
+    // Validation for step 4
+    if (currentStep === 4) {
+      if (formData.platforms.length === 0) {
+        setError(t('projects.wizard.errors.platformsRequired', 'At least one application platform is required'));
+        return false;
+      }
+      
+      if (formData.techStack === 'custom' && !formData.customTechStack.trim()) {
+        setError(t('projects.wizard.errors.customTechStackRequired', 'Please specify your preferred technology stack'));
+        return false;
+      }
+      
+      if (!formData.hosting) {
+        setError(t('projects.wizard.errors.hostingRequired', 'Hosting preference is required'));
+        return false;
+      }
+    }
+    
     return true;
+  };
+
+  // Function to scroll to the top of the wizard
+  const scrollToTop = () => {
+    // Looking at the Modal component, we know the content is in a styled component
+    // that follows the Header. We'll try to find it directly and through parent-child relationships
+    setTimeout(() => {
+      // Direct approach - try to find elements by their likely structure
+      const modalContent = document.querySelector('[role="dialog"] > div:nth-child(3)');
+      if (modalContent) {
+        modalContent.scrollTop = 0;
+        return;
+      }
+      
+      // Try to find any element in the modal that might be scrollable
+      const modalDialog = document.querySelector('[role="dialog"]');
+      if (modalDialog) {
+        // Get all direct children of the dialog
+        const children = Array.from(modalDialog.children);
+        
+        // Try each child - the content is usually the 3rd child after close button and header
+        children.forEach(child => {
+          if (child.scrollHeight > child.clientHeight) {
+            child.scrollTop = 0;
+          }
+        });
+        
+        // If we have at least 3 children, the 3rd one is likely the content
+        if (children.length >= 3) {
+          children[2].scrollTop = 0;
+        }
+      }
+      
+      // Also try the wizard container directly
+      const wizardContainer = document.querySelector('.wizard-container');
+      if (wizardContainer) {
+        wizardContainer.scrollTop = 0;
+      }
+    }, 50); // Short delay to ensure the DOM has updated
   };
 
   // Handle next step
   const handleNextStep = () => {
     if (validateStep()) {
-      if (currentStep < 2) {
+      if (currentStep < 4) {
         setCurrentStep(prev => prev + 1);
+        // Scroll back to top after state update
+        setTimeout(scrollToTop, 50);
       } else {
         handleSubmit();
       }
@@ -172,6 +277,8 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     if (currentStep > 1) {
       setCurrentStep(prev => prev - 1);
       setError(null);
+      // Scroll back to top after state update
+      setTimeout(scrollToTop, 50);
     }
   };
 
@@ -197,6 +304,18 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         geographicLocations: formData.geographicLocations,
         specificLocation: formData.specificLocation,
         
+        // Step 3 - Functional Requirements
+        authFeatures: formData.authFeatures,
+        dataStorageFeatures: formData.dataStorageFeatures,
+        coreFeatures: formData.coreFeatures,
+        otherFeatureText: formData.otherFeatureText,
+        
+        // Step 4 - Technical Preferences & Infrastructure
+        platforms: formData.platforms,
+        techStack: formData.techStack,
+        customTechStack: formData.techStack === 'custom' ? formData.customTechStack : '',
+        hosting: formData.hosting,
+        
         // Default values
         status: 'inProgress',
         createdAt: new Date()
@@ -216,7 +335,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   };
 
   // Total number of steps in the wizard
-  const totalSteps = 2;
+  const totalSteps = 4;
   
   // Render progress bar
   const renderProgressBar = () => {
@@ -270,84 +389,105 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
 
   // Industry options
   const industryOptions = [
-    { value: 'education', label: t('projects.wizard.industries.education', '📚 Education & E-Learning') },
-    { value: 'ecommerce', label: t('projects.wizard.industries.ecommerce', '🛒 E-commerce & Retail') },
-    { value: 'finance', label: t('projects.wizard.industries.finance', '💼 Finance & Banking') },
-    { value: 'technology', label: t('projects.wizard.industries.technology', '💻 Technology & Software') },
-    { value: 'healthcare', label: t('projects.wizard.industries.healthcare', '🏥 Healthcare & Medicine') },
-    { value: 'gaming', label: t('projects.wizard.industries.gaming', '🎮 Gaming & Entertainment') },
-    { value: 'social', label: t('projects.wizard.industries.social', '📸 Social & Media') },
-    { value: 'logistics', label: t('projects.wizard.industries.logistics', '🚚 Logistics & Transportation') },
-    { value: 'food', label: t('projects.wizard.industries.food', '🍽️ Food & Hospitality') },
-    { value: 'creative', label: t('projects.wizard.industries.creative', '🎨 Creative & Design') },
-    { value: 'marketing', label: t('projects.wizard.industries.marketing', '📈 Marketing & Advertising') },
-    { value: 'manufacturing', label: t('projects.wizard.industries.manufacturing', '⚙️ Manufacturing & Production') },
-    { value: 'energy', label: t('projects.wizard.industries.energy', '⚡️ Energy & Utilities') },
-    { value: 'environment', label: t('projects.wizard.industries.environment', '🌱 Environment & Sustainability') },
-    { value: 'realestate', label: t('projects.wizard.industries.realestate', '🏠 Real Estate') },
-    // { value: 'other', label: t('projects.wizard.industries.other', 'Other') }
+    { id: 'ecommerce', label: t('projects.wizard.industries.ecommerce', 'E-commerce'), icon: <FaShoppingCart /> },
+    { id: 'education', label: t('projects.wizard.industries.education', 'Education'), icon: <FaGraduationCap /> },
+    { id: 'healthcare', label: t('projects.wizard.industries.healthcare', 'Healthcare'), icon: <FaMedkit /> },
+    { id: 'finance', label: t('projects.wizard.industries.finance', 'Finance'), icon: <FaMoneyBillAlt /> },
+    { id: 'entertainment', label: t('projects.wizard.industries.entertainment', 'Entertainment'), icon: <FaFilm /> },
+    { id: 'social', label: t('projects.wizard.industries.social', 'Social Media'), icon: <FaUsers /> },
+    { id: 'productivity', label: t('projects.wizard.industries.productivity', 'Productivity'), icon: <FaTasks /> },
+    { id: 'other', label: t('projects.wizard.industries.other', 'Other'), icon: <FaEllipsisH /> }
   ];
 
   // Timeline options
   const timelineOptions = [
-    { id: 'urgent', label: t('projects.wizard.timelines.urgent', '🚀 Less than 1 month (Urgent)') },
-    { id: 'quick', label: t('projects.wizard.timelines.quick', '⚡️ 1–3 months (Quick)') },
-    { id: 'standard', label: t('projects.wizard.timelines.standard', '📅 3–6 months (Standard)') },
-    { id: 'longterm', label: t('projects.wizard.timelines.longterm', '🌱 6+ months (Long-term)') }
+    { id: 'urgent', label: t('projects.wizard.timeline.urgent', 'Urgent (< 1 month)'), icon: <FaBolt /> },
+    { id: 'short', label: t('projects.wizard.timeline.short', 'Short (1-3 months)'), icon: <FaCalendarAlt /> },
+    { id: 'medium', label: t('projects.wizard.timeline.medium', 'Medium (3-6 months)'), icon: <FaCalendarAlt /> },
+    { id: 'long', label: t('projects.wizard.timeline.long', 'Long (6+ months)'), icon: <FaCalendarAlt /> },
+    { id: 'flexible', label: t('projects.wizard.timeline.flexible', 'Flexible'), icon: <FaClock /> }
   ];
 
-  // Target user groups for step 2
+  // User group options
   const userGroupOptions = [
-    { id: 'consumers', label: t('projects.wizard.userGroups.consumers', 'Consumers/General Public'), icon: <FaUsers /> },
-    { id: 'businesses', label: t('projects.wizard.userGroups.businesses', 'Businesses/Organizations'), icon: <FaUserTie /> },
-    { id: 'professionals', label: t('projects.wizard.userGroups.professionals', 'Professionals'), icon: <FaUserCog /> },
-    { id: 'students', label: t('projects.wizard.userGroups.students', 'Students/Educators'), icon: <FaUserGraduate /> },
-    { id: 'developers', label: t('projects.wizard.userGroups.developers', 'Developers/Technical Users'), icon: <FaUserNinja /> },
-    { id: 'healthcare', label: t('projects.wizard.userGroups.healthcare', 'Healthcare Providers'), icon: <FaUserMd /> },
-    { id: 'children', label: t('projects.wizard.userGroups.children', 'Children/Teenagers'), icon: <FaChild /> },
-    { id: 'seniors', label: t('projects.wizard.userGroups.seniors', 'Seniors'), icon: <FaUserAlt /> },
-    { id: 'government', label: t('projects.wizard.userGroups.government', 'Government/Public Sector'), icon: <FaUserShield /> }
+    { id: 'general', label: t('projects.wizard.userGroups.general', 'General Public'), icon: <FaUsers /> },
+    { id: 'professionals', label: t('projects.wizard.userGroups.professionals', 'Professionals'), icon: <FaUserTie /> },
+    { id: 'students', label: t('projects.wizard.userGroups.students', 'Students'), icon: <FaUserGraduate /> },
+    { id: 'seniors', label: t('projects.wizard.userGroups.seniors', 'Seniors'), icon: <FaUserMd /> },
+    { id: 'children', label: t('projects.wizard.userGroups.children', 'Children'), icon: <FaChild /> },
+    { id: 'specialized', label: t('projects.wizard.userGroups.specialized', 'Specialized Group'), icon: <FaUserCog /> }
   ];
-  
-  // User scale options for step 2
+
+  // User scale options
   const userScaleOptions = [
-    { 
-      id: 'small', 
-      label: t('projects.wizard.userScale.small', 'Small Scale'), 
-      description: t('projects.wizard.userScale.smallDesc', 'Up to 100 users'),
-      icon: <FaChartBar />
-    },
-    { 
-      id: 'medium', 
-      label: t('projects.wizard.userScale.medium', 'Medium Scale'), 
-      description: t('projects.wizard.userScale.mediumDesc', '100-1,000 users'),
-      icon: <FaChartLine />
-    },
-    { 
-      id: 'large', 
-      label: t('projects.wizard.userScale.large', 'Large Scale'), 
-      description: t('projects.wizard.userScale.largeDesc', '1,000-10,000 users'),
-      icon: <FaChartArea />
-    },
-    { 
-      id: 'enterprise', 
-      label: t('projects.wizard.userScale.enterprise', 'Enterprise Scale'), 
-      description: t('projects.wizard.userScale.enterpriseDesc', '10,000+ users'),
-      icon: <FaChartPie />
-    }
+    { id: 'small', label: t('projects.wizard.userScale.small', 'Small (< 100 users)'), value: 'small' },
+    { id: 'medium', label: t('projects.wizard.userScale.medium', 'Medium (100-1,000 users)'), value: 'medium' },
+    { id: 'large', label: t('projects.wizard.userScale.large', 'Large (1,000-10,000 users)'), value: 'large' },
+    { id: 'enterprise', label: t('projects.wizard.userScale.enterprise', 'Enterprise (10,000+ users)'), value: 'enterprise' }
+  ];
+
+  // Location options
+  const locationOptions = [
+    { id: 'local', label: t('projects.wizard.location.local', 'Local'), icon: <FaMapMarker /> },
+    { id: 'regional', label: t('projects.wizard.location.regional', 'Regional'), icon: <FaMapMarked /> },
+    { id: 'national', label: t('projects.wizard.location.national', 'National'), icon: <FaFlag /> },
+    { id: 'international', label: t('projects.wizard.location.international', 'International'), icon: <FaGlobe /> },
+    { id: 'online', label: t('projects.wizard.location.online', 'Online Only'), icon: <FaCloud /> }
+  ];
+
+  // Authentication & User Management options
+  const authFeatureOptions = [
+    { id: 'basicAuth', label: t('projects.features.auth.basicAuth', 'Basic Authentication'), icon: <FaKey />, description: t('projects.features.auth.basicAuthDesc', 'Username/password login') },
+    { id: 'socialAuth', label: t('projects.features.auth.socialAuth', 'Social Login'), icon: <FaSignInAlt />, description: t('projects.features.auth.socialAuthDesc', 'Login with Google, Facebook, etc.') },
+    { id: 'userRoles', label: t('projects.features.auth.userRoles', 'User Roles & Permissions'), icon: <FaUsersCog />, description: t('projects.features.auth.userRolesDesc', 'Different access levels') },
+    { id: 'passwordRecovery', label: t('projects.features.auth.passwordRecovery', 'Password Recovery'), icon: <FaUndo />, description: t('projects.features.auth.passwordRecoveryDesc', 'Reset forgotten passwords') }
   ];
   
-  // Geographic location options for step 2
-  const locationOptions = [
-    { id: 'global', label: t('projects.wizard.locations.global', 'Global/Worldwide') },
-    { id: 'northAmerica', label: t('projects.wizard.locations.northAmerica', 'North America') },
-    { id: 'southAmerica', label: t('projects.wizard.locations.southAmerica', 'South America') },
-    { id: 'europe', label: t('projects.wizard.locations.europe', 'Europe') },
-    { id: 'middleEast', label: t('projects.wizard.locations.middleEast', 'Middle East') },
-    { id: 'africa', label: t('projects.wizard.locations.africa', 'Africa') },
-    { id: 'asia', label: t('projects.wizard.locations.asia', 'Asia') },
-    { id: 'oceania', label: t('projects.wizard.locations.oceania', 'Australia/Oceania') },
-    { id: 'specific', label: t('projects.wizard.locations.specific', 'Specific Countries/Regions') }
+  // Data & Storage Needs options
+  const dataStorageOptions = [
+    { id: 'database', label: t('projects.features.data.database', 'Database Storage'), icon: <FaDatabase />, description: t('projects.features.data.databaseDesc', 'Structured data storage') },
+    { id: 'realtime', label: t('projects.features.data.realtime', 'Real-time Data'), icon: <FaBolt />, description: t('projects.features.data.realtimeDesc', 'Live updates and sync') },
+    { id: 'offlineData', label: t('projects.features.data.offlineData', 'Offline Data Access'), icon: <FaMobile />, description: t('projects.features.data.offlineDataDesc', 'Work without internet') },
+    { id: 'fileUploads', label: t('projects.features.data.fileUploads', 'File Uploads'), icon: <FaFileUpload />, description: t('projects.features.data.fileUploadsDesc', 'User file uploads') },
+    { id: 'cloudStorage', label: t('projects.features.data.cloudStorage', 'Cloud Storage'), icon: <FaCloud />, description: t('projects.features.data.cloudStorageDesc', 'Store files in the cloud') }
+  ];
+  
+  // Core Application Features options
+  const coreFeatureOptions = [
+    { id: 'payments', label: t('projects.features.core.payments', 'Payment Processing'), icon: <FaCreditCard />, description: t('projects.features.core.paymentsDesc', 'Accept online payments') },
+    { id: 'messaging', label: t('projects.features.core.messaging', 'Messaging/Chat'), icon: <FaComments />, description: t('projects.features.core.messagingDesc', 'User-to-user communication') },
+    { id: 'notifications', label: t('projects.features.core.notifications', 'Notifications'), icon: <FaBell />, description: t('projects.features.core.notificationsDesc', 'Push, email, or in-app alerts') },
+    { id: 'maps', label: t('projects.features.core.maps', 'Maps & Location'), icon: <FaMapMarked />, description: t('projects.features.core.mapsDesc', 'Geographic features') },
+    { id: 'calendar', label: t('projects.features.core.calendar', 'Calendar/Scheduling'), icon: <FaCalendarAlt />, description: t('projects.features.core.calendarDesc', 'Date-based features') },
+    { id: 'analytics', label: t('projects.features.core.analytics', 'Analytics/Reporting'), icon: <FaChartPie />, description: t('projects.features.core.analyticsDesc', 'Data insights and reports') },
+    { id: 'api', label: t('projects.features.core.api', 'API Integration'), icon: <FaLink />, description: t('projects.features.core.apiDesc', 'Connect with external services') },
+    { id: 'sharing', label: t('projects.features.core.sharing', 'Social Sharing'), icon: <FaShareAlt />, description: t('projects.features.core.sharingDesc', 'Share content to social media') },
+    { id: 'other', label: t('projects.features.core.other', 'Other (Specify)'), icon: <FaPlusCircle />, description: t('projects.features.core.otherDesc', 'Custom functionality') }
+  ];
+  
+  // Platform options for Step 4
+  const platformOptions = [
+    { id: 'ios', label: t('projects.wizard.platforms.ios', 'iOS (Mobile)'), icon: <FaApple /> },
+    { id: 'android', label: t('projects.wizard.platforms.android', 'Android (Mobile)'), icon: <FaAndroid /> },
+    { id: 'web', label: t('projects.wizard.platforms.web', 'Web (Browser-based)'), icon: <FaGlobe /> },
+    { id: 'desktop', label: t('projects.wizard.platforms.desktop', 'Desktop (Windows/macOS/Linux)'), icon: <FaDesktop /> },
+    { id: 'crossPlatform', label: t('projects.wizard.platforms.crossPlatform', 'Cross-platform (Multiple Platforms)'), icon: <FaLayerGroup /> }
+  ];
+  
+  // Tech stack options for Step 4
+  const techStackOptions = [
+    { id: 'recommended', label: t('projects.wizard.techStack.recommended', 'Recommended by Developer'), icon: <FaStar /> },
+    { id: 'javascript', label: t('projects.wizard.techStack.javascript', 'JavaScript (React, Node.js, Express)'), icon: <FaJs /> },
+    { id: 'python', label: t('projects.wizard.techStack.python', 'Python (Django, Flask)'), icon: <FaPython /> },
+    { id: 'mobile', label: t('projects.wizard.techStack.mobile', 'Mobile-focused (Flutter, React Native)'), icon: <FaMobile /> },
+    { id: 'custom', label: t('projects.wizard.techStack.custom', 'Custom'), icon: <FaCode /> }
+  ];
+  
+  // Hosting options for Step 4
+  const hostingOptions = [
+    { id: 'recommended', label: t('projects.wizard.hosting.recommended', 'Recommended by Developer'), icon: <FaStar /> },
+    { id: 'cloud', label: t('projects.wizard.hosting.cloud', 'Cloud-based (AWS, Azure, GCP, Firebase)'), icon: <FaCloud /> },
+    { id: 'selfHosted', label: t('projects.wizard.hosting.selfHosted', 'Self-hosted / On-premises'), icon: <FaServer /> }
   ];  
 
   // Render step content based on current step
@@ -356,13 +496,16 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       case 1:
         return (
           <StepContainer>
-            <StepTitle>{t('projects.wizard.step1.title', 'Step 1: Project Info')}</StepTitle>
+            <StepTitle isRTL={isRTL}>{t('projects.wizard.step1.title', 'Step 1: Project Info')}</StepTitle>
             
             {/* Project Name */}
             <FormGroup isRTL={isRTL}>
               <FormLabel isRTL={isRTL}>
                 {t('projects.wizard.step1.projectName', 'Project Name')}
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step1.projectNameSubtext', 'Enter a unique name that clearly identifies your project')}
+              </FormSubtext>
               <TextInput
                 value={formData.name}
                 onChange={(value) => handleChange('name', value)}
@@ -378,6 +521,9 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
               <FormLabel isRTL={isRTL}>
                 {t('projects.wizard.step1.projectType', 'Project Type')}
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step1.projectTypeSubtext', 'Select the category that best describes your project')}
+              </FormSubtext>
               <SelectableCards
                 options={projectTypes.map(type => ({
                   id: type.id,
@@ -404,6 +550,9 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
               <FormLabel isRTL={isRTL}>
                 {t('projects.wizard.step1.projectIndustry', 'Project Industry')}
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step1.projectIndustrySubtext', 'Choose the industry or sector your project serves')}
+              </FormSubtext>
               <SearchableDropdown
                 options={industryOptions.map(industry => ({
                   id: industry.value,
@@ -427,6 +576,9 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
               <FormLabel isRTL={isRTL}>
                 {t('projects.wizard.step1.estimatedTimeline', 'Estimated Timeline')}
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step1.estimatedTimelineSubtext', 'Select the expected timeframe for completing your project')}
+              </FormSubtext>
               <TimelineSelector
                 options={timelineOptions.map(timeline => ({
                   id: timeline.id,
@@ -453,13 +605,10 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 {
                   t('projects.wizard.step2.targetUserGroups', 'Target User Groups')
                 }
-                <Tooltip 
-                  content={t('projects.wizard.step2.targetUserGroupsTooltip', 'Select all user groups that will use your application')}
-                  position={isRTL ? 'left' : 'right'}
-                >
-                  <FaUser style={{ marginRight: isRTL ? spacing.md : 0, marginLeft: isRTL ? 0 : spacing.md }} />
-                </Tooltip>
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step2.targetUserGroupsTooltip', 'Select all user groups that will use your application')}
+              </FormSubtext>
               <CheckboxCardSelector
                 options={userGroupOptions}
                 selectedValues={formData.targetUserGroups}
@@ -474,13 +623,10 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 {
                   t('projects.wizard.step2.userScale', 'Expected User Scale')
                 }
-                <Tooltip 
-                  content={t('projects.wizard.step2.userScaleTooltip', 'Estimate how many users will be using your application')}
-                  position={isRTL ? 'left' : 'right'}
-                >
-                  <FaUser style={{ marginRight: isRTL ? spacing.md : 0, marginLeft: isRTL ? 0 : spacing.md }} />
-                </Tooltip>
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step2.userScaleTooltip', 'Estimate how many users will be using your application')}
+              </FormSubtext>
               <UserScaleSelector
                 options={userScaleOptions}
                 selectedValue={formData.userScale}
@@ -496,13 +642,10 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 {
                   t('projects.wizard.step2.geographicLocations', 'Geographic Locations')
                 }
-                <Tooltip 
-                  content={t('projects.wizard.step2.geographicLocationsTooltip', 'Select all regions where your application will be used')}
-                  position={isRTL ? 'left' : 'right'}
-                >
-                  <FaMapMarkerAlt style={{ marginRight: isRTL ? spacing.md : 0, marginLeft: isRTL ? 0 : spacing.md }} />
-                </Tooltip>
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step2.geographicLocationsTooltip', 'Select all regions where your application will be used')}
+              </FormSubtext>
               <MultiSelectDropdown
                 options={locationOptions}
                 selectedValues={formData.geographicLocations}
@@ -524,16 +667,137 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
             </FormGroup>
           </StepContainer>
         );
+      case 3:
+        return (
+          <StepContainer>
+            <StepTitle isRTL={isRTL}>
+              {t('projects.wizard.step3.title', 'Functional Requirements')}
+            </StepTitle>
+            
+            {/* Authentication & User Management */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step3.authFeatures', 'Authentication & User Management')}
+              </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step3.authFeaturesTooltip', 'Select the authentication and user management features needed for your project')}
+              </FormSubtext>
+              <CheckboxCardSelector
+                options={authFeatureOptions}
+                selectedValues={formData.authFeatures}
+                onChange={(values) => handleChange('authFeatures', values)}
+                isRTL={isRTL}
+              />
+            </FormGroup>
+            
+            {/* Core Application Features */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step3.coreFeatures', 'Core Application Features')}
+              </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step3.coreFeaturesToolTip', 'Select the main functional features your application will need')}
+              </FormSubtext>
+              <CheckboxCardSelector
+                options={coreFeatureOptions}
+                selectedValues={formData.coreFeatures}
+                onChange={(values) => handleChange('coreFeatures', values)}
+                isRTL={isRTL}
+              />
+              {formData.coreFeatures.includes('other') && (
+                <TextInput
+                  value={formData.otherFeatureText}
+                  onChange={(value) => handleChange('otherFeatureText', value)}
+                  placeholder={t('projects.wizard.step3.otherFeaturePlaceholder', 'Please specify the other feature(s) you need')}
+                  maxLength={200}
+                  style={{ marginTop: spacing.sm }}
+                />
+              )}
+            </FormGroup>
+          </StepContainer>
+        );
+      case 4:
+        return (
+          <StepContainer>
+            <StepTitle isRTL={isRTL}>
+              {t('projects.wizard.step4.title', 'Technical Preferences & Infrastructure')}
+            </StepTitle>
+            
+            {/* Preferred Application Platforms */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step4.platforms', 'Preferred Application Platforms')}
+                <Tooltip content={t('projects.wizard.step4.platformsTooltip', 'Where should your application be available?')}>
+                  <InfoIcon isRTL={isRTL}>ℹ️</InfoIcon>
+                </Tooltip>
+              </FormLabel>
+              <CheckboxCardSelector
+                options={platformOptions}
+                selectedValues={formData.platforms}
+                onChange={(values) => handleChange('platforms', values)}
+                isRTL={isRTL}
+              />
+            </FormGroup>
+            
+            {/* Technology Stack Preference */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step4.techStack', 'Technology Stack Preference')}
+                <Tooltip content={t('projects.wizard.step4.techStackTooltip', 'Preferred technologies used to build your app')}>
+                  <InfoIcon isRTL={isRTL}>ℹ️</InfoIcon>
+                </Tooltip>
+              </FormLabel>
+              <SelectableCards
+                options={techStackOptions}
+                selectedValue={formData.techStack}
+                onChange={(value) => handleChange('techStack', value)}
+                isRTL={isRTL}
+              />
+              {formData.techStack === 'custom' && (
+                <TextInput
+                  value={formData.customTechStack}
+                  onChange={(value) => handleChange('customTechStack', value)}
+                  placeholder={t('projects.wizard.step4.customStackPlaceholder', 'Specify your preferred technology stack')}
+                  maxLength={200}
+                  style={{ marginTop: spacing.sm }}
+                />
+              )}
+            </FormGroup>
+            
+            {/* Preferred Hosting & Infrastructure */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step4.hosting', 'Preferred Hosting & Infrastructure')}
+                <Tooltip content={t('projects.wizard.step4.hostingTooltip', 'Where would you prefer your application to be hosted?')}>
+                  <InfoIcon isRTL={isRTL}>ℹ️</InfoIcon>
+                </Tooltip>
+              </FormLabel>
+              <SelectableCards
+                options={hostingOptions}
+                selectedValue={formData.hosting}
+                onChange={(value) => handleChange('hosting', value)}
+                isRTL={isRTL}
+              />
+            </FormGroup>
+          </StepContainer>
+        );
       default:
         return null;
     }
   };
 
+  // Force re-render on language change
+  useEffect(() => {
+    // This will trigger a re-render when language changes
+    // ensuring all translations update properly
+  }, [i18n.language]);
+  
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title={t('projects.wizard.title', 'Create New Project')}
+      titleStyle={{ textAlign: 'center' }}
       icon={<FaPlus />}
       size="lg"
       theme="default"
@@ -560,17 +824,22 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
           
           <ModalButton 
             primary 
-            onClick={currentStep < totalSteps ? handleNextStep : handleSubmit}
+            onClick={handleNextStep}
             isRTL={isRTL}
+            disabled={isSubmitting}
           >
-            {currentStep < totalSteps 
-              ? t('common.next', 'Next') 
-              : t('common.create', 'Create')}
+            {isSubmitting ? (
+              <LoadingSpinner />
+            ) : currentStep === totalSteps ? (
+              t('projects.wizard.submit', 'Submit')
+            ) : (
+              t('projects.wizard.continue', 'Continue')
+            )}
           </ModalButton>
         </ModalFooter>
       }
     >
-      <WizardContainer isRTL={isRTL}>
+      <WizardContainer className="wizard-container" isRTL={isRTL}>
         {/* Progress indicator */}
         {renderProgressBar()}
         
@@ -592,13 +861,48 @@ const WizardContainer = styled.div`
   max-width: 100%;
   overflow-x: hidden;
   
+  /* RTL-specific adjustments */
+  & * {
+    letter-spacing: ${props => props.isRTL ? '0' : 'inherit'};
+  }
+  
+  /* Arabic text typically needs more space */
+  & input, & textarea, & select, & button {
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.md} * 1.05)` : typography.fontSizes.md};
+    line-height: ${props => props.isRTL ? '1.6' : '1.5'};
+  }
+  
+  /* Improved mobile responsiveness */
+  @media (max-width: ${breakpoints.md}) {
+    padding: 0 ${spacing.md} ${spacing.md};
+  }
+  
   @media (max-width: ${breakpoints.sm}) {
-    padding: 0 ${spacing.sm} ${spacing.md};
+    padding: 0 ${spacing.sm} ${spacing.sm};
     margin: 0;
+    & input, & textarea, & select, & button {
+      font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
+    }
   }
   
   @media (max-width: ${breakpoints.xs}) {
-    padding: 0 ${spacing.xs} ${spacing.sm};
+    padding: ${spacing.xs};
+    gap: ${spacing.xs};
+    & input, & textarea, & select, & button {
+      font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
+    }
+  }
+  
+  /* Add a subtle gradient overlay to the top border */
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(74, 108, 247, 0.3), transparent);
   }
 `;
 
@@ -624,18 +928,6 @@ const ModalFooter = styled.div`
     padding: ${spacing.sm};
     gap: ${spacing.xs};
   }
-  
-  /* Add a subtle gradient overlay to the top border */
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(74, 108, 247, 0.3), transparent);
-  }
 `;
 
 const ModalButton = styled.button`
@@ -643,7 +935,7 @@ const ModalButton = styled.button`
   border-radius: ${borderRadius.md};
   font-weight: ${typography.fontWeights.semiBold};
   font-family: ${typography.fontFamily};
-  font-size: ${typography.fontSizes.md};
+  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.md} * 1.05)` : typography.fontSizes.md};
   cursor: pointer;
   transition: all ${transitions.fast};
   border: none;
@@ -652,10 +944,22 @@ const ModalButton = styled.button`
   overflow: hidden;
   margin: 0;
   flex: 1;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* RTL-specific adjustments */
+  & svg {
+    margin-right: ${props => props.isRTL ? '0' : spacing.xs};
+    margin-left: ${props => props.isRTL ? spacing.xs : '0'};
+    order: ${props => props.isRTL ? '1' : '0'};
+  }
   
   @media (max-width: ${breakpoints.sm}) {
     padding: ${spacing.sm} ${spacing.md};
-    font-size: ${typography.fontSizes.md};
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
     min-width: 100px;
     height: 50px;
     max-width: 48%;
@@ -663,7 +967,7 @@ const ModalButton = styled.button`
   
   @media (max-width: ${breakpoints.xs}) {
     padding: ${spacing.xs} ${spacing.sm};
-    font-size: ${typography.fontSizes.sm};
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
     border-radius: ${borderRadius.sm};
     min-width: 80px;
     height: 40px;
@@ -1067,20 +1371,27 @@ const StepContainer = styled.div`
 `;
 
 const StepTitle = styled.h3`
-  font-size: ${typography.fontSizes.lg};
+  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.lg} * 1.05)` : typography.fontSizes.lg};
   font-weight: ${typography.fontWeights.semiBold};
   margin-bottom: ${spacing.md};
   color: ${colors.accent.primary};
   text-align: center;
   font-family: ${typography.fontFamily};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  width: 100%;
   
   @media (max-width: ${breakpoints.sm}) {
-    font-size: ${typography.fontSizes.md};
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.md} * 1.05)` : typography.fontSizes.md};
     margin-bottom: ${spacing.sm};
   }
   
+  @media (max-width: ${breakpoints.xs}) {
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
+    margin-bottom: ${spacing.xs};
+  }
+  
   /* Add gradient text effect */
-  background: linear-gradient(90deg, ${colors.accent.primary}, ${colors.accent.secondary});
+  background: linear-gradient(${props => props.isRTL ? '-90deg' : '90deg'}, ${colors.accent.primary}, ${colors.accent.secondary});
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1092,7 +1403,7 @@ const FormGroup = styled.div`
   flex-direction: column;
   gap: ${spacing.sm};
   padding: ${spacing.md};
-  background: linear-gradient(135deg, rgba(25, 25, 50, 0.2), rgba(35, 35, 70, 0.2));
+  background: linear-gradient(${props => props.isRTL ? '-135deg' : '135deg'}, rgba(25, 25, 50, 0.2), rgba(35, 35, 70, 0.2));
   border-radius: ${borderRadius.md};
   border: 1px solid rgba(74, 108, 247, 0.05);
   position: relative;
@@ -1104,11 +1415,44 @@ const FormGroup = styled.div`
   /* Add a subtle border accent on the right or left side based on RTL */
   border-${props => props.isRTL ? 'right' : 'left'}: 3px solid ${colors.accent.primary};
   
+  /* RTL-specific adjustments for form elements */
+  & label {
+    text-align: ${props => props.isRTL ? 'right' : 'left'};
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.md} * 1.05)` : typography.fontSizes.md};
+  }
+  
+  & input, & select, & textarea {
+    text-align: ${props => props.isRTL ? 'right' : 'left'};
+    direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+    padding-right: ${props => props.isRTL ? spacing.lg : spacing.md};
+    padding-left: ${props => props.isRTL ? spacing.md : spacing.lg};
+  }
+  
+  /* Adjust icon positioning in inputs for RTL */
+  & .input-icon {
+    left: ${props => props.isRTL ? 'auto' : spacing.sm};
+    right: ${props => props.isRTL ? spacing.sm : 'auto'};
+  }
+  
   @media (max-width: ${breakpoints.sm}) {
     margin-bottom: ${spacing.md};
     padding: ${spacing.sm};
     gap: ${spacing.xs};
     border-radius: ${borderRadius.sm};
+    
+    & label {
+      font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
+    }
+  }
+  
+  @media (max-width: ${breakpoints.xs}) {
+    margin-bottom: ${spacing.sm};
+    padding: ${spacing.xs};
+    border-width: 1px;
+    
+    & label {
+      font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
+    }
   }
   
   @media (max-width: ${breakpoints.xs}) {
@@ -1154,49 +1498,68 @@ const FormGroup = styled.div`
 `;
 
 const FormLabel = styled.label`
-  display: flex;
-  align-items: center;
+  display: block;
   margin-bottom: ${spacing.xs};
   font-weight: ${typography.fontWeights.medium};
-  font-size: ${typography.fontSizes.sm};
-  color: ${colors.text.secondary};
-  font-family: ${typography.fontFamily};
-  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  color: ${colors.text.primary};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  display: flex;
+  align-items: center;
   justify-content: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
-  width: 100%;
-  padding: ${spacing.xs} ${spacing.sm};
-  border-radius: ${borderRadius.sm};
-  background: rgba(25, 25, 50, 0.1);
-  /* Add subtle accent for RTL awareness */
+`;
+
+const FormSubtext = styled.div`
+  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
+  color: ${colors.text.secondary};
+  margin-bottom: ${spacing.sm};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  font-style: ${props => props.isRTL ? 'normal' : 'italic'}; /* Arabic doesn't use italics */
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  line-height: 1.5;
+  padding: ${props => props.isRTL ? `0 ${spacing.xs} 0 0` : `0 0 0 ${spacing.xs}`};
   border-${props => props.isRTL ? 'right' : 'left'}: 2px solid ${colors.accent.primary};
+  opacity: 0.9;
   
   @media (max-width: ${breakpoints.sm}) {
-    font-size: ${typography.fontSizes.xs};
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
     margin-bottom: ${spacing.xxs};
+    padding: ${props => props.isRTL ? `0 ${spacing.xxs} 0 0` : `0 0 0 ${spacing.xxs}`};
   }
   
   /* Add gradient text effect for better visibility on mobile */
   @media (max-width: ${breakpoints.xs}) {
-    background: linear-gradient(90deg, ${colors.text.secondary}, ${colors.accent.primary});
+    background: linear-gradient(${props => props.isRTL ? '-90deg' : '90deg'}, ${colors.text.secondary}, ${colors.accent.primary});
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: ${typography.fontWeights.semiBold};
+    border: none; /* Remove border on very small screens */
   }
 `;
 
 const ErrorMessage = styled.div`
   color: ${colors.error};
   font-size: ${typography.fontSizes.sm};
-  margin-top: ${spacing.xs};
-  min-height: 1.5rem;
-  font-family: ${typography.fontFamily};
-  text-align: center;
-  font-weight: ${typography.fontWeights.medium};
-  @media (max-width: ${breakpoints.sm}) {
-    margin: 0;
-    text-align: center;
-    width: 100%;
+  margin-right: auto;
+  margin-left: ${props => props.isRTL ? 'auto' : '0'};
+  margin-right: ${props => props.isRTL ? '0' : 'auto'};
+  padding: ${spacing.xs} 0;
+`;
+
+const InfoIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-${props => props.isRTL ? 'right' : 'left'}: ${spacing.xs};
+  font-size: 0.9em;
+  cursor: help;
+  color: ${colors.accent.primary};
+  vertical-align: middle;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 1;
   }
 `;
 
