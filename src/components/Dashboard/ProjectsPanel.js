@@ -1,47 +1,77 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import { fadeIn, slideUp } from '../../styles/animations';
 import { 
-  FaThLarge, 
-  FaList, 
-  FaFilter, 
-  FaSort, 
   FaClock, 
   FaCheck, 
   FaPencilAlt, 
-  FaSmile, 
-  FaMeh, 
-  FaFrown, 
   FaPlus,
-  FaSearch,
-  FaMagic,
   FaEllipsisV,
-  FaArrowRight,
-  FaArrowLeft,
   FaCalendarAlt,
-  FaUserAlt,
   FaTags,
-  FaListUl
+  FaListUl,
+  FaSmile,
+  FaMeh,
+  FaFrown,
+  FaThLarge,
+  FaList,
+  FaFilter,
+  FaSort,
+  FaArrowLeft,
+  FaArrowRight,
+  FaUserAlt
 } from 'react-icons/fa';
-import { collection, query, where, orderBy, onSnapshot, addDoc, Timestamp } from 'firebase/firestore';
+import { 
+  collection, 
+  query, 
+  where, 
+  orderBy, 
+  onSnapshot, 
+  addDoc, 
+  serverTimestamp,
+  updateDoc,
+  doc
+} from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-import useFirebaseListener from '../../hooks/useFirebaseListener';
-import SkeletonLoader from '../Common/SkeletonLoader';
 import Modal from '../Common/Modal';
 import LoadingSkeleton from '../Common/LoadingSkeleton';
-
-import ProjectWizard from './ProjectWizard';
 import {
   PanelContainer,
   PanelHeader,
   PanelTitle,
   ActionButton,
-  EmptyState,
   Card,
   FilterButton,
-  IconButton,
+  SortButton,
+  ViewToggleButton,
+  ProjectsGrid,
+  ProjectsList,
+  ProjectCard,
+  ProjectTitle,
+  ProjectType,
+  StatusBadge,
+  ClientInfo,
+  MoodIcon,
+  ProjectCardFooter,
+  ProjectCardHeader,
+  ProjectCardContent,
+  ProjectDeadline,
+  ProjectActions,
+  ActionIcon,
+  EmptyStateContainer,
+  EmptyStateIcon,
+  EmptyStateTitle,
+  EmptyStateText,
+  EmptyStateButton,
+  FilterContainer,
+  PaginationContainer,
+  PaginationButton,
+  PaginationInfo,
+  ErrorMessage
+} from './ProjectsPanel.styles';
+import {
   DashboardHeader,
   HeaderContent,
   TitleSection,
@@ -53,10 +83,7 @@ import {
   ActionsRow,
   FilterGroup,
   FilterLabel,
-
   GradientButton,
-  EmptyStateIcon,
-  ProjectCard,
   ProjectCardInner,
   ProjectHeader,
   ProjectName,
@@ -64,8 +91,6 @@ import {
   Pagination,
   PaginationText,
   PaginationControls,
-  PaginationButton,
-  ModalFooter,
   DetailItem,
   DetailIcon,
   DetailContent,
@@ -84,6 +109,9 @@ import {
   breakpoints 
 } from '../../styles/GlobalTheme';
 
+// Import ProjectWizard directly to fix the default export issue
+import ProjectWizard from './ProjectWizard.jsx';
+
 const ProjectsPanel = () => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
@@ -92,7 +120,7 @@ const ProjectsPanel = () => {
   const [isGridView, setIsGridView] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortBy, setSortBy] = useState('deadline');
-  const [searchTerm, setSearchTerm] = useState('');
+  // Search functionality removed as requested
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,57 +129,82 @@ const ProjectsPanel = () => {
   const [itemsPerPage] = useState(9);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Get status priority for sorting
+  const getStatusPriority = (status) => {
+    switch(status) {
+      case 'inProgress': return 1;
+      case 'done': return 2;
+      case 'awaitingFeedback': return 3;
+      default: return 4;
+    }
+  };
+
+  // Using the existing error state for handling Firebase errors
+  
   // Fetch projects from Firestore
-  useFirebaseListener(() => {
-    if (!currentUser) return () => {};
+  useEffect(() => {
+    if (!currentUser) return;
 
     setIsLoading(true);
+    setError(null);
+    let unsubscribe = null;
 
-    const projectsRef = collection(db, 'projects');
-    let projectQuery = query(projectsRef, where('userId', '==', currentUser.uid));
+    const fetchProjects = async () => {
+      try {
+        const projectsRef = collection(db, 'projects');
+        let projectQuery = query(projectsRef, where('userId', '==', currentUser.uid));
 
-    // Apply sorting
-    if (sortBy === 'deadline') {
-      projectQuery = query(projectQuery, orderBy('deadline', 'asc'));
-    } else if (sortBy === 'name') {
-      projectQuery = query(projectQuery, orderBy('name', 'asc'));
-    } else if (sortBy === 'status') {
-      projectQuery = query(projectQuery, orderBy('status', 'asc'));
-    }
+        // Apply sorting
+        if (sortBy === 'deadline') {
+          projectQuery = query(projectQuery, orderBy('deadline', 'asc'));
+        } else if (sortBy === 'name') {
+          projectQuery = query(projectQuery, orderBy('name', 'asc'));
+        } else if (sortBy === 'status') {
+          projectQuery = query(projectQuery, orderBy('statusPriority', 'asc'));
+        }
 
-    const unsubscribe = onSnapshot(projectQuery, (querySnapshot) => {
-      let projectsList = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      setProjects(projectsList);
-      setIsLoading(false);
-    }, (error) => {
-      console.error('Error fetching projects:', error);
-      setIsLoading(false);
-    });
+        unsubscribe = onSnapshot(projectQuery, (querySnapshot) => {
+          let projectsList = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            statusPriority: getStatusPriority(doc.data().status)
+          }));
+          
+          setProjects(projectsList);
+          setError(null); // Clear any previous errors
+          setIsLoading(false);
+        }, (error) => {
+          console.error('Error fetching projects:', error);
+          // Don't show error for empty collections
+          setIsLoading(false);
+        });
+      } catch (error) {
+        console.error('Error setting up projects listener:', error);
+        setIsLoading(false);
+      }
+    };
 
-    return unsubscribe;
+    fetchProjects();
+
+    // Cleanup function
+    return () => {
+      if (unsubscribe) {
+        try {
+          unsubscribe();
+        } catch (error) {
+          console.error('Error unsubscribing from projects listener:', error);
+        }
+      }
+    };
   }, [currentUser, sortBy]);
   
-  // Filter and search projects
+  // Filter projects based on status only
   useEffect(() => {
     let result = [...projects];
     
     // Apply status filter
     if (filterStatus !== 'all') {
       result = result.filter(project => project.status === filterStatus);
-    }
-    
-    // Apply search filter
-    if (searchTerm.trim() !== '') {
-      const searchLower = searchTerm.toLowerCase();
-      result = result.filter(project => 
-        project.name?.toLowerCase().includes(searchLower) ||
-        project.client?.toLowerCase().includes(searchLower) ||
-        project.description?.toLowerCase().includes(searchLower)
-      );
     }
     
     setFilteredProjects(result);
@@ -163,8 +216,8 @@ const ProjectsPanel = () => {
     if (activePage > 1) {
       setActivePage(1);
     }
-  }, [projects, filterStatus, searchTerm, itemsPerPage]);
-
+  }, [projects, filterStatus, itemsPerPage, activePage]);
+  
   // Get icon for status
   const getStatusIcon = (status) => {
     switch(status) {
@@ -233,11 +286,6 @@ const ProjectsPanel = () => {
     setError(null);
   }, []);
   
-  // Handle search input
-  const handleSearchChange = useCallback((e) => {
-    setSearchTerm(e.target.value);
-  }, []);
-  
   // Handle form submission
   const handleAddProject = useCallback(async (projectData) => {
     setIsSubmitting(true);
@@ -248,7 +296,7 @@ const ProjectsPanel = () => {
       await addDoc(projectsRef, {
         ...projectData,
         userId: currentUser.uid,
-        createdAt: Timestamp.now()
+        createdAt: serverTimestamp()
       });
       
       setIsModalOpen(false);
@@ -282,23 +330,10 @@ const ProjectsPanel = () => {
           </TitleSection>
           
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <SearchContainer>
-              <SearchInputWrapper>
-                <SearchIcon><FaSearch /></SearchIcon>
-                <StyledSearchInput 
-                  type="text" 
-                  placeholder={t('projects.searchPlaceholder', 'Search projects...')} 
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  aria-label={t('projects.searchAriaLabel', 'Search projects')}
-                />
-              </SearchInputWrapper>
-            </SearchContainer>
-            
             <GradientButton 
               onClick={openAddProjectModal}
-              style={{ marginLeft: spacing.md }}
               aria-label={t('projects.addProject', 'Add New Project')}
+              className={isRTL ? 'rtl-button' : ''}
             >
               <FaPlus />
               {t('projects.addProject', 'Add New Project')}
@@ -338,52 +373,7 @@ const ProjectsPanel = () => {
               >
                 <FaCheck />
               </StatusFilterTab>
-              <StatusFilterTab 
-                active={filterStatus === 'awaitingFeedback'} 
-                onClick={() => setFilterStatus('awaitingFeedback')}
-                status="awaitingFeedback"
-                tooltip={t('projects.awaitingFeedback', 'Feedback')}
-                title={t('projects.awaitingFeedback', 'Feedback')}
-                aria-label={t('projects.awaitingFeedback', 'Feedback')}
-              >
-                <FaPencilAlt />
-              </StatusFilterTab>
             </CustomFilterTabs>
-            
-            <ViewToggleContainer>
-              <ViewToggleLabel>{t('projects.layout', 'Layout')}:</ViewToggleLabel>
-              <ViewToggle>
-                <ToggleButton 
-                  active={isGridView} 
-                  onClick={() => setIsGridView(true)}
-                  aria-label={t('projects.gridView', 'Grid View')}
-                >
-                  <FaThLarge />
-                </ToggleButton>
-                <ToggleButton 
-                  active={!isGridView} 
-                  onClick={() => setIsGridView(false)}
-                  aria-label={t('projects.listView', 'List View')}
-                >
-                  <FaList />
-                </ToggleButton>
-              </ViewToggle>
-            </ViewToggleContainer>
-            
-            <SortContainer>
-              <SortIcon>
-                <FaSort />
-              </SortIcon>
-              <Select 
-                value={sortBy} 
-                onChange={handleSortChange}
-                aria-label={t('projects.sortBy', 'Sort By')}
-              >
-                <option value="deadline">{t('projects.sortOptions.deadline', 'Deadline')}</option>
-                <option value="name">{t('projects.sortOptions.alphabetical', 'Alphabetical')}</option>
-                <option value="status">{t('projects.sortOptions.status', 'Status')}</option>
-              </Select>
-            </SortContainer>
           </FilterGroup>
         </ActionsRow>
       </DashboardHeader>
@@ -404,30 +394,41 @@ const ProjectsPanel = () => {
             </ProjectCardSkeleton>
           ))}
         </ProjectsContainer>
-      ) : projects.length === 0 ? (
-        <ProjectEmptyState>
-          {searchTerm || filterStatus !== 'all' ? (
+      ) : filteredProjects.length === 0 ? (
+        <CustomEmptyState className={isRTL ? 'rtl-content' : ''}>
+          {filterStatus !== 'all' ? (
             <>
-              <EmptyStateIcon><FaSearch /></EmptyStateIcon>
+              <EmptyStateIllustration>
+                <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M60 10C32.4 10 10 32.4 10 60C10 87.6 32.4 110 60 110C87.6 110 110 87.6 110 60C110 32.4 87.6 10 60 10ZM60 100C37.9 100 20 82.1 20 60C20 37.9 37.9 20 60 20C82.1 20 100 37.9 100 60C100 82.1 82.1 100 60 100Z" fill="rgba(255,255,255,0.1)"/>
+                  <path d="M65 40H55V65H65V40Z" fill="rgba(255,255,255,0.2)"/>
+                  <path d="M65 75H55V85H65V75Z" fill="rgba(255,255,255,0.2)"/>
+                </svg>
+              </EmptyStateIllustration>
               <h3>{t('projects.noMatchingProjects', 'No matching projects')}</h3>
-              <p>{t('projects.noMatchingMessage', 'Try adjusting your search or filters')}</p>
-              <GradientButton onClick={() => {
-                setSearchTerm('');
-                setFilterStatus('all');
-              }}>
-                <FaMagic />
+              <p>{t('projects.noMatchingMessage', 'Try adjusting your filters')}</p>
+              <GradientButton 
+                onClick={() => setFilterStatus('all')}
+                className={isRTL ? 'rtl-button' : ''}
+              >
                 {t('projects.clearFilters', 'Clear Filters')}
               </GradientButton>
             </>
           ) : (
             <>
-              <EmptyStateIcon><FaPlus /></EmptyStateIcon>
-              <h3>{t('projects.noProjects', 'No projects yet')}</h3>
-              <p>{t('projects.emptyStateMessage', 'Create your first project to get started')}</p>
-              <p>{t('projects.useButtonAbove', 'Use the + button above to create a new project')}</p>
+              <EmptyStateIllustration>
+                <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="20" y="20" width="80" height="80" rx="4" stroke="rgba(255,255,255,0.2)" strokeWidth="2" fill="none"/>
+                  <path d="M35 40H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2"/>
+                  <path d="M35 60H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2"/>
+                  <path d="M35 80H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2"/>
+                </svg>
+              </EmptyStateIllustration>
+              <h3>{isRTL ? 'لا توجد مشاريع بعد' : 'No projects yet'}</h3>
+              <p>{isRTL ? 'قم بإنشاء مشروع جديد باستخدام الزر في الأعلى' : 'Create a new project using the button in the header'}</p>
             </>
           )}
-        </ProjectEmptyState>
+        </CustomEmptyState>
       ) : (
         <>
           <ProjectsContainer isGrid={isGridView}>
@@ -511,13 +512,13 @@ const ProjectsPanel = () => {
                 {Math.min(activePage * itemsPerPage, filteredProjects.length)} {t('pagination.of', 'of')} {filteredProjects.length}
               </PaginationText>
               
-              <PaginationControls>
+              <PaginationControls className={isRTL ? 'rtl-pagination' : ''}>
                 <PaginationButton 
                   onClick={() => handlePageChange(Math.max(1, activePage - 1))}
                   disabled={activePage === 1}
                   aria-label={t('pagination.previous', 'Previous page')}
                 >
-                  <FaArrowLeft />
+                  {isRTL ? <FaArrowRight /> : <FaArrowLeft />}
                 </PaginationButton>
                 
                 {[...Array(totalPages)].map((_, index) => (
@@ -536,7 +537,7 @@ const ProjectsPanel = () => {
                   disabled={activePage === totalPages}
                   aria-label={t('pagination.next', 'Next page')}
                 >
-                  <FaArrowRight />
+                  {isRTL ? <FaArrowLeft /> : <FaArrowRight />}
                 </PaginationButton>
               </PaginationControls>
             </Pagination>
@@ -549,11 +550,14 @@ const ProjectsPanel = () => {
         <ErrorMessage role="alert" aria-live="assertive">{error}</ErrorMessage>
       )}
       
-      <ProjectWizard
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onProjectAdded={handleAddProject}
-      />
+      {/* Render ProjectWizard directly */}
+      {isModalOpen && (
+        <ProjectWizard
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onProjectAdded={handleAddProject}
+        />
+      )}
     </PanelContainer>
   );
 };
@@ -662,7 +666,7 @@ const ToggleButton = styled.button`
   }
 `;
 
-const FilterContainer = styled.div`
+const FilterContainerWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
@@ -676,7 +680,7 @@ const FilterContainer = styled.div`
   }
 `;
 
-const SortContainer = styled(FilterContainer)`
+const SortContainer = styled(FilterContainerWrapper)`
   /* Additional styles specific to sort container if needed */
 `;
 
@@ -757,7 +761,6 @@ const ProjectsContainer = styled.div`
   }
   margin-top: ${spacing.lg};
 `;
-
 
 const ProjectCardSkeleton = styled(Card)`
   ${mixins.card(false)}
@@ -852,24 +855,84 @@ const SkeletonBody = styled(ProjectDetails)`
   gap: ${spacing.sm};
 `;
 
-const ProjectEmptyState = styled(EmptyState)`
+const EmptyStateIllustration = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: ${spacing.lg};
+  
+  svg {
+    width: 120px;
+    height: 120px;
+  }
+  
+  @media (max-width: 768px) {
+    svg {
+      width: 100px;
+      height: 100px;
+    }
+  }
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: ${spacing.xl};
-  margin: ${spacing.md} 0;
-  animation: ${fadeIn} 0.5s ease-out, ${slideUp} 0.5s ease-out;
+  background-color: ${colors.background.card};
+  border-radius: ${borderRadius.md};
+  box-shadow: ${shadows.sm};
+`;
+
+const CustomEmptyState = styled(EmptyState)`
+  max-width: 500px;
+  margin: 3rem auto;
+  text-align: center;
   
   h3 {
-    font-size: ${typography.fontSizes.xl};
+    margin-top: ${spacing.md};
     margin-bottom: ${spacing.sm};
+    font-size: ${typography.fontSizes.xl};
     color: ${colors.text.primary};
   }
   
   p {
+    margin-bottom: ${spacing.md};
     color: ${colors.text.secondary};
-    margin-bottom: ${spacing.lg};
+  }
+  
+  button {
+    margin-top: ${spacing.md};
+  }
+  
+  /* RTL Support */
+  &.rtl-content {
+    direction: rtl;
+    text-align: center;
+    
+    h3, p {
+      text-align: center;
+    }
+    
+    button svg {
+      margin-left: 0;
+      margin-right: ${spacing.xs};
+    }
+  }
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    margin: 2rem auto;
+    padding: ${spacing.md};
+    
+    h3 {
+      font-size: ${typography.fontSizes.lg};
+    }
   }
 `;
 
-const ErrorMessage = styled.div`
+const ErrorMessageAlert = styled.div`
   background: rgba(244, 67, 54, 0.1);
   color: ${colors.status.error};
   padding: ${spacing.md};
@@ -930,26 +993,7 @@ const CancelButton = styled(Button)`
 `;
 
 
-const ProjectsCount = styled.span`
-  color: ${colors.text.secondary};
-  font-size: ${typography.fontSizes.sm};
-`;
-
-
-const ViewToggleLabel = styled.span`
-  color: ${colors.text.secondary};
-  font-size: ${typography.fontSizes.sm};
-`;
-
-
-const MoodContainer = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: ${typography.fontSizes.md};
-  gap: ${spacing.xs};
-`;
-
-const ActionIcon = styled.button`
+const ActionIconButton = styled.button`
   ${mixins.flexCenter}
   background: transparent;
   color: ${colors.text.secondary};
@@ -976,15 +1020,20 @@ const CustomFilterTabs = styled.div`
   display: flex;
   align-items: center;
   gap: ${spacing.sm};
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  border: none;
-  box-shadow: none;
+  margin-right: ${spacing.lg};
   
   /* RTL Support */
   [dir="rtl"] & {
-    flex-direction: row-reverse;
+    margin-right: 0;
+    margin-left: ${spacing.lg};
+  }
+  
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-left: 0;
+    margin-bottom: ${spacing.md};
+    width: 100%;
+    justify-content: space-around;
   }
 `;
 

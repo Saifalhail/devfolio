@@ -67,7 +67,7 @@ import VirtualizedList from '../Common/VirtualizedList';
 import SummaryCard from './SummaryCard';
 
 
-const ProjectsPanel = lazy(() => import('./ProjectsPanel'));
+import ProjectsPanel from './ProjectsPanel';
 const ProjectNotes = lazy(() => import('./ProjectNotes'));
 const AddProjectModal = lazy(() => import('./AddProjectModal'));
 const TasksPanel = lazy(() => import('./TasksPanel'));
@@ -504,9 +504,7 @@ const Dashboard = () => {
                 <ProjectsHeader>
                   <h2>{t('projects.yourProjects', 'Your Projects')}</h2>
                 </ProjectsHeader>
-                <Suspense fallback={<LoadingSpinner />}>
-                  <ProjectsPanel />
-                </Suspense>
+                <ProjectsPanel />
               </ProjectsTabContainer>
             )}
             

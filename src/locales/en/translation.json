@@ -703,11 +703,23 @@
         "title": "Step 4: Technical Preferences & Infrastructure",
         "platforms": "Preferred Application Platforms",
         "platformsTooltip": "Where should your application be available?",
+        "platformsSubtext": "Select all platforms where your application should be accessible",
         "techStack": "Technology Stack Preference",
         "techStackTooltip": "Preferred technologies used to build your app",
+        "techStackSubtext": "Choose the technology stack that best fits your project requirements",
         "hosting": "Preferred Hosting & Infrastructure",
         "hostingTooltip": "Where would you prefer your application to be hosted?",
+        "hostingSubtext": "Select your preferred hosting environment for deployment",
         "customStackPlaceholder": "Specify your preferred technology stack"
+      },
+      "step5": {
+        "title": "Budget & Existing Resources",
+        "budgetRange": "Estimated Budget Range",
+        "budgetRangeSubtext": "Select the budget range that best fits your project",
+        "existingResources": "Existing Resources & Team Availability",
+        "existingResourcesSubtext": "Select any resources or team members you already have available",
+        "existingMaterials": "Existing Materials or Documentation",
+        "existingMaterialsSubtext": "Select any materials or documentation you already have prepared"
       },
       "platforms": {
         "ios": "iOS (Mobile)",
@@ -771,6 +783,29 @@
         "national": "National",
         "international": "International",
         "online": "Online Only"
+      },
+      "budget": {
+        "small": "Small ($1,000 - $5,000)",
+        "medium": "Medium ($5,000 - $15,000)",
+        "large": "Large ($15,000 - $50,000)",
+        "enterprise": "Enterprise ($50,000+)",
+        "flexible": "Flexible / To Be Discussed"
+      },
+      "resources": {
+        "inHouseTeam": "In-house Development Team",
+        "designer": "UI/UX Designer",
+        "projectManager": "Project Manager",
+        "qaTeam": "QA/Testing Team",
+        "contentCreator": "Content Creator",
+        "marketingTeam": "Marketing Team"
+      },
+      "materials": {
+        "wireframes": "Wireframes/Mockups",
+        "brandAssets": "Brand Assets/Guidelines",
+        "contentPlan": "Content Plan",
+        "marketingPlan": "Marketing Plan",
+        "technicalDocs": "Technical Documentation",
+        "apiDocs": "API Documentation"
       },
       "errors": {
         "nameRequired": "Project name is required",

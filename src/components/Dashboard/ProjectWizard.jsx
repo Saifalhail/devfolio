@@ -2,19 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { 
-  FaPlus, FaMobileAlt, FaGlobe, FaDesktop, FaRocket, FaUsers, FaUserTie, 
-  FaUserGraduate, FaUserMd, FaUserCog, FaChild, FaUserAlt, FaUserShield, 
-  FaUserNinja, FaChartBar, FaChartLine, FaChartPie, FaChartArea, FaMapMarkerAlt,
-  FaUser, FaKey, FaSignInAlt, FaUsersCog, FaUndo, FaDatabase, FaBolt, 
+  FaPlus, FaCheck, FaInfoCircle, FaLaptopCode, FaDesktop, FaMobileAlt, 
+  FaTabletAlt, FaServer, FaDatabase, FaUserLock, FaUsers, FaGlobe, FaBuilding, 
+  FaShoppingCart, FaChartBar, FaGamepad, FaCalendarAlt, FaBook, FaTools, 
+  FaPalette, FaFileAlt, FaChartPie, FaMapMarkerAlt, FaRegClock, FaMoneyBillWave, 
+  FaUserFriends, FaRegLightbulb, FaCode, FaUserCog, FaUserShield, FaRegCommentDots, 
   FaMobile, FaFileUpload, FaCloud, FaCreditCard, FaComments, 
-  FaBell, FaMapMarked, FaCalendarAlt, FaLink, FaShareAlt, FaPlus as FaPlusCircle, FaInfoCircle,
-  FaShoppingCart, FaGraduationCap, FaMedkit, FaMoneyBillAlt, FaFilm, FaTasks, FaEllipsisH,
-  FaClock, FaMapMarker, FaFlag, FaApple, FaAndroid, FaLayerGroup, FaStar, FaJs, FaPython, FaCode, FaServer
+  FaRegListAlt, FaRegEdit, FaRegImages, FaRegEnvelope, FaRegBell, FaRegStar, 
+  FaRegCreditCard, FaRegCalendarAlt, FaRegChartBar, FaRegMap, FaRegAddressCard,
+  FaLink, FaTrashAlt, FaPaperclip, FaUpload, FaRocket, FaGraduationCap, FaMedkit,
+  FaMoneyBillAlt, FaFilm, FaTasks, FaEllipsisH, FaBolt, FaClock, FaUserTie,
+  FaUserGraduate, FaUserMd, FaChild, FaMapMarker, FaMapMarked, FaFlag, FaKey,
+  FaSignInAlt, FaUsersCog, FaUndo, FaBell, FaShareAlt, FaPlusCircle, FaApple,
+  FaAndroid, FaLayerGroup, FaStar, FaJs, FaPython, FaChartLine
 } from 'react-icons/fa';
 import Modal from '../Common/Modal';
 import { colors, spacing, borderRadius, shadows, transitions, typography, breakpoints } from '../../styles/GlobalTheme';
 
-// Import wizard components
+// Import all wizard components from the barrel file
 import { 
   TextInput, 
   SelectableCards, 
@@ -23,7 +28,10 @@ import {
   CheckboxCardSelector,
   UserScaleSelector,
   MultiSelectDropdown,
-  Tooltip
+  Tooltip,
+  ExpandableTextarea,
+  LinkInputList,
+  DragDropUploader
 } from './WizardComponents';
 
 /**
@@ -68,7 +76,17 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     platforms: [],
     techStack: 'recommended',
     customTechStack: '',
-    hosting: 'recommended'
+    hosting: 'recommended',
+    
+    // Step 5 - Budget & Existing Resources
+    budgetRange: '',
+    existingResources: [],
+    existingMaterials: [],
+    
+    // Step 6 - Additional Details & Attachments
+    additionalNotes: '',
+    relevantLinks: [],
+    uploadedFiles: []
   });
 
   // Reset form when modal opens/closes
@@ -89,7 +107,17 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         authFeatures: [],
         dataStorageFeatures: [],
         coreFeatures: [],
-        otherFeatureText: ''
+        otherFeatureText: '',
+        platforms: [],
+        techStack: 'recommended',
+        customTechStack: '',
+        hosting: 'recommended',
+        budgetRange: '',
+        existingResources: [],
+        existingMaterials: [],
+        additionalNotes: '',
+        relevantLinks: [],
+        uploadedFiles: []
       });
       setCurrentStep(1);
       setError(null);
@@ -217,6 +245,14 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       }
     }
     
+    // Validation for step 5
+    if (currentStep === 5) {
+      if (!formData.budgetRange) {
+        setError(t('projects.wizard.errors.budgetRangeRequired', 'Budget range is required'));
+        return false;
+      }
+    }
+    
     return true;
   };
 
@@ -225,14 +261,15 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     // Looking at the Modal component, we know the content is in a styled component
     // that follows the Header. We'll try to find it directly and through parent-child relationships
     setTimeout(() => {
-      // Direct approach - try to find elements by their likely structure
+      // Try multiple approaches to ensure scrolling works in all cases
+      
+      // First approach - try to find the modal content directly
       const modalContent = document.querySelector('[role="dialog"] > div:nth-child(3)');
       if (modalContent) {
         modalContent.scrollTop = 0;
-        return;
       }
       
-      // Try to find any element in the modal that might be scrollable
+      // Second approach - try to find any element in the modal that might be scrollable
       const modalDialog = document.querySelector('[role="dialog"]');
       if (modalDialog) {
         // Get all direct children of the dialog
@@ -251,21 +288,30 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         }
       }
       
-      // Also try the wizard container directly
+      // Third approach - try the wizard container directly
       const wizardContainer = document.querySelector('.wizard-container');
       if (wizardContainer) {
         wizardContainer.scrollTop = 0;
       }
-    }, 50); // Short delay to ensure the DOM has updated
+      
+      // Fourth approach - try the modal body if it exists
+      const modalBody = document.querySelector('.modal-body');
+      if (modalBody) {
+        modalBody.scrollTop = 0;
+      }
+      
+      // Fifth approach - try scrolling the document itself as a fallback
+      window.scrollTo(0, 0);
+    }, 100); // Slightly longer delay to ensure the DOM has updated
   };
 
   // Handle next step
   const handleNextStep = () => {
     if (validateStep()) {
-      if (currentStep < 4) {
+      if (currentStep < 6) {
         setCurrentStep(prev => prev + 1);
         // Scroll back to top after state update
-        setTimeout(scrollToTop, 50);
+        setTimeout(scrollToTop, 100);
       } else {
         handleSubmit();
       }
@@ -278,7 +324,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       setCurrentStep(prev => prev - 1);
       setError(null);
       // Scroll back to top after state update
-      setTimeout(scrollToTop, 50);
+      setTimeout(scrollToTop, 100);
     }
   };
 
@@ -316,6 +362,16 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         customTechStack: formData.techStack === 'custom' ? formData.customTechStack : '',
         hosting: formData.hosting,
         
+        // Step 5 - Budget & Existing Resources
+        budgetRange: formData.budgetRange,
+        existingResources: formData.existingResources,
+        existingMaterials: formData.existingMaterials,
+        
+        // Step 6 - Additional Details & Attachments
+        additionalNotes: formData.additionalNotes,
+        relevantLinks: formData.relevantLinks,
+        uploadedFiles: formData.uploadedFiles,
+        
         // Default values
         status: 'inProgress',
         createdAt: new Date()
@@ -335,7 +391,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   };
 
   // Total number of steps in the wizard
-  const totalSteps = 4;
+  const totalSteps = 6;
   
   // Render progress bar
   const renderProgressBar = () => {
@@ -467,28 +523,56 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   
   // Platform options for Step 4
   const platformOptions = [
-    { id: 'ios', label: t('projects.wizard.platforms.ios', 'iOS (Mobile)'), icon: <FaApple /> },
-    { id: 'android', label: t('projects.wizard.platforms.android', 'Android (Mobile)'), icon: <FaAndroid /> },
-    { id: 'web', label: t('projects.wizard.platforms.web', 'Web (Browser-based)'), icon: <FaGlobe /> },
-    { id: 'desktop', label: t('projects.wizard.platforms.desktop', 'Desktop (Windows/macOS/Linux)'), icon: <FaDesktop /> },
-    { id: 'crossPlatform', label: t('projects.wizard.platforms.crossPlatform', 'Cross-platform (Multiple Platforms)'), icon: <FaLayerGroup /> }
+    { id: 'ios', label: t('projects.wizard.step4.platforms.ios', 'iOS (Mobile)'), icon: <FaApple /> },
+    { id: 'android', label: t('projects.wizard.step4.platforms.android', 'Android (Mobile)'), icon: <FaAndroid /> },
+    { id: 'web', label: t('projects.wizard.step4.platforms.web', 'Web (Browser-based)'), icon: <FaGlobe /> },
+    { id: 'desktop', label: t('projects.wizard.step4.platforms.desktop', 'Desktop (Windows/macOS/Linux)'), icon: <FaDesktop /> },
+    { id: 'crossPlatform', label: t('projects.wizard.step4.platforms.crossPlatform', 'Cross-platform (Multiple Platforms)'), icon: <FaLayerGroup /> }
   ];
   
   // Tech stack options for Step 4
   const techStackOptions = [
-    { id: 'recommended', label: t('projects.wizard.techStack.recommended', 'Recommended by Developer'), icon: <FaStar /> },
-    { id: 'javascript', label: t('projects.wizard.techStack.javascript', 'JavaScript (React, Node.js, Express)'), icon: <FaJs /> },
-    { id: 'python', label: t('projects.wizard.techStack.python', 'Python (Django, Flask)'), icon: <FaPython /> },
-    { id: 'mobile', label: t('projects.wizard.techStack.mobile', 'Mobile-focused (Flutter, React Native)'), icon: <FaMobile /> },
-    { id: 'custom', label: t('projects.wizard.techStack.custom', 'Custom'), icon: <FaCode /> }
+    { id: 'recommended', label: t('projects.wizard.step4.techStack.recommended', 'Recommended by Developer'), icon: <FaStar /> },
+    { id: 'javascript', label: t('projects.wizard.step4.techStack.javascript', 'JavaScript (React, Node.js, Express)'), icon: <FaJs /> },
+    { id: 'python', label: t('projects.wizard.step4.techStack.python', 'Python (Django, Flask)'), icon: <FaPython /> },
+    { id: 'mobile', label: t('projects.wizard.step4.techStack.mobile', 'Mobile-focused (Flutter, React Native)'), icon: <FaMobile /> },
+    { id: 'custom', label: t('projects.wizard.step4.techStack.custom', 'Custom'), icon: <FaCode /> }
   ];
   
   // Hosting options for Step 4
   const hostingOptions = [
-    { id: 'recommended', label: t('projects.wizard.hosting.recommended', 'Recommended by Developer'), icon: <FaStar /> },
-    { id: 'cloud', label: t('projects.wizard.hosting.cloud', 'Cloud-based (AWS, Azure, GCP, Firebase)'), icon: <FaCloud /> },
-    { id: 'selfHosted', label: t('projects.wizard.hosting.selfHosted', 'Self-hosted / On-premises'), icon: <FaServer /> }
-  ];  
+    { id: 'recommended', label: t('projects.wizard.step4.hosting.recommended', 'Recommended by Developer'), icon: <FaStar /> },
+    { id: 'cloud', label: t('projects.wizard.step4.hosting.cloud', 'Cloud-based (AWS, Azure, GCP, Firebase)'), icon: <FaCloud /> },
+    { id: 'selfHosted', label: t('projects.wizard.step4.hosting.selfHosted', 'Self-hosted / On-premises'), icon: <FaServer /> }
+  ];
+  
+  // Budget range options for Step 5
+  const budgetOptions = [
+    { id: 'small', label: t('projects.wizard.step5.budget.small', 'Small ($1,000 - $5,000)'), icon: <FaMoneyBillAlt /> },
+    { id: 'medium', label: t('projects.wizard.step5.budget.medium', 'Medium ($5,000 - $15,000)'), icon: <FaMoneyBillAlt /> },
+    { id: 'large', label: t('projects.wizard.step5.budget.large', 'Large ($15,000 - $50,000)'), icon: <FaMoneyBillAlt /> },
+    { id: 'enterprise', label: t('projects.wizard.step5.budget.enterprise', 'Enterprise ($50,000+)'), icon: <FaMoneyBillAlt /> },
+    { id: 'flexible', label: t('projects.wizard.step5.budget.flexible', 'Flexible / To Be Discussed'), icon: <FaComments /> }
+  ];
+  
+  // Existing resources options for Step 5
+  const resourcesOptions = [
+    { id: 'inHouseTeam', label: t('projects.wizard.step5.resources.inHouseTeam', 'In-house Development Team'), icon: <FaUsersCog /> },
+    { id: 'designer', label: t('projects.wizard.step5.resources.designer', 'UI/UX Designer'), icon: <FaPython /> },
+    { id: 'projectManager', label: t('projects.wizard.step5.resources.projectManager', 'Project Manager'), icon: <FaTasks /> },
+    { id: 'qaTeam', label: t('projects.wizard.step5.resources.qaTeam', 'QA/Testing Team'), icon: <FaCode /> },
+    { id: 'contentCreator', label: t('projects.wizard.step5.resources.contentCreator', 'Content Creator'), icon: <FaFileUpload /> },
+    { id: 'marketingTeam', label: t('projects.wizard.step5.resources.marketingTeam', 'Marketing Team'), icon: <FaChartLine /> }
+  ];
+  
+  // Existing materials options for Step 5
+  const materialsOptions = [
+    { id: 'wireframes', label: t('projects.wizard.step5.materials.wireframes', 'Wireframes/Mockups'), icon: <FaDesktop /> },
+    { id: 'brandAssets', label: t('projects.wizard.step5.materials.brandAssets', 'Brand Assets/Guidelines'), icon: <FaPalette /> },
+    { id: 'contentPlan', label: t('projects.wizard.step5.materials.contentPlan', 'Content Plan/Copy'), icon: <FaFileAlt /> },
+    { id: 'marketResearch', label: t('projects.wizard.step5.materials.marketResearch', 'Market Research'), icon: <FaChartPie /> },
+    { id: 'technicalDocs', label: t('projects.wizard.step5.materials.technicalDocs', 'Technical Documentation'), icon: <FaBook /> }
+  ];
 
   // Render step content based on current step
   const renderStepContent = () => {
@@ -533,6 +617,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 selectedValue={formData.type}
                 onChange={(value) => handleChange('type', value)}
                 required
+                isRTL={isRTL}
               />
               {formData.type === 'custom' && (
                 <TextInput
@@ -731,6 +816,9 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                   <InfoIcon isRTL={isRTL}>ℹ️</InfoIcon>
                 </Tooltip>
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step4.platformsSubtext', 'Select all platforms where your application should be accessible')}
+              </FormSubtext>
               <CheckboxCardSelector
                 options={platformOptions}
                 selectedValues={formData.platforms}
@@ -747,6 +835,9 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                   <InfoIcon isRTL={isRTL}>ℹ️</InfoIcon>
                 </Tooltip>
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step4.techStackSubtext', 'Choose the technology stack that best fits your project requirements')}
+              </FormSubtext>
               <SelectableCards
                 options={techStackOptions}
                 selectedValue={formData.techStack}
@@ -772,11 +863,128 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                   <InfoIcon isRTL={isRTL}>ℹ️</InfoIcon>
                 </Tooltip>
               </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step4.hostingSubtext', 'Select your preferred hosting environment for deployment')}
+              </FormSubtext>
               <SelectableCards
                 options={hostingOptions}
                 selectedValue={formData.hosting}
                 onChange={(value) => handleChange('hosting', value)}
                 isRTL={isRTL}
+              />
+            </FormGroup>
+          </StepContainer>
+        );
+      case 5:
+        return (
+          <StepContainer>
+            <StepTitle isRTL={isRTL}>
+              {t('projects.wizard.step5.title', 'Budget & Existing Resources')}
+            </StepTitle>
+            
+            {/* Budget Range */}
+            <FormGroup isRTL={isRTL}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step5.budgetRange', 'Estimated Budget Range')}
+              </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step5.budgetRangeSubtext', 'Select the budget range that best fits your project')}
+              </FormSubtext>
+              <SelectableCards
+                options={budgetOptions}
+                selectedValue={formData.budgetRange}
+                onChange={(value) => handleChange('budgetRange', value)}
+                required
+                isRTL={isRTL}
+              />
+            </FormGroup>
+            
+            {/* Existing Resources & Team Availability */}
+            <FormGroup isRTL={isRTL}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step5.existingResources', 'Existing Resources & Team Availability')}
+              </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step5.existingResourcesSubtext', 'Select any resources or team members you already have available')}
+              </FormSubtext>
+              <CheckboxCardSelector
+                options={resourcesOptions}
+                selectedValues={formData.existingResources}
+                onChange={(values) => handleChange('existingResources', values)}
+                isRTL={isRTL}
+              />
+            </FormGroup>
+            
+            {/* Existing Materials or Documentation */}
+            <FormGroup isRTL={isRTL}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step5.existingMaterials', 'Existing Materials or Documentation')}
+              </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step5.existingMaterialsSubtext', 'Select any materials or documentation you already have prepared')}
+              </FormSubtext>
+              <CheckboxCardSelector
+                options={materialsOptions}
+                selectedValues={formData.existingMaterials}
+                onChange={(values) => handleChange('existingMaterials', values)}
+                isRTL={isRTL}
+              />
+            </FormGroup>
+          </StepContainer>
+        );
+      case 6:
+        return (
+          <StepContainer>
+            <StepTitle isRTL={isRTL}>
+              {t('projects.wizard.step6.title', 'Additional Details & Attachments')}
+            </StepTitle>
+            
+            {/* Additional Notes */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step6.additionalNotes', 'Anything else we should know?')}
+              </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step6.additionalNotesSubtext', 'Use this space to share extra info, special requests, or instructions')}
+              </FormSubtext>
+              <ExpandableTextarea
+                value={formData.additionalNotes}
+                onChange={(value) => handleChange('additionalNotes', value)}
+                placeholder={t('projects.wizard.step6.additionalNotesPlaceholder', 'Please make sure the app supports RTL languages...')}
+                maxLength={500}
+                isRTL={isRTL}
+              />
+            </FormGroup>
+            
+            {/* Relevant Links */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step6.relevantLinks', 'Do you have any links to share?')}
+              </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step6.relevantLinksSubtext', 'Links to designs, docs, or similar products are welcome!')}
+              </FormSubtext>
+              <LinkInputList
+                links={formData.relevantLinks}
+                onChange={(links) => handleChange('relevantLinks', links)}
+                isRTL={isRTL}
+              />
+            </FormGroup>
+            
+            {/* File Uploads */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step6.fileUploads', 'File Uploads')}
+              </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step6.fileUploadsSubtext', 'You can upload documents, images, spreadsheets, or ZIPs of existing assets')}
+              </FormSubtext>
+              <DragDropUploader
+                files={formData.uploadedFiles}
+                onChange={(files) => handleChange('uploadedFiles', files)}
+                isRTL={isRTL}
+                maxFileSize={20} // 20MB
+                acceptedFileTypes={['pdf', 'docx', 'xlsx', 'png', 'jpg', 'svg', 'zip', 'txt']}
               />
             </FormGroup>
           </StepContainer>
@@ -1311,6 +1519,26 @@ const StepContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${spacing.md};
+  
+  /* RTL optimization for Arabic */
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  
+  /* Mobile responsiveness improvements */
+  @media (max-width: ${breakpoints.sm}) {
+    margin-top: ${spacing.md};
+    gap: ${spacing.sm};
+  }
+  
+  /* Optimize for Arabic text which may need more space */
+  & .rtl-optimized {
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.lg} * 1.05)` : typography.fontSizes.lg};
+    line-height: ${props => props.isRTL ? '1.6' : '1.5'};
+  }
+  
+  & .rtl-optimized-cards {
+    margin: ${props => props.isRTL ? `0 ${spacing.xs} 0 0` : `0 0 0 ${spacing.xs}`};
+  }
   padding: ${spacing.md};
   background: linear-gradient(135deg, rgba(25, 25, 50, 0.2), rgba(35, 35, 70, 0.2));
   border-radius: ${borderRadius.md};
@@ -1513,6 +1741,17 @@ const FormSubtext = styled.div`
   color: ${colors.text.secondary};
   margin-bottom: ${spacing.sm};
   text-align: ${props => props.isRTL ? 'right' : 'left'};
+  
+  /* Enhanced RTL support */
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  padding-right: ${props => props.isRTL ? spacing.xs : '0'};
+  padding-left: ${props => props.isRTL ? '0' : spacing.xs};
+  
+  /* Mobile responsiveness */
+  @media (max-width: ${breakpoints.sm}) {
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
+    margin-bottom: ${spacing.xs};
+  }
   font-style: ${props => props.isRTL ? 'normal' : 'italic'}; /* Arabic doesn't use italics */
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   line-height: 1.5;
