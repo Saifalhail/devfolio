@@ -501,10 +501,12 @@ const Dashboard = () => {
             {/* Projects Tab */}
             {activeTab === 'projects' && (
               <ProjectsTabContainer>
-                <ProjectsHeader>
-                  <h2>{t('projects.yourProjects', 'Your Projects')}</h2>
-                </ProjectsHeader>
-                <ProjectsPanel />
+                <ProjectsCard>
+                  <ProjectsHeader>
+                    <h2>{t('projects.yourProjects', 'Your Projects')}</h2>
+                  </ProjectsHeader>
+                  <ProjectsPanel />
+                </ProjectsCard>
               </ProjectsTabContainer>
             )}
             
@@ -756,6 +758,14 @@ const DashboardContent = styled.div`
 const ProjectsTabContainer = styled.div`
   width: 100%;
   padding: 1rem 0;
+`;
+
+const ProjectsCard = styled.div`
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
 `;
 
 const AddProjectButton = styled.button`

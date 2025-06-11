@@ -314,35 +314,16 @@ const ProjectsPanel = () => {
   return (
     <PanelContainer dir={isRTL ? 'rtl' : 'ltr'}>
       <DashboardHeader>
-        <HeaderContent>
-          <TitleSection>
-            <PanelTitle>
-              {t('projects.title', 'Projects')}
-            </PanelTitle>
-            <Subtitle>
-              {isRTL ? 
-                `${t('projects.projects', '\u0627\u0644\u0645\u0634\u0627\u0631\u064a\u0639')} ${filteredProjects.length}` : 
-                `${filteredProjects.length} ${filteredProjects.length === 1 
-                  ? t('projects.project', 'Project') 
-                  : t('projects.projects', 'Projects')}`
-              }
-            </Subtitle>
-          </TitleSection>
+          <HeaderContent>
+            <TitleSection>
+              {/* Projects title removed as requested */}
+            </TitleSection>
           
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <GradientButton 
-              onClick={openAddProjectModal}
-              aria-label={t('projects.addProject', 'Add New Project')}
-              className={isRTL ? 'rtl-button' : ''}
-            >
-              <FaPlus />
-              {t('projects.addProject', 'Add New Project')}
-            </GradientButton>
-          </div>
+          {/* Button moved to FilterGroup */}
         </HeaderContent>
         
         <ActionsRow>
-          <FilterGroup>
+          <FilterSection>
             <CustomFilterTabs>
               <StatusFilterTab 
                 active={filterStatus === 'all'} 
@@ -374,27 +355,45 @@ const ProjectsPanel = () => {
                 <FaCheck />
               </StatusFilterTab>
             </CustomFilterTabs>
-          </FilterGroup>
+            <ProjectCount>
+              {isRTL ? 
+                `${t('projects.projects', '\u0627\u0644\u0645\u0634\u0627\u0631\u064a\u0639')} ${filteredProjects.length}` : 
+                `${filteredProjects.length} ${filteredProjects.length === 1 
+                  ? t('projects.project', 'Project') 
+                  : t('projects.projects', 'Projects')}`
+              }
+            </ProjectCount>
+          </FilterSection>
+          <AddButtonWrapper isRTL={isRTL}>
+            <GradientButton 
+              onClick={openAddProjectModal}
+              aria-label={t('projects.addProject', 'Add New Project')}
+              className={isRTL ? 'rtl-button' : ''}
+            >
+              <FaPlus />
+              {t('projects.addProject', 'Add New Project')}
+            </GradientButton>
+          </AddButtonWrapper>
         </ActionsRow>
       </DashboardHeader>
       
       {isLoading ? (
-        <ProjectsContainer isGridView={isGridView} aria-hidden="true">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <ProjectCardSkeleton key={idx} isGridView={isGridView}>
-              <SkeletonHeader>
-                <LoadingSkeleton width="60%" height="1.2rem" />
-                <LoadingSkeleton width="30%" height="1rem" />
-              </SkeletonHeader>
-              <SkeletonBody>
-                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
-                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
-                <LoadingSkeleton height="0.8rem" />
-              </SkeletonBody>
-            </ProjectCardSkeleton>
-          ))}
-        </ProjectsContainer>
-      ) : filteredProjects.length === 0 ? (
+          <ProjectsContainer isGridView={isGridView} aria-hidden="true">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <ProjectCardSkeleton key={idx} isGridView={isGridView}>
+                <SkeletonHeader>
+                  <LoadingSkeleton width="60%" height="1.2rem" />
+                  <LoadingSkeleton width="30%" height="1rem" />
+                </SkeletonHeader>
+                <SkeletonBody>
+                  <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                  <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                  <LoadingSkeleton height="0.8rem" />
+                </SkeletonBody>
+              </ProjectCardSkeleton>
+            ))}
+          </ProjectsContainer>
+        ) : filteredProjects.length === 0 ? (
         <CustomEmptyState className={isRTL ? 'rtl-content' : ''}>
           {filterStatus !== 'all' ? (
             <>
@@ -544,7 +543,6 @@ const ProjectsPanel = () => {
           )}
         </>
       )}
-      
       {/* Add Project Modal */}
       {error && isModalOpen && (
         <ErrorMessage role="alert" aria-live="assertive">{error}</ErrorMessage>
@@ -563,6 +561,41 @@ const ProjectsPanel = () => {
 };
 
 // Additional Styled Components
+
+const FilterSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.md};
+  flex-grow: 0;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${spacing.sm};
+    width: 100%;
+  }
+`;
+
+const AddButtonWrapper = styled.div`
+  margin-left: auto;
+  margin-right: ${props => props.isRTL ? 'auto' : '0'};
+  
+  @media (max-width: 768px) {
+    margin-top: ${spacing.md};
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+`;
+
+const ProjectCount = styled.span`
+  font-size: 0.9rem;
+  color: ${colors.text.secondary};
+  font-weight: 500;
+  margin-left: ${spacing.xs};
+  white-space: nowrap;
+`;
+
 const ViewToggleContainer = styled.div`
   display: flex;
   align-items: center;

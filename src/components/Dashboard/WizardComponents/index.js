@@ -9,6 +9,8 @@ import Tooltip from './Tooltip';
 import ExpandableTextarea from './ExpandableTextarea';
 import LinkInputList from './LinkInputList';
 import DragDropUploader from './DragDropUploader';
+import SummaryAccordion from './SummaryAccordion';
+import SuccessScreen from './SuccessScreen';
 
 // Export all wizard components
 export {
@@ -19,6 +21,8 @@ export {
   CheckboxCardSelector,
   UserScaleSelector,
   MultiSelectDropdown,
+  SummaryAccordion,
+  SuccessScreen,
   Tooltip,
   ExpandableTextarea,
   LinkInputList,

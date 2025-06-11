@@ -31,7 +31,9 @@ import {
   Tooltip,
   ExpandableTextarea,
   LinkInputList,
-  DragDropUploader
+  DragDropUploader,
+  SummaryAccordion,
+  SuccessScreen
 } from './WizardComponents';
 
 /**
@@ -49,6 +51,8 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
+  const [projectId, setProjectId] = useState('');
   
   // Initialize form data
   const [formData, setFormData] = useState({
@@ -86,7 +90,10 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     // Step 6 - Additional Details & Attachments
     additionalNotes: '',
     relevantLinks: [],
-    uploadedFiles: []
+    uploadedFiles: [],
+    
+    // Step 7 - Review & Final Submission
+    confirmationChecked: false
   });
 
   // Reset form when modal opens/closes
@@ -117,10 +124,14 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         existingMaterials: [],
         additionalNotes: '',
         relevantLinks: [],
-        uploadedFiles: []
+        uploadedFiles: [],
+        confirmationChecked: false
       });
       setCurrentStep(1);
       setError(null);
+      setIsSubmitting(false);
+      setIsSubmitSuccess(false);
+      setProjectId('');
     }
   }, [isOpen]);
 
@@ -253,6 +264,17 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       }
     }
     
+    // Validation for step 6
+    // No required fields for step 6
+    
+    // Validation for step 7
+    if (currentStep === 7) {
+      if (!formData.confirmationChecked) {
+        setError(t('projects.wizard.errors.confirmationRequired', 'Please confirm that the information provided is accurate and complete'));
+        return false;
+      }
+    }
+    
     return true;
   };
 
@@ -308,7 +330,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   // Handle next step
   const handleNextStep = () => {
     if (validateStep()) {
-      if (currentStep < 6) {
+      if (currentStep < 7) {
         setCurrentStep(prev => prev + 1);
         // Scroll back to top after state update
         setTimeout(scrollToTop, 100);
@@ -376,22 +398,38 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         status: 'inProgress',
         createdAt: new Date()
       };
-
-      // Call the onProjectAdded callback with the project data
-      await onProjectAdded(projectData);
       
-      // Close modal on success
-      onClose();
+      // Simulate API call with timeout
+      setTimeout(() => {
+        // Generate a mock project ID
+        const mockProjectId = Math.floor(100000 + Math.random() * 900000).toString();
+        setProjectId(mockProjectId);
+        
+        // Call the onProjectAdded callback with the form data
+        if (onProjectAdded) {
+          onProjectAdded({...projectData, id: mockProjectId});
+        }
+        
+        // Set success state
+        setIsSubmitSuccess(true);
+        setIsSubmitting(false);
+        
+        // Don't close the modal yet - we'll show the success screen
+      }, 1500);
     } catch (err) {
       console.error('Error creating project:', err);
       setError(t('projects.wizard.submitError', 'Error creating project. Please try again.'));
-    } finally {
       setIsSubmitting(false);
     }
   };
+  
+  // Handle return to dashboard
+  const handleReturnToDashboard = () => {
+    onClose();
+  };
 
   // Total number of steps in the wizard
-  const totalSteps = 6;
+  const totalSteps = 7;
   
   // Render progress bar
   const renderProgressBar = () => {
@@ -576,6 +614,17 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
 
   // Render step content based on current step
   const renderStepContent = () => {
+    // If submission was successful, show success screen instead of steps
+    if (isSubmitSuccess) {
+      return (
+        <SuccessScreen 
+          projectId={projectId}
+          onReturnToDashboard={handleReturnToDashboard}
+          isRTL={isRTL}
+        />
+      );
+    }
+    
     switch (currentStep) {
       case 1:
         return (
@@ -989,6 +1038,235 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
             </FormGroup>
           </StepContainer>
         );
+      case 7:
+        return (
+          <StepContainer>
+            <StepTitle isRTL={isRTL}>
+              {t('projects.wizard.step7.title', 'Review & Final Submission')}
+            </StepTitle>
+            
+            <FormGroup isRTL={isRTL}>
+              <FormSubtext isRTL={isRTL} style={{ textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}>
+                {t('projects.wizard.step7.reviewSubtext', 'Please review all the information you have provided. You can edit any section by clicking the edit button.')}
+              </FormSubtext>
+              
+              {/* Step 1 Summary */}
+              <SummaryAccordion
+                title={t('projects.wizard.step1.title', 'Project Info')}
+                isCompleted={true}
+                onEdit={() => setCurrentStep(1)}
+                isRTL={isRTL}
+                defaultOpen={true}
+              >
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step1.projectName', 'Project Name')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>{formData.name}</SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step1.projectType', 'Project Type')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.type === 'custom' ? formData.customType : projectTypes.find(type => type.id === formData.type)?.label || formData.type}
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step1.projectIndustry', 'Industry')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.industry === 'other' ? formData.customIndustry : industryOptions.find(ind => ind.value === formData.industry)?.label || formData.industry}
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step1.estimatedTimeline', 'Timeline')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>{formData.timeline}</SummaryValue>
+                </SummaryItem>
+              </SummaryAccordion>
+              
+              {/* Step 2 Summary */}
+              <SummaryAccordion
+                title={t('projects.wizard.step2.title', 'Target Audience & Users')}
+                isCompleted={true}
+                onEdit={() => setCurrentStep(2)}
+                isRTL={isRTL}
+              >
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step2.targetUserGroups', 'Target User Groups')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.targetUserGroups.map(group => userGroupOptions.find(opt => opt.id === group)?.label || group).join(', ')}
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step2.userScale', 'User Scale')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>{formData.userScale}</SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step2.geographicLocations', 'Geographic Locations')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.geographicLocations.includes('specific') 
+                      ? `${formData.geographicLocations.filter(loc => loc !== 'specific').join(', ')}${formData.geographicLocations.filter(loc => loc !== 'specific').length > 0 ? ', ' : ''}${formData.specificLocation}` 
+                      : formData.geographicLocations.join(', ')}
+                  </SummaryValue>
+                </SummaryItem>
+              </SummaryAccordion>
+              
+              {/* Step 3 Summary */}
+              <SummaryAccordion
+                title={t('projects.wizard.step3.title', 'Functional Requirements')}
+                isCompleted={true}
+                onEdit={() => setCurrentStep(3)}
+                isRTL={isRTL}
+              >
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step3.authFeatures', 'Authentication Features')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.authFeatures.join(', ')}
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step3.dataStorageFeatures', 'Data Storage Features')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.dataStorageFeatures.join(', ')}
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step3.coreFeatures', 'Core Features')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.coreFeatures.includes('other') 
+                      ? `${formData.coreFeatures.filter(f => f !== 'other').join(', ')}${formData.coreFeatures.filter(f => f !== 'other').length > 0 ? ', ' : ''}${formData.otherFeatureText}` 
+                      : formData.coreFeatures.join(', ')}
+                  </SummaryValue>
+                </SummaryItem>
+              </SummaryAccordion>
+              
+              {/* Step 4 Summary */}
+              <SummaryAccordion
+                title={t('projects.wizard.step4.title', 'Technical Preferences')}
+                isCompleted={true}
+                onEdit={() => setCurrentStep(4)}
+                isRTL={isRTL}
+              >
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step4.platforms', 'Platforms')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.platforms.join(', ')}
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step4.techStack', 'Tech Stack')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.techStack === 'custom' ? formData.customTechStack : formData.techStack}
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step4.hosting', 'Hosting')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>{formData.hosting}</SummaryValue>
+                </SummaryItem>
+              </SummaryAccordion>
+              
+              {/* Step 5 Summary */}
+              <SummaryAccordion
+                title={t('projects.wizard.step5.title', 'Budget & Resources')}
+                isCompleted={true}
+                onEdit={() => setCurrentStep(5)}
+                isRTL={isRTL}
+              >
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step5.budgetRange', 'Budget Range')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>{formData.budgetRange}</SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step5.existingResources', 'Existing Resources')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.existingResources.length > 0 ? formData.existingResources.join(', ') : t('common.none', 'None')}
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step5.existingMaterials', 'Existing Materials')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.existingMaterials.length > 0 ? formData.existingMaterials.join(', ') : t('common.none', 'None')}
+                  </SummaryValue>
+                </SummaryItem>
+              </SummaryAccordion>
+              
+              {/* Step 6 Summary */}
+              <SummaryAccordion
+                title={t('projects.wizard.step6.title', 'Additional Details')}
+                isCompleted={true}
+                onEdit={() => setCurrentStep(6)}
+                isRTL={isRTL}
+              >
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step6.additionalNotes', 'Additional Notes')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.additionalNotes ? formData.additionalNotes : t('common.none', 'None')}
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step6.relevantLinks', 'Relevant Links')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.relevantLinks.length > 0 
+                      ? formData.relevantLinks.map((link, index) => (
+                          <div key={index}>{link.title}: {link.url}</div>
+                        ))
+                      : t('common.none', 'None')
+                    }
+                  </SummaryValue>
+                </SummaryItem>
+                
+                <SummaryItem isRTL={isRTL}>
+                  <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step6.fileUploads', 'Uploaded Files')}:</SummaryLabel>
+                  <SummaryValue isRTL={isRTL}>
+                    {formData.uploadedFiles.length > 0 
+                      ? formData.uploadedFiles.map((file, index) => (
+                          <div key={index}>{file.name}</div>
+                        ))
+                      : t('common.none', 'None')
+                    }
+                  </SummaryValue>
+                </SummaryItem>
+              </SummaryAccordion>
+            </FormGroup>
+            
+            {/* Confirmation and Submit Note */}
+            <FormGroup isRTL={isRTL} marginTop={spacing.sm} marginBottom={spacing.xs}>
+              <div style={{ 
+                width: '100%', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: isRTL ? 'flex-end' : 'flex-start', 
+                marginTop: spacing.lg,
+                direction: isRTL ? 'rtl' : 'ltr'
+              }}>
+                <ConfirmationContainer isRTL={isRTL}>
+                  <CheckboxWrapper isRTL={isRTL}>
+                    <ConfirmationCheckbox 
+                      id="confirmationCheckbox"
+                      checked={formData.confirmationChecked}
+                      onChange={(e) => handleChange('confirmationChecked', e.target.checked)}
+                    />
+                  </CheckboxWrapper>
+                  <ConfirmationLabel htmlFor="confirmationCheckbox" isRTL={isRTL}>
+                    {t('projects.wizard.step7Info.confirmationText', 'I confirm that all information is accurate.')}
+                  </ConfirmationLabel>
+                </ConfirmationContainer>
+                
+                <SubmitNote isRTL={isRTL}>
+                  {t('projects.wizard.step7Info.submitNote', 'By submitting, you agree to our Terms of Service.')}
+                </SubmitNote>
+              </div>
+            </FormGroup>
+          </StepContainer>
+        );
       default:
         return null;
     }
@@ -1017,33 +1295,37 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         <ModalFooter isRTL={isRTL}>
           {error && <ErrorMessage>{error}</ErrorMessage>}
           
-          <ModalButton 
-            secondary 
-            onClick={handlePrevStep}
-            isRTL={isRTL}
-            disabled={currentStep === 1}
-            style={{
-              opacity: currentStep === 1 ? '0.5' : '1',
-              cursor: currentStep === 1 ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {t('common.back', 'Back')}
-          </ModalButton>
-          
-          <ModalButton 
-            primary 
-            onClick={handleNextStep}
-            isRTL={isRTL}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <LoadingSpinner />
-            ) : currentStep === totalSteps ? (
-              t('projects.wizard.submit', 'Submit')
-            ) : (
-              t('projects.wizard.continue', 'Continue')
-            )}
-          </ModalButton>
+          {!isSubmitSuccess && (
+            <>
+              <ModalButton 
+                secondary 
+                onClick={handlePrevStep}
+                isRTL={isRTL}
+                disabled={currentStep === 1}
+                style={{
+                  opacity: currentStep === 1 ? '0.5' : '1',
+                  cursor: currentStep === 1 ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {t('common.back', 'Back')}
+              </ModalButton>
+              
+              <ModalButton 
+                primary 
+                onClick={handleNextStep}
+                isRTL={isRTL}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <LoadingSpinner />
+                ) : currentStep === totalSteps ? (
+                  t('projects.wizard.submit', 'Submit')
+                ) : (
+                  t('projects.wizard.continue', 'Continue')
+                )}
+              </ModalButton>
+            </>
+          )}
         </ModalFooter>
       }
     >
@@ -1057,6 +1339,134 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     </Modal>
   );
 };
+
+// Styled components for Step 7 Review
+const SummaryItem = styled.div`
+  display: flex;
+  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  margin-bottom: ${spacing.sm};
+  padding: ${spacing.xs} 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
+    padding: ${spacing.sm} 0;
+  }
+`;
+
+const SummaryLabel = styled.span`
+  font-weight: 600;
+  color: ${colors.text.primary};
+  margin-${props => props.isRTL ? 'left' : 'right'}: ${spacing.sm};
+  min-width: 120px;
+  font-size: ${props => props.isRTL ? '0.95rem' : '0.9rem'};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  
+  @media (max-width: 768px) {
+    margin-${props => props.isRTL ? 'left' : 'right'}: 0;
+    margin-bottom: ${spacing.xs};
+    min-width: auto;
+    font-size: 0.9rem;
+  }
+`;
+
+const SummaryValue = styled.span`
+  color: ${colors.text.secondary};
+  flex: 1;
+  font-size: ${props => props.isRTL ? '0.95rem' : '0.9rem'};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+`;
+
+const ConfirmationContainer = styled.div`
+  display: flex;
+  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  align-items: center;
+  justify-content: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
+  margin: ${spacing.lg} 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: ${borderRadius.sm};
+  padding: ${spacing.lg} ${spacing.md};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 60px;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  position: relative;
+  top: ${props => props.isRTL ? '2px' : '0'};
+`;
+
+const CheckboxWrapper = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, ${colors.accent.primary}, ${colors.accent.secondary});
+  border-radius: 4px;
+  margin-${props => props.isRTL ? 'left' : 'right'}: ${spacing.md};
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  top: 0;
+  transition: all 0.2s ease;
+  transform: ${props => props.isRTL ? 'translateY(1px)' : 'none'};
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  }
+`;
+
+const ConfirmationCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  accent-color: white;
+  margin: 0;
+  opacity: 1;
+`;
+
+const ConfirmationLabel = styled.label`
+  font-weight: 400;
+  cursor: pointer;
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  font-size: ${props => props.isRTL ? '0.95rem' : '0.9rem'};
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  letter-spacing: ${props => props.isRTL ? '0' : '0.2px'};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+`;
+
+const SubmitNote = styled.p`
+  font-size: ${props => props.isRTL ? '0.8rem' : '0.75rem'};
+  color: ${colors.text.muted};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  font-style: ${props => props.isRTL ? 'normal' : 'italic'};
+  line-height: 1.3;
+  margin-top: ${spacing.xs};
+  opacity: 0.7;
+  padding: 0 ${spacing.sm};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  width: 100%;
+`;
 
 // Styled components
 const WizardContainer = styled.div`
