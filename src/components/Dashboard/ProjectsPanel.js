@@ -313,87 +313,129 @@ const ProjectsPanel = () => {
   
   return (
     <PanelContainer dir={isRTL ? 'rtl' : 'ltr'}>
-      <DashboardHeader>
-          <HeaderContent>
-            <TitleSection>
-              {/* Projects title removed as requested */}
-            </TitleSection>
-          
-          {/* Button moved to FilterGroup */}
-        </HeaderContent>
-        
-        <ActionsRow>
-          <FilterSection>
-            <CustomFilterTabs>
-              <StatusFilterTab 
-                active={filterStatus === 'all'} 
-                onClick={() => setFilterStatus('all')}
-                tooltip={t('projects.filters.all', 'All')}
-                title={t('projects.filters.all', 'All')}
-                aria-label={t('projects.filters.all', 'All')}
-              >
-                <FaListUl />
-              </StatusFilterTab>
-              <StatusFilterTab 
-                active={filterStatus === 'inProgress'} 
-                onClick={() => setFilterStatus('inProgress')}
-                status="inProgress"
-                tooltip={t('projects.inProgress', 'In Progress')}
-                title={t('projects.inProgress', 'In Progress')}
-                aria-label={t('projects.inProgress', 'In Progress')}
-              >
-                <FaClock />
-              </StatusFilterTab>
-              <StatusFilterTab 
-                active={filterStatus === 'done'} 
-                onClick={() => setFilterStatus('done')}
-                status="done"
-                tooltip={t('projects.done', 'Done')}
-                title={t('projects.done', 'Done')}
-                aria-label={t('projects.done', 'Done')}
-              >
-                <FaCheck />
-              </StatusFilterTab>
-            </CustomFilterTabs>
-            <ProjectCount>
-              {isRTL ? 
-                `${t('projects.projects', '\u0627\u0644\u0645\u0634\u0627\u0631\u064a\u0639')} ${filteredProjects.length}` : 
-                `${filteredProjects.length} ${filteredProjects.length === 1 
-                  ? t('projects.project', 'Project') 
-                  : t('projects.projects', 'Projects')}`
-              }
-            </ProjectCount>
-          </FilterSection>
-          <AddButtonWrapper isRTL={isRTL}>
-            <GradientButton 
-              onClick={openAddProjectModal}
-              aria-label={t('projects.addProject', 'Add New Project')}
-              className={isRTL ? 'rtl-button' : ''}
-            >
-              <FaPlus />
-              {t('projects.addProject', 'Add New Project')}
-            </GradientButton>
-          </AddButtonWrapper>
+      <ActionsRow isRTL={isRTL}>
+        {isRTL ? (
+            <>
+              <AddButtonWrapper isRTL={isRTL}>
+                <GradientButton 
+                  onClick={openAddProjectModal}
+                  aria-label={t('projects.addProject', 'Add New Project')}
+                  className="rtl-button"
+                >
+                  <FaPlus />
+                  {t('projects.addProject', 'Add New Project')}
+                </GradientButton>
+              </AddButtonWrapper>
+              <FilterSection isRTL={isRTL}>
+                <CustomFilterTabs isRTL={isRTL}>
+                  <StatusFilterTab 
+                    active={filterStatus === 'all'} 
+                    onClick={() => setFilterStatus('all')}
+                    tooltip={t('projects.filters.all', 'All')}
+                    title={t('projects.filters.all', 'All')}
+                    aria-label={t('projects.filters.all', 'All')}
+                    isRTL={isRTL}
+                  >
+                    <FaListUl />
+                  </StatusFilterTab>
+                  <StatusFilterTab 
+                    active={filterStatus === 'inProgress'} 
+                    onClick={() => setFilterStatus('inProgress')}
+                    status="inProgress"
+                    tooltip={t('projects.inProgress', 'In Progress')}
+                    title={t('projects.inProgress', 'In Progress')}
+                    aria-label={t('projects.inProgress', 'In Progress')}
+                    isRTL={isRTL}
+                  >
+                    <FaClock />
+                  </StatusFilterTab>
+                  <StatusFilterTab 
+                    active={filterStatus === 'done'} 
+                    onClick={() => setFilterStatus('done')}
+                    status="done"
+                    tooltip={t('projects.done', 'Done')}
+                    title={t('projects.done', 'Done')}
+                    aria-label={t('projects.done', 'Done')}
+                    isRTL={isRTL}
+                  >
+                    <FaCheck />
+                  </StatusFilterTab>
+                </CustomFilterTabs>
+                <ProjectCount isRTL={isRTL}>
+                  {`${filteredProjects.length} ${t('projects.projects', 'المشاريع')}`}
+                </ProjectCount>
+              </FilterSection>
+            </>
+          ) : (
+            <>
+              <FilterSection>
+                <CustomFilterTabs>
+                  <StatusFilterTab 
+                    active={filterStatus === 'all'} 
+                    onClick={() => setFilterStatus('all')}
+                    tooltip={t('projects.filters.all', 'All')}
+                    title={t('projects.filters.all', 'All')}
+                    aria-label={t('projects.filters.all', 'All')}
+                  >
+                    <FaListUl />
+                  </StatusFilterTab>
+                  <StatusFilterTab 
+                    active={filterStatus === 'inProgress'} 
+                    onClick={() => setFilterStatus('inProgress')}
+                    status="inProgress"
+                    tooltip={t('projects.inProgress', 'In Progress')}
+                    title={t('projects.inProgress', 'In Progress')}
+                    aria-label={t('projects.inProgress', 'In Progress')}
+                  >
+                    <FaClock />
+                  </StatusFilterTab>
+                  <StatusFilterTab 
+                    active={filterStatus === 'done'} 
+                    onClick={() => setFilterStatus('done')}
+                    status="done"
+                    tooltip={t('projects.done', 'Done')}
+                    title={t('projects.done', 'Done')}
+                    aria-label={t('projects.done', 'Done')}
+                  >
+                    <FaCheck />
+                  </StatusFilterTab>
+                </CustomFilterTabs>
+                <ProjectCount>
+                  {`${filteredProjects.length} ${filteredProjects.length === 1 
+                    ? t('projects.project', 'Project') 
+                    : t('projects.projects', 'Projects')}`}
+                </ProjectCount>
+              </FilterSection>
+              <AddButtonWrapper>
+                <GradientButton 
+                  onClick={openAddProjectModal}
+                  aria-label={t('projects.addProject', 'Add New Project')}
+                >
+                  <FaPlus />
+                  {t('projects.addProject', 'Add New Project')}
+                </GradientButton>
+              </AddButtonWrapper>
+            </>
+          )}
         </ActionsRow>
-      </DashboardHeader>
       
       {isLoading ? (
-          <ProjectsContainer isGridView={isGridView} aria-hidden="true">
-            {Array.from({ length: 4 }).map((_, idx) => (
-              <ProjectCardSkeleton key={idx} isGridView={isGridView}>
-                <SkeletonHeader>
-                  <LoadingSkeleton width="60%" height="1.2rem" />
-                  <LoadingSkeleton width="30%" height="1rem" />
-                </SkeletonHeader>
-                <SkeletonBody>
-                  <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
-                  <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
-                  <LoadingSkeleton height="0.8rem" />
-                </SkeletonBody>
-              </ProjectCardSkeleton>
-            ))}
-          </ProjectsContainer>
-        ) : filteredProjects.length === 0 ? (
+        <ProjectsContainer isGridView={isGridView} aria-hidden="true">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <ProjectCardSkeleton key={idx} isGridView={isGridView}>
+              <SkeletonHeader>
+                <LoadingSkeleton width="60%" height="1.2rem" />
+                <LoadingSkeleton width="30%" height="1rem" />
+              </SkeletonHeader>
+              <SkeletonBody>
+                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                <LoadingSkeleton height="0.8rem" style={{ marginBottom: '0.5rem' }} />
+                <LoadingSkeleton height="0.8rem" />
+              </SkeletonBody>
+            </ProjectCardSkeleton>
+          ))}
+        </ProjectsContainer>
+      ) : filteredProjects.length === 0 ? (
         <CustomEmptyState className={isRTL ? 'rtl-content' : ''}>
           {filterStatus !== 'all' ? (
             <>

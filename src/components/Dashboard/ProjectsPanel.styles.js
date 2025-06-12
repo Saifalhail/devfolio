@@ -94,6 +94,14 @@ export const PanelContainer = styled.div`
   width: 100%;
   overflow: hidden;
   animation: ${fadeIn} 0.3s ease-out;
+  text-align: ${props => props.dir === 'rtl' ? 'right' : 'left'};
+`;
+
+export const HeaderContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
 `;
 
 export const PanelHeader = styled.div`
@@ -110,27 +118,29 @@ export const PanelHeader = styled.div`
 `;
 
 export const PanelTitle = styled.h2`
-  font-size: ${typography.fontSizes.xl};
+  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xl} * 1.05)` : typography.fontSizes.xl};
   font-weight: ${typography.fontWeights.bold};
   color: ${colors.text.primary};
   margin: 0;
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
 `;
 
-export const ActionButton = styled.button`
+export const StatusFilterTab = styled.button`
   display: flex;
   align-items: center;
-  gap: ${spacing.xs};
-  background-color: ${colors.accent.primary};
-  color: ${colors.text.onAccent};
+  justify-content: center;
+  background-color: ${props => props.active ? colors.accent.primary : 'transparent'};
+  color: ${props => props.active ? colors.text.onAccent : colors.text.secondary};
   border: none;
-  border-radius: ${borderRadius.md};
-  padding: ${spacing.sm} ${spacing.md};
-  font-weight: ${typography.fontWeights.medium};
+  border-radius: ${borderRadius.sm};
+  padding: ${spacing.xs} ${spacing.sm};
+  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
   cursor: pointer;
   transition: ${transitions.medium};
+  position: relative;
   
   &:hover {
-    background-color: ${colors.accent.primaryDark};
+    background-color: ${props => props.active ? colors.accent.primary : colors.background.hover};
   }
   
   svg {
@@ -138,12 +148,13 @@ export const ActionButton = styled.button`
   }
 `;
 
-export const Card = styled.div`
-  background-color: ${colors.background.card};
-  border-radius: ${borderRadius.lg};
-  box-shadow: ${shadows.medium};
-  padding: ${spacing.lg};
-  margin-bottom: ${spacing.lg};
+export const CustomFilterTabs = styled.div`
+  display: flex;
+  background-color: ${colors.background.subtle};
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.xs};
+  gap: ${spacing.xs};
+  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
 `;
 
 export const FilterButton = styled.button`
@@ -168,30 +179,12 @@ export const FilterButton = styled.button`
   }
 `;
 
-export const SortButton = styled(FilterButton)`
-  /* Additional styles for sort button if needed */
-`;
-
-export const ViewToggleButton = styled.button`
+export const DashboardHeader = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color: ${props => props.active ? colors.accent.primary : colors.text.secondary};
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: ${borderRadius.md};
-  cursor: pointer;
-  transition: ${transitions.medium};
-  
-  &:hover {
-    background-color: ${colors.background.hover};
-  }
-  
-  svg {
-    font-size: 1rem;
-  }
+  flex-direction: column;
+  gap: ${spacing.md};
+  margin-bottom: ${spacing.lg};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
 `;
 
 export const ProjectsGrid = styled.div`
@@ -460,4 +453,58 @@ export const ErrorMessage = styled.div`
   border-radius: ${borderRadius.md};
   margin-bottom: ${spacing.md};
   border-left: 4px solid ${colors.status.error};
+`;
+
+export const Card = styled.div`
+  background-color: ${colors.background.card};
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.md};
+  box-shadow: ${shadows.medium};
+  transition: ${transitions.medium};
+  border: 1px solid ${colors.border.default};
+  margin-bottom: ${spacing.md};
+  overflow: hidden;
+  position: relative;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${shadows.large};
+    border-color: ${colors.border.muted};
+  }
+  
+  @media ${breakpoints.down.md} {
+    padding: ${spacing.sm};
+  }
+`;
+
+export const ActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${props => props.primary ? colors.accent.primary : 'transparent'};
+  color: ${props => props.primary ? colors.text.onAccent : colors.text.primary};
+  border: ${props => props.primary ? 'none' : `1px solid ${colors.border.default}`};
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.md};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  
+  &:hover {
+    background-color: ${props => props.primary ? colors.accent.primaryDark : colors.background.hover};
+  }
+  
+  svg {
+    margin-${props => props.isRTL ? 'left' : 'right'}: ${spacing.xs};
+    font-size: 1rem;
+  }
+  
+  @media ${breakpoints.down.md} {
+    padding: ${spacing.xs} ${spacing.sm};
+    font-size: ${typography.fontSizes.xs};
+  }
 `;

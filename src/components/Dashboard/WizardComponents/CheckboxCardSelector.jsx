@@ -44,11 +44,11 @@ const CheckboxCardSelector = ({
             onClick={() => toggleOption(option.id)}
             isRTL={isRTL}
           >
-            <CardCheckbox selected={selectedValues.includes(option.id)} />
+            <CardCheckbox selected={selectedValues.includes(option.id)} isRTL={isRTL} />
             <CardIcon>{option.icon}</CardIcon>
-            <CardLabel>{option.label}</CardLabel>
+            <CardLabel isRTL={isRTL}>{option.label}</CardLabel>
             {option.description && (
-              <CardDescription>{option.description}</CardDescription>
+              <CardDescription isRTL={isRTL}>{option.description}</CardDescription>
             )}
           </Card>
         ))}
@@ -106,6 +106,7 @@ const Card = styled.div`
   transition: all ${transitions.fast};
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 768px) {
     height: 120px;
@@ -143,7 +144,7 @@ const Card = styled.div`
 const CardCheckbox = styled.div`
   position: absolute;
   top: ${spacing.sm};
-  right: ${spacing.sm};
+  ${props => props.isRTL ? `left: ${spacing.sm}; right: auto;` : `right: ${spacing.sm}; left: auto;`}
   width: 20px;
   height: 20px;
   border-radius: ${borderRadius.sm};
@@ -156,7 +157,7 @@ const CardCheckbox = styled.div`
     position: absolute;
     display: ${props => props.selected ? 'block' : 'none'};
     top: 2px;
-    left: 6px;
+    left: ${props => props.isRTL ? '5px' : '6px'};
     width: 5px;
     height: 10px;
     border: solid white;
@@ -179,22 +180,24 @@ const CardIcon = styled.div`
 `;
 
 const CardLabel = styled.div`
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 500;
   text-align: center;
-  color: ${colors.text.primary};
+  color: white;
   margin-top: ${spacing.xs};
+  font-size: ${props => props.isRTL ? 'calc(0.9rem * 1.05)' : '0.9rem'};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 768px) {
-    font-size: 0.75rem;
+    font-size: ${props => props.isRTL ? 'calc(0.8rem * 1.05)' : '0.8rem'};
   }
 `;
 
 const CardDescription = styled.div`
-  font-size: 0.8rem;
+  font-size: ${props => props.isRTL ? '0.85rem' : '0.8rem'};
   text-align: center;
   color: rgba(255, 255, 255, 0.7);
   margin-top: ${spacing.xs};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
 `;
 
 export default CheckboxCardSelector;

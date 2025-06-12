@@ -629,7 +629,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       case 1:
         return (
           <StepContainer>
-            <StepTitle isRTL={isRTL}>{t('projects.wizard.step1.title', 'Step 1: Project Info')}</StepTitle>
+            <StepTitle isRTL={isRTL} style={{ textAlign: isRTL ? 'right' : 'left' }}>{t('projects.wizard.step1.title', 'Step 1: Project Info')}</StepTitle>
             
             {/* Project Name */}
             <FormGroup isRTL={isRTL}>
@@ -729,7 +729,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       case 2:
         return (
           <StepContainer>
-            <StepTitle isRTL={isRTL}>
+            <StepTitle isRTL={isRTL} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('projects.wizard.step2.title', 'Target Audience Information')}
             </StepTitle>
             
@@ -804,7 +804,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       case 3:
         return (
           <StepContainer>
-            <StepTitle isRTL={isRTL}>
+            <StepTitle isRTL={isRTL} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('projects.wizard.step3.title', 'Functional Requirements')}
             </StepTitle>
             
@@ -853,7 +853,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       case 4:
         return (
           <StepContainer>
-            <StepTitle isRTL={isRTL}>
+            <StepTitle isRTL={isRTL} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('projects.wizard.step4.title', 'Technical Preferences & Infrastructure')}
             </StepTitle>
             
@@ -927,7 +927,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       case 5:
         return (
           <StepContainer>
-            <StepTitle isRTL={isRTL}>
+            <StepTitle isRTL={isRTL} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('projects.wizard.step5.title', 'Budget & Existing Resources')}
             </StepTitle>
             
@@ -984,7 +984,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       case 6:
         return (
           <StepContainer>
-            <StepTitle isRTL={isRTL}>
+            <StepTitle isRTL={isRTL} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('projects.wizard.step6.title', 'Additional Details & Attachments')}
             </StepTitle>
             
@@ -1041,7 +1041,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       case 7:
         return (
           <StepContainer>
-            <StepTitle isRTL={isRTL}>
+            <StepTitle isRTL={isRTL} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('projects.wizard.step7.title', 'Review & Final Submission')}
             </StepTitle>
             
@@ -1057,6 +1057,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 onEdit={() => setCurrentStep(1)}
                 isRTL={isRTL}
                 defaultOpen={true}
+                className={isRTL ? 'rtl-accordion' : ''}
               >
                 <SummaryItem isRTL={isRTL}>
                   <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step1.projectName', 'Project Name')}:</SummaryLabel>
@@ -1089,6 +1090,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 isCompleted={true}
                 onEdit={() => setCurrentStep(2)}
                 isRTL={isRTL}
+                className={isRTL ? 'rtl-accordion' : ''}
               >
                 <SummaryItem isRTL={isRTL}>
                   <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step2.targetUserGroups', 'Target User Groups')}:</SummaryLabel>
@@ -1118,6 +1120,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 isCompleted={true}
                 onEdit={() => setCurrentStep(3)}
                 isRTL={isRTL}
+                className={isRTL ? 'rtl-accordion' : ''}
               >
                 <SummaryItem isRTL={isRTL}>
                   <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step3.authFeatures', 'Authentication Features')}:</SummaryLabel>
@@ -1149,6 +1152,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 isCompleted={true}
                 onEdit={() => setCurrentStep(4)}
                 isRTL={isRTL}
+                className={isRTL ? 'rtl-accordion' : ''}
               >
                 <SummaryItem isRTL={isRTL}>
                   <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step4.platforms', 'Platforms')}:</SummaryLabel>
@@ -1176,6 +1180,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 isCompleted={true}
                 onEdit={() => setCurrentStep(5)}
                 isRTL={isRTL}
+                className={isRTL ? 'rtl-accordion' : ''}
               >
                 <SummaryItem isRTL={isRTL}>
                   <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step5.budgetRange', 'Budget Range')}:</SummaryLabel>
@@ -1203,11 +1208,13 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 isCompleted={true}
                 onEdit={() => setCurrentStep(6)}
                 isRTL={isRTL}
+                className={isRTL ? 'rtl-accordion' : ''}
               >
                 <SummaryItem isRTL={isRTL}>
                   <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step6.additionalNotes', 'Additional Notes')}:</SummaryLabel>
                   <SummaryValue isRTL={isRTL}>
                     {formData.additionalNotes ? formData.additionalNotes : t('common.none', 'None')}
+/* ... */
                   </SummaryValue>
                 </SummaryItem>
                 
@@ -1234,11 +1241,10 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                     }
                   </SummaryValue>
                 </SummaryItem>
+                
               </SummaryAccordion>
-            </FormGroup>
-            
-            {/* Confirmation and Submit Note */}
-            <FormGroup isRTL={isRTL} marginTop={spacing.sm} marginBottom={spacing.xs}>
+              
+              {/* Confirmation section */}
               <div style={{ 
                 width: '100%', 
                 display: 'flex', 
@@ -1253,6 +1259,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                       id="confirmationCheckbox"
                       checked={formData.confirmationChecked}
                       onChange={(e) => handleChange('confirmationChecked', e.target.checked)}
+                      isRTL={isRTL}
                     />
                   </CheckboxWrapper>
                   <ConfirmationLabel htmlFor="confirmationCheckbox" isRTL={isRTL}>
@@ -1276,7 +1283,14 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   useEffect(() => {
     // This will trigger a re-render when language changes
     // ensuring all translations update properly
-  }, [i18n.language]);
+    
+    // Apply RTL-specific document styles when language is Arabic
+    if (isRTL) {
+      document.body.classList.add('rtl-mode');
+    } else {
+      document.body.classList.remove('rtl-mode');
+    }
+  }, [i18n.language, isRTL]);
   
   return (
     <Modal
@@ -1350,6 +1364,21 @@ const SummaryItem = styled.div`
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   
+  /* Ensure proper alignment of dropdown menus */
+  .dropdown-menu,
+  .select-dropdown {
+    text-align: ${props => props.isRTL ? 'right' : 'left'};
+    direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+    left: ${props => props.isRTL ? 'auto' : '0'};
+    right: ${props => props.isRTL ? '0' : 'auto'};
+  }
+  
+  /* Fix alignment of links and buttons */
+  a, button {
+    text-align: ${props => props.isRTL ? 'right' : 'left'};
+    direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  }
+  
   &:last-child {
     border-bottom: none;
   }
@@ -1368,6 +1397,7 @@ const SummaryLabel = styled.span`
   min-width: 120px;
   font-size: ${props => props.isRTL ? '0.95rem' : '0.9rem'};
   text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 768px) {
     margin-${props => props.isRTL ? 'left' : 'right'}: 0;
@@ -1383,6 +1413,19 @@ const SummaryValue = styled.span`
   font-size: ${props => props.isRTL ? '0.95rem' : '0.9rem'};
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  /* Fix dropdown alignment in RTL mode */
+  div, ul, li, a {
+    text-align: ${props => props.isRTL ? 'right' : 'left'};
+    direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  }
+  
+  /* Ensure proper alignment of nested content */
+  div[role="button"],
+  button {
+    text-align: ${props => props.isRTL ? 'right' : 'left'};
+    direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  }
   
   @media (max-width: 768px) {
     width: 100%;
@@ -1404,7 +1447,10 @@ const ConfirmationContainer = styled.div`
   min-height: 60px;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   position: relative;
-  top: ${props => props.isRTL ? '2px' : '0'};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  box-shadow: ${props => props.isRTL ? 
+    '-2px 0 5px rgba(0, 0, 0, 0.1)' : 
+    '2px 0 5px rgba(0, 0, 0, 0.1)'};
 `;
 
 const CheckboxWrapper = styled.div`
@@ -1421,7 +1467,6 @@ const CheckboxWrapper = styled.div`
   position: relative;
   top: 0;
   transition: all 0.2s ease;
-  transform: ${props => props.isRTL ? 'translateY(1px)' : 'none'};
   
   &:hover {
     transform: translateY(-1px);
@@ -1436,6 +1481,9 @@ const ConfirmationCheckbox = styled.input.attrs({ type: 'checkbox' })`
   accent-color: white;
   margin: 0;
   opacity: 1;
+  position: relative;
+  ${props => props.isRTL ? 'right: 0;' : 'left: 0;'}
+  transform: ${props => props.isRTL ? 'scale(1.05)' : 'scale(1)'};
 `;
 
 const ConfirmationLabel = styled.label`
@@ -1682,18 +1730,11 @@ const ProgressBar = styled.div`
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, 
-      rgba(74, 108, 247, 0.05) 0%, 
-      rgba(138, 43, 226, 0.05) 25%, 
-      rgba(90, 90, 150, 0.05) 50%, 
-      rgba(74, 108, 247, 0.05) 75%, 
-      rgba(138, 43, 226, 0.05) 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    z-index: -1;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(74, 108, 247, 0.3), transparent);
   }
   
   /* Timeline line in the middle */
@@ -1966,10 +2007,6 @@ const StepContainer = styled.div`
     margin-top: ${spacing.md};
   }
   
-  @media (max-width: 480px) {
-    padding: ${spacing.xs};
-  }
-  
   @media (max-width: ${breakpoints.sm}) {
     padding: ${spacing.sm};
     gap: ${spacing.sm};
@@ -2036,123 +2073,28 @@ const StepTitle = styled.h3`
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: ${props => props.marginBottom || spacing.lg};
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing.sm};
-  padding: ${spacing.md};
-  background: linear-gradient(${props => props.isRTL ? '-135deg' : '135deg'}, rgba(25, 25, 50, 0.2), rgba(35, 35, 70, 0.2));
-  border-radius: ${borderRadius.md};
-  border: 1px solid rgba(74, 108, 247, 0.05);
-  position: relative;
-  transition: all ${transitions.fast};
+  margin-bottom: ${spacing.lg};
+  width: 100%;
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-  width: 100%;
-  
-  /* Add a subtle border accent on the right or left side based on RTL */
-  border-${props => props.isRTL ? 'right' : 'left'}: 3px solid ${colors.accent.primary};
-  
-  /* RTL-specific adjustments for form elements */
-  & label {
-    text-align: ${props => props.isRTL ? 'right' : 'left'};
-    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.md} * 1.05)` : typography.fontSizes.md};
-  }
-  
-  & input, & select, & textarea {
-    text-align: ${props => props.isRTL ? 'right' : 'left'};
-    direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-    padding-right: ${props => props.isRTL ? spacing.lg : spacing.md};
-    padding-left: ${props => props.isRTL ? spacing.md : spacing.lg};
-  }
-  
-  /* Adjust icon positioning in inputs for RTL */
-  & .input-icon {
-    left: ${props => props.isRTL ? 'auto' : spacing.sm};
-    right: ${props => props.isRTL ? spacing.sm : 'auto'};
-  }
-  
-  @media (max-width: ${breakpoints.sm}) {
-    margin-bottom: ${spacing.md};
-    padding: ${spacing.sm};
-    gap: ${spacing.xs};
-    border-radius: ${borderRadius.sm};
-    
-    & label {
-      font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
-    }
-  }
-  
-  @media (max-width: ${breakpoints.xs}) {
-    margin-bottom: ${spacing.sm};
-    padding: ${spacing.xs};
-    border-width: 1px;
-    
-    & label {
-      font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
-    }
-  }
-  
-  @media (max-width: ${breakpoints.xs}) {
-    margin-bottom: ${spacing.sm};
-    padding: ${spacing.xs};
-  }
-  
-  /* Ensure all input elements inside FormGroup are responsive */
-  input, select, textarea, button {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    
-    @media (max-width: ${breakpoints.sm}) {
-      font-size: ${typography.fontSizes.sm};
-      padding: ${spacing.xs};
-    }
-    
-    @media (max-width: ${breakpoints.xs}) {
-      font-size: ${typography.fontSizes.xs};
-      padding: ${spacing.xxs};
-    }
-  }
-  
-  &:hover {
-    background: linear-gradient(135deg, rgba(30, 30, 60, 0.25), rgba(40, 40, 80, 0.25));
-    border-color: rgba(74, 108, 247, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Add subtle border accent */
-  &:before {
-    content: '';
-    position: absolute;
-    top: 10%;
-    bottom: 10%;
-    left: ${props => props.isRTL ? 'auto' : '0'};
-    right: ${props => props.isRTL ? '0' : 'auto'};
-    width: 3px;
-    background: linear-gradient(to bottom, rgba(74, 108, 247, 0.2), rgba(138, 43, 226, 0.2));
-    border-radius: ${props => props.isRTL ? '${borderRadius.sm} 0 0 ${borderRadius.sm}' : '0 ${borderRadius.sm} ${borderRadius.sm} 0'};
-  }
+`;
+
+const FormSubtext = styled.p`
+  margin-top: ${spacing.xs};
+  color: ${colors.text.secondary};
+  font-size: ${props => props.isRTL ? '0.9rem' : '0.85rem'};
+  opacity: 0.8;
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
 `;
 
 const FormLabel = styled.label`
   display: block;
   margin-bottom: ${spacing.xs};
-  font-weight: ${typography.fontWeights.medium};
+  font-weight: 500;
   color: ${colors.text.primary};
+  font-size: ${props => props.isRTL ? '1rem' : '0.95rem'};
   text-align: ${props => props.isRTL ? 'right' : 'left'};
-  display: flex;
-  align-items: center;
-  justify-content: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
-`;
-
-const FormSubtext = styled.div`
-  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
-  color: ${colors.text.secondary};
-  margin-bottom: ${spacing.sm};
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
-  
-  /* Enhanced RTL support */
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   padding-right: ${props => props.isRTL ? spacing.xs : '0'};
   padding-left: ${props => props.isRTL ? '0' : spacing.xs};
@@ -2162,27 +2104,13 @@ const FormSubtext = styled.div`
     font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
     margin-bottom: ${spacing.xs};
   }
-  font-style: ${props => props.isRTL ? 'normal' : 'italic'}; /* Arabic doesn't use italics */
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  /* Arabic doesn't use italics */
+  font-style: ${props => props.isRTL ? 'normal' : 'inherit'};
   line-height: 1.5;
-  padding: ${props => props.isRTL ? `0 ${spacing.xs} 0 0` : `0 0 0 ${spacing.xs}`};
-  border-${props => props.isRTL ? 'right' : 'left'}: 2px solid ${colors.accent.primary};
-  opacity: 0.9;
   
-  @media (max-width: ${breakpoints.sm}) {
-    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
-    margin-bottom: ${spacing.xxs};
-    padding: ${props => props.isRTL ? `0 ${spacing.xxs} 0 0` : `0 0 0 ${spacing.xxs}`};
-  }
-  
-  /* Add gradient text effect for better visibility on mobile */
   @media (max-width: ${breakpoints.xs}) {
-    background: linear-gradient(${props => props.isRTL ? '-90deg' : '90deg'}, ${colors.text.secondary}, ${colors.accent.primary});
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: ${typography.fontWeights.semiBold};
-    border: none; /* Remove border on very small screens */
+    font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
   }
 `;
 

@@ -1,0 +1,114 @@
+/* RTL Support Styles */
+.rtl-mode {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl-mode .dropdown-menu,
+.rtl-mode .select-dropdown {
+  text-align: right;
+  direction: rtl;
+  left: auto;
+  right: 0;
+}
+
+.rtl-mode .dropdown-item,
+.rtl-mode .select-option {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Fix for dropdown checkboxes in Step 7 */
+.rtl-mode .checkbox-option,
+.rtl-mode .multi-select-option {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+.rtl-mode .checkbox-option input[type="checkbox"],
+.rtl-mode .multi-select-option input[type="checkbox"] {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+.rtl-mode .checkbox-label,
+.rtl-mode .multi-select-label {
+  text-align: right;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.rtl-mode .modal-header,
+.rtl-mode .modal-footer {
+  flex-direction: row-reverse;
+}
+
+.rtl-mode .modal-title {
+  text-align: right;
+}
+
+.rtl-mode .form-group {
+  text-align: right;
+}
+
+.rtl-mode .form-label {
+  text-align: right;
+}
+
+.rtl-mode .form-control {
+  text-align: right;
+  direction: rtl;
+}
+
+.rtl-mode .btn-icon {
+  flex-direction: row-reverse;
+}
+
+.rtl-mode .btn-icon svg,
+.rtl-mode .btn-icon i {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+/* Fix for RTL alignment in summary accordions */
+.rtl-content .summary-item,
+.rtl-accordion .summary-item {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.rtl-content .summary-label,
+.rtl-accordion .summary-label {
+  text-align: right;
+  margin-right: 0;
+  margin-left: 12px;
+}
+
+.rtl-content .summary-value {
+  text-align: right;
+}
+
+/* Fix for RTL alignment in dropdown menus */
+.rtl-mode .dropdown-toggle::after {
+  margin-left: 0;
+  margin-right: 8px;
+}
+
+/* Fix for RTL alignment in buttons with icons */
+.rtl-mode button svg:first-child {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+/* Fix for RTL alignment in project panels */
+.rtl-mode .projects-header {
+  flex-direction: row-reverse;
+}
+
+.rtl-mode .filter-section {
+  flex-direction: row-reverse;
+}
+
+.rtl-mode .add-button-wrapper {
+  justify-content: flex-start;
+}

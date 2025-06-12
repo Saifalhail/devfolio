@@ -35,12 +35,12 @@ const SummaryAccordion = ({
       <AccordionHeader onClick={toggleExpand} isRTL={isRTL}>
         <HeaderContent isRTL={isRTL}>
           <StepInfo isRTL={isRTL}>
-            {isCompleted && <CheckIcon><FaCheck /></CheckIcon>}
+            {isCompleted && <CheckIcon isRTL={isRTL}><FaCheck /></CheckIcon>}
             <StepTitle isRTL={isRTL}>
               {t('projects.wizard.step', 'Step')} {stepNumber}: {title}
             </StepTitle>
           </StepInfo>
-          <ActionButtons>
+          <ActionButtons isRTL={isRTL}>
             <EditButton 
               onClick={(e) => {
                 e.stopPropagation();
@@ -52,7 +52,7 @@ const SummaryAccordion = ({
               <FaEdit />
               <span>{t('projects.wizard.edit', 'Edit')}</span>
             </EditButton>
-            <ExpandButton isExpanded={isExpanded}>
+            <ExpandButton isExpanded={isExpanded} isRTL={isRTL}>
               {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
             </ExpandButton>
           </ActionButtons>
@@ -60,7 +60,7 @@ const SummaryAccordion = ({
       </AccordionHeader>
       
       {isExpanded && (
-        <AccordionContent isRTL={isRTL}>
+        <AccordionContent isRTL={isRTL} className={isRTL ? 'rtl-content' : ''}>
           {children}
         </AccordionContent>
       )}
@@ -120,7 +120,8 @@ const CheckIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: ${spacing.xs};
+  margin-right: ${props => props.isRTL ? '0' : spacing.xs};
+  margin-left: ${props => props.isRTL ? spacing.xs : '0'};
 `;
 
 const StepTitle = styled.h3`
@@ -129,12 +130,14 @@ const StepTitle = styled.h3`
   color: white;
   font-weight: 600;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.isRTL ? 'right' : 'left'};
 `;
 
 const ActionButtons = styled.div`
   display: flex;
   align-items: center;
   gap: ${spacing.sm};
+  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
   
   @media (max-width: 768px) {
     width: 100%;
@@ -174,7 +177,9 @@ const ExpandButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: ${props => props.isExpanded ? 'rotate(180deg)' : 'rotate(0)'};  
+  transform: ${props => props.isExpanded 
+    ? (props.isRTL ? 'rotate(-180deg)' : 'rotate(180deg)') 
+    : 'rotate(0)'};  
   transition: transform ${transitions.default};
 `;
 
@@ -184,6 +189,24 @@ const AccordionContent = styled.div`
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   color: white;
+  font-size: ${props => props.isRTL ? '0.95rem' : '0.9rem'};
+  
+  /* Ensure dropdown menus in RTL mode are properly aligned */
+  .dropdown-menu {
+    text-align: ${props => props.isRTL ? 'right' : 'left'};
+    direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  }
+  
+  /* Fix alignment of summary items in RTL mode */
+  div[role="button"],
+  button,
+  input,
+  select,
+  textarea {
+    text-align: ${props => props.isRTL ? 'right' : 'left'};
+    direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+    font-size: ${props => props.isRTL ? '0.95rem' : '0.9rem'};
+  }
 `;
 
 export default SummaryAccordion;
