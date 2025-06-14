@@ -29,11 +29,14 @@ import DashboardCard from '../Common/CardSystem';
 import { colors, spacing, borderRadius, shadows, mixins, transitions, typography } from '../../styles/GlobalTheme';
 import useTasks from '../../hooks/useTasks';
 import SkeletonLoader from '../Common/SkeletonLoader';
+import TaskWizard from './TaskWizard';
 
 const TasksPanel = () => {
   const { t } = useTranslation();
   const tasks = useTasks();
   const [isLoading, setIsLoading] = useState(true);
+  const [showTaskWizard, setShowTaskWizard] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
@@ -123,7 +126,7 @@ const TasksPanel = () => {
         </PanelTitle>
         
         <ActionButtonWrapper>
-          <ActionButton glow>
+          <ActionButton glow onClick={() => setShowTaskWizard(true)}>
             <IconContainer icon={FaPlus} size="1em" margin={`0 ${spacing.xs} 0 0`} />
             {t('dashboard.tasks.actions.addTask', 'Add Task')}
           </ActionButton>
@@ -325,6 +328,18 @@ const TasksPanel = () => {
           </ColumnContent>
         </KanbanColumn>
       </KanbanBoard>
+      
+      {/* Task Wizard Modal */}
+      <TaskWizard 
+        isOpen={showTaskWizard} 
+        onClose={() => setShowTaskWizard(false)} 
+        projectId={selectedProjectId}
+        onTaskAdded={(newTask) => {
+          // In a real app, this would refresh the task list or add the task directly to the state
+          console.log('New task added:', newTask);
+          // You could trigger a refresh of your tasks here
+        }}
+      />
     </PanelContainer>
   );
 };

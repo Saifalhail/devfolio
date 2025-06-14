@@ -45,11 +45,6 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
       path: '/dashboard/projects' 
     },
     { 
-      icon: <FaFileAlt />, 
-      label: t('dashboard.sidebar.forms', 'Forms'), 
-      path: '/dashboard/forms' 
-    },
-    { 
       icon: <FaClipboardList />, 
       label: t('dashboard.sidebar.tasks', 'Tasks'), 
       path: '/dashboard/tasks' 
@@ -78,11 +73,6 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
       icon: <FaRocket />, 
       label: t('dashboard.sidebar.postLaunch', 'Post-Launch'), 
       path: '/dashboard/post-launch' 
-    },
-    { 
-      icon: <FaClipboardList />, 
-      label: t('dashboard.sidebar.cardDemo', 'Card Demo'), 
-      path: '/dashboard/card-demo' 
     },
     { 
       icon: <FaCog />, 
