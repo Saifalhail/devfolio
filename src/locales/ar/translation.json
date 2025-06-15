@@ -899,6 +899,61 @@
       "crystalBall": "أيقونة كرة بلورية",
       "waving": "أيقونة يد تلوح"
     }
-
+  },
+  "taskWizard": {
+    "title": "إضافة مهمة جديدة",
+    "steps": {
+      "selectProject": "اختر المشروع",
+      "selectProjectDesc": "اختر مشروعًا لإضافة المهام إليه",
+      "taskDetails": "تفاصيل المهمة",
+      "taskDetailsDesc": "أدخل معلومات حول مهمتك",
+      "stepCount": "الخطوة {{current}}/{{total}}",
+      "reviewConfirm": "مراجعة وتأكيد",
+      "reviewConfirmDesc": "مراجعة تفاصيل المهمة قبل الإنشاء"
+    },
+    "fields": {
+      "project": "المشروع",
+      "title": "عنوان المهمة",
+      "description": "الوصف",
+      "dueDate": "تاريخ الاستحقاق",
+      "status": "الحالة",
+      "estimatedHours": "الساعات المقدرة",
+      "assignedTo": "مسند إلى"
+    },
+    "placeholders": {
+      "selectProject": "اختر مشروعًا...",
+      "title": "أدخل عنوان المهمة...",
+      "description": "وصف المهمة...",
+      "estimatedHours": "أدخل الساعات المقدرة...",
+      "dueDate": "سنة-شهر-يوم",
+      "status": "اختر الحالة..."
+    },
+    "sections": {
+      "priority": "أولوية المهمة",
+      "status": "حالة المهمة"
+    },
+    "priority": {
+      "low": "منخفضة",
+      "medium": "متوسطة",
+      "high": "عالية"
+    },
+    "status": {
+      "todo": "للتنفيذ",
+      "inProgress": "قيد التنفيذ",
+      "review": "للمراجعة",
+      "done": "مكتملة"
+    },
+    "guidance": {
+      "selectProject": "اختر مشروعًا للانتقال إلى الخطوة التالية"
+    },
+    "success": {
+      "title": "تم إنشاء المهمة بنجاح!",
+      "message": "تمت إضافة مهمتك الجديدة إلى المشروع.",
+      "viewTask": "عرض المهمة",
+      "createAnother": "إنشاء مهمة أخرى"
+    },
+    "notSpecified": "غير محدد",
+    "hours": "ساعات",
+    "reviewMessage": "يرجى مراجعة جميع التفاصيل قبل إنشاء المهمة."
   }
 }

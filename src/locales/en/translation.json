@@ -870,5 +870,61 @@
         "otherDesc": "Custom functionality"
       }
     }
+  },
+  "taskWizard": {
+    "title": "Add New Task",
+    "steps": {
+      "selectProject": "Select Project",
+      "selectProjectDesc": "Choose a project to add tasks to",
+      "taskDetails": "Task Details",
+      "taskDetailsDesc": "Enter information about your task",
+      "stepCount": "Step {{current}}/{{total}}",
+      "reviewConfirm": "Review & Confirm",
+      "reviewConfirmDesc": "Review task details before creating"
+    },
+    "fields": {
+      "project": "Project",
+      "title": "Task Title",
+      "description": "Description",
+      "dueDate": "Due Date",
+      "status": "Status",
+      "estimatedHours": "Estimated Hours",
+      "assignedTo": "Assigned To"
+    },
+    "placeholders": {
+      "selectProject": "Select a project...",
+      "title": "Enter task title...",
+      "description": "Describe the task...",
+      "estimatedHours": "Enter estimated hours...",
+      "dueDate": "YYYY-MM-DD",
+      "status": "Select status..."
+    },
+    "sections": {
+      "priority": "Task Priority",
+      "status": "Task Status"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "status": {
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "review": "Review",
+      "done": "Done"
+    },
+    "guidance": {
+      "selectProject": "Select a project to proceed to the next step"
+    },
+    "success": {
+      "title": "Task Created Successfully!",
+      "message": "Your new task has been added to the project.",
+      "viewTask": "View Task",
+      "createAnother": "Create Another Task"
+    },
+    "notSpecified": "Not specified",
+    "hours": "hours",
+    "reviewMessage": "Please review all details before creating the task."
   }
 }

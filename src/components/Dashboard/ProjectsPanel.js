@@ -465,8 +465,8 @@ const ProjectsPanel = () => {
                   <path d="M35 80H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2"/>
                 </svg>
               </EmptyStateIllustration>
-              <h3>{isRTL ? 'لا توجد مشاريع بعد' : 'No projects yet'}</h3>
-              <p>{isRTL ? 'قم بإنشاء مشروع جديد باستخدام الزر في الأعلى' : 'Create a new project using the button in the header'}</p>
+              <h3>{t('projects.noProjects', 'No projects yet')}</h3>
+              <p>{t('projects.createNewProject', 'Create a new project using the button in the header')}</p>
             </>
           )}
         </CustomEmptyState>
