@@ -1,6 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import styled from 'styled-components';
-import { ActionButton } from '../../styles/GlobalComponents';
+import { rtl } from '../../utils/rtl';
 import { useTranslation } from 'react-i18next';
 import { 
   FaFigma,
@@ -16,6 +16,15 @@ import {
   FaRocket,
   FaCheckCircle
 } from 'react-icons/fa';
+import {
+  PanelContainer,
+  PanelHeader,
+  PanelTitle,
+  ActionButton,
+  IconContainer,
+  ActionButtonWrapper
+} from '../../styles/GlobalComponents';
+import { spacing } from '../../styles/GlobalTheme';
 import StarryBackground from '../Common/StarryBackground';
 
 // Import Design Section components
@@ -123,20 +132,31 @@ const DesignPanel = () => {
   };
 
   return (
-    <Container>
-      <BackgroundContainer>
-        <StarryBackground color="#a78bfa" starCount={200} blurAmount={8} opacity={1} />
-      </BackgroundContainer>
-      <Header>
-        <Title>{t('design.designAndPrototype', 'Design')}</Title>
-        <ToolbarContainer>
-          <FigmaLinkButton href={mockDesignData.figmaUrl} target="_blank" rel="noopener noreferrer">
-            <FaFigma />
+    <PanelContainer>
+      <StarryBackground intensity={0.5} />
+      
+      <PanelHeader>
+        <PanelTitle>
+          <IconContainer 
+            icon={FaPalette} 
+            color="#8338ec" 
+            size="1.2em" 
+            margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+          />
+          {t('design.designAndPrototype', 'Design')}
+        </PanelTitle>
+        
+        <ActionButtonWrapper>
+          <ActionButton glow as="a" href={mockDesignData.figmaUrl} target="_blank" rel="noopener noreferrer">
+            <IconContainer 
+              icon={FaFigma} 
+              size="1em" 
+              margin={isRTL ? `0 0 0 ${spacing.xs}` : `0 ${spacing.xs} 0 0`} 
+            />
             {t('design.openInFigma', 'Open in Figma')}
-          </FigmaLinkButton>
-          <DesignKit />
-        </ToolbarContainer>
-      </Header>
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PanelHeader>
       
       <Content>
         {/* Compact Design Timeline - Moved to top */}
@@ -193,7 +213,7 @@ const DesignPanel = () => {
       <FeedbackWrapper>
         <DesignFeedback />
       </FeedbackWrapper>
-    </Container>
+    </PanelContainer>
   );
 };
 

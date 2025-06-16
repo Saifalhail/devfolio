@@ -1407,6 +1407,43 @@ const IconContainerWrapper = styled.div`
   }
 `;
 
+// Action Button Wrapper - Container for action buttons
+export const ActionButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  margin-left: auto;
+`;
+
+// Primary Button - Main call-to-action button with enhanced styling
+export const PrimaryButton = styled.button`
+  ${mixins.flexCenter}
+  background-color: ${colors.accent.primary};
+  color: ${colors.text.primary};
+  border: none;
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.lg};
+  font-size: ${typography.fontSizes.md};
+  font-weight: ${typography.fontWeights.semibold};
+  cursor: pointer;
+  transition: ${transitions.medium};
+  box-shadow: ${shadows.medium};
+  
+  &:hover {
+    background-color: ${colors.accent.secondary};
+    transform: translateY(-2px);
+    box-shadow: ${shadows.large};
+  }
+  
+  &:disabled {
+    background-color: ${colors.background.disabled};
+    color: ${colors.text.disabled};
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+`;
+
 // Global Icon Component - Reusable component for all icons
 export const IconContainer = ({ icon: Icon, color, size, background, round, padding, margin, onClick, disabled, className, ...props }) => {
   return (

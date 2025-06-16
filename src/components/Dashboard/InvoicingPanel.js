@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { rtl } from '../../utils/rtl';
 import { 
   FaFileInvoiceDollar, 
   FaHistory, 
@@ -11,6 +12,15 @@ import {
   FaFilter,
   FaSortAmountDown
 } from 'react-icons/fa';
+import {
+  PanelContainer,
+  PanelHeader,
+  PanelTitle,
+  ActionButton,
+  IconContainer,
+  ActionButtonWrapper
+} from '../../styles/GlobalComponents';
+import { spacing } from '../../styles/GlobalTheme';
 
 // Import invoicing components
 import InvoiceDisplay from './Invoicing/InvoiceDisplay';
@@ -121,20 +131,31 @@ const InvoicingPanel = () => {
   };
 
   return (
-    <Container>
-      <BackgroundContainer>
-        <StarryBackground color="#4361ee" starCount={200} blurAmount={8} opacity={0.8} />
-      </BackgroundContainer>
+    <PanelContainer>
+      <StarryBackground intensity={0.5} />
       
-      <Header>
-        <Title>{t('invoices.title', 'Invoices')}</Title>
-        <ActionButtons>
-          <ActionButton>
-            <FaDownload />
-            <span>{t('common.export', 'Export')}</span>
+      <PanelHeader>
+        <PanelTitle>
+          <IconContainer 
+            icon={FaFileInvoiceDollar} 
+            color="#8338ec" 
+            size="1.2em" 
+            margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+          />
+          {t('invoices.title', 'Invoices')}
+        </PanelTitle>
+        
+        <ActionButtonWrapper>
+          <ActionButton glow onClick={() => {}}>
+            <IconContainer 
+              icon={FaDownload} 
+              size="1em" 
+              margin={isRTL ? `0 0 0 ${spacing.xs}` : `0 ${spacing.xs} 0 0`} 
+            />
+            {t('common.export', 'Export')}
           </ActionButton>
-        </ActionButtons>
-      </Header>
+        </ActionButtonWrapper>
+      </PanelHeader>
       
       <SummaryCards>
         <SummaryCard>
@@ -243,7 +264,7 @@ const InvoicingPanel = () => {
           <ProjectSummary />
         )}
       </Content>
-    </Container>
+    </PanelContainer>
   );
 };
 
@@ -350,7 +371,7 @@ const ActionButtons = styled.div`
   gap: 1rem;
 `;
 
-const ActionButton = styled.button`
+const CustomActionButton = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;

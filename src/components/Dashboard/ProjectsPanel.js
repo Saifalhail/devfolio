@@ -21,6 +21,7 @@ import {
   FaArrowRight,
   FaUserAlt
 } from 'react-icons/fa';
+import StarryBackground from '../Common/StarryBackground';
 import { 
   collection, 
   query, 
@@ -218,6 +219,8 @@ const ProjectsPanel = () => {
     }
   }, [projects, filterStatus, itemsPerPage, activePage]);
   
+  // Get RTL status from i18n - removed duplicate declaration
+  
   // Get icon for status
   const getStatusIcon = (status) => {
     switch(status) {
@@ -238,13 +241,23 @@ const ProjectsPanel = () => {
     }
   };
 
-  // Get mood emoji
+  // Get mood emoji and translated label
   const getMoodEmoji = (mood) => {
     switch(mood) {
       case 'happy': return <FaSmile color="#4CAF50" />;
       case 'neutral': return <FaMeh color="#FFC107" />;
       case 'unhappy': return <FaFrown color="#F44336" />;
       default: return null;
+    }
+  };
+  
+  // Get mood label
+  const getMoodLabel = (mood) => {
+    switch(mood) {
+      case 'happy': return t('projects.moods.happy', 'Happy');
+      case 'neutral': return t('projects.moods.neutral', 'Neutral');
+      case 'unhappy': return t('projects.moods.unhappy', 'Unhappy');
+      default: return '';
     }
   };
 
@@ -308,33 +321,59 @@ const ProjectsPanel = () => {
     }
   }, [currentUser]);
 
-  // Detect RTL direction
+  // Styled component for gradient title text
+const GradientTitleText = styled.span`
+  ${mixins.gradientText}
+  font-size: ${typography.fontSizes.xxl};
+  font-weight: ${typography.fontWeights.semiBold};
+  
+  @media (max-width: 768px) {
+    font-size: ${typography.fontSizes.xl};
+  }
+`;
+
+// Detect RTL direction
   const isRTL = i18n.language === 'ar';
   
   return (
-    <PanelContainer dir={isRTL ? 'rtl' : 'ltr'}>
+    <PanelContainer>
+      <StarryBackground intensity={0.5} />
+      
+      <PanelHeader>
+        <PanelTitle>
+          <IconContainer 
+            icon={FaThLarge} 
+            color="#8338ec" 
+            size="1.2em" 
+            margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+          />
+          <GradientTitleText>
+            {t('projects.yourProjects', 'Your Projects')}
+          </GradientTitleText>
+        </PanelTitle>
+        
+        <ActionButtonWrapper>
+          <ActionButton glow onClick={openAddProjectModal}>
+            <IconContainer 
+              icon={FaPlus} 
+              size="1em" 
+              margin={isRTL ? `0 0 0 ${spacing.xs}` : `0 ${spacing.xs} 0 0`} 
+            />
+            {t('projects.addProject', 'Add New Project')}
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PanelHeader>
+      
       <ActionsRow isRTL={isRTL}>
         {isRTL ? (
             <>
-              <AddButtonWrapper isRTL={isRTL}>
-                <GradientButton 
-                  onClick={openAddProjectModal}
-                  aria-label={t('projects.addProject', 'Add New Project')}
-                  className="rtl-button"
-                >
-                  <FaPlus />
-                  {t('projects.addProject', 'Add New Project')}
-                </GradientButton>
-              </AddButtonWrapper>
               <FilterSection isRTL={isRTL}>
                 <CustomFilterTabs isRTL={isRTL}>
                   <StatusFilterTab 
                     active={filterStatus === 'all'} 
                     onClick={() => setFilterStatus('all')}
-                    tooltip={t('projects.filters.all', 'All')}
                     title={t('projects.filters.all', 'All')}
                     aria-label={t('projects.filters.all', 'All')}
-                    isRTL={isRTL}
                   >
                     <FaListUl />
                   </StatusFilterTab>
@@ -342,10 +381,8 @@ const ProjectsPanel = () => {
                     active={filterStatus === 'inProgress'} 
                     onClick={() => setFilterStatus('inProgress')}
                     status="inProgress"
-                    tooltip={t('projects.inProgress', 'In Progress')}
                     title={t('projects.inProgress', 'In Progress')}
                     aria-label={t('projects.inProgress', 'In Progress')}
-                    isRTL={isRTL}
                   >
                     <FaClock />
                   </StatusFilterTab>
@@ -353,16 +390,16 @@ const ProjectsPanel = () => {
                     active={filterStatus === 'done'} 
                     onClick={() => setFilterStatus('done')}
                     status="done"
-                    tooltip={t('projects.done', 'Done')}
                     title={t('projects.done', 'Done')}
                     aria-label={t('projects.done', 'Done')}
-                    isRTL={isRTL}
                   >
                     <FaCheck />
                   </StatusFilterTab>
                 </CustomFilterTabs>
                 <ProjectCount isRTL={isRTL}>
-                  {`${filteredProjects.length} ${t('projects.projects', 'المشاريع')}`}
+                  {`${filteredProjects.length} ${filteredProjects.length === 1 
+                    ? t('projects.project', 'Project') 
+                    : t('projects.projects', 'Projects')}`}
                 </ProjectCount>
               </FilterSection>
             </>
@@ -373,7 +410,6 @@ const ProjectsPanel = () => {
                   <StatusFilterTab 
                     active={filterStatus === 'all'} 
                     onClick={() => setFilterStatus('all')}
-                    tooltip={t('projects.filters.all', 'All')}
                     title={t('projects.filters.all', 'All')}
                     aria-label={t('projects.filters.all', 'All')}
                   >
@@ -383,7 +419,6 @@ const ProjectsPanel = () => {
                     active={filterStatus === 'inProgress'} 
                     onClick={() => setFilterStatus('inProgress')}
                     status="inProgress"
-                    tooltip={t('projects.inProgress', 'In Progress')}
                     title={t('projects.inProgress', 'In Progress')}
                     aria-label={t('projects.inProgress', 'In Progress')}
                   >
@@ -406,15 +441,7 @@ const ProjectsPanel = () => {
                     : t('projects.projects', 'Projects')}`}
                 </ProjectCount>
               </FilterSection>
-              <AddButtonWrapper>
-                <GradientButton 
-                  onClick={openAddProjectModal}
-                  aria-label={t('projects.addProject', 'Add New Project')}
-                >
-                  <FaPlus />
-                  {t('projects.addProject', 'Add New Project')}
-                </GradientButton>
-              </AddButtonWrapper>
+
             </>
           )}
         </ActionsRow>
@@ -530,7 +557,7 @@ const ProjectsPanel = () => {
                           </DetailIcon>
                           <DetailContent>
                             <DetailLabel>{t('projects.clientMood', 'Client Mood')}</DetailLabel>
-                            <DetailValue>{project.mood}</DetailValue>
+                            <DetailValue>{getMoodLabel(project.mood)}</DetailValue>
                           </DetailContent>
                         </DetailItem>
                       )}
@@ -587,7 +614,7 @@ const ProjectsPanel = () => {
       )}
       {/* Add Project Modal */}
       {error && isModalOpen && (
-        <ErrorMessage role="alert" aria-live="assertive">{error}</ErrorMessage>
+        <ErrorMessage role="alert" aria-live="assertive">{t('projects.addError', 'Error adding project. Please try again.')}</ErrorMessage>
       )}
       
       {/* Render ProjectWizard directly */}
@@ -601,6 +628,62 @@ const ProjectsPanel = () => {
     </PanelContainer>
   );
 };
+
+// Styled component for IconContainer
+const StyledIconWrapper = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: ${props => props.color || 'inherit'};
+  font-size: ${props => props.size || '1em'};
+  background: ${props => props.background || 'transparent'};
+  padding: ${props => props.padding || '0'};
+  margin: ${props => props.margin || '0'};
+  border-radius: ${props => props.round ? '50%' : '0'};
+  cursor: ${props => props.onClick && !props.disabled ? 'pointer' : 'default'};
+  opacity: ${props => props.disabled ? '0.5' : '1'};
+  transition: ${transitions.medium};
+  
+  &:hover {
+    opacity: ${props => props.onClick && !props.disabled ? '0.8' : '1'};
+  }
+`;
+
+// Custom IconContainer component for ProjectsPanel
+const IconContainer = ({ icon: Icon, color, size, background, round, padding, margin, onClick, disabled, className, ...props }) => {
+  return (
+    <StyledIconWrapper 
+      color={color}
+      size={size}
+      background={background}
+      round={round}
+      padding={padding}
+      margin={margin}
+      onClick={!disabled ? onClick : undefined}
+      disabled={disabled}
+      className={className} 
+      {...props}
+    >
+      <Icon />
+    </StyledIconWrapper>
+  );
+};
+
+// ActionButtonWrapper for consistent button styling
+const ActionButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  
+  /* RTL Support */
+  ${props => props.isRTL && css`
+    flex-direction: row-reverse;
+  `}
+  
+  @media (max-width: ${breakpoints.md}) {
+    width: 100%;
+    justify-content: flex-end;
+  }
+`;
 
 // Additional Styled Components
 

@@ -79,29 +79,49 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Initialize Firebase with proper error handling
-let app;
-try {
-  // Check if Firebase is already initialized
-  if (!window.firebaseInitialized) {
-    app = initializeApp(firebaseConfig);
-    window.firebaseInitialized = true;
-    console.log('Firebase app initialized successfully with config:', firebaseConfig.projectId);
-  } else {
-    // Get the already initialized app
-    app = window.firebase?.apps?.[0] || initializeApp(firebaseConfig);
-    console.log('Using existing Firebase app');
-  }
-} catch (error) {
-  console.error('Firebase initialization error:', error);
-  if (typeof document !== 'undefined') {
-    // Only show alert in browser environment
-    console.error('Firebase initialization failed:', error.message);
+const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase services
+const auth = getAuth(app);
+const db = getFirestore(app);
+const functions = getFunctions(app);
+const storage = getStorage(app);
+let analytics = null;
+
+// Initialize analytics if in browser environment
+if (typeof window !== 'undefined') {
+  try {
+    isSupported().then(supported => {
+      if (supported) {
+        analytics = getAnalytics(app);
+      }
+    }).catch(error => {
+      console.error('Error checking analytics support:', error);
+    });
+  } catch (error) {
+    console.error('Firebase initialization error:', error);
+    console.error('Analytics initialization error:', error);
+    if (typeof document !== 'undefined') {
+      // Only show alert in browser environment
+      alert('Firebase initialization error: ' + error.message);
+    }
   }
 }
 
-// Initialize services based on whether we're using mock credentials
-let auth, db, functions, storage, analytics = null;
+// Connect to emulators if in development mode
+if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_USE_EMULATORS === 'true') {
+  try {
+    connectAuthEmulator(auth, 'http://localhost:9099');
+    connectFirestoreEmulator(db, 'localhost', 8080);
+    connectFunctionsEmulator(functions, 'localhost', 5001);
+    connectStorageEmulator(storage, 'localhost', 9199);
+    console.log('Connected to Firebase emulators');
+  } catch (error) {
+    console.error('Error connecting to emulators:', error);
+  }
+}
 
+// Create mock services if using mock credentials
 if (usingMockCredentials) {
   console.warn('Using mock Firebase credentials. Some Firebase features will be limited.');
   
@@ -131,16 +151,6 @@ if (usingMockCredentials) {
   
   functions = { httpsCallable: () => () => Promise.resolve({ data: {} }) };
   storage = { ref: () => ({ put: () => ({ snapshot: {}, ref: { getDownloadURL: () => Promise.resolve('https://mock-url.com') } }) }) };
-} else {
-  // Initialize real Firebase services
-  try {
-    auth = getAuth(app);
-    db = getFirestore(app);
-    functions = getFunctions(app);
-    storage = getStorage(app);
-  } catch (error) {
-    console.error('Error initializing Firebase services:', error);
-  }
 }
 
 // Use Firebase emulators in development, but only if we're not using mock credentials
@@ -180,6 +190,7 @@ if (process.env.NODE_ENV !== 'production' &&
 
 // Export the services you'll use throughout your app
 export { app, analytics, auth, db, functions, storage };
+export { GoogleAuthProvider, signInWithPopup };
 
 // Export a function to get functions with a specific region if needed
 export const getFunctionsWithRegion = (region) => getFunctions(app, region);

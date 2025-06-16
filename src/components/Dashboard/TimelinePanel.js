@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import styled, { css } from 'styled-components';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
+import styled, { css, keyframes } from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { rtl } from '../../utils/rtl';
 import { 
   FaUser, 
   FaFileUpload, 
@@ -13,7 +14,9 @@ import {
   FaCalendarAlt, 
   FaFilter,
   FaFileExport,
-  FaSearch
+  FaSearch,
+  FaPaperPlane,
+  FaReply
 } from 'react-icons/fa';
 import {
   PanelContainer,
@@ -21,27 +24,82 @@ import {
   PanelTitle,
   ActionButton,
   SearchInput,
-  EmptyState
+  EmptyState,
+  IconContainer,
+  ActionButtonWrapper
 } from '../../styles/GlobalComponents';
+import StarryBackground from '../Common/StarryBackground';
 import { colors, spacing, borderRadius, shadows, mixins, transitions, typography } from '../../styles/GlobalTheme';
 import { format } from 'date-fns';
 import { enUS, ar } from 'date-fns/locale';
 
+// Removed Firebase imports to eliminate initialization issues
+
+// Keyframe animation for the loading spinner
+const spinAnimation = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+// Styled loading spinner
+const LoadingSpinner = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(131, 56, 236, 0.3);
+  border-radius: 50%;
+  border-top: 5px solid #8338ec;
+  animation: ${spinAnimation} 1s linear infinite;
+  margin-bottom: 20px;
+`;
+
 // Local styled components for search and filter
 const TimelineSearchInput = styled(SearchInput)`
+  width: 100%;
+  padding: ${spacing.sm} ${spacing.lg};
+  padding-left: calc(${spacing.xl} + ${spacing.md});
+  background: ${colors.background.secondary};
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: ${borderRadius.md};
+  color: ${colors.text.primary};
+  font-size: ${typography.fontSizes.sm};
+  height: 38px;
+  
+  &::placeholder {
+    color: ${colors.text.muted};
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: rgba(205, 62, 253, 0.3);
+    box-shadow: ${shadows.sm};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    padding-left: ${spacing.lg};
+    padding-right: calc(${spacing.xl} + ${spacing.md});
+    text-align: right;
+  }
+`;
+
+// Using the TimelineSearchInput defined above
+// Extending with additional styles
+const TimelineSearchInputExtended = styled(TimelineSearchInput)`
   flex: 1;
   min-width: 200px;
 `;
 
 const FilterDropdown = styled.select`
-  padding: ${spacing.sm} ${spacing.md};
+  padding: ${spacing.sm} ${spacing.lg};
+  padding-right: ${spacing.xl};
   background: ${colors.background.secondary};
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: ${borderRadius.md};
-  min-width: 150px;
+  min-width: 180px;
   font-size: ${typography.fontSizes.sm};
   color: ${colors.text.secondary};
   transition: ${transitions.medium};
+  appearance: none;
   
   &:focus {
     outline: none;
@@ -52,11 +110,14 @@ const FilterDropdown = styled.select`
   option {
     background: ${colors.background.secondary};
     color: ${colors.text.secondary};
+    padding: ${spacing.sm};
   }
   
   /* RTL Support */
   [dir="rtl"] & {
     text-align: right;
+    padding-right: ${spacing.lg};
+    padding-left: ${spacing.xl};
   }
 `;
 
@@ -64,24 +125,228 @@ const TimelinePanel = () => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const [filter, setFilter] = useState('all');
+  const [projectFilter, setProjectFilter] = useState('all');
+  const [taskFilter, setTaskFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showExportOptions, setShowExportOptions] = useState(false);
+  const [error, setError] = useState(null);
+  
+  // Chat/forum state variables
+  const [activeThreadId, setActiveThreadId] = useState(null);
+  const [replyText, setReplyText] = useState('');
+  const [showReplyInput, setShowReplyInput] = useState({});
+  const commentInputRef = useRef(null);
+  
+  // Error handling for general errors
+  useEffect(() => {
+    const handleError = (error) => {
+      console.error('Error in TimelinePanel:', error);
+      setError(error.message || 'An unknown error occurred');
+    };
+    
+    // Set up error handling
+    const errorHandler = (event) => {
+      if (event.error) {
+        handleError(event.error);
+        event.preventDefault();
+      }
+    };
+    
+    window.addEventListener('error', errorHandler);
+    
+    // Log that we're using the mock data version
+    console.log('TimelinePanel: Using mock data implementation (no Firebase)'); 
+    
+    return () => {
+      window.removeEventListener('error', errorHandler);
+    };
+  }, []);
 
-  // Mock timeline data
-  const mockActivities = [
-    {
-      id: 1,
-      type: 'file_upload',
-      user: {
-        name: 'John Doe',
-        role: 'client',
-        avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
-      },
-      content: 'Logo Design Final.png',
-      timestamp: new Date(2025, 4, 24, 14, 30),
-      project: 'DevFolio',
-      milestone: 'Design Phase',
-      details: 'Uploaded during milestone #2'
+  // Custom hook to simulate data loading and avoid Firebase initialization issues
+  const useActivityData = () => {
+    const [activities, setActivities] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState(null);
+    
+    useEffect(() => {
+      // Simulate API loading delay
+      const timer = setTimeout(() => {
+        try {
+          // Mock data instead of Firebase fetch
+          const mockData = [
+            {
+              id: 1,
+              type: 'file_upload',
+              user: {
+                name: 'John Doe',
+                role: 'client',
+                avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
+              },
+              content: 'Logo Design Final.png',
+              timestamp: new Date(2025, 4, 24, 14, 30),
+              project: 'DevFolio',
+              milestone: 'Design Phase',
+              details: 'Uploaded during milestone #2',
+              isThread: true,
+              replies: [
+                {
+                  id: 101,
+                  user: {
+                    name: 'Sarah Johnson',
+                    role: 'developer',
+                    avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+                  },
+                  content: 'The logo looks great! I especially like the color palette.',
+                  timestamp: new Date(2025, 4, 24, 15, 45)
+                }
+              ]
+            },
+            {
+              id: 2,
+              type: 'comment',
+              user: {
+                name: 'Sarah Johnson',
+                role: 'developer',
+                avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+              },
+              content: "I've updated the homepage design based on your feedback.",
+              timestamp: new Date(2025, 4, 24, 10, 15),
+              project: 'DevFolio',
+              milestone: 'Development Phase',
+              details: 'Comment on task #12',
+              isThread: true,
+              replies: [
+                {
+                  id: 201,
+                  user: {
+                    name: 'John Doe',
+                    role: 'client',
+                    avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
+                  },
+                  content: 'Looks much better now. Can we adjust the spacing between sections?',
+                  timestamp: new Date(2025, 4, 24, 11, 30)
+                },
+                {
+                  id: 202,
+                  user: {
+                    name: 'Sarah Johnson',
+                    role: 'developer',
+                    avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+                  },
+                  content: "Sure, I'll make those adjustments right away.",
+                  timestamp: new Date(2025, 4, 24, 13, 15)
+                }
+              ]
+            },
+            {
+              id: 3,
+              type: 'task_complete',
+              user: {
+                name: 'Sarah Johnson',
+                role: 'developer',
+                avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+              },
+              content: 'Implement user authentication',
+              timestamp: new Date(2025, 4, 23, 16, 45),
+              project: 'DevFolio',
+              milestone: 'Development Phase',
+              details: 'Completed 2 days before deadline'
+            },
+            {
+              id: 4,
+              type: 'file_edit',
+              user: {
+                name: 'John Doe',
+                role: 'client',
+                avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
+              },
+              content: 'Project Requirements.docx',
+              timestamp: new Date(2025, 4, 23, 9, 20),
+              project: 'DevFolio',
+              milestone: 'Planning Phase',
+              details: 'Updated project scope'
+            },
+            {
+              id: 5,
+              type: 'file_download',
+              user: {
+                name: 'Sarah Johnson',
+                role: 'developer',
+                avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+              },
+              content: 'Brand Guidelines.pdf',
+              timestamp: new Date(2025, 4, 22, 11, 10),
+              project: 'DevFolio',
+              milestone: 'Design Phase',
+              details: 'Downloaded for reference'
+            },
+            {
+              id: 6,
+              type: 'file_view',
+              user: {
+                name: 'John Doe',
+                role: 'client',
+                avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
+              },
+              content: 'Homepage Mockup.jpg',
+              timestamp: new Date(2025, 4, 22, 10, 5),
+              project: 'DevFolio',
+              milestone: 'Design Phase',
+              details: 'Viewed for the first time'
+            },
+            {
+              id: 7,
+              type: 'milestone',
+              user: {
+                name: 'System',
+                role: 'system',
+                avatar: null
+              },
+              content: 'Design Phase completed',
+              timestamp: new Date(2025, 4, 21, 17, 0),
+              project: 'DevFolio',
+              milestone: 'Design Phase',
+              details: 'All tasks completed'
+            },
+            {
+              id: 8,
+              type: 'file_delete',
+              user: {
+                name: 'Sarah Johnson',
+                role: 'developer',
+                avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+              },
+              content: 'Old Logo Draft.png',
+              timestamp: new Date(2025, 4, 21, 14, 25),
+              project: 'DevFolio',
+              milestone: 'Design Phase',
+              details: 'Removed outdated file'
+            }
+          ];
+          setActivities(mockData);
+          setIsLoading(false);
+        } catch (err) {
+          setLoadError(err.message || 'Failed to load activity data');
+          setIsLoading(false);
+        }
+      }, 1500); // Simulate loading delay
+      
+      return () => clearTimeout(timer);
+    }, []);
+    
+    return { activities, isLoading, loadError };
+  };
+        {
+          id: 101,
+          user: {
+            name: 'Sarah Johnson',
+            role: 'developer',
+            avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+          },
+          content: 'The logo looks great! I especially like the color palette.',
+          timestamp: new Date(2025, 4, 24, 15, 45)
+        }
+      ]
     },
     {
       id: 2,
@@ -95,7 +360,30 @@ const TimelinePanel = () => {
       timestamp: new Date(2025, 4, 24, 10, 15),
       project: 'DevFolio',
       milestone: 'Development Phase',
-      details: 'Comment on task #12'
+      details: 'Comment on task #12',
+      isThread: true,
+      replies: [
+        {
+          id: 201,
+          user: {
+            name: 'John Doe',
+            role: 'client',
+            avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
+          },
+          content: 'Looks much better now. Can we adjust the spacing between sections?',
+          timestamp: new Date(2025, 4, 24, 11, 30)
+        },
+        {
+          id: 202,
+          user: {
+            name: 'Sarah Johnson',
+            role: 'developer',
+            avatar: 'https://randomuser.me/api/portraits/women/44.jpg'
+          },
+          content: "Sure, I'll make those adjustments right away.",
+          timestamp: new Date(2025, 4, 24, 13, 15)
+        }
+      ]
     },
     {
       id: 3,
@@ -203,11 +491,41 @@ const TimelinePanel = () => {
     return groups;
   };
 
-  // Filter activities based on selected filter and search query
+  // Get unique projects from activities
+  const getUniqueProjects = (activities) => {
+    const projects = activities.map(activity => activity.project);
+    return [...new Set(projects)].filter(Boolean);
+  };
+
+  // Get unique tasks/milestones from activities, optionally filtered by project
+  const getUniqueTasks = (activities, projectName = null) => {
+    const filteredActivities = projectName === 'all' || !projectName
+      ? activities
+      : activities.filter(activity => activity.project === projectName);
+    
+    const tasks = filteredActivities.map(activity => activity.milestone);
+    return [...new Set(tasks)].filter(Boolean);
+  };
+
+  // Get unique projects and tasks
+  const uniqueProjects = getUniqueProjects(activities);
+  const uniqueTasks = getUniqueTasks(activities, projectFilter);
+
+  // Filter activities based on selected filters and search query
   const filterActivities = (activities) => {
     return activities.filter(activity => {
       // Filter by type
       if (filter !== 'all' && !activity.type.includes(filter)) {
+        return false;
+      }
+      
+      // Filter by project
+      if (projectFilter !== 'all' && activity.project !== projectFilter) {
+        return false;
+      }
+      
+      // Filter by task/milestone
+      if (taskFilter !== 'all' && activity.milestone !== taskFilter) {
         return false;
       }
       
@@ -296,21 +614,172 @@ const TimelinePanel = () => {
     alert(`Exporting timeline in ${format} format`);
     setShowExportOptions(false);
   };
+  
+  // Chat/forum handlers
+  const toggleReplyInput = (activityId) => {
+    setShowReplyInput(prev => ({
+      ...prev,
+      [activityId]: !prev[activityId]
+    }));
+    
+    if (!showReplyInput[activityId]) {
+      setActiveThreadId(activityId);
+      setReplyText('');
+      // Focus the input after it renders
+      setTimeout(() => {
+        if (commentInputRef.current) {
+          commentInputRef.current.focus();
+        }
+      }, 100);
+    }
+  };
+  
+  const handleReplySubmit = (activityId) => {
+    if (!replyText.trim()) return;
+    
+    // In a real app, this would send the comment to an API
+    // For now, we'll just update our local state
+    const updatedActivities = mockActivities.map(activity => {
+      if (activity.id === activityId) {
+        const newReply = {
+          id: Date.now(), // Generate a unique ID
+          user: {
+            name: 'Developer', // In a real app, this would be the current user
+            role: 'developer',
+            avatar: 'https://randomuser.me/api/portraits/men/85.jpg'
+          },
+          content: replyText,
+          timestamp: new Date()
+        };
+        
+        return {
+          ...activity,
+          replies: [...(activity.replies || []), newReply]
+        };
+      }
+      return activity;
+    });
+    
+    // In a real app, we would update the state with the new activities
+    // For now, just clear the input and hide it
+    setReplyText('');
+    setShowReplyInput(prev => ({
+      ...prev,
+      [activityId]: false
+    }));
+    
+    alert('Comment posted successfully!');
+  };
 
-  const filteredActivities = filterActivities(mockActivities);
+  // Use our custom hook to get activity data
+  const { activities, isLoading, loadError } = useActivityData();
+  
+  // Set error from the hook if there is one
+  useEffect(() => {
+    if (loadError) {
+      setError(loadError);
+    }
+  }, [loadError]);
+
+  const filteredActivities = filterActivities(activities);
   const groupedActivities = groupActivitiesByDate(filteredActivities);
   const dateGroups = Object.keys(groupedActivities).sort().reverse();
 
+  // Show loading state
+  if (isLoading && !error) {
+    return (
+      <PanelContainer>
+        <StarryBackground intensity={0.5} />
+        <PanelHeader>
+          <PanelTitle>
+            <IconContainer 
+              icon={FaCalendarAlt} 
+              color="#8338ec" 
+              size="1.2em" 
+              margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+            />
+            {t('timeline.loadingTitle', 'Loading Timeline')}
+          </PanelTitle>
+        </PanelHeader>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '40px 20px',
+          textAlign: 'center'
+        }}>
+          <LoadingSpinner />
+          <h3>{t('timeline.initializing', 'Loading Activity Data')}</h3>
+          <p style={{ color: colors.text.secondary }}>
+            {t('timeline.loadingMessage', 'Please wait while we load your activity data...')}
+          </p>
+        </div>
+      </PanelContainer>
+    );
+  }
+  
+  // If there's an error, display it
+  if (error) {
+    return (
+      <PanelContainer>
+        <StarryBackground intensity={0.5} />
+        <PanelHeader>
+          <PanelTitle>
+            <IconContainer 
+              icon={FaCalendarAlt} 
+              color="#8338ec" 
+              size="1.2em" 
+              margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+            />
+            {t('timeline.errorTitle', 'Error Loading Timeline')}
+          </PanelTitle>
+        </PanelHeader>
+        <div style={{ padding: '20px', color: '#e53935', background: '#ffebee', borderRadius: '4px', margin: '20px' }}>
+          <h3 style={{ marginTop: 0 }}>{t('timeline.errorHeading', 'Something went wrong')}</h3>
+          <p>{t('timeline.errorMessage', 'We encountered an error while loading the timeline data:')}</p>
+          <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px', overflowX: 'auto' }}>
+            {error}
+          </pre>
+          <button 
+            onClick={() => window.location.reload()} 
+            style={{ 
+              background: '#82a1bf', 
+              color: 'white', 
+              border: 'none', 
+              padding: '10px 15px', 
+              borderRadius: '4px', 
+              cursor: 'pointer',
+              marginTop: '15px'
+            }}
+          >
+            {t('timeline.tryAgain', 'Try Again')}
+          </button>
+        </div>
+      </PanelContainer>
+    );
+  }
+
   return (
     <PanelContainer>
+      <StarryBackground intensity={0.5} />
       <PanelHeader>
-        <PanelTitle>{t('timeline.activityLog', 'Activity Timeline')}</PanelTitle>
+        <PanelTitle>
+          <IconContainer
+            icon={FaCalendarAlt} 
+            color="#8338ec" 
+            size="1.2em" 
+            margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+          />
+          {t('timeline.activityLog', 'Activity Timeline')}
+        </PanelTitle>
+        
         <ToolbarWrapper>
           <TimelineSearchWrapper>
             <SearchIcon>
               <FaSearch />
             </SearchIcon>
-            <TimelineSearchInput
+            <TimelineSearchInputExtended
               type="text"
               placeholder={t('timeline.search', 'Search activities...')}
               value={searchQuery}
@@ -353,6 +822,40 @@ const TimelinePanel = () => {
         </ToolbarWrapper>
       </PanelHeader>
       
+      {/* Project and Task Filter Section */}
+      <FilterSection>
+        <FilterRow>
+          <FilterGroup>
+            <FilterLabel>{t('timeline.filterByProject', 'Project:')}</FilterLabel>
+            <FilterDropdown
+              value={projectFilter}
+              onChange={(e) => {
+                setProjectFilter(e.target.value);
+                setTaskFilter('all'); // Reset task filter when project changes
+              }}
+            >
+              <option value="all">{t('timeline.allProjects', 'All Projects')}</option>
+              {uniqueProjects.map(project => (
+                <option key={project} value={project}>{project}</option>
+              ))}
+            </FilterDropdown>
+          </FilterGroup>
+          
+          <FilterGroup>
+            <FilterLabel>{t('timeline.filterByTask', 'Task/Milestone:')}</FilterLabel>
+            <FilterDropdown
+              value={taskFilter}
+              onChange={(e) => setTaskFilter(e.target.value)}
+            >
+              <option value="all">{t('timeline.allTasks', 'All Tasks')}</option>
+              {uniqueTasks.map(task => (
+                <option key={task} value={task}>{task}</option>
+              ))}
+            </FilterDropdown>
+          </FilterGroup>
+        </FilterRow>
+      </FilterSection>
+      
       <TimelineContent>
         {dateGroups.length > 0 ? (
           dateGroups.map(dateGroup => (
@@ -388,6 +891,50 @@ const TimelinePanel = () => {
                     <HoverDetails>
                       <HoverContent>{activity.details}</HoverContent>
                     </HoverDetails>
+                    
+                    {/* Quick Reply Button */}
+                    <QuickReplyButton onClick={() => toggleReplyInput(activity.id)}>
+                      <FaReply /> {t('timeline.reply', 'Reply')}
+                    </QuickReplyButton>
+                    
+                    {/* Threaded Conversation */}
+                    {activity.isThread && activity.replies && activity.replies.length > 0 && (
+                      <ThreadContainer>
+                        {activity.replies.map(reply => (
+                          <ReplyItem key={reply.id}>
+                            <ReplyAvatar src={reply.user.avatar} alt={reply.user.name} />
+                            <ReplyContent>
+                              <ReplyText>{reply.content}</ReplyText>
+                              <ReplyMeta>
+                                <span>{reply.user.name}</span>
+                                <span style={{ margin: '0 4px' }}>•</span>
+                                <span>{formatDate(reply.timestamp)}</span>
+                              </ReplyMeta>
+                            </ReplyContent>
+                          </ReplyItem>
+                        ))}
+                      </ThreadContainer>
+                    )}
+                    
+                    {/* Comment Input */}
+                    {showReplyInput[activity.id] && (
+                      <ReplyInputContainer>
+                        <ReplyInput
+                          ref={activeThreadId === activity.id ? commentInputRef : null}
+                          type="text"
+                          placeholder={t('timeline.addComment', 'Add a comment...')}
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && handleReplySubmit(activity.id)}
+                        />
+                        <SendButton 
+                          onClick={() => handleReplySubmit(activity.id)}
+                          disabled={!replyText.trim()}
+                        >
+                          <FaPaperPlane />
+                        </SendButton>
+                      </ReplyInputContainer>
+                    )}
                   </ActivityContentWrapper>
                 </ActivityItem>
               ))}
@@ -404,8 +951,103 @@ const TimelinePanel = () => {
     </PanelContainer>
   );
 };
-
 // Styled components for the timeline panel
+const FilterSection = styled.div`
+  padding: ${spacing.md} ${spacing.lg};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+`;
+
+const FilterRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xl};
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${spacing.md};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+`;
+
+const FilterGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.md};
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+  }
+`;
+
+const FilterLabel = styled.label`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  white-space: nowrap;
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    text-align: right;
+  }
+`;
+
+const ToolbarSection = styled.div`
+  padding: ${spacing.md} ${spacing.lg};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+`;
+
+const FilterTabsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.md};
+  margin: ${spacing.sm} 0;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: ${spacing.sm} ${spacing.md};
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: ${borderRadius.md};
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${spacing.sm};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    flex-direction: row-reverse;
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+`;
+
+// FilterLabel is already defined above
+const FilterLabelAlt = styled.span`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+  white-space: nowrap;
+`;
+
 const ToolbarWrapper = styled.div`
   ${mixins.flexBetween}
   flex-wrap: wrap;
@@ -435,22 +1077,40 @@ const TimelineSearchWrapper = styled.div`
   align-items: center;
   flex: 1;
   max-width: 300px;
+  margin-right: ${spacing.md};
   
   @media (max-width: 768px) {
     max-width: 100%;
     width: 100%;
+    margin-right: 0;
+    margin-bottom: ${spacing.sm};
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    margin-right: 0;
+    margin-left: ${spacing.md};
+    
+    @media (max-width: 768px) {
+      margin-left: 0;
+    }
   }
 `;
 
 const SearchIcon = styled.div`
   position: absolute;
-  left: ${spacing.sm};
+  left: 26px;
   color: ${colors.text.muted};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 14px; /* Control icon size */
   
   /* RTL Support */
   [dir="rtl"] & {
     left: auto;
-    right: ${spacing.sm};
+    right: 26px;
   }
 `;
 
@@ -470,6 +1130,9 @@ const FilterIcon = styled.div`
   color: ${colors.text.muted};
   z-index: 1;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const ExportWrapper = styled.div`
@@ -761,6 +1424,151 @@ const HoverDetails = styled.div`
 
 const HoverContent = styled.div`
   text-align: center;
+`;
+
+// Chat/forum styled components
+const ThreadContainer = styled.div`
+  margin-top: ${spacing.md};
+  margin-left: ${spacing.xl};
+  padding-left: ${spacing.xl};
+  border-left: 2px solid rgba(131, 56, 236, 0.3);
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    margin-left: 0;
+    margin-right: ${spacing.xl};
+    padding-left: 0;
+    padding-right: ${spacing.xl};
+    border-left: none;
+    border-right: 2px solid rgba(131, 56, 236, 0.3);
+  }
+`;
+
+const ReplyItem = styled.div`
+  display: flex;
+  padding: ${spacing.sm} 0;
+  position: relative;
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+`;
+
+const ReplyAvatar = styled.img`
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-right: ${spacing.sm};
+  object-fit: cover;
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    margin-right: 0;
+    margin-left: ${spacing.sm};
+  }
+`;
+
+const ReplyContent = styled.div`
+  flex: 1;
+`;
+
+const ReplyText = styled.p`
+  margin: 0;
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.primary};
+`;
+
+const ReplyMeta = styled.div`
+  font-size: ${typography.fontSizes.xs};
+  color: ${colors.text.muted};
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+`;
+
+const ReplyInputContainer = styled.div`
+  display: flex;
+  margin-top: ${spacing.md};
+  position: relative;
+  align-items: center;
+`;
+
+const ReplyInput = styled.input`
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.lg};
+  color: ${colors.text.primary};
+  font-size: ${typography.fontSizes.sm};
+  padding-right: 40px;
+  
+  &:focus {
+    outline: none;
+    border-color: rgba(131, 56, 236, 0.5);
+    box-shadow: 0 0 0 2px rgba(131, 56, 236, 0.2);
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    padding-right: ${spacing.lg};
+    padding-left: 40px;
+  }
+`;
+
+const SendButton = styled.button`
+  position: absolute;
+  right: ${spacing.sm};
+  background: transparent;
+  border: none;
+  color: ${colors.primary.main};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${spacing.xs};
+  border-radius: 50%;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: rgba(131, 56, 236, 0.1);
+    color: ${colors.primary.light};
+  }
+  
+  &:disabled {
+    color: ${colors.text.muted};
+    cursor: not-allowed;
+  }
+  
+  /* RTL Support */
+  [dir="rtl"] & {
+    right: auto;
+    left: ${spacing.sm};
+  }
+`;
+
+const QuickReplyButton = styled.button`
+  background: transparent;
+  border: none;
+  color: ${colors.text.muted};
+  font-size: ${typography.fontSizes.xs};
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: ${spacing.xs};
+  
+  &:hover {
+    color: ${colors.primary.main};
+    background: rgba(131, 56, 236, 0.1);
+  }
+  
+  svg {
+    font-size: 0.75em;
+  }
 `;
 
 export default TimelinePanel;

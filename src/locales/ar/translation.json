@@ -215,14 +215,6 @@
     "errorInvalidEmail": "يرجى إدخال بريد إلكتروني صالح",
     "errorWeakPassword": "يجب أن تحتوي كلمة المرور على أحرف وأرقام"
   },
-  "projects": {
-    "title": "المشاريع",
-    "addProject": "إضافة مشروع",
-    "addError": "خطأ في إضافة المشروع. يرجى المحاولة مرة أخرى.",
-    "editProject": "تعديل المشروع",
-    "deleteProject": "حذف المشروع",
-    "deleteConfirm": "هل أنت متأكد من حذف هذا المشروع؟",
-    "done": "مكتمل",
     "namePlaceholder": "أدخل اسم المشروع",
     "clientPlaceholder": "أدخل اسم العميل",
     "descriptionPlaceholder": "أدخل وصف المشروع",
@@ -498,8 +490,7 @@
         "other": "أخرى (حدد)",
         "otherDesc": "وظائف مخصصة"
       }
-    }
-  },
+    },
   "dashboard": {
     "welcome": "مرحباً بك في لوحة التحكم",
     "logout": "تسجيل الخروج",
@@ -660,50 +651,34 @@
   "modal": {
     "close": "إغلاق"
   },
+  "projects": {
+    "title": "المشاريع",
+    "yourProjects": "مشاريعك",
+    "addProject": "إضافة مشروع جديد",
     "addError": "خطأ في إضافة المشروع. يرجى المحاولة مرة أخرى.",
     "editProject": "تعديل المشروع",
+    "moreOptions": "خيارات أخرى",
+    "client": "العميل",
+    "deadline": "الموعد النهائي",
+    "status": "الحالة",
+    "clientMood": "مزاج العميل",
+    "noDescription": "لم يتم تقديم وصف.",
+    "project": "مشروع",
+    "projects": "المشاريع",
+    "inProgress": "قيد التنفيذ",
+    "done": "مكتمل",
+    "awaitingFeedback": "بانتظار الملاحظات",
+    "notStarted": "لم يبدأ",
+    "noProjects": "لا توجد مشاريع بعد",
+    "createNewProject": "قم بإنشاء مشروع جديد باستخدام الزر في الأعلى",
+    "noMatchingProjects": "لا توجد مشاريع مطابقة",
+    "noMatchingMessage": "حاول تعديل الفلاتر",
+    "clearFilters": "مسح الفلاتر",
     "deleteProject": "حذف المشروع",
     "deleteConfirm": "هل أنت متأكد من حذف هذا المشروع؟",
-    "done": "مكتمل",
     "namePlaceholder": "أدخل اسم المشروع",
     "clientPlaceholder": "أدخل اسم العميل",
     "descriptionPlaceholder": "أدخل وصف المشروع",
-    "noProjects": "لا توجد مشاريع حاليًا. قم بإضافة مشروع جديد للبدء.",
-    "filters": {
-      "all": "جميع المشاريع",
-      "active": "نشط",
-      "completed": "مكتمل",
-      "pending": "قيد الانتظار"
-    },
-    "sortOptions": {
-      "newest": "الأحدث",
-      "oldest": "الأقدم",
-      "deadline": "الموعد النهائي",
-      "alphabetical": "أبجدي"
-    },
-    "moods": {
-      "happy": "سعيد",
-      "neutral": "محايد",
-      "unhappy": "غير راضي"
-    },
-    "viewOptions": {
-      "grid": "شبكة",
-      "list": "قائمة"
-    }
-  ,
-  "forms": {
-    "title": "النماذج والملاحظات",
-    "createNew": "إنشاء نموذج جديد",
-    "search": "البحث عن النماذج...",
-    "sortAsc": "تصاعدي",
-    "sortDesc": "تنازلي",
-    "noForms": "لا توجد نماذج تطابق معايير البحث",
-    "client": "العميل",
-    "project": "المشروع",
-    "created": "تاريخ الإنشاء",
-    "responses": "الردود",
-    "createForm": "إنشاء نموذج جديد",
-    "editForm": "تعديل النموذج",
     "types": {
       "all": "جميع النماذج",
       "feedback": "ملاحظات",

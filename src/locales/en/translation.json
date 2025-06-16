@@ -648,6 +648,30 @@
     }
   },
   "projects": {
+    "title": "Projects",
+    "yourProjects": "Your Projects",
+    "addProject": "Add New Project",
+    "editProject": "Edit Project",
+    "moreOptions": "More Options",
+    "client": "Client",
+    "deadline": "Deadline",
+    "status": "Status",
+    "clientMood": "Client Mood",
+    "noDescription": "No description provided.",
+    "project": "Project",
+    "projects": "Projects",
+    "inProgress": "In Progress",
+    "done": "Done",
+    "awaitingFeedback": "Awaiting Feedback",
+    "notStarted": "Not Started",
+    "noProjects": "No projects yet",
+    "createNewProject": "Create a new project using the button in the header",
+    "noMatchingProjects": "No matching projects",
+    "noMatchingMessage": "Try adjusting your filters",
+    "clearFilters": "Clear Filters",
+    "filters": {
+      "all": "All"
+    },
     "wizard": {
       "title": "Create New Project",
       "subtitle": "Let's gather some information about your project",

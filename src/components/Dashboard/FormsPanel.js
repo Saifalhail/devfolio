@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { rtl } from '../../utils/rtl';
 import {
   FaCommentAlt, FaClipboardList, FaEdit, FaEye,
   FaTrash, FaPlus, FaFilter, FaSearch, FaSort,
@@ -31,8 +32,11 @@ import {
   StatusBadge,
   FeatureCard,
   FeatureIcon,
-  FilterButton
+  FilterButton,
+  IconContainer,
+  ActionButtonWrapper
 } from '../../styles/GlobalComponents';
+import StarryBackground from '../Common/StarryBackground';
 
 const FormsPanel = () => {
   const { t, i18n } = useTranslation();
@@ -149,12 +153,27 @@ const FormsPanel = () => {
   
   return (
     <PanelContainer>
+      <StarryBackground intensity={0.5} />
       <PanelHeader>
-        <PanelTitle>{t('forms.title', 'Forms')}</PanelTitle>
-        <ActionButton onClick={toggleNewForm}>
-          <FaPlus />
-          {t('forms.create', 'Create Form')}
-        </ActionButton>
+        <PanelTitle>
+          <IconContainer 
+            icon={FaClipboardList} 
+            color="#8338ec" 
+            size="1.2em" 
+            margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+          />
+          {t('forms.title', 'Forms')}
+        </PanelTitle>
+        <ActionButtonWrapper>
+          <ActionButton glow onClick={toggleNewForm}>
+            <IconContainer 
+              icon={FaPlus} 
+              size="1em" 
+              margin={isRTL ? `0 0 0 ${spacing.xs}` : `0 ${spacing.xs} 0 0`} 
+            />
+            {t('forms.create', 'Create Form')}
+          </ActionButton>
+        </ActionButtonWrapper>
       </PanelHeader>
       
       <FormsToolbar>

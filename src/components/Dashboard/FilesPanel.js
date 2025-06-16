@@ -2,22 +2,25 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { rtl } from '../../utils/rtl';
 import { useTranslation } from 'react-i18next';
-import { FaUpload, FaFilter, FaSearch, FaTags, FaDownload, FaEye, FaTrash, FaHistory } from 'react-icons/fa';
+import { FaUpload, FaFilter, FaSearch, FaTags, FaDownload, FaEye, FaTrash, FaHistory, FaFileAlt } from 'react-icons/fa';
 import FileCard from './FileCard';
 import Button from '../Common/Button';
 import SkeletonLoader from '../Common/SkeletonLoader';
+import StarryBackground from '../Common/StarryBackground';
 import {
   Card,
   PanelContainer,
   PanelHeader,
-  DashboardTitle,
+  PanelTitle,
+  ActionButton,
   Input,
   IconButton,
   PrimaryButton,
   FlexContainer,
-  Badge
-} from '../../styles/dashboardStyles';
-import { colors } from '../../styles/GlobalTheme';
+  Badge,
+  IconContainer
+} from '../../styles/GlobalComponents';
+import { colors, spacing } from '../../styles/GlobalTheme';
 
 const FilesPanel = () => {
   const { t, i18n } = useTranslation();
@@ -143,15 +146,30 @@ const FilesPanel = () => {
   // No dropdown useEffect needed anymore
 
   return (
-    <FilesPanelContainer isRTL={isRTL}>
-      <FilesPanelHeader>
-        <PanelTitle>{t('files.title', 'Files & Deliverables')}</PanelTitle>
-        <UploadButton 
-          onClick={() => fileInputRef.current.click()}
-        >
-          <FaUpload />
-          <span>{t('files.upload', 'Upload Files')}</span>
-        </UploadButton>
+    <PanelContainer>
+      <StarryBackground intensity={0.5} />
+      
+      <PanelHeader>
+        <PanelTitle>
+          <IconContainer 
+            icon={FaFileAlt} 
+            color="#8338ec" 
+            size="1.2em" 
+            margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+          />
+          {t('files.title', 'Files & Deliverables')}
+        </PanelTitle>
+        
+        <ActionButtonWrapper>
+          <ActionButton glow onClick={() => fileInputRef.current.click()}>
+            <IconContainer 
+              icon={FaUpload} 
+              size="1em" 
+              margin={isRTL ? `0 0 0 ${spacing.xs}` : `0 ${spacing.xs} 0 0`} 
+            />
+            {t('files.upload', 'Upload Files')}
+          </ActionButton>
+        </ActionButtonWrapper>
         <input
           type="file"
           ref={fileInputRef}
@@ -159,7 +177,7 @@ const FilesPanel = () => {
           multiple
           style={{ display: 'none' }}
         />
-      </FilesPanelHeader>
+      </PanelHeader>
       
       <FilesToolbar>
         <SearchBar isRTL={isRTL}>
@@ -217,7 +235,7 @@ const FilesPanel = () => {
           )}
         </FilesGrid>
       </DropZone>
-    </FilesPanelContainer>
+    </PanelContainer>
   );
 };
 
@@ -239,9 +257,15 @@ const FilesPanelHeader = styled(PanelHeader)`
   }
 `;
 
-// Using the shared DashboardTitle component
-const PanelTitle = styled(DashboardTitle)`
-  color: #fff;
+// Action button wrapper for consistent styling
+const ActionButtonWrapper = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 // Using the shared PrimaryButton component

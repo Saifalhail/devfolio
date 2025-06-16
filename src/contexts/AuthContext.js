@@ -9,8 +9,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  getAuth
 } from 'firebase/auth';
+// Import Firebase services directly
 import { auth } from '../firebase';
 import useFirebaseListener from '../hooks/useFirebaseListener';
 
@@ -24,6 +26,8 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // Use the auth instance imported from firebase.js
 
   // Sign up with email and password - REAL FIREBASE
   async function signup(email, password, displayName) {
@@ -58,7 +62,7 @@ export function AuthProvider({ children }) {
       } else {
         setError(err.message || 'Failed to create account');
       }
-      
+
       throw err;
     }
   }
@@ -68,19 +72,19 @@ export function AuthProvider({ children }) {
     try {
       setError('');
       console.log('Signing in with email and password');
-      
+
       // Sign in with email and password in Firebase
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      
+
       // Set the current user
       setCurrentUser(user);
-      
+
       console.log('User signed in successfully:', user.uid);
       return { user };
     } catch (err) {
       console.error('Sign-in error:', err);
-      
+
       // Handle specific error cases
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
         setError('Invalid email or password. Please try again.');
@@ -91,7 +95,7 @@ export function AuthProvider({ children }) {
       } else {
         setError(err.message || 'Failed to sign in');
       }
-      
+
       throw err;
     }
   }
@@ -105,96 +109,42 @@ export function AuthProvider({ children }) {
       photoURL: 'https://via.placeholder.com/150',
     }
   ];
-  
-  // Sign in with Google - MOCK FOR DEVELOPMENT, REAL FOR PRODUCTION
+
+  // Sign in with Google - REAL FIREBASE
   async function signInWithGoogle() {
     try {
       setError('');
-      setLoading(true);
-      
-      // For development environment, use mock authentication
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('Using mock Google authentication for development');
-        
-        // Create a mock user with Google profile data
-        const mockUser = {
-          uid: 'google-mock-user-1',
-          email: 'developer@example.com',
-          displayName: 'Developer Account',
-          photoURL: 'https://via.placeholder.com/150',
-          providerId: 'google.com',
-          emailVerified: true
-        };
-        
-        // Set the current user with mock data
-        setCurrentUser(mockUser);
-        
-        console.log('Mock Google authentication successful');
-        setLoading(false);
-        return { user: mockUser };
-      }
-      
-      // For production, use real Google authentication
-      console.log('Initiating real Google authentication with Firebase config:', auth.app.options.apiKey);
-      
+      console.log('Signing in with Google');
+
       // Create a Google auth provider
       const provider = new GoogleAuthProvider();
-      
-      // Add scopes for better user experience
-      provider.addScope('profile');
-      provider.addScope('email');
-      
-      // Set custom parameters for a better UX
-      provider.setCustomParameters({
-        prompt: 'select_account'
-      });
-      
-      // First check if we have a redirect result
-      try {
-        const redirectResult = await getRedirectResult(auth);
-        if (redirectResult) {
-          // User just got redirected back from the auth provider
-          console.log('Redirect result received:', redirectResult);
-          const user = redirectResult.user;
-          console.log('Google authentication successful via redirect, user:', user.email);
-          
-          // Set the current user
-          setCurrentUser(user);
-          setLoading(false);
-          return { user };
-        }
-      } catch (redirectError) {
-        console.error('Redirect result error:', redirectError);
-        // Continue with the sign-in process even if getting redirect result failed
-      }
-      
-      // If no redirect result, initiate the redirect flow
-      console.log('Starting Google sign-in redirect flow');
-      await signInWithRedirect(auth, provider);
-      
-      // The page will redirect to Google and then back to the app
-      // The function won't return here in the normal flow
-      setLoading(false);
-      return { user: null };
-      
-    } catch (error) {
-      console.error('Google sign-in error:', error);
-      setLoading(false);
-      
+
+      // Sign in with popup
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Set the current user
+      setCurrentUser(user);
+
+      console.log('Google authentication successful:', user.uid);
+      return { user };
+    } catch (err) {
+      console.error('Google sign-in error:', err);
+
       // Handle specific error cases
-      if (error.code === 'auth/api-key-not-valid') {
+      if (err.code === 'auth/api-key-not-valid') {
         setError('Authentication configuration error. Please contact support.');
-      } else if (error.code === 'auth/unauthorized-domain') {
+      } else if (err.code === 'auth/unauthorized-domain') {
         setError(`This domain is not authorized for Google sign-in. Please use the app at https://devfolio-84079.web.app`);
-      } else if (error.code === 'auth/popup-closed-by-user') {
+      } else if (err.code === 'auth/popup-closed-by-user') {
         setError('Sign-in was cancelled. Please try again.');
-      } else if (error.code === 'auth/popup-blocked') {
+      } else if (err.code === 'auth/popup-blocked') {
         setError('Pop-up was blocked by your browser. Please allow pop-ups for this site.');
       } else {
-        setError(error.message || 'Failed to sign in with Google');
+        setError(err.message || 'Failed to sign in with Google');
       }
-      
-      throw error;
+
+      throw err;
     }
   }
 
@@ -203,7 +153,7 @@ export function AuthProvider({ children }) {
     try {
       setError('');
       console.log('Initializing phone authentication');
-      
+
       // Create a reCAPTCHA verifier instance
       const recaptchaVerifier = new RecaptchaVerifier(
         recaptchaContainer,
@@ -221,21 +171,21 @@ export function AuthProvider({ children }) {
 
       // Render the reCAPTCHA widget
       await recaptchaVerifier.render();
-      
+
       // Format phone number if needed (ensure it has country code)
       const formattedPhoneNumber = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
-      
+
       // Send verification code
       const confirmationResult = await signInWithPhoneNumber(auth, formattedPhoneNumber, recaptchaVerifier);
-      
+
       // Store confirmation result to use when verifying code
       window.confirmationResult = confirmationResult;
-      
+
       console.log('Verification code sent to phone');
       return confirmationResult;
     } catch (err) {
       console.error('Phone verification error:', err);
-      
+
       // Handle specific error cases
       if (err.code === 'auth/invalid-phone-number') {
         setError('Invalid phone number. Please enter a valid phone number with country code.');
@@ -244,33 +194,33 @@ export function AuthProvider({ children }) {
       } else {
         setError(err.message || 'Failed to send verification code');
       }
-      
+
       throw err;
     }
   }
-  
+
   // Verify phone code - REAL FIREBASE
   async function verifyPhoneCode(verificationCode) {
     try {
       setError('');
       console.log('Verifying phone code');
-      
+
       if (!window.confirmationResult) {
         throw new Error('No verification sent. Please send a code first.');
       }
-      
+
       // Confirm the verification code
       const result = await window.confirmationResult.confirm(verificationCode);
       const user = result.user;
-      
+
       // Set the current user
       setCurrentUser(user);
-      
+
       console.log('Phone verification successful');
       return { user };
     } catch (err) {
       console.error('Code verification error:', err);
-      
+
       // Handle specific error cases
       if (err.code === 'auth/invalid-verification-code') {
         setError('Invalid verification code. Please try again.');
@@ -279,7 +229,7 @@ export function AuthProvider({ children }) {
       } else {
         setError(err.message || 'Failed to verify code');
       }
-      
+
       throw err;
     }
   }
@@ -287,7 +237,10 @@ export function AuthProvider({ children }) {
   // Sign out - REAL FIREBASE
   async function logout() {
     try {
-      console.log('Signing out user');
+      setError('');
+      console.log('Signing out');
+
+      // Sign out from Firebase
       await signOut(auth);
       setCurrentUser(null);
       return true;
@@ -299,11 +252,9 @@ export function AuthProvider({ children }) {
   }
 
   // Listen to auth state changes - REAL FIREBASE
-  // Using useFirebaseListener hook for proper cleanup
-  useFirebaseListener(() => {
+  useEffect(() => {
     console.log('Setting up auth state listener');
 
-    // Set up Firebase auth state observer
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);

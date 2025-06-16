@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { rtl } from '../../utils/rtl';
 import { 
   FaRocket, 
   FaBook, 
   FaCommentAlt, 
   FaHandshake 
 } from 'react-icons/fa';
+import {
+  PanelContainer,
+  PanelHeader,
+  PanelTitle,
+  IconContainer,
+  ActionButtonWrapper
+} from '../../styles/GlobalComponents';
+import { spacing } from '../../styles/GlobalTheme';
 
 // Import post-launch components
 import MaintenanceGuide from './PostLaunch/MaintenanceGuide';
@@ -24,14 +33,20 @@ const PostLaunchPanel = () => {
   };
 
   return (
-    <Container>
-      <BackgroundContainer>
-        <StarryBackground color="#4361ee" starCount={200} blurAmount={8} opacity={0.8} />
-      </BackgroundContainer>
+    <PanelContainer>
+      <StarryBackground intensity={0.5} />
       
-      <Header>
-        <Title>{t('postLaunch.title', 'Post-Launch')}</Title>
-      </Header>
+      <PanelHeader>
+        <PanelTitle>
+          <IconContainer 
+            icon={FaRocket} 
+            color="#8338ec" 
+            size="1.2em" 
+            margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+          />
+          {t('postLaunch.title', 'Post-Launch')}
+        </PanelTitle>
+      </PanelHeader>
       
       <NavigationTabs>
         <NavigationTab 
@@ -72,7 +87,7 @@ const PostLaunchPanel = () => {
           <HireAgain />
         )}
       </Content>
-    </Container>
+    </PanelContainer>
   );
 };
 

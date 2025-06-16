@@ -502,9 +502,6 @@ const Dashboard = () => {
             {activeTab === 'projects' && (
               <ProjectsTabContainer>
                 <ProjectsCard>
-                  <ProjectsHeader>
-                    <h2>{t('projects.yourProjects', 'Your Projects')}</h2>
-                  </ProjectsHeader>
                   <ProjectsPanel />
                 </ProjectsCard>
               </ProjectsTabContainer>
