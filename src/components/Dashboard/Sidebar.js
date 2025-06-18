@@ -61,8 +61,8 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
     },
     { 
       icon: <FaHistory />, 
-      label: t('dashboard.sidebar.activity', 'Activity Log'), 
-      path: '/dashboard/activity' 
+      label: t('dashboard.sidebar.chat', 'Chat'), 
+      path: '/dashboard/chat' 
     },
     { 
       icon: <FaFigma />, 

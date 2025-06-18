@@ -73,7 +73,8 @@ const AddProjectModal = lazy(() => import('./AddProjectModal'));
 const TasksPanel = lazy(() => import('./TasksPanel'));
 const FilesPanel = lazy(() => import('./FilesPanel'));
 const FormsPanel = lazy(() => import('./FormsPanel'));
-const TimelinePanel = lazy(() => import('./TimelinePanel'));
+// const TimelinePanel = lazy(() => import('./TimelinePanel')); // Replaced with ForumPanel
+const ForumPanel = lazy(() => import('./ForumPanel'));
 const DesignPanel = lazy(() => import('./DesignPanel'));
 const InvoicingPanel = lazy(() => import('./InvoicingPanel'));
 const PostLaunchPanel = lazy(() => import('./PostLaunchPanel'));
@@ -168,8 +169,8 @@ const Dashboard = () => {
       setActiveTab('files');
     } else if (location.pathname.includes('/dashboard/forms')) {
       setActiveTab('forms');
-    } else if (location.pathname.includes('/dashboard/activity')) {
-      setActiveTab('activity');
+    } else if (location.pathname.includes('/dashboard/chat')) {
+      setActiveTab('chat');
     } else if (location.pathname.includes('/dashboard/design')) {
       setActiveTab('design');
     } else if (location.pathname.includes('/dashboard/invoices')) {
@@ -534,13 +535,13 @@ const Dashboard = () => {
               </FormsTabContainer>
             )}
             
-            {/* Activity Log Tab */}
-            {activeTab === 'activity' && (
-              <ActivityTabContainer>
+            {/* Chat Forum Tab */}
+            {activeTab === 'chat' && (
+              <ChatTabContainer>
                 <Suspense fallback={<LoadingSpinner />}>
-                  <TimelinePanel />
+                  <ForumPanel />
                 </Suspense>
-              </ActivityTabContainer>
+              </ChatTabContainer>
             )}
             
             {/* Design & Prototype Tab */}
@@ -870,7 +871,7 @@ const CardDemoTabContainer = styled.div`
   }
 `;
 
-const ActivityTabContainer = styled.div`
+const ChatTabContainer = styled.div`
   width: 100%;
   height: 100%;
   padding: 1rem 0;

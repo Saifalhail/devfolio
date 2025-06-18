@@ -13,6 +13,7 @@
     "firebase-functions": "^6.3.2",
     "framer-motion": "^12.10.5",
     "i18next": "^23.10.0",
+    "jspdf": "^3.0.1",
     "react": "^19.1.0",
     "react-circular-progressbar": "^2.2.0",
     "react-dom": "^19.1.0",

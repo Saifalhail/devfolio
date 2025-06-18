@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApp } from "firebase/app";
 import { getAuth, connectAuthEmulator, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
@@ -78,14 +78,56 @@ if (process.env.NODE_ENV === 'production') {
   usingMockCredentials = false;
 }
 
-// Initialize Firebase with proper error handling
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase with proper error handling in a try-catch block
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+  console.log('Firebase core initialized successfully');
+} catch (error) {
+  console.error('Error initializing Firebase core:', error);
+  // If it's already initialized, use the existing app
+  if (error.code === 'app/duplicate-app') {
+    console.log('Using existing Firebase app instance');
+    app = getApp();
+  } else {
+    // Re-throw non-initialization errors
+    throw error;
+  }
+}
 
-// Initialize Firebase services
-const auth = getAuth(app);
-const db = getFirestore(app);
-const functions = getFunctions(app);
-const storage = getStorage(app);
+// Initialize Firebase services with error handling
+let auth, db, functions, storage;
+try {
+  auth = getAuth(app);
+  console.log('Firebase Auth initialized');
+} catch (error) {
+  console.error('Error initializing Firebase Auth:', error);
+  auth = { currentUser: null };
+}
+
+try {
+  db = getFirestore(app);
+  console.log('Firebase Firestore initialized');
+} catch (error) {
+  console.error('Error initializing Firebase Firestore:', error);
+  db = {};
+}
+
+try {
+  functions = getFunctions(app);
+  console.log('Firebase Functions initialized');
+} catch (error) {
+  console.error('Error initializing Firebase Functions:', error);
+  functions = {};
+}
+
+try {
+  storage = getStorage(app);
+  console.log('Firebase Storage initialized');
+} catch (error) {
+  console.error('Error initializing Firebase Storage:', error);
+  storage = {};
+}
 let analytics = null;
 
 // Initialize analytics if in browser environment
