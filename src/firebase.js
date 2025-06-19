@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApp } from "firebase/app";
+import { initializeApp, getApp, getApps } from "firebase/app";
 import { getAuth, connectAuthEmulator, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
@@ -78,56 +78,115 @@ if (process.env.NODE_ENV === 'production') {
   usingMockCredentials = false;
 }
 
-// Initialize Firebase with proper error handling in a try-catch block
+// Initialize Firebase with proper error handling
 let app;
-try {
-  app = initializeApp(firebaseConfig);
-  console.log('Firebase core initialized successfully');
-} catch (error) {
-  console.error('Error initializing Firebase core:', error);
-  // If it's already initialized, use the existing app
-  if (error.code === 'app/duplicate-app') {
-    console.log('Using existing Firebase app instance');
-    app = getApp();
-  } else {
-    // Re-throw non-initialization errors
-    throw error;
+
+// Function to safely initialize Firebase
+const initializeFirebase = () => {
+  try {
+    // First check if the config is valid
+    if (!firebaseConfig || !firebaseConfig.apiKey || !firebaseConfig.projectId) {
+      console.error('Invalid Firebase configuration:', firebaseConfig);
+      throw new Error('Invalid Firebase configuration');
+    }
+
+    // Check if Firebase is already initialized
+    if (getApps().length > 0) {
+      console.log('Using existing Firebase app instance');
+      return getApp();
+    }
+
+    // Initialize a new app
+    console.log('Initializing new Firebase app with config:', {
+      projectId: firebaseConfig.projectId,
+      authDomain: firebaseConfig.authDomain
+    });
+    return initializeApp(firebaseConfig);
+  } catch (error) {
+    console.error('Error initializing Firebase:', error);
+    
+    // Create a mock app to prevent crashes
+    return {
+      name: 'firebase-initialization-failed',
+      options: { ...firebaseConfig },
+      automaticDataCollectionEnabled: false
+    };
   }
-}
+};
+
+// Initialize Firebase
+app = initializeFirebase();
+
+// Helper function to safely initialize Firebase services
+const safeInitialize = (serviceName, initFn) => {
+  try {
+    if (!app || app.name === 'firebase-initialization-failed') {
+      console.warn(`Skipping ${serviceName} initialization due to failed Firebase app initialization`);
+      return createMockService(serviceName);
+    }
+    const service = initFn(app);
+    console.log(`Firebase ${serviceName} initialized successfully`);
+    return service;
+  } catch (error) {
+    console.error(`Error initializing Firebase ${serviceName}:`, error);
+    return createMockService(serviceName);
+  }
+};
+
+// Create mock services based on service type
+const createMockService = (serviceName) => {
+  console.warn(`Creating mock ${serviceName} service`);
+  
+  switch(serviceName) {
+    case 'Auth':
+      return {
+        currentUser: null,
+        onAuthStateChanged: (callback) => {
+          callback(null);
+          return () => {};
+        },
+        signInWithEmailAndPassword: () => Promise.resolve({ user: { uid: 'mock-user-id' } }),
+        createUserWithEmailAndPassword: () => Promise.resolve({ user: { uid: 'mock-user-id' } }),
+        signOut: () => Promise.resolve()
+      };
+    case 'Firestore':
+      return {
+        collection: () => ({
+          doc: () => ({
+            get: () => Promise.resolve({ exists: false, data: () => ({}) }),
+            set: () => Promise.resolve(),
+            update: () => Promise.resolve(),
+            delete: () => Promise.resolve()
+          }),
+          where: () => ({
+            get: () => Promise.resolve({ docs: [] })
+          }),
+          add: () => Promise.resolve({ id: 'mock-doc-id' })
+        })
+      };
+    case 'Functions':
+      return { httpsCallable: () => () => Promise.resolve({ data: {} }) };
+    case 'Storage':
+      return { 
+        ref: () => ({ 
+          put: () => ({ 
+            snapshot: {}, 
+            ref: { 
+              getDownloadURL: () => Promise.resolve('https://mock-url.com') 
+            } 
+          }) 
+        }) 
+      };
+    default:
+      return {};
+  }
+};
 
 // Initialize Firebase services with error handling
-let auth, db, functions, storage;
-try {
-  auth = getAuth(app);
-  console.log('Firebase Auth initialized');
-} catch (error) {
-  console.error('Error initializing Firebase Auth:', error);
-  auth = { currentUser: null };
-}
-
-try {
-  db = getFirestore(app);
-  console.log('Firebase Firestore initialized');
-} catch (error) {
-  console.error('Error initializing Firebase Firestore:', error);
-  db = {};
-}
-
-try {
-  functions = getFunctions(app);
-  console.log('Firebase Functions initialized');
-} catch (error) {
-  console.error('Error initializing Firebase Functions:', error);
-  functions = {};
-}
-
-try {
-  storage = getStorage(app);
-  console.log('Firebase Storage initialized');
-} catch (error) {
-  console.error('Error initializing Firebase Storage:', error);
-  storage = {};
-}
+let auth = safeInitialize('Auth', getAuth);
+let db = safeInitialize('Firestore', getFirestore);
+let functions = safeInitialize('Functions', getFunctions);
+let storage = safeInitialize('Storage', getStorage);
 let analytics = null;
 
 // Initialize analytics if in browser environment
@@ -163,36 +222,16 @@ if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_USE_EMULATOR
   }
 }
 
-// Create mock services if using mock credentials
+// Override services with mocks if using mock credentials
 if (usingMockCredentials) {
   console.warn('Using mock Firebase credentials. Some Firebase features will be limited.');
   
   // Create mock services that won't throw errors
-  auth = {
-    currentUser: null,
-    onAuthStateChanged: (callback) => callback(null),
-    signInWithEmailAndPassword: () => Promise.resolve({ user: { uid: 'mock-user-id' } }),
-    createUserWithEmailAndPassword: () => Promise.resolve({ user: { uid: 'mock-user-id' } }),
-    signOut: () => Promise.resolve()
-  };
-  
-  db = {
-    collection: () => ({
-      doc: () => ({
-        get: () => Promise.resolve({ exists: false, data: () => ({}) }),
-        set: () => Promise.resolve(),
-        update: () => Promise.resolve(),
-        delete: () => Promise.resolve()
-      }),
-      where: () => ({
-        get: () => Promise.resolve({ docs: [] })
-      }),
-      add: () => Promise.resolve({ id: 'mock-doc-id' })
-    })
-  };
-  
-  functions = { httpsCallable: () => () => Promise.resolve({ data: {} }) };
-  storage = { ref: () => ({ put: () => ({ snapshot: {}, ref: { getDownloadURL: () => Promise.resolve('https://mock-url.com') } }) }) };
+  auth = createMockService('Auth');
+  db = createMockService('Firestore');
+  functions = createMockService('Functions');
+  storage = createMockService('Storage');
+  console.log('All Firebase services replaced with mock implementations');
 }
 
 // Use Firebase emulators in development, but only if we're not using mock credentials
@@ -233,6 +272,35 @@ if (process.env.NODE_ENV !== 'production' &&
 // Export the services you'll use throughout your app
 export { app, analytics, auth, db, functions, storage };
 export { GoogleAuthProvider, signInWithPopup };
+
+// Export Firebase services with safe getters to prevent circular dependencies
+export const getFirestoreDb = () => {
+  try {
+    return db || createMockService('Firestore');
+  } catch (error) {
+    console.error('Error accessing Firestore:', error);
+    return createMockService('Firestore');
+  }
+};
+
+export const getStorageInstance = () => {
+  try {
+    return storage || createMockService('Storage');
+  } catch (error) {
+    console.error('Error accessing Storage:', error);
+    return createMockService('Storage');
+  }
+};
+
+// Export a function to check if Firebase is properly initialized
+export const isFirebaseInitialized = () => {
+  try {
+    return app && app.name !== 'firebase-initialization-failed';
+  } catch (error) {
+    console.error('Error checking Firebase initialization:', error);
+    return false;
+  }
+};
 
 // Export a function to get functions with a specific region if needed
 export const getFunctionsWithRegion = (region) => getFunctions(app, region);
