@@ -30,6 +30,13 @@ export const colors = {
     neutral: '#9E9E9E',
   },
   
+  // Border colors
+  border: {
+    main: '#2a2a35',
+    light: '#333340',
+    focus: '#513a52',
+  },
+  
   // Gradient definitions
   gradients: {
     primary: 'linear-gradient(145deg, #1a1a20, #1d1d25)',

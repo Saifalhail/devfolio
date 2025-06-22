@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProviderWrapper } from './contexts/ThemeContext'; // Import the wrapper
 import GlobalStyles from './styles/GlobalStyles';
 import { GlobalAnimationStyles } from './styles/animations';
-import theme from './styles/theme';
 import './i18n'; // Import i18n initialization
 import i18n from './i18n';
 import { setDocumentDirection } from './utils/rtl';
@@ -89,7 +88,7 @@ function App() {
   // Show a simple loading indicator while the app initializes
   if (!isLoaded) {
     return (
-      <ThemeProvider theme={theme}>
+      <ThemeProviderWrapper>
         <GlobalStyles />
         <GlobalAnimationStyles />
         <div style={{ 
@@ -150,13 +149,13 @@ function App() {
             `}</style>
           </div>
         </div>
-      </ThemeProvider>
+      </ThemeProviderWrapper>
     );
   }
   
   return (
     <ErrorBoundary>
-      <ThemeProvider theme={theme}>
+      <ThemeProviderWrapper>
         <GlobalStyles />
         <GlobalAnimationStyles />
         <AuthProvider>
@@ -171,15 +170,10 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              {/* Add more routes as needed */}
-              {/* <Route path="/portfolio" element={<PortfolioPage />} /> */}
-              {/* <Route path="/about" element={<AboutPage />} /> */}
-              {/* <Route path="/contact" element={<ContactPage />} /> */}
-              {/* <Route path="*" element={<NotFoundPage />} /> */}
             </Routes>
           </Router>
         </AuthProvider>
-      </ThemeProvider>
+      </ThemeProviderWrapper>
     </ErrorBoundary>
   );
 }

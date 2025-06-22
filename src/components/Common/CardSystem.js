@@ -54,7 +54,7 @@ const DashboardCard = ({
   accentColor,
   glow = false,
   glowColor,
-  interactive = false,
+  interactive={undefined},
   onClick,
   children,
   ...props
@@ -68,7 +68,7 @@ const DashboardCard = ({
           accentColor={accentColor}
           glow={glow}
           glowColor={glowColor}
-          interactive={interactive}
+          interactive={interactive ? true : undefined}
           onClick={interactive ? onClick : undefined}
           {...props}
         >
@@ -87,7 +87,7 @@ const DashboardCard = ({
           accentColor={accentColor}
           glow={glow}
           glowColor={glowColor}
-          interactive={interactive}
+          interactive={interactive ? true : undefined}
           onClick={interactive ? onClick : undefined}
           status={props.status}
           {...props}
@@ -141,7 +141,7 @@ const DashboardCard = ({
           accentColor={accentColor}
           glow={glow}
           glowColor={glowColor}
-          interactive={interactive}
+          interactive={interactive ? true : undefined}
           onClick={interactive ? onClick : undefined}
           {...props}
         >
@@ -158,7 +158,7 @@ const DashboardCard = ({
           accentColor={accentColor}
           glow={glow}
           glowColor={glowColor}
-          interactive={interactive}
+          interactive={interactive ? true : undefined}
           onClick={interactive ? onClick : undefined}
           {...props}
         >
@@ -174,7 +174,7 @@ const DashboardCard = ({
           accentColor={accentColor}
           glow={glow}
           glowColor={glowColor}
-          interactive={interactive}
+          interactive={interactive ? true : undefined}
           onClick={interactive ? onClick : undefined}
           {...props}
         >
@@ -190,7 +190,7 @@ const DashboardCard = ({
           accentColor={accentColor}
           glow={glow}
           glowColor={glowColor}
-          interactive={interactive}
+          interactive={interactive ? true : undefined}
           onClick={interactive ? onClick : undefined}
           {...props}
         >
@@ -222,7 +222,7 @@ const DashboardCard = ({
           accentColor={accentColor}
           glow={glow}
           glowColor={glowColor}
-          interactive={interactive}
+          interactive={interactive ? true : undefined}
           onClick={interactive ? onClick : undefined}
           {...props}
         >

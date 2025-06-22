@@ -65,12 +65,12 @@ const FileCard = ({ file }) => {
   return (
     <Card 
       isRTL={isRTL} 
-      category={file.category}
+      $category={file.category}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <CardHeader>
-        <FileTitle parentHover={isHovered}>{file.name}</FileTitle>
+        <FileTitle $parentHover={isHovered}>{file.name}</FileTitle>
         {file.isFinal !== undefined && (
           <StatusBadge color={file.isFinal ? '#4CAF50' : '#FFC107'}>
             {file.isFinal ? 
@@ -84,7 +84,7 @@ const FileCard = ({ file }) => {
         {file.type.startsWith('image/') ? (
           <PreviewImage src={file.thumbnailUrl} alt={file.name} />
         ) : (
-          <IconWrapper category={file.type ? file.type.split('/')[0] : 'file'}>
+          <IconWrapper $category={file.type ? file.type.split('/')[0] : 'file'}>
             {getFileIcon()}
           </IconWrapper>
         )}
@@ -137,10 +137,10 @@ const FileCard = ({ file }) => {
 const Card = styled(BaseCard)`
   cursor: pointer;
   position: relative;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   display: flex;
   flex-direction: column;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   
   &:hover {
     transform: translateY(-5px);
@@ -163,7 +163,7 @@ const Card = styled(BaseCard)`
   height: 100%;
   transform-origin: center;
   border-top: 4px solid ${props => {
-    switch(props.category) {
+    switch(props.$category) {
       case 'design': return '#82a1bf';
       case 'docs': return '#27ae60';
       case 'feedback': return '#faaa93';
@@ -179,7 +179,7 @@ const Card = styled(BaseCard)`
     right: 0;
     height: 100%;
     background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 80%, rgba(${props => {
-      switch(props.category) {
+      switch(props.$category) {
         case 'design': return '130, 161, 191';
         case 'docs': return '39, 174, 96';
         case 'feedback': return '250, 170, 147';
@@ -236,7 +236,7 @@ const FileTitle = styled.h3`
     width: 0;
     height: 2px;
     background: ${props => {
-      switch(props.category) {
+      switch(props.$category) {
         case 'design': return '#82a1bf';
         case 'docs': return '#27ae60';
         case 'feedback': return '#faaa93';
@@ -246,14 +246,14 @@ const FileTitle = styled.h3`
     transition: width 0.3s ease;
   }
   
-  ${props => props.isRTL && `
+  ${props => props.$isRTL && `
     &:after {
       left: auto;
       right: 0;
     }
   `}
   
-  ${props => props.parentHover && `
+  ${props => props.$parentHover && `
     &:after {
       width: 40px;
     }
@@ -361,7 +361,7 @@ const IconWrapper = styled.div`
   svg {
     font-size: 3.5rem;
     color: ${props => {
-      switch(props.category) {
+      switch(props.$category) {
         case 'design': return '#82a1bf';
         case 'docs': return '#27ae60';
         case 'feedback': return '#faaa93';
@@ -405,7 +405,7 @@ const FooterItem = styled.div`
   
   svg {
     color: ${props => {
-      switch(props.category) {
+      switch(props.$category) {
         case 'design': return '#82a1bf';
         case 'docs': return '#27ae60';
         case 'feedback': return '#faaa93';

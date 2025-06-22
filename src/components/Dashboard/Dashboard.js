@@ -73,8 +73,7 @@ const AddProjectModal = lazy(() => import('./AddProjectModal'));
 const TasksPanel = lazy(() => import('./TasksPanel'));
 const FilesPanel = lazy(() => import('./FilesPanel'));
 const FormsPanel = lazy(() => import('./FormsPanel'));
-// const TimelinePanel = lazy(() => import('./TimelinePanel')); // Replaced with ForumPanel
-const ForumPanel = lazy(() => import('./ForumPanel'));
+const Forum = lazy(() => import('./Forum'));
 const DesignPanel = lazy(() => import('./DesignPanel'));
 const InvoicingPanel = lazy(() => import('./InvoicingPanel'));
 const PostLaunchPanel = lazy(() => import('./PostLaunchPanel'));
@@ -315,7 +314,7 @@ const Dashboard = () => {
             aria-label={t('dashboard.toggleSidebar', 'Toggle sidebar')}
             aria-expanded={sidebarOpen}
             data-testid="menu-toggle"
-            isRTL={isRTL}
+            $isRTL={isRTL}
             onClick={toggleSidebar}
           >
             <FaBars aria-hidden="true" />
@@ -324,8 +323,8 @@ const Dashboard = () => {
         </NavbarContent>
       </NavbarArea>
       
-      <DashboardBody>
-        <SidebarArea data-testid="sidebar-area" isOpen={sidebarOpen} isMobile={mobileView} isRTL={isRTL} collapsed={sidebarCollapsed}>
+      <DashboardBody $isRTL={isRTL}>
+        <SidebarArea data-testid="sidebar-area" $isOpen={sidebarOpen} $isMobile={mobileView} $isRTL={isRTL} $collapsed={sidebarCollapsed}>
           <Sidebar
             active={activeTab}
             onLogout={handleLogout}
@@ -345,10 +344,10 @@ const Dashboard = () => {
         )}
         
         <ContentArea
-          sidebarOpen={sidebarOpen}
-          isMobile={mobileView}
-          isRTL={isRTL}
-          collapsed={sidebarCollapsed}
+          $sidebarOpen={sidebarOpen}
+          $isMobile={mobileView}
+          $isRTL={isRTL}
+          $collapsed={sidebarCollapsed}
         >
           {/* Starry background effect for all tabs */}
           <BackgroundWrapper>
@@ -539,7 +538,7 @@ const Dashboard = () => {
             {activeTab === 'chat' && (
               <ChatTabContainer>
                 <Suspense fallback={<LoadingSpinner />}>
-                  <ForumPanel />
+                  <Forum />
                 </Suspense>
               </ChatTabContainer>
             )}
@@ -635,7 +634,7 @@ const DashboardBody = styled.div`
   display: flex;
   flex: 1;
   padding-top: 70px; /* Exact height of navbar */
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 768px) {
     padding-top: 60px;
@@ -643,19 +642,19 @@ const DashboardBody = styled.div`
 `;
 
 const SidebarArea = styled.div`
-  width: ${props => (props.collapsed ? '60px' : '240px')};
+  width: ${props => (props.$collapsed ? '60px' : '240px')};
   height: calc(100vh - 70px);
   position: fixed;
   top: 70px; /* Exactly at navbar bottom */
-  ${props => props.isRTL ? 'right: 0;' : 'left: 0;'}
+  ${props => props.$isRTL ? 'right: 0;' : 'left: 0;'}
   z-index: 10;
   overflow-y: auto;
-  transform: translateX(${props => (props.isOpen || !props.isMobile) ? '0' : (props.isRTL ? '100%' : '-100%')});
+  transform: translateX(${props => (props.$isOpen || !props.$isMobile) ? '0' : (props.$isRTL ? '100%' : '-100%')});
   transition: transform 0.3s ease;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   background: linear-gradient(180deg, #1a1a22 0%, #161620 100%);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
@@ -694,14 +693,14 @@ const SidebarBackdrop = styled.button`
 const ContentArea = styled.main`
   flex: 1;
   padding: 2rem;
-  margin-left: ${props => !props.isRTL && (props.sidebarOpen || !props.isMobile) ? (props.collapsed ? '60px' : '240px') : '0'};
-  margin-right: ${props => props.isRTL && (props.sidebarOpen || !props.isMobile) ? (props.collapsed ? '60px' : '240px') : '0'};
+  margin-left: ${props => !props.$isRTL && (props.$sidebarOpen || !props.$isMobile) ? (props.$collapsed ? '60px' : '240px') : '0'};
+  margin-right: ${props => props.$isRTL && (props.$sidebarOpen || !props.$isMobile) ? (props.$collapsed ? '60px' : '240px') : '0'};
   transition: all 0.3s ease;
   min-height: calc(100vh - 70px);
   background-color: transparent;
   overflow-x: hidden;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   color: #fff;
   position: relative;
   z-index: 1;
@@ -726,8 +725,8 @@ const FocusProgressText = styled(ProgressText)`
 
 const MenuIconWrapper = styled.div`
   cursor: pointer;
-  margin-right: ${props => props.isRTL ? '0' : '1rem'};
-  margin-left: ${props => props.isRTL ? '1rem' : '0'};
+  margin-right: ${props => props.$isRTL ? '0' : '1rem'};
+  margin-left: ${props => props.$isRTL ? '1rem' : '0'};
   display: flex;
   align-items: center;
   justify-content: center;

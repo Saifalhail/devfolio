@@ -87,7 +87,7 @@ export const transitions = {
   bounce: 'all 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6)',
 };
 
-export default {
+const animations = {
   fadeIn,
   slideUp,
   slideInRight,
@@ -98,5 +98,7 @@ export default {
   rotate,
   shine,
   float,
-  transitions,
+  transitions
 };
+
+export default animations;

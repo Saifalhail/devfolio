@@ -71,7 +71,7 @@ const Navbar = ({ showUserAccount }) => {
         {/* Desktop view: Split layout with menu centered and user account on right */}
         <DesktopMenu>
           {/* Main Navigation Links */}
-          <NavMenu isRTL={isRTL}>
+          <NavMenu $isRTL={isRTL}>
             <NavItem>
               <NavLink to="/" onClick={handleNavLinkClick}>{t('navbar.home')}</NavLink>
             </NavItem>
@@ -222,7 +222,7 @@ const MobileMenu = styled.ul`
   top: 100%;
   left: 0;
   right: 0;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   background: linear-gradient(180deg, rgba(42, 18, 82, 0.9), rgba(18, 20, 44, 0.9));
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(205, 62, 253, 0.05);
   padding: 1.5rem 0;

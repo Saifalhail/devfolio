@@ -142,9 +142,7 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
   };
 
   return (
-    <SidebarContainer
-      isRTL={isRTL}
-      collapsed={collapsed}
+    <SidebarContainer $isRTL={isRTL} $collapsed={collapsed}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -152,16 +150,15 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
       <CollapseButton
         onClick={onToggleCollapse}
         aria-label={collapsed ? t('dashboard.sidebar.expand', 'Expand Sidebar') : t('dashboard.sidebar.collapse', 'Collapse Sidebar')}
-        isRTL={isRTL}
+        $isRTL={isRTL}
       >
         {collapsed
-
           ? (isRTL ? <FaAngleDoubleLeft /> : <FaAngleDoubleRight />)
           : (isRTL ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />)}
 
       </CollapseButton>
 
-      <NavMenu role="menu" collapsed={collapsed}>
+      <NavMenu $isRTL={isRTL} $collapsed={collapsed}>
         {menuItems.map((item, index) => (
           <NavItem
             key={item.path}
@@ -171,13 +168,13 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
             onKeyDown={(e) => handleKeyDown(e, index)}
             isActive={isItemActive(item.path)}
             isHighlighted={item.isHighlighted}
-            isRTL={isRTL}
-            collapsed={collapsed}
+            $isRTL={isRTL}
+            $collapsed={collapsed}
             to={item.path}
             aria-current={isItemActive(item.path) ? 'page' : undefined}
           >
             <IconWrapper
-              isRTL={isRTL}
+              $isRTL={isRTL}
               isActive={isItemActive(item.path) || item.isHighlighted}
               aria-hidden="true"
             >
@@ -192,7 +189,7 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
 };
 
 const SidebarContainer = styled.div`
-  width: ${props => (props.collapsed ? '60px' : '240px')};
+  width: ${props => (props.$collapsed ? '60px' : '240px')};
   height: 100%;
   background: #2c1e3f; /* Solid dark purple color to match screenshot */
   color: white;
@@ -207,8 +204,8 @@ const SidebarContainer = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   border-top: none;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   
   @media (max-width: 768px) {
     width: 100%;
@@ -230,7 +227,7 @@ const DashboardTitle = styled.div`
   border-bottom: 3px solid #8a3fe7;
   margin-bottom: 0;
   background-color: #231733; /* Darker background for the title */
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   
   @media (max-width: 768px) {
     padding: 1rem 0.5rem;
@@ -246,8 +243,8 @@ const NavMenu = styled.div`
   padding: 0;
   margin-top: 0;
   padding-top: 0;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-  align-items: ${props => (props.collapsed ? 'center' : 'stretch')};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  align-items: ${props => (props.$collapsed ? 'center' : 'stretch')};
   
   @media (max-width: 768px) {
     padding: 0.5rem;
@@ -261,15 +258,15 @@ const NavMenu = styled.div`
 const NavItem = styled(Link)`
   display: flex;
   align-items: center;
-  padding: ${props => (props.collapsed ? '1rem' : '1rem 1.5rem')};
-  justify-content: ${props => (props.collapsed ? 'center' : 'flex-start')};
+  padding: ${props => (props.$collapsed ? '1rem' : '1rem 1.5rem')};
+  justify-content: ${props => (props.$collapsed ? 'center' : 'flex-start')};
   color: ${props => props.isActive || props.isHighlighted ? 'white' : 'rgba(255, 255, 255, 0.7)'};
   background: ${props => props.isActive || props.isHighlighted ? '#3a2952' : 'transparent'};
   text-decoration: none;
   transition: all 0.3s ease;
-  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
-  border-${props => props.isRTL ? 'right' : 'left'}: ${props =>
-    props.collapsed
+  flex-direction: ${props => props.$isRTL ? 'row-reverse' : 'row'};
+  border-${props => props.$isRTL ? 'right' : 'left'}: ${props =>
+    props.$collapsed
       ? 'none'
       : props.isActive || props.isHighlighted
         ? '4px solid #faaa93'
@@ -280,13 +277,13 @@ const NavItem = styled(Link)`
   &:hover {
     background: #3a2952;
     color: white;
-    border-${props => props.isRTL ? 'right' : 'left'}: ${props => props.collapsed ? 'none' : '4px solid #faaa93'};
+    border-${props => props.$isRTL ? 'right' : 'left'}: ${props => props.$collapsed ? 'none' : '4px solid #faaa93'};
   }
   
   span {
-    margin-${props => props.isRTL ? 'right' : 'left'}: 0.8rem;
+    margin-${props => props.$isRTL ? 'right' : 'left'}: 0.8rem;
     font-weight: ${props => props.isActive ? '600' : '400'};
-    display: ${props => (props.collapsed ? 'none' : 'inline')};
+    display: ${props => (props.$collapsed ? 'none' : 'inline')};
     
     @media (max-width: 768px) {
       display: block;
@@ -315,8 +312,8 @@ const NavItem = styled(Link)`
 `;
 
 const IconWrapper = styled.div`
-  margin-right: ${props => props.isRTL ? '0' : '1rem'};
-  margin-left: ${props => props.isRTL ? '1rem' : '0'};
+  margin-right: ${props => props.$isRTL ? '0' : '1rem'};
+  margin-left: ${props => props.$isRTL ? '1rem' : '0'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -341,7 +338,7 @@ const CollapseButton = styled.button`
   cursor: pointer;
   font-size: 1.2rem;
   padding: 0.5rem;
-  align-self: ${props => (props.isRTL ? 'flex-end' : 'flex-start')};
+  align-self: ${props => (props.$isRTL ? 'flex-end' : 'flex-start')};
   transition: transform 0.3s ease;
 
   &:hover {

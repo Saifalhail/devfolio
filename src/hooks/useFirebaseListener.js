@@ -25,10 +25,18 @@ import { useEffect, useRef } from 'react';
 function useFirebaseListener(listenerSetup, dependencies = []) {
   const unsubscribeRef = useRef(null);
 
+  // Store listenerSetup in a ref to avoid it becoming a dependency
+  const listenerSetupRef = useRef(listenerSetup);
+  
+  // Update the ref when listenerSetup changes
+  useEffect(() => {
+    listenerSetupRef.current = listenerSetup;
+  }, [listenerSetup]);
+
   useEffect(() => {
     // Set up the listener and store the unsubscribe function
-    if (typeof listenerSetup === 'function') {
-      unsubscribeRef.current = listenerSetup();
+    if (typeof listenerSetupRef.current === 'function') {
+      unsubscribeRef.current = listenerSetupRef.current();
     }
 
     // Cleanup function that runs when the component unmounts or dependencies change
@@ -38,7 +46,8 @@ function useFirebaseListener(listenerSetup, dependencies = []) {
         unsubscribeRef.current = null;
       }
     };
-  }, dependencies); // Re-run effect when dependencies change
+  // Ensure dependencies is always treated as an array
+  }, Array.isArray(dependencies) ? dependencies : []);
 }
 
 export default useFirebaseListener;

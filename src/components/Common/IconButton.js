@@ -26,7 +26,7 @@ const IconButtonWrapper = styled.div`
     left: 50%;
     width: 0;
     height: 0;
-    background: ${props => props.withBg ? `${props.color}15` : 'transparent'};
+    background: ${props => props.$withBg ? `${props.color}15` : 'transparent'};
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: width 0.4s ease, height 0.4s ease;
@@ -37,8 +37,8 @@ const IconButtonWrapper = styled.div`
     transform: translateY(-2px);
 
     &:before {
-      width: ${props => (props.withBg ? '150%' : '0')};
-      height: ${props => (props.withBg ? '150%' : '0')};
+      width: ${props => (props.$withBg ? '150%' : '0')};
+      height: ${props => (props.$withBg ? '150%' : '0')};
     }
   }
   
@@ -76,7 +76,7 @@ const IconButton = ({
       fontSize={fontSize}
       onClick={onClick}
       className={className}
-      withBg={withBg}
+      $withBg={withBg}
       {...rest}
     >
       {icon}

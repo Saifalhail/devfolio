@@ -112,7 +112,7 @@ const StarryBackground = ({
   }, [color, starCount]);
   
   return (
-    <BackgroundContainer opacity={opacity} blurAmount={blurAmount}>
+    <BackgroundContainer $opacity={opacity} $blurAmount={blurAmount}>
       <Canvas ref={canvasRef} />
     </BackgroundContainer>
   );
@@ -126,8 +126,8 @@ const BackgroundContainer = styled.div`
   bottom: 0;
   overflow: hidden;
   z-index: -1;
-  opacity: ${props => props.opacity};
-  filter: blur(${props => props.blurAmount}px);
+  opacity: ${props => props.$opacity};
+  filter: blur(${props => props.$blurAmount}px);
   pointer-events: none;
 `;
 
