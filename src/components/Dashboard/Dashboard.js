@@ -73,7 +73,8 @@ const AddProjectModal = lazy(() => import('./AddProjectModal'));
 const TasksPanel = lazy(() => import('./TasksPanel'));
 const FilesPanel = lazy(() => import('./FilesPanel'));
 const FormsPanel = lazy(() => import('./FormsPanel'));
-const Forum = lazy(() => import('./Forum'));
+const ForumsHome = lazy(() => import('./Forums/ForumsHome.tsx'));
+
 const DesignPanel = lazy(() => import('./DesignPanel'));
 const InvoicingPanel = lazy(() => import('./InvoicingPanel'));
 const PostLaunchPanel = lazy(() => import('./PostLaunchPanel'));
@@ -170,6 +171,8 @@ const Dashboard = () => {
       setActiveTab('forms');
     } else if (location.pathname.includes('/dashboard/chat')) {
       setActiveTab('chat');
+    } else if (location.pathname.includes('/dashboard/forums')) {
+      setActiveTab('chat'); // Forums are under the chat tab
     } else if (location.pathname.includes('/dashboard/design')) {
       setActiveTab('design');
     } else if (location.pathname.includes('/dashboard/invoices')) {
@@ -534,11 +537,11 @@ const Dashboard = () => {
               </FormsTabContainer>
             )}
             
-            {/* Chat Forum Tab */}
+            {/* Chat Tab */}
             {activeTab === 'chat' && (
               <ChatTabContainer>
                 <Suspense fallback={<LoadingSpinner />}>
-                  <Forum />
+                  <ForumsHome />
                 </Suspense>
               </ChatTabContainer>
             )}

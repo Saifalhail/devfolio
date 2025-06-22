@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProviderWrapper } from './contexts/ThemeContext'; // Import the wrapper
 import GlobalStyles from './styles/GlobalStyles';
@@ -7,10 +8,15 @@ import './i18n'; // Import i18n initialization
 import i18n from './i18n';
 import { setDocumentDirection } from './utils/rtl';
 
-// Import components after initialization imports
+// Import components
 import HomePage from './components/Home/HomePage';
 import Dashboard from './components/Dashboard/Dashboard';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+
+// Lazy-loaded pages
+const ForumsHome = lazy(() => import('./components/Dashboard/Forums/ForumsHome'));
+const PostDetails = lazy(() => import('./components/Dashboard/Forums/PostDetails'));
+
 
 // Error boundary component to catch Firebase initialization errors
 class ErrorBoundary extends React.Component {
@@ -160,6 +166,7 @@ function App() {
         <GlobalAnimationStyles />
         <AuthProvider>
           <Router>
+            <Suspense fallback={<div style={{ color: '#513a52', textAlign: 'center', marginTop: '2rem' }}>Loading...</div>}>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route 
@@ -170,7 +177,10 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-            </Routes>
+            <Route path="/forums" element={<ForumsHome />} />
+                <Route path="/forums/:postId" element={<PostDetails />} />
+              </Routes>
+          </Suspense>
           </Router>
         </AuthProvider>
       </ThemeProviderWrapper>

@@ -95,18 +95,18 @@ const Navbar = ({ showUserAccount }) => {
           </NavMenu>
           
           {/* User Account and Language Switcher */}
-          <UserControls isRTL={isRTL}>
+          <UserControls $isRTL={isRTL}>
             <NavItem>
               <StyledLanguageSwitcher />
             </NavItem>
             {(currentUser || isDashboard) && (
               <NavItem>
-                <UserAccountContainer isRTL={isRTL}>
+                <UserAccountContainer $isRTL={isRTL}>
                   <UserInfo>
                     <FaUser />
                     <span>{currentUser?.displayName || 'Developer'}</span>
                   </UserInfo>
-                  <LogoutButton onClick={handleLogout} isRTL={isRTL}>
+                  <LogoutButton onClick={handleLogout} $isRTL={isRTL}>
                     <FaSignOutAlt />
                     <span>{t('navbar.logout', 'Logout')}</span>
                   </LogoutButton>
@@ -130,7 +130,7 @@ const Navbar = ({ showUserAccount }) => {
       </NavContainer>
       
       {/* Desktop: Logo in corner */}
-      <LogoWrapper isRTL={isRTL} isDashboard={isDashboard}>
+      <LogoWrapper $isRTL={isRTL} isDashboard={isDashboard}>
         <Logo to="/">
           <LogoText>
             <span style={{ direction: 'ltr', display: 'inline-block' }} data-component-name="Navbar">
@@ -142,7 +142,7 @@ const Navbar = ({ showUserAccount }) => {
       </LogoWrapper>
       
       {/* Mobile menu button positioned in corner */}
-      <HamburgerWrapper isRTL={isRTL}>
+      <HamburgerWrapper $isRTL={isRTL}>
         <HamburgerButton onClick={toggleMenu}>
           <span></span>
           <span></span>
@@ -151,7 +151,7 @@ const Navbar = ({ showUserAccount }) => {
       </HamburgerWrapper>
       
       {/* Mobile Menu - Separate from desktop menu */}
-      <MobileMenu $isOpen={isOpen} isRTL={isRTL}>
+      <MobileMenu $isOpen={isOpen} $isRTL={isRTL}>
         <NavItem>
           <NavLink to="/" onClick={handleNavLinkClick}>{t('navbar.home')}</NavLink>
         </NavItem>
@@ -193,12 +193,12 @@ const Navbar = ({ showUserAccount }) => {
         </NavItem>
         {(currentUser || isDashboard) && (
           <NavItem>
-            <MobileUserAccountContainer isRTL={isRTL}>
+            <MobileUserAccountContainer $isRTL={isRTL}>
               <UserInfo>
                 <FaUser />
                 <span>{currentUser?.displayName || 'Developer'}</span>
               </UserInfo>
-              <LogoutButton onClick={handleLogout} isRTL={isRTL}>
+              <LogoutButton onClick={handleLogout} $isRTL={isRTL}>
                 <FaSignOutAlt />
                 <span>{t('navbar.logout', 'Logout')}</span>
               </LogoutButton>
@@ -237,7 +237,7 @@ const MobileMenu = styled.ul`
   opacity: ${({$isOpen}) => $isOpen ? '1' : '0'};
   visibility: ${({$isOpen}) => $isOpen ? 'visible' : 'hidden'};
   backdrop-filter: blur(15px);
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 768px) {
     display: flex;
@@ -274,7 +274,7 @@ const DesktopMenu = styled.div`
 const LogoWrapper = styled.div`
   position: absolute;
   top: 0;
-  ${props => props.isRTL ? 'right' : 'left'}: 0;
+  ${props => props.$isRTL ? 'right' : 'left'}: 0;
   height: 100%;
   display: flex; /* Always show logo */
   align-items: center;
@@ -296,7 +296,7 @@ const LogoWrapper = styled.div`
 const HamburgerWrapper = styled.div`
   position: absolute;
   top: 0;
-  ${props => props.isRTL ? 'left' : 'right'}: 0;
+  ${props => props.$isRTL ? 'left' : 'right'}: 0;
   height: 100%;
   display: none;
   align-items: center;
@@ -520,7 +520,7 @@ const UserControls = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   margin-left: 1rem;
   
   @media (max-width: 768px) {
@@ -541,7 +541,7 @@ const NavMenu = styled.ul`
   animation: ${menuPulse} 6s infinite ease-in-out;
   position: relative;
   overflow: hidden;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'}; /* Support RTL layout */
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'}; /* Support RTL layout */
   width: auto; /* Allow natural width */
   
   /* Glowing dots decoration */
@@ -585,7 +585,7 @@ const NavItem = styled.li`
   
   @media (max-width: 768px) {
     margin: 0.5rem 1.5rem;
-    justify-content: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
+    justify-content: ${props => props.$isRTL ? 'flex-end' : 'flex-start'};
   }
   
   /* Active item indicator */
@@ -802,7 +802,7 @@ const MobileUserAccountContainer = styled.div`
   margin: 0.5rem auto;
   width: 90%;
   max-width: 300px;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 480px) {
     flex-direction: column;
@@ -819,7 +819,7 @@ const UserAccountContainer = styled.div`
   border-radius: 30px;
   padding: 0.2rem 0.4rem;
   margin-left: 0.3rem;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 1100px) {
     gap: 0.2rem;
@@ -828,8 +828,8 @@ const UserAccountContainer = styled.div`
   
   /* Dashboard specific styling */
   .with-sidebar & {
-    margin-right: ${props => props.isRTL ? '1rem' : '0'};
-    margin-left: ${props => props.isRTL ? '0' : '1rem'};
+    margin-right: ${props => props.$isRTL ? '1rem' : '0'};
+    margin-left: ${props => props.$isRTL ? '0' : '1rem'};
   }
 `;
 

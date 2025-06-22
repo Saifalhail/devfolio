@@ -414,3 +414,118 @@ If requirements or architecture are ambiguous, **pause** and request human clari
 - [ ] **Code‑Split** heavy new pages using `React.lazy`.
 - [ ] Added/updated tests for Error Boundaries if touched.
 - [ ] Updated `.env.example` if new env vars introduced.
+
+### 1-S · Project Setup — Tooling, Firebase, Services Layer
+
+#### 1. Initialise Project
+```bash
+pnpm create vite@latest my-app --template react-ts
+cd my-app
+pnpm install
+```
+
+#### 2. TypeScript Config (`tsconfig.json`)
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "strict": true,
+    "baseUrl": "src",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@styles/*": ["styles/*"],
+      "@utils/*": ["utils/*"],
+      "@services/*": ["services/*"]
+    }
+  }
+}
+```
+
+#### 3. Firebase CLI Bootstrap
+```bash
+pnpm dlx firebase-tools@latest init
+```
+
+```plaintext
+firebase.json
+.firebaserc
+/functions/
+  ├── src/index.ts
+  ├── tsconfig.json
+  └── package.json
+```
+
+#### 4. Local Emulator Script (`package.json`)
+```json
+"scripts": {
+  "dev": "vite",
+  "emulate": "firebase emulators:start --import=.emulator",
+  "deploy": "firebase deploy"
+}
+```
+
+#### 5. Services Layer (`/src/services`)
+```plaintext
+/src/services/
+├── apiClient.ts
+├── auth.service.ts
+├── user.service.ts
+└── index.ts
+```
+
+#### 6. Absolute Imports & Barrels
+```json
+// tsconfig paths already defined above
+```
+```plaintext
+/components/Common/index.ts
+/services/index.ts
+/hooks/index.ts
+```
+
+#### 7. Jest Setup
+```bash
+pnpm add -D jest @testing-library/react @testing-library/jest-dom
+```
+
+```ts
+// setupTests.ts
+import '@testing-library/jest-dom';
+```
+
+```ts
+// jest.config.ts
+export default {
+  preset: 'vite-jest',
+  testEnvironment: 'jsdom',
+  moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' }
+};
+```
+
+#### 8. ESLint + Prettier + Husky
+```bash
+pnpm add -D eslint prettier eslint-config-prettier eslint-plugin-react @typescript-eslint/parser @typescript-eslint/eslint-plugin husky lint-staged
+npx husky install
+```
+
+```json
+// .lintstagedrc
+{
+  "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"],
+  "*.{json,md}": ["prettier --write"],
+  "**/*.{ts,tsx}": "jest --bail --findRelatedTests"
+}
+```
+
+#### 9. Optional Dockerfile
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm run build
+CMD ["pnpm","serve","--host","0.0.0.0","--port","5173"]
+```

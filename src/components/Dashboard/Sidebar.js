@@ -15,7 +15,8 @@ import {
   FaFigma,
   FaAngleDoubleLeft,
   FaAngleDoubleRight,
-  FaRocket
+  FaRocket,
+  FaComments
 } from 'react-icons/fa';
 
 const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
@@ -60,7 +61,7 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
       path: '/dashboard/invoices' 
     },
     { 
-      icon: <FaHistory />, 
+      icon: <FaComments />, 
       label: t('dashboard.sidebar.chat', 'Chat'), 
       path: '/dashboard/chat' 
     },
@@ -166,8 +167,8 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
             ref={el => (menuRefs.current[index] = el)}
             tabIndex={index === focusedIndex ? 0 : -1}
             onKeyDown={(e) => handleKeyDown(e, index)}
-            isActive={isItemActive(item.path)}
-            isHighlighted={item.isHighlighted}
+            $isActive={isItemActive(item.path)}
+            $isHighlighted={item.isHighlighted}
             $isRTL={isRTL}
             $collapsed={collapsed}
             to={item.path}
@@ -175,7 +176,7 @@ const Sidebar = ({ collapsed = false, onToggleCollapse, onClose }) => {
           >
             <IconWrapper
               $isRTL={isRTL}
-              isActive={isItemActive(item.path) || item.isHighlighted}
+              $isActive={isItemActive(item.path) || item.isHighlighted}
               aria-hidden="true"
             >
               {item.icon}
@@ -260,19 +261,19 @@ const NavItem = styled(Link)`
   align-items: center;
   padding: ${props => (props.$collapsed ? '1rem' : '1rem 1.5rem')};
   justify-content: ${props => (props.$collapsed ? 'center' : 'flex-start')};
-  color: ${props => props.isActive || props.isHighlighted ? 'white' : 'rgba(255, 255, 255, 0.7)'};
-  background: ${props => props.isActive || props.isHighlighted ? '#3a2952' : 'transparent'};
+  color: ${props => props.$isActive || props.$isHighlighted ? 'white' : 'rgba(255, 255, 255, 0.7)'};
+  background: ${props => props.$isActive || props.$isHighlighted ? '#3a2952' : 'transparent'};
   text-decoration: none;
   transition: all 0.3s ease;
   flex-direction: ${props => props.$isRTL ? 'row-reverse' : 'row'};
   border-${props => props.$isRTL ? 'right' : 'left'}: ${props =>
     props.$collapsed
       ? 'none'
-      : props.isActive || props.isHighlighted
+      : props.$isActive || props.$isHighlighted
         ? '4px solid #faaa93'
         : '4px solid transparent'};
   position: relative;
-  margin-top: ${props => props.isHighlighted ? '0' : '0'};
+  margin-top: ${props => props.$isHighlighted ? '0' : '0'};
   
   &:hover {
     background: #3a2952;
@@ -282,7 +283,7 @@ const NavItem = styled(Link)`
   
   span {
     margin-${props => props.$isRTL ? 'right' : 'left'}: 0.8rem;
-    font-weight: ${props => props.isActive ? '600' : '400'};
+    font-weight: ${props => props.$isActive ? '600' : '400'};
     display: ${props => (props.$collapsed ? 'none' : 'inline')};
     
     @media (max-width: 768px) {
@@ -298,14 +299,14 @@ const NavItem = styled(Link)`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-${props => props.isRTL ? 'right' : 'left'}: none;
+    border-${props => props.$isRTL ? 'right' : 'left'}: none;
     border-radius: 8px;
-    border-bottom: ${props => props.isActive || props.isHighlighted ? '3px solid #faaa93' : '3px solid transparent'};
+    border-bottom: ${props => props.$isActive || props.$isHighlighted ? '3px solid #faaa93' : '3px solid transparent'};
     margin: 0.2rem;
     min-width: 80px;
     
     &:hover {
-      border-${props => props.isRTL ? 'right' : 'left'}: none;
+      border-${props => props.$isRTL ? 'right' : 'left'}: none;
       border-bottom: 3px solid #faaa93;
     }
   }
@@ -319,7 +320,7 @@ const IconWrapper = styled.div`
   justify-content: center;
   font-size: 1.2rem;
   min-width: 24px;
-  color: ${props => props.isActive ? '#faaa93' : 'inherit'};
+  color: ${props => props.$isActive ? '#faaa93' : 'inherit'};
   
   @media (max-width: 768px) {
     margin: 0;
