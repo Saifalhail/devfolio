@@ -12,6 +12,7 @@ import { colors, spacing, borderRadius, shadows, transitions, typography } from 
  * @param {number} props.maxLength - Maximum character length
  * @param {boolean} props.isRTL - Whether the text direction is right-to-left
  * @param {Object} props.customStyles - Custom styles to apply to the textarea
+ * @param {boolean} props.hideCharCount - Whether to hide the character counter
  */
 const ExpandableTextarea = ({ 
   value = '', 
@@ -19,7 +20,8 @@ const ExpandableTextarea = ({
   placeholder = '', 
   maxLength = 500,
   isRTL = false,
-  customStyles = {}
+  customStyles = {},
+  hideCharCount = false
 }) => {
   const [charCount, setCharCount] = useState(0);
   
@@ -44,9 +46,11 @@ const ExpandableTextarea = ({
         isRTL={isRTL}
         rows={3}
       />
-      <CharacterCounter isRTL={isRTL}>
-        {charCount}/{maxLength}
-      </CharacterCounter>
+      {!hideCharCount && (
+        <CharacterCounter isRTL={isRTL}>
+          {charCount}/{maxLength}
+        </CharacterCounter>
+      )}
     </TextareaContainer>
   );
 };

@@ -22,6 +22,7 @@ const TextInput = ({
   minLength = 0, 
   required = false,
   style = {},
+  hideCharCount = false,
   ...props 
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -72,7 +73,7 @@ const TextInput = ({
           {isValid ? <FaCheck /> : <FaExclamationTriangle />}
         </ValidationIcon>
       )}
-      {maxLength > 0 && (
+      {maxLength > 0 && !hideCharCount && (
         <CharacterCount isNearLimit={value.length > maxLength * 0.8}>
           {value.length}/{maxLength}
         </CharacterCount>
