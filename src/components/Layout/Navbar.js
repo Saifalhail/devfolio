@@ -130,7 +130,7 @@ const Navbar = ({ showUserAccount }) => {
       </NavContainer>
       
       {/* Desktop: Logo in corner */}
-      <LogoWrapper $isRTL={isRTL} isDashboard={isDashboard}>
+      <LogoWrapper $isRTL={isRTL} $isDashboard={isDashboard}>
         <Logo to="/">
           <LogoText>
             <span style={{ direction: 'ltr', display: 'inline-block' }} data-component-name="Navbar">

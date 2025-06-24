@@ -28,11 +28,27 @@ export interface Post {
   tags: string[];
   likes: number;
   likedBy: string[];
-  commentCount: number;
-  imageURL?: string;
-  views: number;
-  isPinned?: boolean;
-  isLocked?: boolean;
+}
+
+export interface Mockup {
+  id: string;
+  title: string;
+  description: string;
+  imageURL: string;
+  userId: number;
+  userName: string;
+  createdAt: Date | string;
+  commentCount?: number;
+  views?: number;
+}
+
+export interface MockupComment {
+  id: string;
+  mockupId: string;
+  commentText: string;
+  userId: number;
+  userName: string;
+  createdAt: Date | string;
 }
 
 export interface ForumState {

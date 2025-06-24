@@ -263,7 +263,8 @@ const MenuDropdown = styled.div`
   position: absolute;
   top: 100%;
   ${props => props.isRTL ? 'left: 0;' : 'right: 0;'}
-  background: white;
+  background: var(--clr-glass);
+  backdrop-filter: blur(6px);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 100;

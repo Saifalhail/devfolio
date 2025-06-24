@@ -311,18 +311,7 @@ const Dashboard = () => {
       
       <NavbarArea>
         <NavbarContent>
-          <MenuIconWrapper
-            as="button"
-            type="button"
-            aria-label={t('dashboard.toggleSidebar', 'Toggle sidebar')}
-            aria-expanded={sidebarOpen}
-            data-testid="menu-toggle"
-            $isRTL={isRTL}
-            onClick={toggleSidebar}
-          >
-            <FaBars aria-hidden="true" />
-          </MenuIconWrapper>
-          <Navbar hideMenu={true} />
+          <Navbar hideMenu={true} style={{ width: '100%' }} />
         </NavbarContent>
       </NavbarArea>
       
@@ -612,13 +601,17 @@ const DashboardPage = styled.div`
 `;
 
 const NavbarArea = styled.div`
-  width: 100%;
+  width: 100vw;
   height: 70px;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
+  background: linear-gradient(180deg, #1a1a22 0%, #161620 100%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  margin: 0;
+  padding: 0;
   
   @media (max-width: 768px) {
     height: 60px;
@@ -631,6 +624,14 @@ const NavbarContent = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
+  max-width: 100vw;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+  
+  & > * {
+    width: 100%;
+  }
 `;
 
 const DashboardBody = styled.div`
@@ -665,7 +666,7 @@ const SidebarArea = styled.div`
   @media (max-width: 768px) {
     top: 60px; /* Adjust for mobile navbar */
     height: calc(100vh - 60px);
-    box-shadow: ${props => props.isOpen ? '0 5px 15px rgba(0, 0, 0, 0.3)' : 'none'};
+    box-shadow: ${props => props.$isOpen ? '0 5px 15px rgba(0, 0, 0, 0.3)' : 'none'};
     z-index: 1001;
   }
 `;

@@ -175,11 +175,7 @@ const ButtonContainer = styled.div`
   justify-content: flex-end;
 `;
 
-const SubmitButton = styled.button`
-  background: linear-gradient(135deg, #82a1bf 0%, #513a52 100%);
-  border: none;
-  border-radius: 8px;
-  color: white;
+const SubmitButton = styled.button.attrs({ className: 'btn-outline-accent' })`
   padding: 0.6rem 1.25rem;
   font-weight: 500;
   cursor: pointer;
@@ -187,7 +183,6 @@ const SubmitButton = styled.button`
   
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
   &:disabled {

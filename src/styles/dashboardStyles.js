@@ -29,7 +29,8 @@ export const BaseContainer = styled.div`
 
 // Base Card - Foundation for card-like elements
 export const BaseCard = styled.div`
-  background: linear-gradient(145deg, #1c1c24, #1e1e28);
+  background: var(--clr-glass);
+  backdrop-filter: blur(6px);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);

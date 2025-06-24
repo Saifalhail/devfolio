@@ -26,6 +26,7 @@ const GlobalStyles = createGlobalStyle`
     --card-bg: rgba(35, 38, 85, 0.6);
     --card-gradient: linear-gradient(to bottom, rgba(55, 42, 99, 0.7) 0%, rgba(37, 38, 89, 0.8) 100%);
     --overlay: rgba(18, 20, 44, 0.8);
+    --clr-glass: rgba(35, 38, 85, 0.6);
   }
 
   * {

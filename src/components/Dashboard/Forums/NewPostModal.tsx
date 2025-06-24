@@ -5,6 +5,7 @@ import { createPost, uploadImage } from '../../../firebase/services/forums';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Post } from '../../../firebase/services/forums';
 import { FaTimes, FaPlus, FaHashtag, FaTag, FaImage, FaUpload } from 'react-icons/fa';
+import { FiSend } from 'react-icons/fi';
 import CustomScrollbar from '../../Common/CustomScrollbar';
 
 // Import the components dynamically with proper typing
@@ -225,8 +226,9 @@ const NewPostModal = ({ onClose, onSubmit, modalTitle }: NewPostModalProps) => {
               type="submit" 
               disabled={loading || !title.trim() || !content.trim()}
               aria-label="Submit post"
+              className="btn-outline-accent rounded-lg gap-2"
             >
-              {loading ? 'Posting...' : 'Post'}
+              <FiSend aria-label="Publish post" /> {loading ? 'Posting...' : 'Publish'}
             </SubmitButton>
           </ButtonGroup>
         </Form>
@@ -726,39 +728,20 @@ const CancelButton = styled(Button)<ButtonProps>`
   }
 `;
 
-const SubmitButton = styled(Button)<ButtonProps>`
-  background: linear-gradient(135deg, #cd3efd, #7b2cbf);
-  border: none;
-  color: white;
-  box-shadow: 0 4px 10px rgba(123, 44, 191, 0.3);
-  position: relative;
-  overflow: hidden;
+const SubmitButton = styled(Button).attrs({ className: 'btn-outline-accent' })<ButtonProps>`
+  border-radius: 8px;
+  font-size: 1rem;
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: all 0.6s ease;
-  }
+  /* We're using the global btn-outline-accent class for styling */
+  /* Only add specific overrides if needed */
   
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(123, 44, 191, 0.5);
-    
-    &::before {
-      left: 100%;
-    }
-  }
-  
-  &:active:not(:disabled) {
-    transform: translateY(1px);
-    box-shadow: 0 2px 5px rgba(123, 44, 191, 0.4);
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 `;
+
 
 const ErrorMessage = styled.div`
   background: rgba(255, 0, 0, 0.1);

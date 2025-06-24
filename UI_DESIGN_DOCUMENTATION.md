@@ -758,3 +758,52 @@ The Modal component has been enhanced to improve reusability, mobile responsiven
   {/* Modal content */}
 </Modal>
 ```
+
+---
+
+## 📌 Forums & Mockups Addendum (June 2025)
+
+> *This section documents **only** the extra tokens, layout rules, and component patterns introduced by the new Forums page.  
+> Everything else continues to follow the primary DevFolio design system above.*
+
+### 1 · Additional Color Tokens  
+| Token | Hex | Purpose |
+|-------|-----|----------|
+| `--clr-forum-accent` | `#CBBC9F` | Highlight for discussion headings, mockup card borders, "Send" buttons |
+| `--clr-forum-glass`  | `rgba(255,255,255,0.04)` | Glassy card fill on dark panels |
+| `--clr-forum-backdrop` | `rgba(0,0,0,0.65)` | Modal backdrop |
+
+> **Note:** These tokens **layer on top** of the primary palette. They are *not* global replacements. Use them **only inside Forums components** (scope via CSS module / styled-component `Forums*`).
+
+### 2 · Layout Rules  
+| Breakpoint | Discussion | Mockups |
+|------------|------------|----------|
+| **Desktop ≥ 1024 px** | Occupies left 50% (single column) | Right 50% grid (3 cols) |
+| **Tablet ≥ 640 px**   | Stacked ↕; Discussion first | Grid collapses to 2 cols |
+| **Mobile < 640 px**   | Full-width accordion | Full-width grid (1 col) |
+
+*Gutters remain DevFolio standard (`gap-6`).*
+
+### 3 · Component Specs
+
+| Component | Key Styles | Interaction |
+|-----------|------------|-------------|
+| **MockupCard** | `card-glass` mix-in, border `2px solid transparent`, `hover:border-[var(--clr-forum-accent)]`, img radius `8px` | Entire card is a button; activates modal |
+| **MockupModal** | Backdrop `var(--clr-forum-backdrop)`, panel uses `card-glass` + `p-6` | `fadeIn` + scale `0.95→1` over 200 ms |
+| **CommentRow** | Flex left/right, bubble bg `--clr-forum-accent/20` (self) or `#ffffff14` (others) | On hover, show timestamp (`opacity` 0→1) |
+| **DiscussionAccordion** | Card border accent on hover, expands with `max-height` transition | Arrow icon rotates `0→90 deg` |
+
+### 4 · Animation Map  
+| Name | From → To | Usage |
+|------|-----------|-------|
+| `forumFade` | `opacity:0 → 1` | Modal backdrop |
+| `forumSlideUp` | `translateY(8px) → 0` + `opacity 0→1` | MockupCard on first render |
+| `forumPulse` | `scale 1 → 1.05 → 1` | "Send" button hover |
+
+*(Durations inherit DevFolio's `transitions.fast` ≈ 200 ms.)*
+
+### 5 · Accessibility & RTL  
+* Mirrors DevFolio guidelines:  
+  * All icon-only buttons have `aria-label`.  
+  * Modal traps focus; closes on **Esc**.  
+  * RTL: flex directions flip; arrow rotations reversed.*
