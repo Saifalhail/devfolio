@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { colors, spacing, borderRadius, shadows, transitions, typography } from '../../../styles/GlobalTheme';
+// Import removed to fix undefined error
 
 /**
  * ExpandableTextarea - An auto-resizing textarea component with character counter
@@ -38,17 +38,17 @@ const ExpandableTextarea = ({
   };
   
   return (
-    <TextareaContainer isRTL={isRTL} style={customStyles}>
+    <TextareaContainer $isRTL={isRTL} style={customStyles}>
       <StyledTextarea 
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
-        isRTL={isRTL}
+        $isRTL={isRTL}
         rows={3}
       />
       {!hideCharCount && (
-        <CharacterCounter isRTL={isRTL}>
-          {charCount}/{maxLength}
+        <CharacterCounter $isRTL={isRTL}>
+          <span>{charCount}</span> / <span>{maxLength}</span>
         </CharacterCounter>
       )}
     </TextareaContainer>
@@ -59,43 +59,57 @@ const ExpandableTextarea = ({
 const TextareaContainer = styled.div`
   position: relative;
   width: 100%;
-  margin-bottom: ${spacing.sm};
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  margin-bottom: 1rem; /* Hardcoded value instead of spacing.md */
 `;
 
 const StyledTextarea = styled.textarea`
   width: 100%;
   min-height: 120px;
-  padding: ${spacing.md};
+  padding: 1rem; /* Hardcoded value instead of spacing.md */
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: ${borderRadius.md};
-  background-color: ${colors.background.secondary};
-  color: ${colors.text.primary};
-  font-size: ${props => props.isRTL ? '1.05rem' : '1rem'};
+  border-radius: 8px; /* Hardcoded value instead of borderRadius.md */
+  font-family: inherit;
+  font-size: 1rem;
   line-height: 1.5;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
   resize: vertical;
   transition: all 0.3s ease;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   
   &:focus {
     outline: none;
-    border-color: ${colors.accent.primary};
+    border-color: #cd3efd;
     box-shadow: 0 0 0 2px rgba(205, 62, 253, 0.2);
   }
   
   &::placeholder {
-    color: ${colors.text.muted};
-    opacity: 0.7;
+    color: #999999;
+  }
+  
+  /* Customize scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
   }
 `;
 
 const CharacterCounter = styled.div`
   position: absolute;
   bottom: 8px;
-  ${props => props.isRTL ? 'left' : 'right'}: 16px;
+  ${props => props.$isRTL ? 'left: 16px;' : 'right: 16px;'}
   font-size: 0.8rem;
-  color: ${colors.text.secondary};
+  color: #cccccc;
   user-select: none;
 `;
 

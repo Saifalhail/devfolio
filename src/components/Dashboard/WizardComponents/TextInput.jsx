@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaCheck, FaExclamationTriangle } from 'react-icons/fa';
-import { colors, spacing, borderRadius, shadows, typography, transitions } from '../../../styles/GlobalTheme';
+// Import removed to fix undefined error
 
 /**
  * TextInput - A styled text input component with validation
@@ -54,27 +54,33 @@ const TextInput = ({
   };
 
   return (
-    <InputContainer style={style}>
+    <InputContainer>
       <StyledInput
         type="text"
         value={value}
         onChange={handleChange}
         onFocus={() => setIsFocused(true)}
-        onBlur={handleBlur}
+        onBlur={() => {
+          setIsFocused(false);
+          setShowValidation(true);
+        }}
         placeholder={placeholder}
         maxLength={maxLength}
-        isValid={isValid}
-        isFocused={isFocused}
-        showValidation={showValidation}
+        $isFocused={isFocused}
+        $isValid={isValid}
+        $showValidation={showValidation}
+        style={style}
         {...props}
       />
+      
       {showValidation && (
-        <ValidationIcon isValid={isValid}>
+        <ValidationIcon $isValid={isValid}>
           {isValid ? <FaCheck /> : <FaExclamationTriangle />}
         </ValidationIcon>
       )}
-      {maxLength > 0 && !hideCharCount && (
-        <CharacterCount isNearLimit={value.length > maxLength * 0.8}>
+      
+      {!hideCharCount && maxLength > 0 && (
+        <CharacterCount $isNearLimit={value.length > maxLength * 0.8}>
           {value.length}/{maxLength}
         </CharacterCount>
       )}
@@ -89,23 +95,23 @@ const InputContainer = styled.div`
 
 const StyledInput = styled.input`
   width: 100%;
-  padding: ${spacing.md};
-  font-size: ${typography.fontSizes.md};
+  padding: 1rem;
+  font-size: 1rem;
   background: rgba(255, 255, 255, 0.05);
-  color: ${colors.text.primary};
+  color: #ffffff;
   border: 2px solid ${props => {
-    if (!props.showValidation) return 'rgba(255, 255, 255, 0.1)';
-    return props.isValid ? 'rgba(39, 174, 96, 0.5)' : 'rgba(231, 76, 60, 0.5)';
+    if (!props.$showValidation) return 'rgba(255, 255, 255, 0.1)';
+    return props.$isValid ? 'rgba(39, 174, 96, 0.5)' : 'rgba(231, 76, 60, 0.5)';
   }};
-  border-radius: ${borderRadius.md};
-  transition: all ${transitions.fast};
+  border-radius: 8px;
+  transition: all 0.2s ease;
   outline: none;
-  box-shadow: ${props => props.isFocused ? shadows.sm : 'none'};
+  box-shadow: ${props => props.$isFocused ? '0 2px 4px rgba(0, 0, 0, 0.1)' : 'none'};
   
   &:focus {
     border-color: rgba(74, 108, 247, 0.5);
     background: rgba(255, 255, 255, 0.07);
-    box-shadow: ${shadows.sm};
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
   }
   
@@ -121,10 +127,10 @@ const StyledInput = styled.input`
 
 const ValidationIcon = styled.div`
   position: absolute;
-  right: ${spacing.md};
+  right: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: ${props => props.isValid ? '#27ae60' : '#e74c3c'};
+  color: ${props => props.$isValid ? '#27ae60' : '#e74c3c'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,21 +138,21 @@ const ValidationIcon = styled.div`
   /* RTL Support */
   [dir="rtl"] & {
     right: auto;
-    left: ${spacing.md};
+    left: 1rem;
   }
 `;
 
 const CharacterCount = styled.div`
   position: absolute;
-  right: ${spacing.md};
-  bottom: -${spacing.md};
-  font-size: ${typography.fontSizes.xs};
-  color: ${props => props.isNearLimit ? '#e74c3c' : 'rgba(255, 255, 255, 0.5)'};
+  right: 1rem;
+  bottom: -1rem;
+  font-size: 0.75rem;
+  color: ${props => props.$isNearLimit ? '#e74c3c' : 'rgba(255, 255, 255, 0.5)'};
   
   /* RTL Support */
   [dir="rtl"] & {
     right: auto;
-    left: ${spacing.md};
+    left: 1rem;
   }
 `;
 

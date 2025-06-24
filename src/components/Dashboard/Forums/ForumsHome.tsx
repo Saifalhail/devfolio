@@ -1,26 +1,40 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { collection, getDocs, query, orderBy, limit, where, doc, getDoc, updateDoc, increment } from 'firebase/firestore';
-import { firestore as db } from '../../../firebase/config';
-import { Post, Comment } from './types';
+import { FaPlus, FaSearch, FaFilter, FaComment, FaEye, FaThumbsUp, FaArrowLeft } from 'react-icons/fa';
+import { collection, query, orderBy, getDocs, doc, getDoc, updateDoc, increment, addDoc } from 'firebase/firestore';
+import { firestore } from '../../../firebase/config';
+import { getAllPosts, getPostById, Post as ServicePost } from '../../../firebase/services/forums';
+import { useAuth } from '../../../contexts/AuthContext';
+import { Comment } from './types';
 import NewPostModal from './NewPostModal';
 import CommentBox from './CommentBox';
-import { useAuth } from '../../../contexts/AuthContext';
-import { FaEye, FaThumbsUp, FaComment, FaArrowLeft, FaPlus } from 'react-icons/fa';
+import MockupGallery from './MockupGallery';
+
+// Extended Post type for UI display that includes UI-specific fields
+interface UIPost extends ServicePost {
+  content?: string; // Optional legacy field that maps to body
+  body: string; // Content of the post
+  user: { displayName: string; photoURL: string; email: string };
+  tags?: string[];
+  likes?: number;
+  likedBy?: string[];
+  commentCount?: number;
+  views?: number;
+}
 
 const ForumsHome = () => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<UIPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isNewPostModalOpen, setNewPostModalOpen] = useState(false);
-  const [activeTag, setActiveTag] = useState(null);
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [comments, setComments] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isNewPostModalOpen, setIsNewPostModalOpen] = useState(false);
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [selectedPost, setSelectedPost] = useState<UIPost | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
-  const [commentsError, setCommentsError] = useState(null);
+  const [commentsError, setCommentsError] = useState<string | null>(null);
   const isRTL = i18n.language === 'ar';
 
   const popularTags = ['react', 'javascript', 'design', 'firebase', 'mobile', 'web'];
@@ -28,49 +42,58 @@ const ForumsHome = () => {
   const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
-      let postsQuery;
-      if (activeTag) {
-        postsQuery = query(
-          collection(db, 'posts'),
-          where('tags', 'array-contains', activeTag),
-          orderBy('createdAt', 'desc'),
-          limit(20)
-        );
-      } else {
-        postsQuery = query(
-          collection(db, 'posts'),
-          orderBy('createdAt', 'desc'),
-          limit(20)
-        );
-      }
-
-      const snapshot = await getDocs(postsQuery);
-      const fetchedPosts = snapshot.docs.map(doc => {
-        const data = doc.data() as Post;
+      
+      // Use the getAllPosts service function
+      const fetchedPosts = await getAllPosts();
+      
+      // Filter by tag if activeTag is set
+      const filteredPosts = activeTag 
+        ? fetchedPosts.filter(post => {
+            // Safely check if post has tags and if it includes activeTag
+            // Since tags is not in the ServicePost type, we use a type assertion
+            const postWithTags = post as any;
+            return Array.isArray(postWithTags.tags) && postWithTags.tags.includes(activeTag);
+          })
+        : fetchedPosts;
+      
+      // Map the posts to match the expected format in the UI
+      const formattedPosts: UIPost[] = filteredPosts.map(post => {
+        // Since tags is not in the ServicePost type, we use a type assertion
+        const postWithTags = post as any;
+        
         return {
-          id: doc.id,
-          title: data.title,
-          content: data.content,
-          userId: data.userId,
-          user: data.user,
-          createdAt: data.createdAt,
-          tags: data.tags,
-          likes: data.likes,
-          likedBy: data.likedBy,
-          commentCount: data.commentCount,
-          views: data.views,
-          imageURL: data.imageURL,
+          id: post.id || '',
+          title: post.title,
+          body: post.body || '', // Keep the body field for new UI
+          content: post.body, // Keep content for backward compatibility
+          userId: post.userId,
+          userName: post.userName,
+          createdAt: post.createdAt,
+          // Create a user object from userName
+          user: { 
+            displayName: post.userName || 'Anonymous', 
+            photoURL: '', 
+            email: '' 
+          },
+          // Add UI-specific fields with default values
+          tags: Array.isArray(postWithTags.tags) ? postWithTags.tags : [],
+          likes: 0,
+          likedBy: [],
+          commentCount: 0,
+          views: 0,
+          imageURL: post.imageURL || ''
         };
       });
-      setPosts(fetchedPosts);
+      
+      setPosts(formattedPosts);
       setError(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching posts:', err);
-      setError(t('forums.errorFetchingPosts'));
+      setError(err.message || 'Error fetching posts');
     } finally {
       setLoading(false);
     }
-  }, [activeTag, t]);
+  }, [activeTag]);
 
   useEffect(() => {
     fetchPosts();
@@ -79,59 +102,133 @@ const ForumsHome = () => {
   const handlePostClick = async (postId: string) => {
     try {
       setCommentsLoading(true);
-      const postRef = doc(db, 'posts', postId);
-      const postDoc = await getDoc(postRef);
-
-      if (postDoc.exists()) {
-        const postDocData = postDoc.data() as Post;
-        const postData = {
-          id: postDoc.id,
-          title: postDocData.title,
-          content: postDocData.content,
-          userId: postDocData.userId,
-          user: postDocData.user,
-          createdAt: postDocData.createdAt,
-          tags: postDocData.tags,
-          likes: postDocData.likes,
-          likedBy: postDocData.likedBy,
-          commentCount: postDocData.commentCount,
-          views: postDocData.views,
+      console.log('Fetching post details for ID:', postId);
+      
+      // Use the forums service to get the post
+      const post = await getPostById(postId);
+      console.log('Retrieved post data:', post);
+      
+      if (post) {
+        // Create a UI-compatible post object with safe defaults for missing fields
+        const postData: UIPost = {
+          id: post.id || '',
+          title: post.title,
+          body: post.body || '', // Required field for UIPost
+          content: post.body, // Keep for backward compatibility
+          userId: post.userId,
+          userName: post.userName,
+          user: {
+            displayName: post.userName || 'Anonymous',
+            photoURL: '',
+            email: ''
+          },
+          createdAt: post.createdAt,
+          tags: [], // Default empty array since we don't have tags in Firestore
+          likes: 0, // Default values for UI
+          likedBy: [],
+          commentCount: 0,
+          views: 0,
+          imageURL: post.imageURL || ''
         };
-        setSelectedPost(postData);
-
-        await updateDoc(postRef, { views: increment(1) });
-
+        
+        console.log('Mapped post data for UI:', postData);
+        
+        // Fetch comments for this post
         const commentsQuery = query(
-          collection(db, 'comments'),
-          where('postId', '==', postId),
+          collection(firestore, `forumsPosts/${postId}/comments`),
           orderBy('createdAt', 'desc')
         );
-
+        
         const commentsSnapshot = await getDocs(commentsQuery);
-        const fetchedComments = commentsSnapshot.docs.map(doc => {
-          const data = doc.data() as Comment;
-          return {
-            id: doc.id,
-            postId: data.postId,
-            userId: data.userId,
-            user: data.user,
-            content: data.content,
-            createdAt: data.createdAt,
-            likes: data.likes,
-            likedBy: data.likedBy,
-          };
-        });
-
+        const fetchedComments = commentsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Comment[];
+        
+        console.log('Fetched comments:', fetchedComments.length);
+        
+        try {
+          // Update view count in Firestore - wrapped in try/catch in case this fails
+          const postRef = doc(firestore, 'forumsPosts', postId);
+          await updateDoc(postRef, {
+            views: increment(1)
+          });
+          console.log('Updated view count in Firestore');
+        } catch (viewErr) {
+          console.error('Error updating view count:', viewErr);
+          // Continue execution even if this fails
+        }
+        
+        // Update the post with the latest data and increment view locally
+        const updatedPost: UIPost = {
+          ...postData,
+          views: (postData.views || 0) + 1
+        };
+        
+        setSelectedPost(updatedPost);
         setComments(fetchedComments);
-        setCommentsError(null);
+        setIsNewPostModalOpen(false);
       } else {
+        console.error('Post not found');
         setCommentsError(t('forums.postNotFound'));
       }
     } catch (err) {
       console.error('Error fetching post details:', err);
-      setCommentsError(t('forums.errorFetchingPost'));
+      setCommentsError(t('forums.errorFetchingComments'));
     } finally {
       setCommentsLoading(false);
+    }
+  };
+
+  const handleAddComment = async (content: string) => {
+    if (!selectedPost || !currentUser) return;
+
+    try {
+      const commentData = {
+        postId: selectedPost.id,
+        userId: currentUser.uid,
+        user: {
+          displayName: currentUser.displayName || 'Anonymous',
+          photoURL: currentUser.photoURL || '',
+          email: currentUser.email || '',
+        },
+        content,
+        createdAt: new Date(),
+        likes: 0,
+        likedBy: [],
+      };
+
+      // Add comment to the post's comments subcollection
+      const commentsCollection = collection(firestore, `forumsPosts/${selectedPost.id}/comments`);
+      await addDoc(commentsCollection, commentData);
+
+      // Update comment count on post
+      const postRef = doc(firestore, 'forumsPosts', selectedPost.id);
+      await updateDoc(postRef, { commentCount: increment(1) });
+
+      // Refresh comments
+      const commentsQuery = query(
+        collection(firestore, `forumsPosts/${selectedPost.id}/comments`),
+        orderBy('createdAt', 'desc')
+      );
+
+      const commentsSnapshot = await getDocs(commentsQuery);
+      const fetchedComments = commentsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Comment[];
+
+      setComments(fetchedComments);
+
+      // Update local post data
+      if (selectedPost) {
+        setSelectedPost({
+          ...selectedPost,
+          commentCount: selectedPost.commentCount + 1,
+        });
+      }
+    } catch (err) {
+      console.error('Error adding comment:', err);
     }
   };
 
@@ -139,45 +236,91 @@ const ForumsHome = () => {
     setSelectedPost(null);
     setComments([]);
   };
+  
+  const handleLikeComment = async (commentId: string) => {
+    if (!currentUser || !selectedPost) return;
+
+    try {
+      const commentRef = doc(firestore, `forumsPosts/${selectedPost.id}/comments`, commentId);
+      const commentDoc = await getDoc(commentRef);
+
+      if (commentDoc.exists()) {
+        const commentData = commentDoc.data() as Comment;
+        const isLiked = commentData.likedBy?.includes(currentUser.uid);
+
+        if (isLiked) {
+          // Unlike
+          await updateDoc(commentRef, {
+            likes: increment(-1),
+            likedBy: commentData.likedBy.filter(uid => uid !== currentUser.uid)
+          });
+        } else {
+          // Like
+          await updateDoc(commentRef, {
+            likes: increment(1),
+            likedBy: [...(commentData.likedBy || []), currentUser.uid]
+          });
+        }
+
+        // Refresh comments
+        setComments(comments.map(comment => {
+          if (comment.id === commentId) {
+            return {
+              ...comment,
+              likes: isLiked ? comment.likes - 1 : comment.likes + 1,
+              likedBy: isLiked
+                ? comment.likedBy.filter(uid => uid !== currentUser.uid)
+                : [...comment.likedBy, currentUser.uid]
+            };
+          }
+          return comment;
+        }));
+      }
+    } catch (err) {
+      console.error('Error liking/unliking comment:', err);
+    }
+  };
 
   const handleLikePost = async () => {
     if (!selectedPost || !currentUser) return;
 
     try {
-      const postRef = doc(db, 'posts', selectedPost.id);
-      const hasLiked = selectedPost.likedBy?.includes(currentUser.uid);
-
-      if (hasLiked) {
+      const postRef = doc(firestore, 'forumsPosts', selectedPost.id);
+      
+      if (selectedPost.likedBy.includes(currentUser.uid)) {
+        // Unlike the post
         await updateDoc(postRef, {
           likes: increment(-1),
-          likedBy: selectedPost.likedBy.filter(id => id !== currentUser.uid)
+          likedBy: selectedPost.likedBy.filter(uid => uid !== currentUser.uid)
         });
+
         setSelectedPost({
           ...selectedPost,
-          likes: (selectedPost.likes || 1) - 1,
-          likedBy: selectedPost.likedBy.filter(id => id !== currentUser.uid)
+          likes: selectedPost.likes - 1,
+          likedBy: selectedPost.likedBy.filter(uid => uid !== currentUser.uid)
         });
       } else {
-        const newLikedBy = [...(selectedPost.likedBy || []), currentUser.uid];
+        // Like the post
         await updateDoc(postRef, {
           likes: increment(1),
-          likedBy: newLikedBy
+          likedBy: [...selectedPost.likedBy, currentUser.uid]
         });
+
         setSelectedPost({
           ...selectedPost,
-          likes: (selectedPost.likes || 0) + 1,
-          likedBy: newLikedBy
+          likes: selectedPost.likes + 1,
+          likedBy: [...selectedPost.likedBy, currentUser.uid]
         });
       }
     } catch (err) {
-      console.error('Error updating like:', err);
+      console.error('Error liking/unliking post:', err);
     }
   };
 
   const handleNewComment = (newComment: Comment) => {
     setComments([newComment, ...comments]);
     if (selectedPost) {
-        const postRef = doc(db, 'posts', selectedPost.id);
+        const postRef = doc(firestore, 'forumsPosts', selectedPost.id);
         updateDoc(postRef, { commentCount: increment(1) });
         setSelectedPost({
             ...selectedPost,
@@ -242,77 +385,99 @@ const ForumsHome = () => {
   return (
     <ForumsContainer $isRTL={isRTL}>
       <ForumsHeader>
-        <h1>{t('forums.title')}</h1>
-        <NewPostButton onClick={() => setNewPostModalOpen(true)} >
-          {t('forums.newPost')}
-        </NewPostButton>
+        <h1>Forums</h1>
       </ForumsHeader>
-
-      <TagsContainer>
-        {popularTags.map(tag => (
-          <TagPill
-            key={tag}
-            $active={activeTag === tag}
-            onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-          >
-            #{tag}
-          </TagPill>
-        ))}
-      </TagsContainer>
-
-      {loading ? (
-        <LoadingContainer>
-          <div>{t('common.loading')}</div>
-        </LoadingContainer>
-      ) : error ? (
-        <ErrorContainer>
-          <div>{error}</div>
-        </ErrorContainer>
-      ) : (
-        <PostsGrid>
-          {posts.length > 0 ? (
-            posts.map(post => (
-              <PostCard key={post.id} onClick={() => handlePostClick(post.id)}>
-                {post.imageURL && <PostThumbnail src={post.imageURL} alt={post.title} />}
-                <PostCardContent>
-                  <PostTitle>{post.title}</PostTitle>
-                  <PostContent>{post.content ? post.content.substring(0, 100) + '...' : (post.body ? post.body.substring(0,100)+'...' : '')}</PostContent>
-                  <PostMeta>
-                    <Avatar src={post.user?.photoURL} alt={post.user?.displayName} />
-                    <span>{post.user.displayName}</span>
-                    <PostStats>
-                      <StatItem>
-                        <FaEye /> {post.views || 0}
-                      </StatItem>
-                      <StatItem>
-                        <FaThumbsUp /> {post.likes || 0}
-                      </StatItem>
-                      <StatItem>
-                        <FaComment /> {post.commentCount || 0}
-                      </StatItem>
-                    </PostStats>
-                  </PostMeta>
-                </PostCardContent>
-              </PostCard>
-            ))
+      
+      <ForumsLayout>
+        <LeftColumn>
+          <DiscussionHeader>
+            <h2>Discussion Forum</h2>
+            <NewPostButton onClick={() => setIsNewPostModalOpen(true)}>
+              <FaPlus />
+              Add Post
+            </NewPostButton>
+          </DiscussionHeader>
+          {loading ? (
+            <LoadingContainer>
+              <div>{t('common.loading')}</div>
+            </LoadingContainer>
+          ) : error ? (
+            <ErrorContainer>
+              <div>{error}</div>
+            </ErrorContainer>
           ) : (
-            <p>{t('forums.noPosts')}</p>
+            <PostsGrid>
+              {posts.length > 0 ? (
+                posts.map(post => (
+                  <PostCard key={post.id} onClick={() => handlePostClick(post.id || '')}>
+                    {post.imageURL && <PostThumbnail src={post.imageURL} alt={post.title} />}
+                    <PostCardContent>
+                      <PostTitle>{post.title}</PostTitle>
+                      <PostContent>{post.body ? (post.body.substring(0, 100) + (post.body.length > 100 ? '...' : '')) : ''}</PostContent>
+                      <PostMeta>
+                        <Avatar src={post.user?.photoURL || '/default-avatar.png'} alt={post.user?.displayName || 'User'} />
+                        <span>{post.user?.displayName || 'Anonymous'}</span>
+                        <PostStats>
+                          <StatItem>
+                            <FaEye /> {post.views || 0}
+                          </StatItem>
+                          <StatItem>
+                            <FaThumbsUp /> {post.likes || 0}
+                          </StatItem>
+                          <StatItem>
+                            <FaComment /> {post.commentCount || 0}
+                          </StatItem>
+                        </PostStats>
+                      </PostMeta>
+                    </PostCardContent>
+                  </PostCard>
+                ))
+              ) : (
+                <p>{t('forums.noPosts')}</p>
+              )}
+            </PostsGrid>
           )}
-        </PostsGrid>
-      )}
+        </LeftColumn>
+        
+        <RightColumn>
+          <MockupGallery onAddMockup={() => setIsNewPostModalOpen(true)} />
+        </RightColumn>
+      </ForumsLayout>
 
       {isNewPostModalOpen && (
         <NewPostModal
-          onClose={() => setNewPostModalOpen(false)}
-          onSubmit={() => {
-            setNewPostModalOpen(false);
-            fetchPosts();
+          onClose={() => setIsNewPostModalOpen(false)}
+          modalTitle="Add New Content"
+          onSubmit={(newPost: any) => {
+            // Add the new post to the posts array to avoid an extra fetch
+            const uiPost: UIPost = {
+              id: newPost.id,
+              title: newPost.title,
+              body: newPost.body || '', // Required field for UIPost
+              content: newPost.body, // Keep for backward compatibility
+              userId: newPost.userId,
+              userName: newPost.userName,
+              createdAt: newPost.createdAt,
+              imageURL: newPost.imageURL || '',
+              user: {
+                displayName: newPost.userName,
+                photoURL: '',
+                email: ''
+              },
+              tags: newPost.tags || [],
+              likes: 0,
+              likedBy: [],
+              commentCount: 0,
+              views: 0
+            };
+            setPosts([uiPost, ...posts]);
+            setIsNewPostModalOpen(false);
           }}
         />
       )}
 
       {/* Floating action button */}
-      <FloatingButton onClick={() => setNewPostModalOpen(true)}>
+      <FloatingButton onClick={() => setIsNewPostModalOpen(true)} title="Add New Post">
         <FaPlus />
       </FloatingButton>
     </ForumsContainer>
@@ -323,8 +488,16 @@ const ForumsContainer = styled.div<{ $isRTL?: boolean }>`
   direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   padding: 2rem;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.3s ease-in-out;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 `;
 
 const ForumsHeader = styled.div`
@@ -334,24 +507,37 @@ const ForumsHeader = styled.div`
   margin-bottom: 2rem;
   
   h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin: 0;
   }
 `;
 
 const NewPostButton = styled.button`
-  background-color: #82a1bf;
+  background: linear-gradient(135deg, #cd3efd, #7b2cbf);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(123, 44, 191, 0.3);
   
   &:hover {
-    background-color: #513a52;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(123, 44, 191, 0.5);
+  }
+  
+  &:active {
+    transform: translateY(1px);
   }
 `;
 
@@ -359,27 +545,36 @@ const FloatingButton = styled.button`
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  background-color: #faaa93;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
   width: 60px;
   height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #cd3efd, #7b2cbf);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
+  border: none;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(123, 44, 191, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   z-index: 100;
-  &:hover {
-    background-color: #513a52;
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  animation: pulse 2s infinite;
+  
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(205, 62, 253, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(205, 62, 253, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(205, 62, 253, 0); }
   }
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(123, 44, 191, 0.7);
+    animation: none;
+  }
+  
   &:active {
-    transform: translateY(-2px) scale(0.98);
+    transform: scale(0.95);
   }
 `;
 
@@ -391,67 +586,66 @@ const TagsContainer = styled.div`
 `;
 
 const TagPill = styled.div<{ $active?: boolean }>`
-  background-color: ${props => props.$active ? '#82a1bf' : '#f0f0f0'};
-  color: ${props => props.$active ? 'white' : '#333'};
-  border: 1px solid #ddd;
-  border-radius: 20px;
+  background-color: ${props => props.$active ? 'rgba(123, 44, 191, 0.8)' : 'rgba(123, 44, 191, 0.1)'};
+  color: ${props => props.$active ? 'white' : '#cd3efd'};
   padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  border: 1px solid ${props => props.$active ? 'rgba(255, 255, 255, 0.2)' : 'transparent'};
+  box-shadow: ${props => props.$active ? '0 4px 8px rgba(123, 44, 191, 0.3)' : 'none'};
   
   &:hover {
-    background-color: ${props => props.$active ? '#513a52' : '#e0e0e0'};
+    background-color: ${props => props.$active ? 'rgba(123, 44, 191, 0.9)' : 'rgba(123, 44, 191, 0.2)'};
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(1px);
   }
 `;
 
 const PostsGrid = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-height: calc(100vh - 250px);
-  overflow-y: auto;
-  padding-right: 0.5rem;
-  scrollbar-width: thin;
-  scrollbar-color: #82a1bf transparent;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.5s ease-in-out;
   
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background-color: #82a1bf;
-    border-radius: 6px;
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 `;
 
-
 const PostCard = styled.div`
-  background-color: white;
-  border-radius: 8px;
+  background: rgba(35, 38, 85, 0.4);
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
   display: flex;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  flex-direction: column;
+  
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: #82a1bf;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   }
 `;
 
 
 const PostThumbnail = styled.img`
-  width: 120px;
-  height: 120px;
+  width: 100%;
+  height: 180px;
   object-fit: cover;
   flex-shrink: 0;
+  transition: transform 0.3s ease;
 `;
 
 const PostCardContent = styled.div`
@@ -460,6 +654,7 @@ const PostCardContent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: rgba(35, 38, 85, 0.6);
 `;
 
 const Avatar = styled.img`
@@ -472,12 +667,13 @@ const Avatar = styled.img`
 const PostTitle = styled.h2`
   font-size: 1.25rem;
   margin: 0 0 0.5rem;
-  color: #333;
+  color: white;
+  font-weight: 600;
 `;
 
 const PostContent = styled.p`
   font-size: 0.875rem;
-  color: #666;
+  color: rgba(255, 255, 255, 0.7);
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -492,11 +688,12 @@ const PostMeta = styled.div`
   align-items: center;
   margin-top: 1rem;
   font-size: 0.75rem;
-  color: #999;
+  color: rgba(255, 255, 255, 0.7);
   
   span {
     margin-left: 0.5rem;
     font-weight: 500;
+    color: white;
   }
 `;
 
@@ -509,6 +706,12 @@ const StatItem = styled.div`
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    color: #cd3efd;
+  }
 `;
 
 const LoadingContainer = styled.div`
@@ -517,6 +720,18 @@ const LoadingContainer = styled.div`
   align-items: center;
   height: 200px;
   width: 100%;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  background: rgba(35, 38, 85, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  animation: pulse 1.5s infinite ease-in-out;
+  
+  @keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
 `;
 
 const ErrorContainer = styled.div`
@@ -525,7 +740,11 @@ const ErrorContainer = styled.div`
   align-items: center;
   padding: 2rem;
   text-align: center;
-  color: red;
+  color: #ff6b6b;
+  background: rgba(35, 38, 85, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 107, 107, 0.3);
 `;
 
 // Styled components for Post Details view
@@ -665,6 +884,66 @@ const NoCommentsMessage = styled.p`
   color: #888;
   text-align: center;
   padding: 2rem;
+`;
+
+
+
+// Two-column layout styled components
+const ForumsLayout = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+  animation: slideIn 0.5s ease-in-out;
+  
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const LeftColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background: rgba(35, 38, 85, 0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+`;
+
+const RightColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #cd3efd, #7b2cbf);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+const DiscussionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #cd3efd, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 `;
 
 export default ForumsHome;

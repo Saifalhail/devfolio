@@ -76,12 +76,39 @@ service cloud.firestore {
       allow create: if request.resource.data.name is string &&
                       request.resource.data.name.size() > 0 &&
                       request.resource.data.email is string &&
-                      request.resource.data.email.matches('^[^\s@]+@[^\s@]+\.[^\s@]+$') &&
                       request.resource.data.message is string &&
                       request.resource.data.message.size() > 0;
 
       // Only allow admin access to read submissions as recommended in FIREBASE_SETUP.md
       allow read, update, delete: if isAdmin();
+    }
+    
+    // Forums posts collection
+    match /forumsPosts/{postId} {
+      // Allow all users to read posts
+      allow read: if true;
+      
+      // Allow authenticated users to create posts
+      // Modified to allow both numeric userIds (legacy) and string userIds (Firebase Auth)
+      allow create: if isSignedIn();
+      
+      // Allow post owners to update/delete their posts
+      // For now, allow any authenticated user to update/delete posts
+      allow update, delete: if isSignedIn();
+      
+      // Allow comments on posts
+      match /comments/{commentId} {
+        // Anyone can read comments
+        allow read: if true;
+        
+        // Authenticated users can create comments
+        // Modified to allow both numeric userIds (legacy) and string userIds (Firebase Auth)
+        allow create: if isSignedIn();
+        
+        // Comment owners can update/delete their comments
+        // For now, allow any authenticated user to update/delete comments
+        allow update, delete: if isSignedIn();
+      }
     }
 
     // Default deny all

@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { firestore as db } from '../../../firebase/config';
+import { createPost, uploadImage } from '../../../firebase/services/forums';
 import { useAuth } from '../../../contexts/AuthContext';
-import { Post } from './types';
-import { FaTimes, FaPlus, FaHashtag, FaTag } from 'react-icons/fa';
+import { Post } from '../../../firebase/services/forums';
+import { FaTimes, FaPlus, FaHashtag, FaTag, FaImage, FaUpload } from 'react-icons/fa';
 import CustomScrollbar from '../../Common/CustomScrollbar';
 
 // Import the components dynamically with proper typing
@@ -15,28 +14,50 @@ const ExpandableTextarea = require('../WizardComponents/ExpandableTextarea').def
 
 interface NewPostModalProps {
   onClose: () => void;
-  onSubmit: (post: Omit<Post, 'id'>) => void;
+  onSubmit: (post: Post) => void;
+  modalTitle?: string;
 }
 
-const NewPostModal = ({ onClose, onSubmit }: NewPostModalProps) => {
+const NewPostModal = ({ onClose, onSubmit, modalTitle }: NewPostModalProps) => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
   const isRTL = i18n.language === 'ar';
   
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-  // Tag input removed as per redesign
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    
-    if (!currentUser) {
-      setError(t('forums.mustBeLoggedIn'));
-      return;
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      
+      // Create a preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+    setUploadProgress(0);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
     if (!title.trim()) {
       setError(t('forums.titleRequired'));
@@ -51,27 +72,55 @@ const NewPostModal = ({ onClose, onSubmit }: NewPostModalProps) => {
     try {
       setLoading(true);
       
+      // Upload image if one is selected
+      let imageURL = '';
+      if (imageFile) {
+        try {
+          // Show progress during upload
+          const onProgress = (progress: number) => {
+            setUploadProgress(progress);
+          };
+          
+          imageURL = await uploadImage(imageFile, onProgress);
+          console.log('Image uploaded successfully:', imageURL);
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          setError(t('forums.imageUploadError'));
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // Create a post object with just the required fields
+      // The forums service will add userId, userName, and createdAt
       const newPost = {
         title: title.trim(),
-        content: content.trim(),
-        userId: currentUser.uid,
-        user: {
-          displayName: currentUser.displayName || 'Anonymous',
-          photoURL: currentUser.photoURL || '',
-          email: currentUser.email || '',
-        },
-        createdAt: serverTimestamp(),
-        tags: tags,
-        likes: 0,
-        likedBy: [],
-        commentCount: 0,
-        views: 0,
+        body: content.trim(),
+        imageURL: imageURL, // Use the uploaded image URL
+        tags: [] // Empty tags array as tags are removed
       };
       
-      const docRef = await addDoc(collection(db, 'posts'), newPost);
+      console.log('Creating post with data:', newPost);
       
-      // @ts-ignore - Adding id property after Firestore generates it
-      onSubmit({ ...newPost, id: docRef.id });
+      // Use the forums service to create the post
+      const postId = await createPost(newPost as Post);
+      
+      console.log('Post created with ID:', postId);
+      
+      // Prepare the complete post with the generated ID for UI
+      const completePost = {
+        ...newPost,
+        id: postId,
+        userId: currentUser.uid,
+        userName: currentUser.displayName || 'Anonymous',
+        // Add these fields for UI compatibility
+        likes: 0,
+        likedBy: [],
+        views: 0,
+        commentCount: 0
+      };
+      
+      onSubmit(completePost);
       onClose();
     } catch (err) {
       console.error('Error creating post:', err);
@@ -80,27 +129,11 @@ const NewPostModal = ({ onClose, onSubmit }: NewPostModalProps) => {
     }
   };
 
-  const handleTagClick = (tag: string) => {
-    if (!tags.includes(tag) && tags.length < 5) {
-      setTags([...tags, tag]);
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
-  };
-
-  // Common tag suggestions
-  const tagSuggestions = [
-    'react', 'javascript', 'typescript', 'css', 'html', 'node', 'firebase',
-    'design', 'ui', 'ux', 'frontend', 'backend', 'fullstack', 'mobile'
-  ];
-
   return (
     <ModalOverlay onClick={onClose}>
       <ModalContent isRTL={isRTL} onClick={e => e.stopPropagation()}>
         <ModalHeader>
-          <h2>Create New Post</h2>
+          <h2>{modalTitle || t('forums.newPost')}</h2>
           <CloseButton onClick={onClose} aria-label="Close modal"><FaTimes /></CloseButton>
         </ModalHeader>
         
@@ -141,40 +174,43 @@ const NewPostModal = ({ onClose, onSubmit }: NewPostModalProps) => {
               <CharacterCount>{content.length}/1000</CharacterCount>
             </InputWrapper>
           </FormGroup>
-          
+
           <FormGroup>
             <SectionTitle>
-              <HashtagIcon><FaTag /></HashtagIcon>
-              Tags ({tags.length}/5)
+              <ImageIcon><FaImage /></ImageIcon>
+              Add Image (Optional)
             </SectionTitle>
-            
-            <TagSuggestions>
-              {tagSuggestions
-                .filter(tag => !tags.includes(tag))
-                .map(tag => (
-                  <TagSuggestion 
-                    key={tag} 
-                    onClick={() => handleTagClick(tag)}
-                    disabled={tags.length >= 5}
-                  >
-                    #{tag}
-                  </TagSuggestion>
-                ))}
-            </TagSuggestions>
-            
-            {tags.length > 0 && (
-              <TagsContainer>
-                {tags.map(tag => (
-                  <Tag key={tag}>
-                    #{tag}
-                    <RemoveTagButton onClick={() => handleRemoveTag(tag)}>
-                      <FaTimes size={10} />
-                    </RemoveTagButton>
-                  </Tag>
-                ))}
-              </TagsContainer>
-            )}
+            <ImageUploadContainer>
+              {imagePreview ? (
+                <ImagePreviewWrapper>
+                  <ImagePreview src={imagePreview} alt="Preview" />
+                  <RemoveImageButton onClick={handleRemoveImage}>
+                    <FaTimes />
+                  </RemoveImageButton>
+                  {uploadProgress > 0 && uploadProgress < 100 && (
+                    <UploadProgressBar>
+                      <ProgressFill style={{ width: `${uploadProgress}%` }} />
+                      <ProgressText>{Math.round(uploadProgress)}%</ProgressText>
+                    </UploadProgressBar>
+                  )}
+                </ImagePreviewWrapper>
+              ) : (
+                <ImageUploadButton onClick={() => fileInputRef.current?.click()}>
+                  <FaUpload />
+                  <span>Upload Image</span>
+                </ImageUploadButton>
+              )}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageSelect}
+                accept="image/*"
+                style={{ display: 'none' }}
+              />
+            </ImageUploadContainer>
           </FormGroup>
+          
+          {/* Tags section removed as requested */}
           
           <ButtonGroup>
             <CancelButton 
@@ -202,6 +238,53 @@ const NewPostModal = ({ onClose, onSubmit }: NewPostModalProps) => {
 };
 
 // Styled Components
+const TagInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0 0.5rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  height: 32px;
+`;
+
+const TagInputPrefix = styled.span`
+  color: #82a1bf;
+  margin-right: 4px;
+`;
+
+const TagInput = styled.input`
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 0.9rem;
+  padding: 0;
+  width: 100px;
+  outline: none;
+  
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+`;
+
+const AddTagButton = styled.button`
+  background: transparent;
+  border: none;
+  color: #82a1bf;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 4px;
+  font-size: 0.8rem;
+  
+  &:hover {
+    color: white;
+  }
+`;
+
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -217,18 +300,20 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div<{ isRTL?: boolean }>`
-  background: #1e1e2d;
+  background: rgba(30, 30, 45, 0.95);
   border-radius: 12px;
   width: 90%;
   max-width: 600px;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   color: white;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(123, 44, 191, 0.3);
+  backdrop-filter: blur(10px);
   
   @media (max-width: 768px) {
     width: 95%;
@@ -243,6 +328,7 @@ const ModalHeader = styled.div`
   padding: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
+  background: linear-gradient(90deg, rgba(123, 44, 191, 0.1), rgba(205, 62, 253, 0.1));
   
   h2 {
     margin: 0;
@@ -252,6 +338,7 @@ const ModalHeader = styled.div`
     background: linear-gradient(135deg, #cd3efd, #7b2cbf);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(205, 62, 253, 0.3);
   }
 `;
 
@@ -330,6 +417,129 @@ const SectionTitle = styled.h3`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+`;
+
+
+
+const ImageIcon = styled.span`
+  margin-right: 0.5rem;
+  color: #7b2cbf;
+  display: inline-flex;
+  align-items: center;
+`;
+
+const ImageUploadContainer = styled.div`
+  margin-top: 0.5rem;
+  width: 100%;
+  min-height: 80px;
+  border: 2px dashed rgba(123, 44, 191, 0.4);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: rgba(35, 38, 85, 0.4);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: rgba(123, 44, 191, 0.8);
+    box-shadow: 0 0 15px rgba(123, 44, 191, 0.2);
+  }
+`;
+
+const ImagePreviewWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+const ImagePreview = styled.img`
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+`;
+
+const RemoveImageButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+`;
+
+const ImageUploadButton = styled.button`
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+  
+  svg {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+  }
+  
+  span {
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  }
+  
+  &:hover {
+    background-color: rgba(123, 44, 191, 0.3);
+    transform: scale(1.02);
+  }
+`;
+
+const UploadProgressBar = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(2px);
+`;
+
+const ProgressFill = styled.div`
+  height: 100%;
+  background: linear-gradient(90deg, #7b2cbf, #cd3efd);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(205, 62, 253, 0.5);
+`;
+
+const ProgressText = styled.span`
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-weight: bold;
 `;
 
 const SectionTitleWithCount = styled.div`
@@ -490,12 +700,29 @@ const Button = styled.button`
 `;
 
 const CancelButton = styled(Button)<ButtonProps>`
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: ${props => props.disabled ? 0.6 : 1};
+  pointer-events: ${props => props.disabled ? 'none' : 'auto'};
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  
   &:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -503,10 +730,33 @@ const SubmitButton = styled(Button)<ButtonProps>`
   background: linear-gradient(135deg, #cd3efd, #7b2cbf);
   border: none;
   color: white;
+  box-shadow: 0 4px 10px rgba(123, 44, 191, 0.3);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: all 0.6s ease;
+  }
   
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, #d85ffd, #8b3ccf);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(123, 44, 191, 0.5);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(123, 44, 191, 0.4);
   }
 `;
 
