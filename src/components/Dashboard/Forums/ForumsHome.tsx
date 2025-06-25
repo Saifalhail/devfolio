@@ -5,88 +5,93 @@ import { FaSearch, FaFilter } from 'react-icons/fa';
 import { firestore } from '../../../firebase/config';
 import { useAuth } from '../../../contexts/AuthContext';
 import MockupGallery from './MockupGallery';
-import { MockupUIProvider } from './MockupUIContext';
+import { MockupUIProvider, useMockupUI } from './MockupUIContext';
 import { DiscussionUIProvider } from './DiscussionUIContext';
 import { HeaderStyles, SectionTitle } from './ForumStyles';
 import MockupModal from './MockupModal';
 import DiscussionList from './DiscussionList';
-import ChatInput from './ChatInput';
 
 // Default project ID for discussions
 const DEFAULT_PROJECT_ID = 'default';
 
 
 
-const ForumsHome = () => {
+// Inner component that consumes the MockupUIContext
+const ForumsContentComponent = () => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
+  const { selectedMockup, openAddModal } = useMockupUI();
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const isRTL = i18n.language === 'ar';
 
   const popularTags = ['react', 'javascript', 'design', 'firebase', 'mobile', 'web'];
 
-  // Post click handling is now managed by the DiscussionList component
+  return (
+    <ForumsWrapper>
+      <ForumsCard>
+        <ForumsTitle>Chat</ForumsTitle>
+        <ForumsContentWrapper>
+          <ForumsLayout>
+            <LeftColumn>
+              <SectionHeader>
+                <DiscussionHeader>
+                  <SectionTitle>Real-time Chat</SectionTitle>
+                </DiscussionHeader>
+                <FilterSection>
+                  <SearchBar>
+                    <SearchIcon>
+                      <FaSearch />
+                    </SearchIcon>
+                    <SearchInput 
+                      type="text" 
+                      placeholder={t('forums.searchPlaceholder')} 
+                    />
+                  </SearchBar>
+                  <FilterButton>
+                    <FaFilter /> Filter
+                  </FilterButton>
+                </FilterSection>
+                <TagsContainer>
+                  <TagItem 
+                    onClick={() => setActiveTag(null)}
+                    $active={activeTag === null}
+                  >
+                    {t('forums.allTopics')}
+                  </TagItem>
+                  {popularTags.map(tag => (
+                    <TagItem 
+                      key={tag} 
+                      onClick={() => setActiveTag(tag)}
+                      $active={activeTag === tag}
+                    >
+                      #{tag}
+                    </TagItem>
+                  ))}
+                </TagsContainer>
+              </SectionHeader>
+              
+              {/* Chat messages list with integrated reply functionality */}
+              <DiscussionList projectId={DEFAULT_PROJECT_ID} />
+            </LeftColumn>
+            <RightColumn>
+              <MockupGallery onAddMockup={openAddModal} />
+            </RightColumn>
+          </ForumsLayout>
+        </ForumsContentWrapper>
+        
+        {/* Conditionally render the mockup detail modal */}
+        {selectedMockup && <MockupModal />}
+      </ForumsCard>
+    </ForumsWrapper>
+  );
+};
 
+// Main component that provides the context
+const ForumsHome = () => {
   return (
     <MockupUIProvider>
       <DiscussionUIProvider>
-        <ForumsWrapper>
-          <ForumsCard>
-            <ForumsTitle>Chat</ForumsTitle>
-            <ForumsContent>
-              <ForumsLayout>
-                <LeftColumn>
-                  <SectionHeader>
-                    <DiscussionHeader>
-                      <SectionTitle>Real-time Chat</SectionTitle>
-                    </DiscussionHeader>
-                    <FilterSection>
-                      <SearchBar>
-                        <SearchIcon>
-                          <FaSearch />
-                        </SearchIcon>
-                        <SearchInput 
-                          type="text" 
-                          placeholder={t('forums.searchPlaceholder')} 
-                        />
-                      </SearchBar>
-                      <FilterButton>
-                        <FaFilter /> Filter
-                      </FilterButton>
-                    </FilterSection>
-                    <TagsContainer>
-                      <TagItem 
-                        onClick={() => setActiveTag(null)}
-                        $active={activeTag === null}
-                      >
-                        {t('forums.allTopics')}
-                      </TagItem>
-                      {popularTags.map(tag => (
-                        <TagItem 
-                          key={tag} 
-                          onClick={() => setActiveTag(tag)}
-                          $active={activeTag === tag}
-                        >
-                          #{tag}
-                        </TagItem>
-                      ))}
-                    </TagsContainer>
-                  </SectionHeader>
-                  
-                  {/* Chat messages list */}
-                  <DiscussionList projectId={DEFAULT_PROJECT_ID} />
-                  
-                  {/* Chat input */}
-                  <ChatInput projectId={DEFAULT_PROJECT_ID} />
-                </LeftColumn>
-                <RightColumn>
-                  <MockupGallery onAddMockup={() => {/* Handle adding mockup */}} />
-                </RightColumn>
-              </ForumsLayout>
-            </ForumsContent>
-            <MockupModal />
-          </ForumsCard>
-        </ForumsWrapper>
+        <ForumsContentComponent />
       </DiscussionUIProvider>
     </MockupUIProvider>
   );
@@ -119,7 +124,7 @@ const ForumsTitle = styled.h1`
   text-align: center;
 `;
 
-const ForumsContent = styled.div`
+const ForumsContentWrapper = styled.div`
   padding: 1.5rem;
   height: 100%;
   display: flex;

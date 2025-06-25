@@ -4,12 +4,12 @@ import { FaDownload, FaComment, FaTimes } from 'react-icons/fa';
 import { useMockupUI } from './MockupUIContext';
 
 const MockupModal: React.FC = () => {
-  const { selected, setSelected } = useMockupUI();
+  const { selectedMockup, clearSelectedMockup } = useMockupUI();
   
-  if (!selected) return null;
+  if (!selectedMockup) return null;
   
   const handleClose = () => {
-    setSelected(null);
+    clearSelectedMockup();
   };
   
   return (
@@ -20,7 +20,7 @@ const MockupModal: React.FC = () => {
         </CloseButton>
         
         <ModalHeader>
-          <h2>{selected.title}</h2>
+          <h2>{selectedMockup.title}</h2>
           <ModalActions>
             <ActionButton>
               <FaDownload /> Download
@@ -32,15 +32,15 @@ const MockupModal: React.FC = () => {
         </ModalHeader>
         
         <MockupImageContainer>
-          <MockupImage src={selected.imageURL} alt={selected.title} />
+          <MockupImage src={selectedMockup.imageURL} alt={selectedMockup.title} />
         </MockupImageContainer>
         
         <MockupDetails>
-          <p>{selected.description}</p>
+          <p>{selectedMockup.description}</p>
           <MockupMeta>
-            <span>Created by {selected.userName}</span>
-            <span>Views: {selected.views}</span>
-            <span>Comments: {selected.commentCount}</span>
+            <span>Created by {selectedMockup.userName}</span>
+            <span>Views: {selectedMockup.views}</span>
+            <span>Comments: {selectedMockup.commentCount}</span>
           </MockupMeta>
         </MockupDetails>
       </ModalContent>

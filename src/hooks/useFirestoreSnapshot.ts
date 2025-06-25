@@ -24,6 +24,10 @@ interface FirestoreState<T> {
  * @param enabled Optional flag to enable/disable the subscription
  * @returns Object containing data, loading state, and error
  */
+// Flag to disable real-time updates and use one-time fetches instead
+// Set to true to prevent constant Firestore POST requests
+const DISABLE_REALTIME_UPDATES = true;
+
 export function useFirestoreSnapshot<T = DocumentData>(
   queryOrRef: Query<DocumentData> | DocumentReference<DocumentData> | null,
   enabled: boolean = true
@@ -32,6 +36,7 @@ export function useFirestoreSnapshot<T = DocumentData>(
   const unsubscribeRef = useRef<(() => void) | null>(null);
   const attemptCountRef = useRef(0);
   const maxRetries = 3;
+  const initialFetchDoneRef = useRef(false);
   
   // Function to safely unsubscribe from previous listeners
   const safeUnsubscribe = () => {
@@ -88,6 +93,18 @@ export function useFirestoreSnapshot<T = DocumentData>(
     
     // Clean up any existing subscription
     safeUnsubscribe();
+    
+    // If we've already done the initial fetch and real-time updates are disabled, don't fetch again
+    if (DISABLE_REALTIME_UPDATES && initialFetchDoneRef.current) {
+      return;
+    }
+
+    // For development mode or when real-time updates are disabled, just fetch once
+    if (DISABLE_REALTIME_UPDATES) {
+      fetchOnce();
+      initialFetchDoneRef.current = true;
+      return;
+    }
 
     // Set up the new subscription with error handling and retry logic
     const setupSubscription = () => {

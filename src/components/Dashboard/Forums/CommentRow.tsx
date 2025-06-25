@@ -12,9 +12,10 @@ interface CommentProps {
     };
   };
   isSelf?: boolean;
+  className?: string;
 }
 
-const CommentRow: React.FC<CommentProps> = ({ c, isSelf = false }) => {
+const CommentRow: React.FC<CommentProps> = ({ c, isSelf = false, className }) => {
   // Handle different timestamp formats safely
   let timestamp: Date;
   try {
@@ -27,7 +28,7 @@ const CommentRow: React.FC<CommentProps> = ({ c, isSelf = false }) => {
   const timeAgo = formatDistanceToNow(timestamp, { addSuffix: true });
   
   return (
-    <CommentContainer $isSelf={isSelf}>
+    <CommentContainer $isSelf={isSelf} className={className}>
       <CommentHeader>
         <UserName>{c.userName}</UserName>
         <TimeStamp>{timeAgo}</TimeStamp>

@@ -80,6 +80,99 @@ This document outlines the UI design elements, animations, and interaction patte
   `;
   ```
 
+### Global Button Style Overrides
+- **Important Note**: The application has global button styles in `GlobalStyles.js` that apply gradient backgrounds and other effects to all buttons
+- **Minimal Buttons**: For minimal buttons like the chat UI's "+" button, these global styles must be explicitly overridden
+
+#### Global Button Style in GlobalStyles.js
+```css
+button, .button {
+  cursor: pointer;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background: linear-gradient(to right, var(--accent-1), var(--accent-2));
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 0 4px 15px rgba(66, 165, 245, 0.25);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 25px rgba(66, 165, 245, 0.4);
+    
+    &::before {
+      transform: scaleX(1.5) scaleY(1.5);
+      opacity: 0;
+    }
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, var(--accent-2), var(--accent-1));
+    z-index: -1;
+    transition: all 0.5s ease;
+    transform: scaleX(1) scaleY(1);
+    opacity: 1;
+  }
+}
+```
+
+#### Proper Override for Minimal Buttons
+```css
+/* Minimal button with no background or effects */
+const MinimalButton = styled.button`
+  /* Override background with !important */
+  background: none !important;
+  background-image: none !important;
+  
+  /* Reset basic properties */
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #ffffff;
+  
+  /* Remove shadows and effects */
+  box-shadow: none !important;
+  overflow: visible;
+  z-index: auto;
+  
+  /* Override hover effects */
+  &:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Override active effects */
+  &:active {
+    transform: none !important;
+  }
+  
+  /* Completely disable the ::before pseudo-element that adds gradient */
+  &::before {
+    display: none !important;
+    content: none !important;
+    background: none !important;
+  }
+`;
+```
+
+#### Implementation Notes
+- Always use `!important` flags to override global styles for minimal buttons
+- Explicitly disable all pseudo-elements (`::before`, `::after`)
+- Reset all positioning, shadows, and transforms
+- For chat UI buttons like the "+" button, ensure they have no background or decorative elements
+
 ### Tab Design Implementation
 - **Minimalist Approach**: Tabs use a clean, icon-only design with minimal visual elements
 - **Selection Indicators**: Active tabs are indicated by a colored border and icon color change only

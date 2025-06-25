@@ -3,24 +3,26 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaComment, FaPaperPlane } from 'react-icons/fa';
 import { collection, query, orderBy, limit, onSnapshot, Timestamp, addDoc, Unsubscribe, startAfter, getDocs, DocumentData } from 'firebase/firestore';
-import { firestore, auth } from '../../../firebase/config';
-import { useFirestoreSnapshot } from '../../../hooks/useFirestoreSnapshot';
-import CommentRow from './CommentRow';
-import ChatInput from './ChatInput';
-import { format } from 'date-fns';
 import { debounce } from 'lodash';
+import { firestore } from '../../../firebase/config';
 import { useAuth } from '../../../contexts/AuthContext';
+import CommentRow from './CommentRow';
 import { Post } from '../../../firebase/services/forums';
+import { HeaderStyles } from './ForumStyles';
+import { useDiscussionUI } from './DiscussionUIContext';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { formatDistanceToNow, format } from 'date-fns';
 
 // Extended Message type for chat messages
 interface ChatMessage extends Post {
   id?: string;
   replyTo?: string;
   replies?: ChatMessage[];
-  body: string;
-  userId: string;
-  userName: string;
-  createdAt: any;
+  body: string; // Content of the message
+  userId: string; // ID of the user who sent the message
+  userName: string; // Name of the user who sent the message
+  createdAt: any; // Timestamp of when the message was sent
 }
 
 interface DiscussionListProps {
@@ -59,8 +61,15 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
   
   // Initial data fetch and subscription setup
   useEffect(() => {
+    // Skip real-time updates if no project ID
+    if (!projectId) {
+      setIsLoading(false);
+      return;
+    }
+    
     setIsLoading(true);
     const minTimeBetweenFetches = 2000; // 2 seconds minimum between fetches
+    let lastFetchTime = 0;
     
     // Initial fetch to get messages quickly
     const fetchInitialMessages = async () => {
@@ -73,6 +82,7 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
         );
         
         const querySnapshot = await getDocs(messagesQuery);
+        lastFetchTime = Date.now();
         
         if (!querySnapshot.empty) {
           // Extract the messages from the snapshot
@@ -103,21 +113,37 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
     
     fetchInitialMessages();
     
-    // Set up real-time listener with throttling
+    // Set up real-time listener with throttling - only if we need real-time updates
+    // For this mockup UI, we'll disable real-time updates to prevent constant POST requests
+    // In a production app, you would conditionally enable this based on user needs
+    const enableRealTimeUpdates = false; // Set to false to disable real-time updates
+    
+    if (!enableRealTimeUpdates) {
+      return; // Skip setting up the listener
+    }
+    
     const messagesQuery = query(
       collection(firestore, `projectDiscussions/${projectId}/messages`),
       orderBy('createdAt', 'asc'),
       limit(REAL_TIME_MESSAGE_LIMIT)
     );
     
-    // Clean up previous subscription
+    // Clean up previous subscription if it exists
     if (unsubscribeRef.current) {
       unsubscribeRef.current();
       unsubscribeRef.current = null;
     }
     
-    // Set up new subscription with optimized updates
-    const debouncedUpdate = debounce((snapshot) => {
+    // Create heavily throttled update function - only process updates every 5 seconds at most
+    const throttledUpdate = debounce((snapshot) => {
+      // Check if enough time has passed since last fetch
+      const now = Date.now();
+      if (now - lastFetchTime < minTimeBetweenFetches) {
+        return; // Skip this update if it's too soon
+      }
+      
+      lastFetchTime = now;
+      
       const newMessages = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -155,11 +181,12 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
       }
       
       setIsLoading(false);
-    }, 300);
+    }, 5000); // Increase debounce time to 5 seconds
     
+    // Set up the Firestore listener
     try {
       unsubscribeRef.current = onSnapshot(messagesQuery, (snapshot) => {
-        debouncedUpdate(snapshot);
+        throttledUpdate(snapshot);
       }, (error) => {
         console.error('Error in messages subscription:', error);
         setIsLoading(false);
@@ -168,60 +195,66 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
       console.error('Error setting up subscription:', error);
       setIsLoading(false);
     }
-        // Use a small timeout to ensure DOM is fully updated
-        setTimeout(() => {
-          if (container && messagesEndRef.current) {
-            container.scrollTop = container.scrollHeight;
-          }
-        }, 100);
+    
+    // Clean up subscription on unmount
+    return () => {
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
       }
-      
-      // Update last scroll height
-      lastScrollHeightRef.current = container.scrollHeight;
-    }
-  }, [messages, shouldScrollToBottom]);
+      // Also cancel any pending throttled updates
+      throttledUpdate.cancel();
+    };
+  }, [projectId]); // Remove shouldScrollToBottom dependency to prevent re-subscriptions
   
   // Handle comment submission
-  const handleCommentSubmit = async (replyToId: string) => {
+  const handleCommentSubmit = async () => {
     if (!commentText.trim() || !currentUser) return;
     
     try {
-      const commentData = {
+      const newMessage = {
         body: commentText.trim(),
         userId: currentUser.uid,
         userName: currentUser.displayName || 'Anonymous',
         createdAt: Timestamp.now(),
-        replyTo: replyToId
+        replyTo: focusedInputId || null
       };
       
-      await addDoc(
-        collection(firestore, `projectDiscussions/${projectId}/messages`),
-        commentData
-      );
+      // Add the message to Firestore
+      await addDoc(collection(firestore, `projectDiscussions/${projectId}/messages`), newMessage);
       
+      // Clear the input and reset focused message
       setCommentText('');
+      setFocusedInputId('');
       
-      // Scroll to bottom after adding a comment
+      // Reset the placeholder text
+      const inputElement = document.querySelector('.main-chat-input') as HTMLInputElement;
+      if (inputElement) {
+        inputElement.placeholder = 'Type a message...';
+      }
+      
+      // Scroll to bottom after sending
+      setShouldScrollToBottom(true);
       setTimeout(() => {
         if (messagesEndRef.current && containerRef.current) {
           containerRef.current.scrollTop = containerRef.current.scrollHeight;
         }
       }, 100);
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error('Error sending message:', error);
     }
   };
   
   // Handle keyboard submission with Enter key
-  const handleKeyDown = (e: React.KeyboardEvent, messageId: string) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey && commentText.trim()) {
       e.preventDefault();
-      handleCommentSubmit(messageId);
+      handleCommentSubmit();
     }
   };
   
   // Track which input is focused
-  const [focusedInputId, setFocusedInputId] = useState<string | null>(null);
+  const [focusedInputId, setFocusedInputId] = useState<string>('');
   
   // Handle focus and blur events for inputs
   const handleInputFocus = (messageId: string) => {
@@ -231,7 +264,12 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
   const handleInputBlur = () => {
     // Small delay to allow for click events to process
     setTimeout(() => {
-      setFocusedInputId(null);
+      setFocusedInputId('');
+      // Reset the placeholder text
+      const inputElement = document.querySelector('.main-chat-input') as HTMLInputElement;
+      if (inputElement) {
+        inputElement.placeholder = 'Type a message...';
+      }
     }, 100);
   };
   
@@ -244,54 +282,87 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
   
   // Load messages with pagination
   const loadMessages = useCallback(async () => {
-    if (isLoading || !hasMore) return;
+    if (isLoading || !hasMore) return Promise.resolve();
     
     setIsLoading(true);
     
-    try {
-      // Create a query to get the next batch of messages
-      const messagesQuery = query(
-        collection(firestore, `projectDiscussions/${projectId}/messages`),
-        orderBy('createdAt', 'desc'),
-        limit(MESSAGES_PER_PAGE)
-      );
-      
-      // If we have a last document, start after it
-      const q = lastDoc
-        ? query(messagesQuery, startAfter(lastDoc))
-        : messagesQuery;
-      
-      const querySnapshot = await getDocs(q);
-      
-      if (querySnapshot.empty) {
-        setHasMore(false);
+    return new Promise<void>((resolve) => {
+      try {
+        // Create a query to get the next batch of messages
+        const messagesQuery = query(
+          collection(firestore, `projectDiscussions/${projectId}/messages`),
+          orderBy('createdAt', 'desc'),
+          limit(MESSAGES_PER_PAGE)
+        );
+        
+        // If we have a last document, start after it
+        const q = lastDoc
+          ? query(messagesQuery, startAfter(lastDoc))
+          : messagesQuery;
+        
+        getDocs(q).then((querySnapshot) => {
+          if (querySnapshot.empty) {
+            setHasMore(false);
+            setIsLoading(false);
+            resolve();
+            return;
+          }
+          
+          // Extract the messages from the snapshot
+          const newMessages = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as unknown as ChatMessage[];
+          
+          // Update state with the new messages
+          setMessages(prevMessages => [...prevMessages, ...newMessages]);
+          setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
+          
+          setIsLoading(false);
+          resolve();
+        }).catch(error => {
+          console.error('Error loading messages:', error);
+          setIsLoading(false);
+          resolve();
+        });
+      } catch (error) {
+        console.error('Error setting up query:', error);
         setIsLoading(false);
-        return;
+        resolve();
       }
-      
-      // Extract the messages from the snapshot
-      const newMessages = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as unknown as ChatMessage[];
-      
-      // Update state with the new messages
-      setMessages(prevMessages => [...prevMessages, ...newMessages]);
-      setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
-    } catch (error) {
-      console.error('Error loading messages:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    });
   }, [isLoading, hasMore, projectId, lastDoc]);
   
-  // Load more messages when scrolling to top
-  const handleScroll = useCallback(() => {
-    if (containerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+  // Track if we're currently loading more messages to prevent duplicate requests
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  
+  // Debounced function to load more messages
+  const debouncedLoadMore = useCallback(
+    debounce(() => {
+      if (!isLoading && !isLoadingMore && hasMore && messages.length >= MESSAGES_PER_PAGE) {
+        setIsLoadingMore(true);
+        console.log('Loading more messages, current count:', messages.length);
+        loadMessages().finally(() => {
+          setIsLoadingMore(false);
+        });
+      }
+    }, 300),
+    [isLoading, isLoadingMore, hasMore, messages.length, loadMessages]
+  );
+  
+  // Track the last scroll position to prevent redundant calls
+  const lastScrollTopRef = useRef<number>(0);
+  const lastScrollTimeRef = useRef<number>(0);
+  const isLoadingRef = useRef<boolean>(false);
+  const loadingLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Create a properly throttled scroll handler to prevent excessive calls
+  const handleScroll = useMemo(() => {
+    return debounce(() => {
+      if (!containerRef.current || isLoadingRef.current) return;
       
-      // Set scrolling flag
-      isScrollingRef.current = true;
+      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+      const now = Date.now();
       
       // Update shouldScrollToBottom state based on current scroll position
       const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
@@ -299,24 +370,64 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
         setShouldScrollToBottom(isNearBottom);
       }
       
-      // Load more messages when user scrolls to top
-      if (scrollTop < 50 && messages.length >= MESSAGES_PER_PAGE && !isLoading) {
-        console.log('Loading more messages, current limit:', messages.length);
-        loadMessages();
+      // Only check for loading more if we're near the top
+      if (scrollTop < 50 && !isLoading && !isLoadingMore && hasMore) {
+        // Prevent excessive calls by checking time difference
+        const timeDiff = now - lastScrollTimeRef.current;
+        
+        // Only load more if it's been at least 2 seconds since the last load
+        if (timeDiff > 2000) {
+          // Set loading lock to prevent multiple concurrent requests
+          isLoadingRef.current = true;
+          
+          // Update tracking refs
+          lastScrollTopRef.current = scrollTop;
+          lastScrollTimeRef.current = now;
+          
+          console.log('Triggering load more at scrollTop:', scrollTop, 'Time since last load:', timeDiff);
+          setIsLoadingMore(true);
+          
+          loadMessages().finally(() => {
+            setIsLoadingMore(false);
+            
+            // Release the loading lock after a delay to prevent rapid consecutive loads
+            if (loadingLockTimeoutRef.current) {
+              clearTimeout(loadingLockTimeoutRef.current);
+            }
+            
+            loadingLockTimeoutRef.current = setTimeout(() => {
+              isLoadingRef.current = false;
+            }, 2000); // Keep lock for 2 seconds after loading completes
+          });
+        }
+      } else {
+        // Still update the last scroll position for tracking
+        lastScrollTopRef.current = scrollTop;
       }
-      
-      // Clear scrolling flag after a short delay
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, 150);
-    }
-  }, [messages.length, isLoading, shouldScrollToBottom, loadMessages]);
+    }, 500, { leading: true, trailing: false, maxWait: 1000 });
+  }, [shouldScrollToBottom, isLoading, isLoadingMore, hasMore, loadMessages]);
 
-  // Group messages by date for display
-  const messagesByDate = useMemo(() => {
-    const grouped: Record<string, ChatMessage[]> = {};
-    
-    // Sort messages by createdAt in ascending order
+  // Add scroll event listener with proper cleanup
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => {
+        handleScroll.cancel(); // Cancel any pending debounced calls
+        container.removeEventListener('scroll', handleScroll);
+        
+        // Clear any pending loading lock timeout
+        if (loadingLockTimeoutRef.current) {
+          clearTimeout(loadingLockTimeoutRef.current);
+          loadingLockTimeoutRef.current = null;
+        }
+      };
+    }
+  }, [handleScroll]);
+  
+  // Group messages by date for better UI organization
+  const groupedMessages = useMemo(() => {
+    const grouped: { [key: string]: ChatMessage[] } = {};
     const sortedMessages = [...messages].sort((a, b) => {
       if (!a.createdAt || !b.createdAt) return 0;
       return a.createdAt.seconds - b.createdAt.seconds;
@@ -326,7 +437,7 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
       if (!message.createdAt) return;
       
       const date = message.createdAt.toDate ? message.createdAt.toDate() : new Date(message.createdAt.seconds * 1000);
-      const dateStr = format(date, 'yyyy-MM-dd');
+      const dateStr = format(date, 'MMMM d, yyyy');
       
       if (!grouped[dateStr]) {
         grouped[dateStr] = [];
@@ -335,7 +446,7 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
       grouped[dateStr].push(message);
     });
     
-    return grouped;
+    return Object.keys(grouped).map(date => ({ date, messages: grouped[date] }));
   }, [messages]);
 
   return (
@@ -344,84 +455,116 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
         <LoadingContainer>
           <LoadingText>Loading messages...</LoadingText>
         </LoadingContainer>
-      ) : messages.length === 0 ? (
-        <NoMessagesContainer>
-          <NoMessagesText>No messages yet. Start the conversation!</NoMessagesText>
-        </NoMessagesContainer>
       ) : (
-        <MessagesContainer ref={containerRef} onScroll={handleScroll}>
-          {Object.keys(messagesByDate).map(date => (
-            <React.Fragment key={date}>
-              <DateSeparator>
-                <DateText>
-                  {format(new Date(date), 'MMMM d, yyyy')}
-                </DateText>
-              </DateSeparator>
-              {messagesByDate[date].map((message) => {
-                const isSelf = currentUser && message.userId === currentUser.uid;
-                const isReply = message.replyTo !== undefined;
-                
-                // Find parent message if this is a reply
-                const parentMessage = isReply ? 
-                  messages.find(m => m.id === message.replyTo) : null;
-                
-                return (
-                  <MessageContainer key={message.id}>
-                    <MessageWrapper $isSelf={isSelf} $isReply={isReply}>
-                      {isReply && parentMessage && (
-                        <ReplyIndicator>
-                          <ReplyLine />
-                          <ReplyInfo>
-                            Replying to <ReplyName>{parentMessage.userName}</ReplyName>
-                          </ReplyInfo>
-                        </ReplyIndicator>
-                      )}
-                      <div className="comment-row">
-                        <CommentRow 
-                          c={{
-                            id: message.id || '',
-                            commentText: message.body || '',
-                            userName: message.userName || 'Anonymous',
-                            createdAt: message.createdAt
-                          }}
-                          isSelf={isSelf}
-                        />
-                      </div>
-                    </MessageWrapper>
-                    
-                    {/* Always visible reply input */}
-                    {!isReply && (
-                      <MessageActionBar>
-                        <ReplyForm $isFocused={focusedInputId === message.id}>
-                          <ReplyIcon>
-                             <FaComment size={12} />
-                          </ReplyIcon>
-                          <ReplyInput
-                            type="text"
-                            placeholder="Write a reply..."
-                            value={message.id === focusedInputId ? commentText : ''}
-                            onChange={(e) => setCommentText(e.target.value)}
-                            onKeyDown={(e) => handleKeyDown(e, message.id || '')}
-                            onFocus={() => handleInputFocus(message.id || '')}
-                            onBlur={handleInputBlur}
+        <>
+          <MessagesContainer ref={containerRef}>
+            {messages.length === 0 ? (
+              <NoMessagesContainer>
+                <NoMessagesText>No messages yet. Start the conversation!</NoMessagesText>
+              </NoMessagesContainer>
+            ) : (
+              groupedMessages.map((group) => (
+                <React.Fragment key={group.date}>
+                  <DateSeparator>
+                    <DateText>{group.date}</DateText>
+                  </DateSeparator>
+                  {group.messages.map((message) => {
+                    const isSelf = message.userId === currentUser?.uid;
+                    return (
+                      <MessageContainer key={message.id}>
+                        <MessageWrapper $isSelf={isSelf}>
+                          <CommentRow
+                            c={{
+                              id: message.id || '',
+                              commentText: message.body || '',
+                              userName: message.userName || 'Anonymous',
+                              createdAt: message.createdAt
+                            }}
+                            isSelf={isSelf}
+                            className="comment-row"
                           />
-                          <SendButton 
-                            onClick={() => handleCommentSubmit(message.id || '')}
-                            disabled={!commentText.trim() || focusedInputId !== message.id}
-                            title="Send reply"
-                          >
-                            <FaPaperPlane size={14} />
-                          </SendButton>
-                        </ReplyForm>
-                      </MessageActionBar>
-                    )}
-                  </MessageContainer>
-                );
-              })}
-            </React.Fragment>
-          ))}
-          <div ref={messagesEndRef} />
-        </MessagesContainer>
+                        </MessageWrapper>
+                        
+                        {/* Display replies */}
+                        {message.replies && message.replies.length > 0 && (
+                          message.replies.map((reply) => {
+                            const isReplySelf = reply.userId === currentUser?.uid;
+                            return (
+                              <MessageWrapper key={reply.id} $isSelf={isReplySelf} $isReply={true}>
+                                <ReplyIndicator>
+                                  <ReplyInfo>
+                                    <FaComment size={8} />
+                                    <ReplyName>{reply.userName}</ReplyName>
+                                  </ReplyInfo>
+                                </ReplyIndicator>
+                                <CommentRow
+                                  c={{
+                                    id: reply.id || '',
+                                    commentText: reply.body || '',
+                                    userName: reply.userName || 'Anonymous',
+                                    createdAt: reply.createdAt
+                                  }}
+                                  isSelf={isReplySelf}
+                                  className="comment-row"
+                                />
+                              </MessageWrapper>
+                            );
+                          })
+                        )}
+                        
+                        {/* Message action bar with reply button that transforms into input */}
+                        {currentUser && (
+                          <MessageActionBar>
+                            {focusedInputId === message.id ? (
+                              <ReplyInputContainer>
+                                <CommentIcon>
+                                  <FaComment size={14} />
+                                </CommentIcon>
+                                <ReplyInput 
+                                  className="reply-input"
+                                  type="text" 
+                                  placeholder={`Reply to ${message.userName}...`}
+                                  value={commentText}
+                                  onChange={(e) => setCommentText(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && !e.shiftKey && commentText.trim()) {
+                                      e.preventDefault();
+                                      handleCommentSubmit();
+                                    }
+                                  }}
+                                  autoFocus
+                                />
+                                <ReplySendButton 
+                                  onClick={() => handleCommentSubmit()}
+                                  disabled={!commentText.trim()}
+                                  title="Send message"
+                                >
+                                  <span>+</span>
+                                </ReplySendButton>
+                              </ReplyInputContainer>
+                            ) : (
+                              <ReplyButtonMinimal 
+                                onClick={() => {
+                                  // Set the focused message ID
+                                  setFocusedInputId(message.id || '');
+                                }}
+                              >
+                                <span>+</span>
+                              </ReplyButtonMinimal>
+                            )}
+                          </MessageActionBar>
+                        )}
+                      </MessageContainer>
+                    );
+                  })}
+                </React.Fragment>
+              ))
+            )}
+            <div ref={messagesEndRef} />
+          </MessagesContainer>
+          
+          {/* No bottom input area - using reply buttons instead */}
+        </>
       )}
     </ChatContainer>
   );
@@ -434,6 +577,11 @@ const ChatContainer = styled.div`
   flex: 1;
   overflow: hidden;
   height: 100%;
+  background: rgba(35, 38, 85, 0.15);
+  border-radius: 16px;
+  border: 1px solid rgba(130, 161, 191, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
 `;
 
 const MessagesContainer = styled.div`
@@ -441,9 +589,12 @@ const MessagesContainer = styled.div`
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
-  gap: 0.5rem;
+  padding: 1.5rem;
+  gap: 1rem;
   scroll-behavior: smooth;
+  background: rgba(35, 38, 85, 0.05);
+  border-radius: 12px;
+  margin: 0.75rem;
   
   /* Custom scrollbar */
   &::-webkit-scrollbar {
@@ -465,7 +616,8 @@ const MessageContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+  position: relative;
 `;
 
 const MessageWrapper = styled.div<{ $isSelf: boolean; $isReply?: boolean }>`
@@ -473,30 +625,36 @@ const MessageWrapper = styled.div<{ $isSelf: boolean; $isReply?: boolean }>`
   flex-direction: column;
   align-items: ${props => props.$isSelf ? 'flex-end' : 'flex-start'};
   width: 100%;
-  margin: 2px 0;
-  padding-left: ${props => props.$isReply ? '20px' : '0'};
+  margin: 4px 0;
+  padding-left: ${props => props.$isReply ? '24px' : '0'};
   position: relative;
   
   &::before {
     content: '';
     position: absolute;
-    left: 8px;
+    left: 10px;
     top: 0;
     bottom: 0;
     width: 2px;
-    background: ${props => props.$isReply ? 'rgba(130, 161, 191, 0.15)' : 'transparent'};
-    border-radius: 1px;
+    background: ${props => props.$isReply ? 'rgba(130, 161, 191, 0.25)' : 'transparent'};
+    border-radius: 2px;
   }
   
   /* Style CommentRow to look like a chat bubble */
   .comment-row {
-    background: ${props => props.$isSelf ? 'rgba(90, 120, 190, 0.2)' : 'rgba(35, 38, 85, 0.3)'};
-    border-radius: 18px;
-    padding: 10px 14px;
-    border: 1px solid ${props => props.$isSelf ? 'rgba(130, 161, 191, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
+    background: ${props => props.$isSelf ? 'rgba(130, 90, 213, 0.2)' : 'rgba(35, 38, 85, 0.3)'};
+    border-radius: ${props => props.$isSelf ? '18px 18px 0 18px' : '18px 18px 18px 0'};
+    padding: 12px 16px;
+    border: 1px solid ${props => props.$isSelf ? 'rgba(130, 161, 191, 0.3)' : 'rgba(255, 255, 255, 0.1)'};
     width: 100%;
-    max-width: 95%;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    max-width: 92%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-1px);
+    }
   }
 `;
 
@@ -579,20 +737,23 @@ const InlineCommentInput = styled.input`
 `;
 
 const SendButton = styled.button<{ disabled?: boolean }>`
-  background: transparent;
+  background: ${props => props.disabled ? 'transparent' : 'rgba(130, 161, 191, 0.2)'};
   border: none;
-  color: ${props => props.disabled ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.8)'};
+  color: ${props => props.disabled ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.9)'};
   cursor: ${props => props.disabled ? 'default' : 'pointer'};
-  padding: 6px;
+  padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
   border-radius: 50%;
+  width: 32px;
+  height: 32px;
   
   &:hover:not(:disabled) {
-    color: white;
-    background: rgba(90, 120, 190, 0.3);
+    color: rgba(255, 255, 255, 1);
+    background: rgba(130, 161, 191, 0.4);
+    transform: scale(1.05);
   }
   
   &:active:not(:disabled) {
@@ -605,13 +766,33 @@ const NoMessagesContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 2rem;
+  padding: 3rem;
+  background: rgba(35, 38, 85, 0.1);
+  border-radius: 12px;
+  margin: 1rem;
 `;
 
 const NoMessagesText = styled.p`
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
   text-align: center;
+  font-weight: 500;
+  line-height: 1.5;
+  max-width: 80%;
+  
+  &::before {
+    content: '💬';
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite ease-in-out;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
 `;
 
 const LoadingContainer = styled.div`
@@ -619,29 +800,69 @@ const LoadingContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 2rem;
+  padding: 3rem;
+  background: rgba(35, 38, 85, 0.1);
+  border-radius: 12px;
+  margin: 1rem;
 `;
 
 const LoadingText = styled.p`
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  
+  &::before {
+    content: '';
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(130, 161, 191, 0.3);
+    border-top: 3px solid rgba(130, 161, 191, 0.8);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: block;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 `;
 
 const DateSeparator = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
   width: 100%;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: rgba(130, 161, 191, 0.15);
+    z-index: 0;
+  }
 `;
 
 const DateText = styled.span`
-  background: rgba(130, 161, 191, 0.2);
-  color: rgba(255, 255, 255, 0.8);
+  background: rgba(130, 161, 191, 0.25);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.8rem;
-  padding: 0.25rem 0.75rem;
+  padding: 0.35rem 0.85rem;
   border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 1;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 `;
 
 // Reply styling components
@@ -690,36 +911,30 @@ const ActiveReplyIndicator = styled.div`
 // New styled components for the integrated reply UI
 const MessageActionBar = styled.div`
   display: flex;
-  align-items: center;
-  margin-top: 2px;
-  margin-left: 8px;
-  margin-bottom: 12px;
+  justify-content: flex-end;
+  padding: 4px 0;
   width: 100%;
-  max-width: 95%;
-  position: relative;
 `;
 
-
 const ReplyInput = styled.input`
+  flex: 1;
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.9rem;
-  padding: 8px 4px;
-  flex: 1;
-  min-width: 200px;
+  padding: 6px 8px;
   outline: none;
+  transition: all 0.3s ease;
   
   &::placeholder {
     color: rgba(255, 255, 255, 0.5);
-    transition: color 0.2s ease;
+    transition: all 0.3s ease;
   }
   
   &:focus {
-    outline: none;
-    
     &::placeholder {
-      color: rgba(255, 255, 255, 0.7);
+      opacity: 0.8;
+      transform: translateX(3px);
     }
   }
 `;
@@ -727,18 +942,19 @@ const ReplyInput = styled.input`
 const ReplyForm = styled.div<{ $isFocused: boolean }>`
   display: flex;
   align-items: center;
-  background: ${props => props.$isFocused ? 'rgba(35, 38, 85, 0.4)' : 'rgba(35, 38, 85, 0.2)'};
-  border-radius: 18px;
-  padding: 6px 10px;
-  border: 1px solid ${props => props.$isFocused ? 'rgba(130, 161, 191, 0.4)' : 'rgba(130, 161, 191, 0.1)'};
+  background: ${props => props.$isFocused ? 'rgba(35, 38, 85, 0.5)' : 'rgba(35, 38, 85, 0.25)'};
+  border-radius: 24px;
+  padding: 8px 14px;
+  border: 1px solid ${props => props.$isFocused ? 'rgba(130, 161, 191, 0.5)' : 'rgba(130, 161, 191, 0.15)'};
   width: 100%;
   transition: all 0.2s ease;
-  box-shadow: ${props => props.$isFocused ? '0 2px 4px rgba(0, 0, 0, 0.2)' : 'none'};
-  margin-top: 6px;
+  box-shadow: ${props => props.$isFocused ? '0 3px 8px rgba(0, 0, 0, 0.25)' : '0 1px 3px rgba(0, 0, 0, 0.1)'};
+  margin-top: 8px;
   
   &:hover {
-    background: ${props => props.$isFocused ? 'rgba(35, 38, 85, 0.4)' : 'rgba(35, 38, 85, 0.25)'};
-    border-color: rgba(130, 161, 191, 0.2);
+    background: ${props => props.$isFocused ? 'rgba(35, 38, 85, 0.5)' : 'rgba(35, 38, 85, 0.3)'};
+    border-color: rgba(130, 161, 191, 0.3);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -755,6 +971,227 @@ const ReplyIcon = styled.div`
   ${ReplyForm}:hover & {
     color: rgba(255, 255, 255, 0.8);
   }
+`;
+
+// SendButton is already defined above
+
+// Add a styled component for the input area at the bottom of the chat
+const InputArea = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(35, 38, 85, 0.2);
+  border-top: 1px solid rgba(130, 161, 191, 0.15);
+  border-radius: 0 0 16px 16px;
+  margin-top: auto;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+`;
+
+// Add a styled component for the main input field
+const MainInput = styled.input`
+  flex: 1;
+  background: rgba(35, 38, 85, 0.3);
+  border: 1px solid rgba(130, 161, 191, 0.2);
+  border-radius: 24px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  outline: none;
+  transition: all 0.2s ease;
+  
+  &:focus {
+    border-color: rgba(130, 161, 191, 0.5);
+    box-shadow: 0 0 0 2px rgba(130, 161, 191, 0.2);
+  }
+  
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+`;
+
+// Add a styled component for the send button in the main input area
+const MainSendButton = styled.button`
+  background: rgba(130, 161, 191, 0.3);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.9);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(130, 161, 191, 0.5);
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+    transform: none;
+  }
+`;
+
+// Styled component for the reply input container with three distinct styles
+const ReplyInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  transition: all 0.3s ease;
+  
+  /* Default state - flat, minimal design */
+  background: rgba(35, 38, 85, 0.1);
+  border-radius: 4px;
+  padding: 6px 12px;
+  border-bottom: 1px dashed rgba(130, 161, 191, 0.2);
+  
+  /* Hover state - rounded with gradient */
+  &:hover:not(:focus-within) {
+    background: linear-gradient(to right, rgba(35, 38, 85, 0.2), rgba(35, 38, 85, 0.3));
+    border-radius: 16px;
+    border-bottom: none;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Focus/active state - pill shape with glow */
+  &:focus-within {
+    background: rgba(35, 38, 85, 0.4);
+    border-radius: 24px;
+    padding: 8px 16px;
+    box-shadow: 0 0 12px rgba(130, 161, 191, 0.4);
+    transform: translateY(-2px);
+  }
+`;
+
+// Styled component for the reply send button
+const ReplySendButton = styled.button`
+  background: transparent !important;
+  background-image: none !important;
+  border: none;
+  color: #ffffff;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  box-shadow: none !important;
+  overflow: visible;
+  z-index: auto;
+  padding: 0;
+  
+  &:hover {
+    opacity: 0.9;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  &:active {
+    opacity: 0.7;
+    transform: none !important;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  
+  &::before {
+    display: none !important;
+    content: none !important;
+    background: none !important;
+  }
+`;
+
+const ReplyButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(35, 38, 85, 0.15);
+  border: none;
+  border-radius: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  justify-content: center;
+  margin-top: 4px;
+  opacity: 0.7;
+  
+  &:hover {
+    background: rgba(35, 38, 85, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+    opacity: 1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  &:active {
+    background: rgba(35, 38, 85, 0.5);
+    transform: scale(0.98);
+  }
+  
+  span {
+    margin-top: 1px;
+  }
+`;
+
+// Minimal reply button with just a + icon - absolutely no background or effects
+const ReplyButtonMinimal = styled.button`
+  display: inline;
+  background: none !important;
+  background-image: none !important;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+  box-shadow: none !important;
+  overflow: visible;
+  z-index: auto;
+  
+  &:hover {
+    opacity: 0.9;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  &:active {
+    opacity: 0.7;
+    transform: none !important;
+  }
+  
+  &::before {
+    display: none !important;
+    content: none !important;
+    background: none !important;
+  }
+`;
+
+const CommentIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  margin-right: 8px;
 `;
 
 export default DiscussionList;
