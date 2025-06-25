@@ -1,106 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { FaPlus, FaSearch, FaFilter, FaComment, FaEye } from 'react-icons/fa';
-import { collection, query, orderBy, getDocs, doc, updateDoc, increment } from 'firebase/firestore';
+import { FaSearch, FaFilter } from 'react-icons/fa';
 import { firestore } from '../../../firebase/config';
-import { getAllPosts, Post as ServicePost } from '../../../firebase/services/forums';
 import { useAuth } from '../../../contexts/AuthContext';
-import NewPostModal from './NewPostModal';
 import MockupGallery from './MockupGallery';
 import { MockupUIProvider } from './MockupUIContext';
-import { DiscussionUIProvider, useDiscussionUI } from './DiscussionUIContext';
+import { DiscussionUIProvider } from './DiscussionUIContext';
 import { HeaderStyles, SectionTitle } from './ForumStyles';
 import MockupModal from './MockupModal';
-import DiscussionModal from './DiscussionModal';
 import DiscussionList from './DiscussionList';
+import ChatInput from './ChatInput';
 
-// Extended Post type for UI display that includes UI-specific fields
-interface UIPost extends ServicePost {
-  content?: string; // Optional legacy field that maps to body
-  body: string; // Content of the post
-  user: { displayName: string; photoURL: string; email: string };
-  tags?: string[];
-  likes?: number;
-  likedBy?: string[];
-  commentCount?: number;
-  views?: number;
-}
+// Default project ID for discussions
+const DEFAULT_PROJECT_ID = 'default';
 
 
 
 const ForumsHome = () => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
-  const [posts, setPosts] = useState<UIPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isNewPostModalOpen, setIsNewPostModalOpen] = useState(false);
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const isRTL = i18n.language === 'ar';
-  const { setSelectedId } = useDiscussionUI();
 
   const popularTags = ['react', 'javascript', 'design', 'firebase', 'mobile', 'web'];
-
-  const fetchPosts = useCallback(async () => {
-    try {
-      setLoading(true);
-      
-      // Use the getAllPosts service function
-      const fetchedPosts = await getAllPosts();
-      
-      // Filter by tag if activeTag is set
-      const filteredPosts = activeTag 
-        ? fetchedPosts.filter(post => {
-            // Safely check if post has tags and if it includes activeTag
-            // Since tags is not in the ServicePost type, we use a type assertion
-            const postWithTags = post as any;
-            return Array.isArray(postWithTags.tags) && postWithTags.tags.includes(activeTag);
-          })
-        : fetchedPosts;
-      
-      // Map the posts to match the expected format in the UI
-      const formattedPosts: UIPost[] = filteredPosts.map(post => {
-        // Since tags is not in the ServicePost type, we use a type assertion
-        const postWithTags = post as any;
-        
-        return {
-          id: post.id || '',
-          title: post.title,
-          body: post.body || '', // Keep the body field for new UI
-          content: post.body, // Keep content for backward compatibility
-          userId: post.userId,
-          userName: post.userName,
-          createdAt: post.createdAt,
-          // Create a user object from userName
-          user: { 
-            displayName: post.userName || 'Anonymous', 
-            photoURL: '', 
-            email: '' 
-          },
-          // Add UI-specific fields with default values
-          tags: Array.isArray(postWithTags.tags) ? postWithTags.tags : [],
-          likes: 0,
-          likedBy: [],
-          commentCount: 0,
-          views: 0,
-          imageURL: post.imageURL || ''
-        };
-      });
-      
-      setPosts(formattedPosts);
-      setError(null);
-    } catch (err: any) {
-      console.error('Error fetching posts:', err);
-      setError(err.message || 'Error fetching posts');
-    } finally {
-      setLoading(false);
-    }
-  }, [activeTag]);
-
-  useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
 
   // Post click handling is now managed by the DiscussionList component
 
@@ -115,13 +38,7 @@ const ForumsHome = () => {
                 <LeftColumn>
                   <SectionHeader>
                     <DiscussionHeader>
-                      <SectionTitle>Discussion</SectionTitle>
-                      <NewPostButton 
-                        onClick={() => setIsNewPostModalOpen(true)}
-                        aria-label="Create new post"
-                      >
-                        <FaPlus /> Post
-                      </NewPostButton>
+                      <SectionTitle>Real-time Chat</SectionTitle>
                     </DiscussionHeader>
                     <FilterSection>
                       <SearchBar>
@@ -130,7 +47,7 @@ const ForumsHome = () => {
                         </SearchIcon>
                         <SearchInput 
                           type="text" 
-                          placeholder="forums.searchPlaceholder" 
+                          placeholder={t('forums.searchPlaceholder')} 
                         />
                       </SearchBar>
                       <FilterButton>
@@ -142,7 +59,7 @@ const ForumsHome = () => {
                         onClick={() => setActiveTag(null)}
                         $active={activeTag === null}
                       >
-                        forums.allTopics
+                        {t('forums.allTopics')}
                       </TagItem>
                       {popularTags.map(tag => (
                         <TagItem 
@@ -155,52 +72,19 @@ const ForumsHome = () => {
                       ))}
                     </TagsContainer>
                   </SectionHeader>
-                  {loading ? (
-                    <LoadingContainer><div>{t('common.loading')}</div></LoadingContainer>
-                  ) : error ? (
-                    <ErrorContainer><div>{error}</div></ErrorContainer>
-                  ) : (
-                  <DiscussionList posts={posts} />
-                  )}
+                  
+                  {/* Chat messages list */}
+                  <DiscussionList projectId={DEFAULT_PROJECT_ID} />
+                  
+                  {/* Chat input */}
+                  <ChatInput projectId={DEFAULT_PROJECT_ID} />
                 </LeftColumn>
                 <RightColumn>
                   <MockupGallery onAddMockup={() => {/* Handle adding mockup */}} />
                 </RightColumn>
               </ForumsLayout>
             </ForumsContent>
-            {isNewPostModalOpen && (
-              <NewPostModal
-                onClose={() => setIsNewPostModalOpen(false)}
-                onSubmit={(newPost) => {
-                  // Convert the post to UIPost format
-                  const uiPost: UIPost = {
-                    id: newPost.id,
-                    title: newPost.title,
-                    body: newPost.body || '', // Required field for UIPost
-                    content: newPost.body, // Keep for backward compatibility
-                    userId: newPost.userId,
-                    userName: newPost.userName,
-                    createdAt: newPost.createdAt,
-                    imageURL: newPost.imageURL || '',
-                    user: {
-                      displayName: newPost.userName || 'Anonymous',
-                      photoURL: '',
-                      email: ''
-                    },
-                    tags: newPost.tags || [],
-                    likes: 0,
-                    likedBy: [],
-                    commentCount: 0,
-                    views: 0
-                  };
-                  setPosts([uiPost, ...posts]);
-                  setIsNewPostModalOpen(false);
-                }}
-                modalTitle="Add New Discussion"
-              />
-            )}
             <MockupModal />
-            <DiscussionModal />
           </ForumsCard>
         </ForumsWrapper>
       </DiscussionUIProvider>
@@ -216,12 +100,14 @@ const ForumsWrapper = styled.div`
 
 const ForumsCard = styled.div`
   background: rgba(35, 38, 85, 0.4);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(4px);
-  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ForumsTitle = styled.h1`
@@ -234,13 +120,18 @@ const ForumsTitle = styled.h1`
 `;
 
 const ForumsContent = styled.div`
-  padding: 1rem;
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 `;
 
 const ForumsLayout = styled.div`
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
   height: 100%;
   
   @media (max-width: 768px) {
@@ -251,6 +142,9 @@ const ForumsLayout = styled.div`
 const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 200px);
+  min-height: 600px;
+  max-height: 800px;
 `;
 
 const RightColumn = styled.div`
@@ -261,7 +155,8 @@ const RightColumn = styled.div`
 
 
 const SectionHeader = styled.div`
-  ${HeaderStyles.wrapper}
+  margin-bottom: 1rem;
+  flex-shrink: 0;
 `;
 
 const DiscussionHeader = styled.div`

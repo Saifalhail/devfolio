@@ -103,8 +103,12 @@ const NewPostModal = ({ onClose, onSubmit, modalTitle }: NewPostModalProps) => {
       
       console.log('Creating post with data:', newPost);
       
-      // Use the forums service to create the post
-      const postId = await createPost(newPost as Post);
+      // Default project ID for discussions
+      const DEFAULT_PROJECT_ID = 'default';
+      
+      // Use the forums service to create the post with the correct parameter order
+      // createPost expects (projectId, post) as parameters
+      const postId = await createPost(DEFAULT_PROJECT_ID, newPost as Post);
       
       console.log('Post created with ID:', postId);
       

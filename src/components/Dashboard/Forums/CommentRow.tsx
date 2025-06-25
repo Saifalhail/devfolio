@@ -11,14 +11,23 @@ interface CommentProps {
       toDate: () => Date;
     };
   };
+  isSelf?: boolean;
 }
 
-const CommentRow: React.FC<CommentProps> = ({ c }) => {
-  const timestamp = c.createdAt?.toDate ? c.createdAt.toDate() : new Date();
+const CommentRow: React.FC<CommentProps> = ({ c, isSelf = false }) => {
+  // Handle different timestamp formats safely
+  let timestamp: Date;
+  try {
+    timestamp = c.createdAt?.toDate ? c.createdAt.toDate() : new Date();
+  } catch (err) {
+    // Fallback if toDate() fails or createdAt is in a different format
+    timestamp = new Date();
+  }
+  
   const timeAgo = formatDistanceToNow(timestamp, { addSuffix: true });
   
   return (
-    <CommentContainer>
+    <CommentContainer $isSelf={isSelf}>
       <CommentHeader>
         <UserName>{c.userName}</UserName>
         <TimeStamp>{timeAgo}</TimeStamp>
@@ -28,15 +37,16 @@ const CommentRow: React.FC<CommentProps> = ({ c }) => {
   );
 };
 
-const CommentContainer = styled.div`
+const CommentContainer = styled.div<{ $isSelf: boolean }>`
   padding: 0.75rem;
   margin-bottom: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  background: ${props => props.$isSelf ? 'rgba(123, 44, 191, 0.2)' : 'rgba(255, 255, 255, 0.05)'};
+  border-radius: ${props => props.$isSelf ? '12px 12px 0 12px' : '12px 12px 12px 0'};
   transition: all 0.2s ease;
+  width: 100%;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: ${props => props.$isSelf ? 'rgba(123, 44, 191, 0.3)' : 'rgba(255, 255, 255, 0.08)'};
   }
 `;
 
@@ -45,6 +55,8 @@ const CommentHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 `;
 
 const UserName = styled.span`
@@ -56,6 +68,7 @@ const UserName = styled.span`
 const TimeStamp = styled.span`
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
 `;
 
 const CommentText = styled.p`
@@ -64,6 +77,7 @@ const CommentText = styled.p`
   line-height: 1.5;
   color: rgba(255, 255, 255, 0.9);
   word-break: break-word;
+  white-space: pre-wrap;
 `;
 
 export default CommentRow;

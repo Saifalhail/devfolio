@@ -6,7 +6,7 @@ import { Mockup } from './types';
 interface Ctx { selected: Mockup | null; setSelected: (m: Mockup|null)=>void; }
 const MockupCtx = createContext<Ctx>({ selected: null, setSelected: () => {} });
 
-export const MockupUIProvider = ({ children }: { children: ReactNode }) => {
+export const MockupUIProvider = ({ children = null }: { children?: ReactNode }) => {
   const [selected, setSelected] = useState<Mockup | null>(null);
   return <MockupCtx.Provider value={{ selected, setSelected }}>{children}</MockupCtx.Provider>;
 };

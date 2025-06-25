@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useDiscussionUI } from './DiscussionUIContext';
 import { doc, collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
@@ -10,14 +10,29 @@ import { useAuth } from '../../../contexts/AuthContext';
 export default function DiscussionModal() {
   const { selectedId, setSelectedId } = useDiscussionUI();
   const { currentUser } = useAuth();
+  const [error, setError] = useState<string | null>(null);
   
-  // Always initialize hooks regardless of selectedId
-  // Use nullish coalescing to provide a fallback document reference when selectedId is null
-  const postRef = selectedId ? doc(firestore, 'forumsPosts', selectedId) : doc(firestore, 'forumsPosts', 'placeholder');
-  const postSnap = useFirestoreSnapshot<any>(postRef);
-  const comments = useFirestoreSnapshot<any>(
-    query(collection(postRef, 'comments'), orderBy('createdAt', 'asc'))
-  );
+  // Default project ID for discussions
+  const DEFAULT_PROJECT_ID = 'default';
+  
+  // Only create references when we have a valid selectedId
+  const postRef = selectedId 
+    ? doc(firestore, `projectDiscussions/${DEFAULT_PROJECT_ID}/messages`, selectedId) 
+    : null;
+  
+  // Use the improved hook with proper error handling
+  const postSnap = useFirestoreSnapshot<any>(postRef, !!selectedId);
+  
+  // Only create the comments query if we have a valid post reference
+  const commentsQuery = postRef ? query(collection(postRef, 'comments'), orderBy('createdAt', 'asc')) : null;
+  const comments = useFirestoreSnapshot<any>(commentsQuery, !!selectedId);
+  
+  // Handle errors - MUST be called before any conditional returns
+  useEffect(() => {
+    if (postSnap.length === 0 && selectedId) {
+      console.log(`No post found with ID: ${selectedId}`);
+    }
+  }, [postSnap, selectedId]);
   
   // Early return after hooks are called
   if (!selectedId) return null;

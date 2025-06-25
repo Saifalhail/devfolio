@@ -37,6 +37,7 @@ export interface Post {
   views?: number;
   likes?: number;
   likedBy?: string[];
+  commentCount?: number;
 }
 
 export interface Comment {
@@ -51,11 +52,12 @@ export interface Comment {
  * Internal helpers -----------------------------------------------
  */
 // Use the firestore instance from config
-const postsCollection = (): CollectionReference<DocumentData> =>
-  collection(firestore, 'forumsPosts');
+// Updated to use projectDiscussions collection as per new security rules
+const postsCollection = (projectId: string = 'default'): CollectionReference<DocumentData> =>
+  collection(firestore, `projectDiscussions/${projectId}/messages`);
 
-const commentsCollection = (postId: string): CollectionReference<DocumentData> =>
-  collection(firestore, `forumsPosts/${postId}/comments`);
+const commentsCollection = (projectId: string, messageId: string): CollectionReference<DocumentData> =>
+  collection(firestore, `projectDiscussions/${projectId}/messages/${messageId}/comments`);
 
 /**
  * Upload a file to Firebase Storage and return its download URL
@@ -95,8 +97,11 @@ export const uploadImage = async (file: File, onProgress?: (progress: number) =>
 
 /**
  * Create a new forum post. If an image is provided it will be uploaded first.
+ * @param projectId - Project ID, defaults to 'default'
+ * @param post - The post data to create
+ * @param image - Optional image file to upload
  */
-export const createPost = async (post: Post, image?: File): Promise<string> => {
+export const createPost = async (projectId: string = 'default', post: Post, image?: File): Promise<string> => {
   // Verify user is authenticated
   const currentUser = auth.currentUser;
   
@@ -111,64 +116,100 @@ export const createPost = async (post: Post, image?: File): Promise<string> => {
   }
 
   // Create a post object that exactly matches the Firestore structure we observed
-  // Only include fields that are in the Firestore database
   const postData = {
     title: post.title,
     body: post.body,
-    userId: 342564, // Using the numeric userId to match existing data
+    userId: currentUser.uid,
     userName: currentUser.displayName || 'Anonymous',
     imageURL,
-    createdAt: Timestamp.now()
+    createdAt: Timestamp.now(),
+    views: 0,
+    likes: 0,
+    likedBy: []
   };
 
   try {
-    console.log("Attempting to create post with data:", postData);
-    console.log("Current user:", currentUser.uid, currentUser.displayName);
-    
-    const docRef = await addDoc(postsCollection(), postData);
-    console.log("Post created successfully with ID:", docRef.id);
+    console.log(`Creating post in project ${projectId}:`, postData);
+    const docRef = await addDoc(postsCollection(projectId), postData);
     return docRef.id;
-  } catch (error) {
-    console.error("Error creating post:", error);
-    throw error;
+  } catch (err) {
+    console.error(`Error creating post in project ${projectId}:`, err);
+    throw err;
   }
 };
 
 /**
  * Fetch every forum post ordered by creation date desc.
+ * @param projectId - Optional project ID, defaults to 'default'
  */
-export const getAllPosts = async (): Promise<Post[]> => {
-  const q = query(postsCollection(), orderBy('createdAt', 'desc'));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Post) }));
+export const getAllPosts = async (projectId: string = 'default'): Promise<Post[]> => {
+  try {
+    console.log(`Fetching posts from collection: projectDiscussions/${projectId}/messages`);
+    console.log('Current auth state:', auth.currentUser ? 'Authenticated' : 'Not authenticated');
+    
+    // Use the updated collection reference with projectId
+    const q = query(postsCollection(projectId), orderBy('createdAt', 'desc'));
+    
+    const snapshot = await getDocs(q);
+    console.log(`Successfully fetched ${snapshot.docs.length} posts for project ${projectId}`);
+    
+    return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Post) }));
+  } catch (error) {
+    console.error(`Error fetching posts for project ${projectId}:`, error);
+    // Re-throw with more context for better debugging
+    throw new Error(`Failed to fetch posts: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 };
 
 /**
  * Retrieve a single post document by id
+ * @param projectId - Project ID, defaults to 'default'
+ * @param postId - The ID of the post to retrieve
  */
-export const getPostById = async (postId: string): Promise<Post | null> => {
-  const docSnap = await getDoc(doc(firestore, 'forumsPosts', postId));
-  if (!docSnap.exists()) return null;
-  return { id: docSnap.id, ...(docSnap.data() as Post) };
+export const getPostById = async (projectId: string = 'default', postId: string): Promise<Post | null> => {
+  try {
+    const docRef = doc(firestore, `projectDiscussions/${projectId}/messages`, postId);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return null;
+    return { id: docSnap.id, ...(docSnap.data() as Post) };
+  } catch (err) {
+    console.error(`Error retrieving post ${postId} from project ${projectId}:`, err);
+    throw err;
+  }
 };
 
 /**
- * Add a comment document under a post's `comments` subcollection
+ * Add a comment to a post
+ * @param projectId - Project ID, defaults to 'default'
+ * @param postId - The ID of the post to add a comment to
+ * @param comment - The comment data to add
  */
-export const addComment = async (postId: string, comment: Comment): Promise<string> => {
-  const data: Comment = {
-    ...comment,
-    createdAt: Timestamp.now(),
-  };
-  const docRef = await addDoc(commentsCollection(postId), data);
-  return docRef.id;
+export const addComment = async (projectId: string = 'default', postId: string, comment: Comment): Promise<string> => {
+  try {
+    const data: Comment = {
+      ...comment,
+      createdAt: Timestamp.now(),
+    };
+    const docRef = await addDoc(commentsCollection(projectId, postId), data);
+    return docRef.id;
+  } catch (err) {
+    console.error(`Error adding comment to post ${postId} in project ${projectId}:`, err);
+    throw err;
+  }
 };
 
 /**
- * Get all comments for a post ordered by creation date asc
+ * Get all comments for a post
+ * @param projectId - Project ID, defaults to 'default'
+ * @param postId - The ID of the post to get comments for
  */
-export const getComments = async (postId: string): Promise<Comment[]> => {
-  const q = query(commentsCollection(postId), orderBy('createdAt', 'asc'));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Comment) }));
+export const getComments = async (projectId: string = 'default', postId: string): Promise<Comment[]> => {
+  try {
+    const q = query(commentsCollection(projectId, postId), orderBy('createdAt', 'asc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Comment) }));
+  } catch (err) {
+    console.error(`Error getting comments for post ${postId} in project ${projectId}:`, err);
+    throw err;
+  }
 };
