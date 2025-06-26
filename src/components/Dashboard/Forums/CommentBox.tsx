@@ -9,9 +9,16 @@ import { Comment } from './types';
 interface CommentBoxProps {
   postId: string;
   onCommentAdded: (comment: Comment) => void;
+  firestorePath?: string; // Path to the Firestore collection for comments
+  postCollectionPath?: string; // Path to the Firestore collection for posts (to update comment count)
 }
 
-const CommentBox = ({ postId, onCommentAdded }: CommentBoxProps) => {
+const CommentBox = ({ 
+  postId, 
+  onCommentAdded, 
+  firestorePath = 'comments', // Default to 'comments' collection
+  postCollectionPath = 'posts' // Default to 'posts' collection
+}: CommentBoxProps) => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
   const isRTL = i18n.language === 'ar';
@@ -51,13 +58,15 @@ const CommentBox = ({ postId, onCommentAdded }: CommentBoxProps) => {
         likedBy: [],
       };
       
-      const commentRef = await addDoc(collection(db, 'comments'), newComment);
+      const commentRef = await addDoc(collection(db, firestorePath), newComment);
       
-      // Update comment count in the post
-      const postRef = doc(db, 'posts', postId);
-      await updateDoc(postRef, {
-        commentCount: increment(1)
-      });
+      // Update comment count in the post if postCollectionPath is provided
+      if (postCollectionPath) {
+        const postRef = doc(db, postCollectionPath, postId);
+        await updateDoc(postRef, {
+          commentCount: increment(1)
+        });
+      }
       
       // Add the new comment to the UI
       onCommentAdded({ 
@@ -81,35 +90,36 @@ const CommentBox = ({ postId, onCommentAdded }: CommentBoxProps) => {
     <CommentBoxContainer dir={isRTL ? 'rtl' : 'ltr'}>
       <h4>{t('forums.addComment')}</h4>
       
-      {error && <ErrorMessage>{error}</ErrorMessage>}
+      {error && <ErrorMessage role="alert">{error}</ErrorMessage>}
       
-      {!currentUser ? (
-        <LoginPrompt>{t('forums.loginToComment')}</LoginPrompt>
-      ) : (
-        <Form onSubmit={handleSubmit}>
-          <UserInfo>
-            <UserAvatar 
-              src={currentUser.photoURL || '/default-avatar.png'} 
-              alt={currentUser.displayName || 'User'} 
-            />
-            <UserName>{currentUser.displayName || 'Anonymous'}</UserName>
-          </UserInfo>
-          
-          <TextArea
-            value={content}
-            onChange={e => setContent(e.target.value)}
-            placeholder={t('forums.commentPlaceholder')}
-            disabled={loading}
-            rows={4}
+      <Form onSubmit={handleSubmit}>
+        <UserInfo>
+          <UserAvatar 
+            src={currentUser?.photoURL || '/default-avatar.png'} 
+            alt={currentUser?.displayName || 'User'}
+            loading="lazy"
           />
-          
-          <ButtonContainer>
-            <SubmitButton type="submit" disabled={loading || !content.trim()}>
-              {loading ? t('common.submitting') : t('common.submit')}
-            </SubmitButton>
-          </ButtonContainer>
-        </Form>
-      )}
+          <UserName>{currentUser?.displayName || 'Anonymous'}</UserName>
+        </UserInfo>
+        <TextArea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder={t('forums.commentPlaceholder')}
+          disabled={loading}
+          rows={4}
+          aria-label={t('forums.commentInputLabel')}
+        />
+        <ButtonContainer>
+          <SubmitButton 
+            type="submit" 
+            disabled={loading || !content.trim()}
+            aria-label={loading ? t('common.submitting') : t('common.submit')}
+          >
+            {loading ? t('common.submitting') : t('common.submit')}
+          </SubmitButton>
+        </ButtonContainer>
+      </Form>
+      {!currentUser && <LoginPrompt role="alert">{t('forums.loginToComment')}</LoginPrompt>}
     </CommentBoxContainer>
   );
 };

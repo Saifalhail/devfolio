@@ -1,32 +1,73 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaDownload, FaComment, FaTimes } from 'react-icons/fa';
 import { useMockupUI } from './MockupUIContext';
+import DiscussionList from './DiscussionList';
+import CommentBox from './CommentBox';
+import { Comment } from './types';
+import { useTranslation } from 'react-i18next';
 
-const MockupModal: React.FC = () => {
+interface MockupModalProps {
+  projectId?: string;
+}
+
+const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
+  const { t, i18n } = useTranslation();
   const { selectedMockup, clearSelectedMockup } = useMockupUI();
-  
-  if (!selectedMockup) return null;
+  const [showComments, setShowComments] = useState(false);
+  const isRTL = i18n.language === 'ar';
   
   const handleClose = () => {
     clearSelectedMockup();
   };
   
+  // Add event listener for Escape key
+  useEffect(() => {
+    if (!selectedMockup) return;
+    
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClose();
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscapeKey);
+    
+    // Clean up the event listener on component unmount
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [selectedMockup, clearSelectedMockup]);
+  
+  if (!selectedMockup) return null;
+  
+  const handleCommentAdded = (comment: Comment) => {
+    // Handle new comment added - could update UI or trigger a refresh
+    console.log('New comment added:', comment);
+  };
+  
+  const toggleComments = () => {
+    setShowComments(!showComments);
+  };
+  
+  // Build the dynamic Firestore path for comments
+  const commentFirestorePath = `projects/${projectId}/mockups/${selectedMockup.id}/comments`;
+  
   return (
-    <ModalOverlay onClick={handleClose}>
+    <ModalOverlay onClick={handleClose} dir={isRTL ? 'rtl' : 'ltr'}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
-        <CloseButton onClick={handleClose}>
+        <CloseButton onClick={handleClose} aria-label={t('common.close')}>
           <FaTimes />
         </CloseButton>
         
         <ModalHeader>
           <h2>{selectedMockup.title}</h2>
           <ModalActions>
-            <ActionButton>
-              <FaDownload /> Download
+            <ActionButton aria-label={t('mockups.download')}>
+              <FaDownload /> {t('mockups.download')}
             </ActionButton>
-            <ActionButton>
-              <FaComment /> Comment
+            <ActionButton onClick={toggleComments} aria-label={showComments ? t('mockups.hideComments') : t('mockups.showComments')}>
+              <FaComment /> {showComments ? t('mockups.hideComments') : t('mockups.showComments')}
             </ActionButton>
           </ModalActions>
         </ModalHeader>
@@ -38,11 +79,30 @@ const MockupModal: React.FC = () => {
         <MockupDetails>
           <p>{selectedMockup.description}</p>
           <MockupMeta>
-            <span>Created by {selectedMockup.userName}</span>
-            <span>Views: {selectedMockup.views}</span>
-            <span>Comments: {selectedMockup.commentCount}</span>
+            <span>{t('mockups.createdBy', { name: selectedMockup.userName })}</span>
+            <span>{t('mockups.views', { count: selectedMockup.views })}</span>
+            <span>{t('mockups.commentCount', { count: selectedMockup.commentCount })}</span>
           </MockupMeta>
         </MockupDetails>
+        
+        {showComments && (
+          <CommentsSection>
+            <CommentsSectionHeader>{t('mockups.comments')}</CommentsSectionHeader>
+            <CommentsContainer>
+              <DiscussionList 
+                firestorePath={commentFirestorePath} 
+              />
+            </CommentsContainer>
+            <CommentInputContainer>
+              <CommentBox 
+                postId={selectedMockup.id} 
+                onCommentAdded={handleCommentAdded}
+                firestorePath={commentFirestorePath}
+                postCollectionPath={`projects/${projectId}/mockups`}
+              />
+            </CommentInputContainer>
+          </CommentsSection>
+        )}
       </ModalContent>
     </ModalOverlay>
   );
@@ -181,6 +241,46 @@ const MockupMeta = styled.div`
   margin-top: 1.5rem;
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.6);
+`;
+
+const CommentsSection = styled.div`
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.2);
+`;
+
+const CommentsSectionHeader = styled.h3`
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+`;
+
+const CommentsContainer = styled.div`
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(123, 44, 191, 0.5);
+    border-radius: 3px;
+  }
+`;
+
+const CommentInputContainer = styled.div`
+  margin-top: 1rem;
 `;
 
 export default MockupModal;

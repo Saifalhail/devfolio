@@ -529,3 +529,75 @@ COPY . .
 RUN pnpm run build
 CMD ["pnpm","serve","--host","0.0.0.0","--port","5173"]
 ```
+
+### 1-T · Detailed Directory & File Architecture Guide
+
+This section provides a deeper explanation of the project structure outlined in 1-B · Folder Skeleton. Its purpose is to serve as a single source of truth for all contributors (human or AI) on where to find and place code, ensuring consistency and maintainability.
+
+#### /public/
+
+**Purpose:** Stores static assets that are not processed by the build tool (Vite/Webpack). These are copied directly to the build output directory.
+
+**Contents:** favicon.ico, robots.txt, manifest.json, and other static files that need to be accessible from the root domain. Do not place assets here that should be hashed and optimized, like images or fonts used within your React components.
+
+#### /src/assets/
+
+**Purpose:** The primary location for all static assets that are imported and used within the React application.
+
+**Contents:** Images (.svg, .png, .webp), custom fonts, and global icons. These assets will be processed by the build system for optimization and hashing.
+
+#### /src/components/
+
+**Purpose:** The core of the UI. This directory contains all React components.
+
+- **/Common/**: Holds highly reusable, generic components that are presentation-focused and application-agnostic (e.g., Button, Card, Modal). This is the first place to look before creating a new UI element. Reference section 1-R for a detailed catalogue.
+
+- **/Layout/**: Contains components that define the structure and layout of pages, such as Navbar, Footer, Sidebar, and layout wrappers (PublicLayout, AuthLayout).
+
+- **/Pages/**: Contains components that are specific to a particular page or feature. These often compose multiple Common and Layout components to build a complete view (e.g., a UserProfile component within /Pages/Dashboard/ that uses Card, Avatar, and Button from /Common/).
+
+#### /src/contexts/
+
+**Purpose:** For React Context providers and their associated hooks. This is used for managing global or widely-shared state that doesn't change frequently.
+
+**Contents:** AuthContext.tsx (for user session state), ThemeContext.tsx (for light/dark mode), LocaleContext.tsx (for managing language state, often handled by react-i18next's provider).
+
+#### /src/hooks/
+
+**Purpose:** Stores custom React hooks (use...) that encapsulate reusable logic.
+
+**Contents:** useAuth.ts (a consumer for AuthContext), useTheme.ts, useToggle.ts, useMediaQuery.ts. This helps keep components clean and separates business logic from the view.
+
+#### /src/locales/
+
+**Purpose:** Contains JSON files for internationalization (i18n). Each file represents a language.
+
+**Contents:** en.json, ar.json, etc. The key structure within each file must be identical.
+
+#### /src/routes/
+
+**Purpose:** Defines the application's routing configuration.
+
+**Contents:** An index.tsx that exports the route definitions (often as an array of objects), route guards like <RequireAuth />, and any route-level code-splitting using React.lazy.
+
+#### /src/services/
+
+**Purpose:** Decouples the application from the backend. This layer is responsible for all external API communication (e.g., Firebase, REST APIs). It should not contain any React-specific code.
+
+**Contents:** firebase.ts (Firebase app initialization), auth.service.ts (functions like signInWithGoogle, signOutUser), firestore.service.ts (functions like getUserProfile, updateDocument). Components and hooks call these services to fetch or push data.
+
+#### /src/styles/
+
+**Purpose:** Global styling resources.
+
+**Contents:** theme.ts (the central object for design tokens: colors, fonts, spacing), GlobalStyle.ts (CSS reset, base font styles, body styles), and potentially mixins.ts for reusable CSS snippets with styled-components.
+
+#### /src/utils/
+
+**Purpose:** A collection of pure helper functions and utilities that are not specific to any framework or service.
+
+**Contents:** formatters.ts (for dates, currency), validators.ts, constants.ts, and the rtl.ts helper mentioned in the i18n section.
+
+#### /src/__tests__/
+
+**Purpose:** Contains all test files for Jest and React Testing Library. The folder structure within __tests__ should mirror the /src directory to make it easy to locate tests for a specific component or utility.

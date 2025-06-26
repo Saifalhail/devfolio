@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { FaComment, FaDownload, FaTimes } from 'react-icons/fa';
 import { FiPlus, FiUpload } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 import { HeaderStyles, SectionTitle } from './ForumStyles';
 import { Mockup, MockupComment } from './types';
 import { useMockupUI } from './MockupUIContext';
+import MockupModal from './MockupModal';
 import { collection, query, orderBy, limit } from 'firebase/firestore';
 import { useFirestoreSnapshot } from '../../../hooks/useFirestoreSnapshot';
 import { getFirestoreDb } from '../../../firebase';
@@ -55,6 +57,8 @@ interface MockupProps {
 }
 
 const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT_PROJECT_ID }) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const { selectedMockup, handleSelectMockup, isAddModalOpen, openAddModal, closeAddModal } = useMockupUI();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const firestore = getFirestoreDb();
@@ -90,11 +94,11 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
   };
   
   return (
-    <MockupContainer>
+    <MockupContainer dir={isRTL ? 'rtl' : 'ltr'}>
       <SectionHeader>
         <MockupHeader>
-          <SectionTitle>Mockups</SectionTitle>
-          <AddMockupButton onClick={handleAddMockupClick} aria-label="Add new mockup">
+          <SectionTitle>{t('mockups.title')}</SectionTitle>
+          <AddMockupButton onClick={handleAddMockupClick} aria-label={t('mockups.addNew')}>
             <FiPlus />
           </AddMockupButton>
         </MockupHeader>
@@ -106,10 +110,10 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
         </LoadingContainer>
       ) : mockups.length === 0 ? (
         <EmptyState>
-          <EmptyStateText>No mockups yet</EmptyStateText>
-          <EmptyStateSubtext>Add your first mockup to get started</EmptyStateSubtext>
+          <EmptyStateText>{t('mockups.empty.title')}</EmptyStateText>
+          <EmptyStateSubtext>{t('mockups.empty.subtitle')}</EmptyStateSubtext>
           <AddMockupButtonLarge onClick={handleAddMockupClick}>
-            <FiPlus /> Add Mockup
+            <FiPlus /> {t('mockups.addNew')}
           </AddMockupButtonLarge>
         </EmptyState>
       ) : (
@@ -146,6 +150,9 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
       {isAddModalOpen && (
         <AddMockupModal onClose={closeAddModal} />
       )}
+      
+      {/* Render the MockupModal with projectId */}
+      <MockupModal projectId={projectId} />
     </MockupContainer>
   );
 };
@@ -156,6 +163,8 @@ interface AddMockupModalProps {
 }
 
 const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -261,12 +270,12 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
   };
   
   return (
-    <ModalOverlay onClick={isSubmitting ? undefined : onClose}>
+    <ModalOverlay onClick={isSubmitting ? undefined : onClose} dir={isRTL ? 'rtl' : 'ltr'}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
-          <h2>Add New Mockup</h2>
+          <h2>{t('mockups.addNew.title')}</h2>
           {!isSubmitting && (
-            <CloseButton onClick={onClose}>
+            <CloseButton onClick={onClose} aria-label={t('common.close')}>
               <FaTimes />
             </CloseButton>
           )}
@@ -276,41 +285,41 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
           {error && <ErrorMessage>{error}</ErrorMessage>}
           
           <FormGroup>
-            <FormLabel>Title</FormLabel>
+            <FormLabel>{t('mockups.form.title')}</FormLabel>
             <FormInput 
               type="text" 
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter mockup title"
+              placeholder={t('mockups.form.titlePlaceholder')}
               required
               disabled={isSubmitting}
             />
           </FormGroup>
           
           <FormGroup>
-            <FormLabel>Description</FormLabel>
+            <FormLabel>{t('mockups.form.description')}</FormLabel>
             <FormTextarea 
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter mockup description"
+              placeholder={t('mockups.form.descriptionPlaceholder')}
               required
               disabled={isSubmitting}
             />
           </FormGroup>
           
           <FormGroup>
-            <FormLabel>Upload Image</FormLabel>
+            <FormLabel>{t('mockups.form.uploadImage')}</FormLabel>
             <UploadContainer>
               {previewUrl ? (
                 <PreviewContainer>
-                  <ImagePreview src={previewUrl} alt="Preview" />
+                  <ImagePreview src={previewUrl} alt={t('mockups.form.preview')} />
                   <ChangeImageButton type="button" onClick={handleUploadClick} disabled={isSubmitting}>
-                    Change Image
+                    {t('mockups.form.changeImage')}
                   </ChangeImageButton>
                 </PreviewContainer>
               ) : (
                 <UploadButton type="button" onClick={handleUploadClick} disabled={isSubmitting}>
-                  <FiUpload /> Choose File
+                  <FiUpload /> {t('mockups.form.chooseFile')}
                 </UploadButton>
               )}
               <input 
@@ -330,13 +339,13 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
               onClick={onClose}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('common.cancel')}
             </CancelButton>
             <SubmitButton 
               type="submit"
               disabled={isSubmitting || !selectedFile}
             >
-              {isSubmitting ? 'Uploading...' : 'Add Mockup'}
+              {isSubmitting ? t('mockups.form.uploading') : t('mockups.form.submit')}
             </SubmitButton>
           </ButtonGroup>
         </ModalForm>
