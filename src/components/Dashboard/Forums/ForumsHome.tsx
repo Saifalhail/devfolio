@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { FaSearch, FaFilter } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { firestore } from '../../../firebase/config';
 import { useAuth } from '../../../contexts/AuthContext';
 import MockupGallery from './MockupGallery';
@@ -21,15 +21,13 @@ const ForumsContentComponent = () => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
   const { selectedMockup, openAddModal } = useMockupUI();
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const isRTL = i18n.language === 'ar';
 
-  const popularTags = ['react', 'javascript', 'design', 'firebase', 'mobile', 'web'];
 
   return (
     <ForumsWrapper>
       <ForumsCard>
-        <ForumsTitle>Chat</ForumsTitle>
         <ForumsContentWrapper>
           <ForumsLayout>
             <LeftColumn>
@@ -37,41 +35,23 @@ const ForumsContentComponent = () => {
                 <DiscussionHeader>
                   <SectionTitle>Real-time Chat</SectionTitle>
                 </DiscussionHeader>
-                <FilterSection>
+                <SearchSection>
                   <SearchBar>
                     <SearchIcon>
                       <FaSearch />
                     </SearchIcon>
                     <SearchInput 
                       type="text" 
-                      placeholder={t('forums.searchPlaceholder')} 
+                      placeholder={t('forums.searchMessages')} 
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
                     />
                   </SearchBar>
-                  <FilterButton>
-                    <FaFilter /> Filter
-                  </FilterButton>
-                </FilterSection>
-                <TagsContainer>
-                  <TagItem 
-                    onClick={() => setActiveTag(null)}
-                    $active={activeTag === null}
-                  >
-                    {t('forums.allTopics')}
-                  </TagItem>
-                  {popularTags.map(tag => (
-                    <TagItem 
-                      key={tag} 
-                      onClick={() => setActiveTag(tag)}
-                      $active={activeTag === tag}
-                    >
-                      #{tag}
-                    </TagItem>
-                  ))}
-                </TagsContainer>
+                </SearchSection>
               </SectionHeader>
               
               {/* Chat messages list with integrated reply functionality */}
-              <DiscussionList projectId={DEFAULT_PROJECT_ID} />
+              <DiscussionList projectId={DEFAULT_PROJECT_ID} searchQuery={searchQuery} />
             </LeftColumn>
             <RightColumn>
               <MockupGallery onAddMockup={openAddModal} />
@@ -80,7 +60,7 @@ const ForumsContentComponent = () => {
         </ForumsContentWrapper>
         
         {/* Conditionally render the mockup detail modal */}
-        {selectedMockup && <MockupModal />}
+        {selectedMockup && <MockupModal projectId={DEFAULT_PROJECT_ID} />}
       </ForumsCard>
     </ForumsWrapper>
   );
@@ -115,14 +95,6 @@ const ForumsCard = styled.div`
   flex-direction: column;
 `;
 
-const ForumsTitle = styled.h1`
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, #cd3efd, #7b2cbf);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-`;
 
 const ForumsContentWrapper = styled.div`
   padding: 1.5rem;
@@ -147,7 +119,7 @@ const ForumsLayout = styled.div`
 const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 150px);
   min-height: 600px;
   max-height: 800px;
 `;
@@ -155,6 +127,10 @@ const LeftColumn = styled.div`
 const RightColumn = styled.div`
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 150px);
+  min-height: 600px;
+  max-height: 800px;
+  overflow: hidden;
 `;
 
 
@@ -505,13 +481,11 @@ background: linear-gradient(135deg, #cd3efd, #7b2cbf);
 }
 `;
 
-// Add missing styled components
-const FilterSection = styled.div`
+// Search section styled component
+const SearchSection = styled.div`
   display: flex;
-  gap: 1rem;
   margin-bottom: 1rem;
   width: 100%;
-  align-items: center;
 `;
 
 const SearchBar = styled.div`
@@ -542,47 +516,7 @@ const SearchInput = styled.input`
   }
 `;
 
-const FilterButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(123, 44, 191, 0.3);
-  border: 1px solid rgba(123, 44, 191, 0.5);
-  border-radius: 20px;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.9rem;
-  
-  &:hover {
-    background: rgba(123, 44, 191, 0.5);
-    border-color: rgba(123, 44, 191, 0.8);
-  }
-`;
 
-const TagsContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 0.5rem 0 1.5rem;
-`;
-
-const TagItem = styled.button<{ $active?: boolean }>`
-  background: ${props => props.$active ? 'rgba(123, 44, 191, 0.5)' : 'rgba(35, 38, 85, 0.2)'};
-  border: 1px solid ${props => props.$active ? 'rgba(123, 44, 191, 0.8)' : 'rgba(255, 255, 255, 0.1)'};
-  color: ${props => props.$active ? 'white' : 'rgba(255, 255, 255, 0.7)'};
-  border-radius: 20px;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  
-  &:hover {
-    background: ${props => props.$active ? 'rgba(123, 44, 191, 0.6)' : 'rgba(35, 38, 85, 0.3)'};
-    transform: translateY(-1px);
-  }
-`;
 
 const NoPostsMessage = styled.div`
   display: flex;

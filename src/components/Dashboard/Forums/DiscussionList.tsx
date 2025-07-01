@@ -27,13 +27,16 @@ interface ChatMessage extends Post {
 
 interface DiscussionListProps {
   projectId?: string;
+  highlightedCommentId?: string | null;
+  firestorePath?: string;
+  searchQuery?: string;
 }
 
 // Constants for pagination and real-time updates
 const MESSAGES_PER_PAGE = 50;
 const REAL_TIME_MESSAGE_LIMIT = 50;
 
-const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }) => {
+const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default', highlightedCommentId = null, firestorePath, searchQuery = '' }) => {
   const { currentUser } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -425,10 +428,22 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
     }
   }, [handleScroll]);
   
-  // Group messages by date for better UI organization
+  // Filter messages based on search query and group by date
   const groupedMessages = useMemo(() => {
     const grouped: { [key: string]: ChatMessage[] } = {};
-    const sortedMessages = [...messages].sort((a, b) => {
+    
+    // Filter messages based on search query
+    const filteredMessages = messages.filter(message => {
+      if (!searchQuery.trim()) return true;
+      
+      const query = searchQuery.toLowerCase();
+      const messageText = (message.body || '').toLowerCase();
+      const userName = (message.userName || '').toLowerCase();
+      
+      return messageText.includes(query) || userName.includes(query);
+    });
+    
+    const sortedMessages = [...filteredMessages].sort((a, b) => {
       if (!a.createdAt || !b.createdAt) return 0;
       return a.createdAt.seconds - b.createdAt.seconds;
     });
@@ -447,7 +462,7 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
     });
     
     return Object.keys(grouped).map(date => ({ date, messages: grouped[date] }));
-  }, [messages]);
+  }, [messages, searchQuery]);
 
   return (
     <ChatContainer>
@@ -458,9 +473,11 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
       ) : (
         <>
           <MessagesContainer ref={containerRef}>
-            {messages.length === 0 ? (
+            {groupedMessages.length === 0 ? (
               <NoMessagesContainer>
-                <NoMessagesText>No messages yet. Start the conversation!</NoMessagesText>
+                <NoMessagesText>
+                  {searchQuery.trim() ? `No messages found for "${searchQuery}"` : 'No messages yet. Start the conversation!'}
+                </NoMessagesText>
               </NoMessagesContainer>
             ) : (
               groupedMessages.map((group) => (
@@ -471,7 +488,7 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
                   {group.messages.map((message) => {
                     const isSelf = message.userId === currentUser?.uid;
                     return (
-                      <MessageContainer key={message.id}>
+                      <MessageContainer key={message.id}>  
                         <MessageWrapper $isSelf={isSelf}>
                           <CommentRow
                             c={{
@@ -482,6 +499,7 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
                             }}
                             isSelf={isSelf}
                             className="comment-row"
+                            isHighlighted={highlightedCommentId === message.id}
                           />
                         </MessageWrapper>
                         
@@ -506,6 +524,7 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ projectId = 'default' }
                                   }}
                                   isSelf={isReplySelf}
                                   className="comment-row"
+                                  isHighlighted={highlightedCommentId === reply.id}
                                 />
                               </MessageWrapper>
                             );

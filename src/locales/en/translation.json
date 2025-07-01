@@ -507,10 +507,68 @@
       "aws": "AWS developer Qatar"
     }
   },
+  "mockups": {
+    "title": "Design Mockups",
+    "showComments": "Show Comments",
+    "hideComments": "Hide Comments",
+    "download": "Download",
+    "expandComment": "Expand comment {{number}}",
+    "collapseComment": "Collapse comment",
+    "addFeedback": "Add your feedback here...",
+    "post": "Post",
+    "posting": "Posting...",
+    "viewMockup": "View Mockup",
+    "close": "Close",
+    "addNew": "Add Mockup",
+    "empty": {
+      "title": "No mockups yet",
+      "subtitle": "Upload your first design mockup"
+    },
+    "addNew.title": "Add New Mockup",
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "Enter mockup title",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your mockup",
+      "uploadImage": "Upload Image",
+      "chooseFile": "Choose File",
+      "changeImage": "Change Image",
+      "preview": "Preview",
+      "uploading": "Uploading...",
+      "submit": "Add Mockup"
+    },
+    "status": {
+      "createdBy": "Created by:",
+      "viewed": "Viewed:",
+      "feedbackGiven": "Feedback Given:",
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm"
+  },
   "testimonials": {
     "title": "Client Testimonials",
     "subtitle": "What my clients say about my work",
     "iconAlt": "Client testimonial icon"
+  },
+  "forums": {
+    "searchPlaceholder": "Search discussions...",
+    "searchMessages": "Search messages...",
+    "allTopics": "All Topics",
+    "filter": "Filter"
   },
 
   "seo": {

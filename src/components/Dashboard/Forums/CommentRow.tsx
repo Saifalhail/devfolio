@@ -13,9 +13,10 @@ interface CommentProps {
   };
   isSelf?: boolean;
   className?: string;
+  isHighlighted?: boolean;
 }
 
-const CommentRow: React.FC<CommentProps> = ({ c, isSelf = false, className }) => {
+const CommentRow: React.FC<CommentProps> = ({ c, isSelf = false, className, isHighlighted = false }) => {
   // Handle different timestamp formats safely
   let timestamp: Date;
   try {
@@ -28,7 +29,11 @@ const CommentRow: React.FC<CommentProps> = ({ c, isSelf = false, className }) =>
   const timeAgo = formatDistanceToNow(timestamp, { addSuffix: true });
   
   return (
-    <CommentContainer $isSelf={isSelf} className={className}>
+    <CommentContainer 
+      $isSelf={isSelf} 
+      $isHighlighted={isHighlighted}
+      className={`${className} ${isHighlighted ? 'highlighted' : ''}`}
+    >
       <CommentHeader>
         <UserName>{c.userName}</UserName>
         <TimeStamp>{timeAgo}</TimeStamp>
@@ -38,16 +43,24 @@ const CommentRow: React.FC<CommentProps> = ({ c, isSelf = false, className }) =>
   );
 };
 
-const CommentContainer = styled.div<{ $isSelf: boolean }>`
+const CommentContainer = styled.div<{ $isSelf: boolean; $isHighlighted: boolean }>`
   padding: 0.75rem;
   margin-bottom: 0.75rem;
-  background: ${props => props.$isSelf ? 'rgba(123, 44, 191, 0.2)' : 'rgba(255, 255, 255, 0.05)'};
+  background: ${props => {
+    if (props.$isHighlighted) return 'rgba(203, 188, 159, 0.25)';
+    return props.$isSelf ? 'rgba(123, 44, 191, 0.2)' : 'rgba(255, 255, 255, 0.05)';
+  }};
   border-radius: ${props => props.$isSelf ? '12px 12px 0 12px' : '12px 12px 12px 0'};
   transition: all 0.2s ease;
   width: 100%;
+  border-left: ${props => props.$isHighlighted ? '3px solid #CBBC9F' : 'none'};
+  box-shadow: ${props => props.$isHighlighted ? '0 0 8px rgba(203, 188, 159, 0.5)' : 'none'};
   
   &:hover {
-    background: ${props => props.$isSelf ? 'rgba(123, 44, 191, 0.3)' : 'rgba(255, 255, 255, 0.08)'};
+    background: ${props => {
+      if (props.$isHighlighted) return 'rgba(203, 188, 159, 0.3)';
+      return props.$isSelf ? 'rgba(123, 44, 191, 0.3)' : 'rgba(255, 255, 255, 0.08)';
+    }};
   }
 `;
 

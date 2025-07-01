@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint:*)",
+      "Bash(ls:*)",
+      "Bash(rm:*)",
+      "Bash(grep:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "Bash(firebase deploy:*)",
+      "Bash(firebase login:*)"
+    ],
+    "deny": []
+  }
+}

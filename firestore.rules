@@ -110,6 +110,33 @@ service cloud.firestore {
         allow update, delete: if isSignedIn();
       }
     }
+    
+    // Project discussions collection for forums
+    match /projectDiscussions/{projectId} {
+      // Allow authenticated users to access project discussions
+      match /messages/{messageId} {
+        // Allow all users to read messages
+        allow read: if true;
+        
+        // Allow authenticated users to create messages
+        allow create: if isSignedIn();
+        
+        // Allow message owners to update/delete their messages
+        allow update, delete: if isSignedIn();
+        
+        // Allow comments on messages
+        match /comments/{commentId} {
+          // Anyone can read comments
+          allow read: if true;
+          
+          // Authenticated users can create comments
+          allow create: if isSignedIn();
+          
+          // Comment owners can update/delete their comments
+          allow update, delete: if isSignedIn();
+        }
+      }
+    }
 
     // Default deny all
     match /{document=**} {

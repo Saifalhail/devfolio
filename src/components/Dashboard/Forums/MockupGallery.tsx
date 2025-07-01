@@ -3,50 +3,27 @@ import styled, { css } from 'styled-components';
 import { FaComment, FaDownload, FaTimes } from 'react-icons/fa';
 import { FiPlus, FiUpload } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '../../../contexts/ToastContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import { HeaderStyles, SectionTitle } from './ForumStyles';
 import { Mockup, MockupComment } from './types';
 import { useMockupUI } from './MockupUIContext';
 import MockupModal from './MockupModal';
-import { collection, query, orderBy, limit } from 'firebase/firestore';
-import { useFirestoreSnapshot } from '../../../hooks/useFirestoreSnapshot';
-import { getFirestoreDb } from '../../../firebase';
+import { getAllPosts, Post, createPost, uploadImage } from '../../../firebase/services/forums';
 
-// Dummy mockup data for UI demonstration
-const dummyMockups: Mockup[] = [
-  {
-    id: 'dummy-1',
-    title: 'Homepage Redesign',
-    description: 'New homepage layout with improved navigation',
-    imageURL: 'https://via.placeholder.com/300x200?text=Homepage+Mockup',
-    userId: 1,
-    userName: 'Sarah Designer',
-    createdAt: new Date(2025, 5, 20),
-    commentCount: 5,
-    views: 28
-  },
-  {
-    id: 'dummy-2',
-    title: 'Mobile App UI',
-    description: 'User interface for the new mobile application',
-    imageURL: 'https://via.placeholder.com/300x200?text=Mobile+App+UI',
-    userId: 2,
-    userName: 'Mike Developer',
-    createdAt: new Date(2025, 5, 18),
-    commentCount: 3,
-    views: 15
-  },
-  {
-    id: 'dummy-3',
-    title: 'Dashboard Analytics',
-    description: 'Analytics dashboard with data visualization',
-    imageURL: 'https://via.placeholder.com/300x200?text=Dashboard',
-    userId: 1,
-    userName: 'Sarah Designer',
-    createdAt: new Date(2025, 5, 15),
-    commentCount: 7,
-    views: 42
-  }
-];
+// Transform a forum post with image into a mockup
+const postToMockup = (post: Post): Mockup => ({
+  id: post.id || '',
+  title: post.title || post.body?.substring(0, 50) + '...' || 'Untitled',
+  description: post.body || 'No description',
+  imageURL: post.imageURL || '',
+  userId: 1, // Default userId since Post uses string but Mockup expects number
+  userName: post.userName || 'Anonymous',
+  createdAt: post.createdAt?.toDate ? post.createdAt.toDate() : new Date(),
+  commentCount: post.commentCount || 0,
+  views: post.views || 0
+});
+
 
 // Default project ID for mockups
 const DEFAULT_PROJECT_ID = 'default';
@@ -58,39 +35,87 @@ interface MockupProps {
 
 const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT_PROJECT_ID }) => {
   const { t, i18n } = useTranslation();
+  const { currentUser } = useAuth();
   const isRTL = i18n.language === 'ar';
   const { selectedMockup, handleSelectMockup, isAddModalOpen, openAddModal, closeAddModal } = useMockupUI();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const firestore = getFirestoreDb();
+  const [mockups, setMockups] = useState<Mockup[]>([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
-  // Create a query to fetch mockups from Firestore
-  const mockupsQuery = query(
-    collection(firestore, `projects/${projectId}/mockups`),
-    orderBy('createdAt', 'desc'),
-    limit(20)
-  );
-  
-  // Use the custom hook to fetch mockups with real-time updates
-  const firestoreMockups = useFirestoreSnapshot<Mockup>(mockupsQuery);
-  
-  // Combine real and dummy mockups
-  const mockups = firestoreMockups.length > 0 ? firestoreMockups : dummyMockups;
-  
-  // Update loading state when mockups are fetched
+  // Fetch forum posts and filter for ones with images (mockups)
   useEffect(() => {
-    // Short timeout to simulate loading for better UX
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
+    const fetchMockupPosts = async () => {
+      setIsLoading(true);
+      try {
+        console.log('🔥 FETCHING MOCKUPS FROM FIREBASE...');
+        console.log('Project ID:', projectId);
+        console.log('Current user state:', currentUser ? `Logged in as ${currentUser.email}` : 'Not logged in');
+        console.log('getAllPosts function:', getAllPosts);
+        console.log('typeof getAllPosts:', typeof getAllPosts);
+        
+        const allPosts = await getAllPosts(projectId);
+        console.log('🔥 RAW FIREBASE RESPONSE - All posts:', allPosts);
+        console.log('🔥 Number of posts returned:', allPosts.length);
+        console.log('Raw post data (first 3):');
+        allPosts.slice(0, 3).forEach((post, index) => {
+          console.log(`Post ${index}:`, {
+            id: post.id,
+            title: post.title,
+            body: post.body,
+            imageURL: post.imageURL,
+            userId: post.userId,
+            userName: post.userName,
+            createdAt: post.createdAt
+          });
+        });
+        
+        // Filter posts that have images and convert them to mockups
+        const postsWithImages = allPosts
+          .filter(post => {
+            const hasImage = post.imageURL && post.imageURL.trim() !== '';
+            const title = post.title || post.body || 'Untitled';
+            console.log(`Post "${title}" has image:`, hasImage, 'imageURL:', post.imageURL);
+            return hasImage;
+          })
+          .map(postToMockup);
+        
+        console.log(`Found ${postsWithImages.length} posts with images (mockups)`);
+        console.log('Posts with images:', postsWithImages);
+        
+        // Set the mockups from real posts only
+        console.log(`Setting ${postsWithImages.length} real mockups`);
+        setMockups(postsWithImages);
+      } catch (error) {
+        console.error('Error fetching mockup posts:', error);
+        setMockups([]); // Set empty array on error
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    return () => clearTimeout(timer);
-  }, [firestoreMockups]);
+    fetchMockupPosts();
+  }, [projectId, refreshTrigger]);
   
   const handleAddMockupClick = () => {
     openAddModal();
     if (onAddMockup) {
       onAddMockup();
     }
+  };
+  
+  const handleMockupAdded = () => {
+    console.log('🔄 Mockup added, refreshing list...');
+    closeAddModal();
+    
+    // Force immediate refresh and show loading
+    setIsLoading(true);
+    setRefreshTrigger(prev => prev + 1);
+    
+    // Also refresh after a delay to ensure Firebase sync
+    setTimeout(() => {
+      console.log('🔄 Secondary refresh after delay...');
+      setRefreshTrigger(prev => prev + 1);
+    }, 2000);
   };
   
   return (
@@ -110,11 +135,9 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
         </LoadingContainer>
       ) : mockups.length === 0 ? (
         <EmptyState>
+          <EmptyStateIcon>+</EmptyStateIcon>
           <EmptyStateText>{t('mockups.empty.title')}</EmptyStateText>
           <EmptyStateSubtext>{t('mockups.empty.subtitle')}</EmptyStateSubtext>
-          <AddMockupButtonLarge onClick={handleAddMockupClick}>
-            <FiPlus /> {t('mockups.addNew')}
-          </AddMockupButtonLarge>
         </EmptyState>
       ) : (
         <MockupGrid>
@@ -124,14 +147,17 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
               onClick={() => handleSelectMockup(mockup)}
               $isSelected={selectedMockup?.id === mockup.id}
             >
+              <MockupImage $imageUrl={mockup.imageURL} />
               <MockupInfo>
-                <MockupTitle>{mockup.title}</MockupTitle>
-                <MockupDescription>
-                  {mockup.description}
-                </MockupDescription>
+                <div>
+                  <MockupTitle>{mockup.title}</MockupTitle>
+                  <MockupDescription>
+                    {mockup.description}
+                  </MockupDescription>
+                </div>
                 <MockupMeta>
                   <MockupDate>
-                    Updated {mockup.createdAt instanceof Date 
+                    {mockup.createdAt instanceof Date 
                       ? mockup.createdAt.toLocaleDateString() 
                       : new Date(mockup.createdAt).toLocaleDateString()}
                   </MockupDate>
@@ -148,7 +174,7 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
       )}
       
       {isAddModalOpen && (
-        <AddMockupModal onClose={closeAddModal} />
+        <AddMockupModal onClose={handleMockupAdded} />
       )}
       
       {/* Render the MockupModal with projectId */}
@@ -164,6 +190,8 @@ interface AddMockupModalProps {
 
 const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
   const { t, i18n } = useTranslation();
+  const { showToast } = useToast();
+  const { currentUser } = useAuth();
   const isRTL = i18n.language === 'ar';
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -181,13 +209,17 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        setError('Please select an image file');
+        const errorMessage = 'Please select an image file';
+        setError(errorMessage);
+        showToast(errorMessage, 'error');
         return;
       }
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        setError('Image size should be less than 5MB');
+        const errorMessage = 'Image size should be less than 5MB';
+        setError(errorMessage);
+        showToast(errorMessage, 'error');
         return;
       }
       
@@ -213,18 +245,38 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('🔥 REAL MOCKUP SUBMISSION STARTED - AUTH CHECK');
+    console.log('Current user from useAuth:', currentUser);
+    console.log('Current user ID:', currentUser?.uid);
+    console.log('Current user name:', currentUser?.displayName);
+    
+    // Check if user is authenticated
+    if (!currentUser) {
+      const errorMessage = 'You must be logged in to upload a mockup';
+      console.error('❌ AUTH ERROR:', errorMessage);
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
+      return;
+    }
+    
     if (!selectedFile) {
-      setError('Please select an image file');
+      const errorMessage = 'Please select an image file';
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
       return;
     }
     
     if (!title.trim()) {
-      setError('Please enter a title');
+      const errorMessage = 'Please enter a title';
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
       return;
     }
     
     if (!description.trim()) {
-      setError('Please enter a description');
+      const errorMessage = 'Please enter a description';
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
       return;
     }
     
@@ -232,38 +284,55 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
     setError(null);
     
     try {
-      // In a real app, this would upload the file to storage and save mockup data to Firestore
-      // For this mockup UI, we'll create a dummy mockup with the file preview URL
+      console.log('🎨 Creating real forum post with image...');
+      console.log('📝 Title:', title.trim());
+      console.log('📄 Description:', description.trim());
+      console.log('🖼️ Image file:', selectedFile?.name, selectedFile?.size, selectedFile?.type);
       
-      // Create a new mockup object
-      const newMockup = {
-        id: `mockup-${Date.now()}`,
+      // Create the post data
+      const postData: Post = {
         title: title.trim(),
-        description: description.trim(),
-        imageURL: previewUrl || 'https://via.placeholder.com/300x200?text=Mockup+Image',
-        userId: 'current-user-id',
-        userName: 'Current User',
-        createdAt: new Date(),
-        commentCount: 0,
-        views: 0
+        body: description.trim(),
+        userId: '', // Will be set by createPost
+        userName: '', // Will be set by createPost
+        tags: ['mockup', 'design'],
+        views: 0,
+        likes: 0,
+        likedBy: [],
+        commentCount: 0
       };
       
-      console.log('Submitting mockup:', newMockup);
+      console.log('📊 Post data to create:', postData);
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Create the post using the forums service
+      console.log('🚀 CALLING FIREBASE createPost SERVICE...');
+      console.log('createPost function:', createPost);
+      console.log('typeof createPost:', typeof createPost);
+      console.log('Arguments:', {
+        projectId: 'default',
+        postData,
+        selectedFile: selectedFile ? `${selectedFile.name} (${selectedFile.size} bytes)` : null
+      });
       
-      // In a real app, we would add this to Firestore
-      // For now, we'll just log it and close the modal
+      const postId = await createPost('default', postData, selectedFile);
+      
+      console.log('✅ FIREBASE RESPONSE: Successfully created post with ID:', postId);
+      console.log('✅ Post created successfully - should appear in Firebase and UI');
+      
+      // Show success message
+      showToast('✅ Mockup added successfully! It will appear in the list shortly.', 'success');
       
       // Close modal after successful submission
       onClose();
-      
-      // Show success message
-      alert('Mockup added successfully!');
     } catch (err) {
-      console.error('Error submitting mockup:', err);
-      setError('Failed to upload mockup. Please try again.');
+      console.error('❌ Error creating mockup post:', err);
+      console.error('Error details:', {
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : 'No stack trace'
+      });
+      const errorMessage = `Failed to upload mockup: ${err instanceof Error ? err.message : 'Unknown error'}`;
+      setError(errorMessage);
+      showToast(`❌ ${errorMessage}`, 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -357,6 +426,10 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
 const MockupContainer = styled.div`
   padding: 1rem;
   position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `;
 
 const SectionHeader = styled.div`
@@ -394,8 +467,30 @@ const AddMockupButton = styled.button.attrs({ className: 'btn-outline-accent' })
 
 const MockupGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 0.5rem;
+  
+  /* Custom scrollbar */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(130, 161, 191, 0.5);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(130, 161, 191, 0.7);
+  }
 `;
 
 const MockupCard = styled.div.attrs<{ $isSelected?: boolean }>(props => ({
@@ -403,11 +498,13 @@ const MockupCard = styled.div.attrs<{ $isSelected?: boolean }>(props => ({
 }))<{ $isSelected?: boolean }>`
   background: ${props => props.$isSelected ? 'rgba(66, 165, 245, 0.2)' : 'rgba(35, 38, 85, 0.4)'};
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0;
   position: relative;
-  margin-bottom: 1rem;
   box-shadow: ${props => props.$isSelected ? '0 4px 12px rgba(66, 165, 245, 0.3)' : '0 4px 8px rgba(0, 0, 0, 0.2)'};
   overflow: hidden;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
   
   &:before {
     content: '';
@@ -436,16 +533,35 @@ const MockupCard = styled.div.attrs<{ $isSelected?: boolean }>(props => ({
   }
 `;
 
-const MockupImage = styled.img`
+const MockupImage = styled.div<{ $imageUrl?: string }>`
   width: 100%;
-  height: 180px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+  height: 60%;
+  background-image: ${props => props.$imageUrl ? `url(${props.$imageUrl})` : 'linear-gradient(135deg, rgba(130, 161, 191, 0.3), rgba(35, 38, 85, 0.5))'};
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px 12px 0 0;
+  position: relative;
+  
+  ${props => !props.$imageUrl && `
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:before {
+      content: '🖼️';
+      font-size: 2rem;
+      opacity: 0.5;
+    }
+  `}
 `;
 
 const MockupInfo = styled.div`
   padding: 0.75rem;
   color: white;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const MockupTitle = styled.h3`
@@ -516,43 +632,33 @@ const EmptyState = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 3rem 2rem;
   text-align: center;
-  height: 200px;
+  height: 300px;
+  background: rgba(35, 38, 85, 0.1);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+`;
+
+const EmptyStateIcon = styled.div`
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 1rem;
+  font-weight: 300;
 `;
 
 const EmptyStateText = styled.h3`
   color: white;
   margin-bottom: 0.5rem;
+  font-size: 1.1rem;
 `;
 
 const EmptyStateSubtext = styled.p`
   color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 1.5rem;
+  margin: 0;
+  font-size: 0.9rem;
 `;
 
-const AddMockupButtonLarge = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(to right, var(--accent-1), var(--accent-2));
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  svg {
-    font-size: 1.2rem;
-  }
-`;
 
 // Modal Styles
 const ModalOverlay = styled.div`
@@ -561,12 +667,12 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
 `;
 
 const ModalContent = styled.div`

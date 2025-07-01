@@ -18,9 +18,22 @@ import { ref, uploadBytes, uploadBytesResumable, getDownloadURL, getStorage } fr
 import { firestore, auth } from '../config';
 import app from '../config';
 import { v4 as uuidv4 } from 'uuid';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Initialize storage
 const storage = getStorage(app);
+
+/**
+ * Helper function to wait for auth to be ready
+ */
+const waitForAuth = (): Promise<any> => {
+  return new Promise((resolve) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe();
+      resolve(user);
+    });
+  });
+};
 
 /**
  * Types -----------------------------------------------------------
@@ -48,6 +61,22 @@ export interface Comment {
   createdAt?: Timestamp;
 }
 
+export interface MockupComment {
+  id?: string;
+  content: string;
+  userId: string;
+  userName: string;
+  userEmail?: string;
+  userPhotoURL?: string;
+  coordinates: {
+    x: number; // Pixel coordinates relative to image container
+    y: number;
+  };
+  createdAt?: Timestamp;
+  likes?: number;
+  likedBy?: string[];
+}
+
 /**
  * Internal helpers -----------------------------------------------
  */
@@ -58,6 +87,9 @@ const postsCollection = (projectId: string = 'default'): CollectionReference<Doc
 
 const commentsCollection = (projectId: string, messageId: string): CollectionReference<DocumentData> =>
   collection(firestore, `projectDiscussions/${projectId}/messages/${messageId}/comments`);
+
+const mockupCommentsCollection = (projectId: string, mockupId: string): CollectionReference<DocumentData> =>
+  collection(firestore, `projects/${projectId}/mockups/${mockupId}/comments`);
 
 /**
  * Upload a file to Firebase Storage and return its download URL
@@ -103,12 +135,25 @@ export const uploadImage = async (file: File, onProgress?: (progress: number) =>
  */
 export const createPost = async (projectId: string = 'default', post: Post, image?: File): Promise<string> => {
   // Verify user is authenticated
-  const currentUser = auth.currentUser;
+  console.log('createPost called - checking authentication...');
+  console.log('Auth instance:', auth);
+  console.log('Auth currentUser:', auth.currentUser);
+  
+  let currentUser = auth.currentUser;
+  
+  // If currentUser is null, wait for auth state to be determined
+  if (!currentUser) {
+    console.log('Auth currentUser is null, waiting for auth state...');
+    currentUser = await waitForAuth();
+  }
   
   if (!currentUser) {
-    console.error("User not authenticated");
+    console.error("User not authenticated - auth.currentUser is null even after waiting");
+    console.error("Make sure you're logged in before trying to create a post");
     throw new Error("User must be authenticated to create a post");
   }
+  
+  console.log('User authenticated:', currentUser.email, currentUser.uid);
   
   let imageURL = post.imageURL || '';
   if (image) {
@@ -125,7 +170,8 @@ export const createPost = async (projectId: string = 'default', post: Post, imag
     createdAt: Timestamp.now(),
     views: 0,
     likes: 0,
-    likedBy: []
+    likedBy: [],
+    commentCount: 0
   };
 
   try {
@@ -210,6 +256,151 @@ export const getComments = async (projectId: string = 'default', postId: string)
     return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Comment) }));
   } catch (err) {
     console.error(`Error getting comments for post ${postId} in project ${projectId}:`, err);
+    throw err;
+  }
+};
+
+/**
+ * MOCKUP COMMENT SERVICES
+ * Functions for managing comments on mockups with coordinate positioning
+ */
+
+/**
+ * Add a comment to a mockup with coordinate positioning
+ * @param projectId - Project ID, defaults to 'default'
+ * @param mockupId - The ID of the mockup to add a comment to
+ * @param comment - The mockup comment data to add
+ */
+export const addMockupComment = async (projectId: string = 'default', mockupId: string, comment: MockupComment): Promise<string> => {
+  // Verify user is authenticated
+  let currentUser = auth.currentUser;
+  
+  // If currentUser is null, wait for auth state to be determined
+  if (!currentUser) {
+    console.log('Auth currentUser is null, waiting for auth state...');
+    currentUser = await waitForAuth();
+  }
+  
+  if (!currentUser) {
+    console.error("User not authenticated");
+    throw new Error("User must be authenticated to add a comment");
+  }
+
+  try {
+    const data: MockupComment = {
+      content: comment.content,
+      userId: currentUser.uid,
+      userName: currentUser.displayName || 'Anonymous',
+      userEmail: currentUser.email || '',
+      userPhotoURL: currentUser.photoURL || '',
+      coordinates: {
+        x: comment.coordinates.x,
+        y: comment.coordinates.y
+      },
+      createdAt: Timestamp.now(),
+      likes: 0,
+      likedBy: []
+    };
+
+    console.log(`Adding mockup comment to project ${projectId}, mockup ${mockupId}:`, data);
+    const docRef = await addDoc(mockupCommentsCollection(projectId, mockupId), data);
+    
+    return docRef.id;
+  } catch (err) {
+    console.error(`Error adding comment to mockup ${mockupId} in project ${projectId}:`, err);
+    throw err;
+  }
+};
+
+/**
+ * Get all comments for a mockup
+ * @param projectId - Project ID, defaults to 'default'
+ * @param mockupId - The ID of the mockup to get comments for
+ */
+export const getMockupComments = async (projectId: string = 'default', mockupId: string): Promise<MockupComment[]> => {
+  try {
+    console.log(`Fetching mockup comments from: projects/${projectId}/mockups/${mockupId}/comments`);
+    
+    const q = query(mockupCommentsCollection(projectId, mockupId), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    
+    console.log(`Successfully fetched ${snapshot.docs.length} comments for mockup ${mockupId}`);
+    
+    return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as MockupComment) }));
+  } catch (err) {
+    console.error(`Error getting comments for mockup ${mockupId} in project ${projectId}:`, err);
+    throw err;
+  }
+};
+
+/**
+ * Update a mockup comment (for likes, etc.)
+ * @param projectId - Project ID, defaults to 'default'
+ * @param mockupId - The ID of the mockup
+ * @param commentId - The ID of the comment to update
+ * @param updates - The fields to update
+ */
+export const updateMockupComment = async (
+  projectId: string = 'default', 
+  mockupId: string, 
+  commentId: string, 
+  updates: Partial<MockupComment>
+): Promise<void> => {
+  try {
+    const docRef = doc(firestore, `projects/${projectId}/mockups/${mockupId}/comments`, commentId);
+    await updateDoc(docRef, {
+      ...updates,
+      // Don't allow updating certain fields
+      createdAt: undefined,
+      userId: undefined,
+      id: undefined
+    });
+    
+    console.log(`Updated mockup comment ${commentId} in project ${projectId}, mockup ${mockupId}`);
+  } catch (err) {
+    console.error(`Error updating comment ${commentId} for mockup ${mockupId} in project ${projectId}:`, err);
+    throw err;
+  }
+};
+
+/**
+ * Delete a mockup comment
+ * @param projectId - Project ID, defaults to 'default'
+ * @param mockupId - The ID of the mockup
+ * @param commentId - The ID of the comment to delete
+ */
+export const deleteMockupComment = async (projectId: string = 'default', mockupId: string, commentId: string): Promise<void> => {
+  // Verify user is authenticated
+  let currentUser = auth.currentUser;
+  
+  // If currentUser is null, wait for auth state to be determined
+  if (!currentUser) {
+    console.log('Auth currentUser is null, waiting for auth state...');
+    currentUser = await waitForAuth();
+  }
+  
+  if (!currentUser) {
+    throw new Error("User must be authenticated to delete a comment");
+  }
+
+  try {
+    const docRef = doc(firestore, `projects/${projectId}/mockups/${mockupId}/comments`, commentId);
+    
+    // Get the comment to verify ownership
+    const commentDoc = await getDoc(docRef);
+    if (!commentDoc.exists()) {
+      throw new Error("Comment not found");
+    }
+    
+    const commentData = commentDoc.data() as MockupComment;
+    if (commentData.userId !== currentUser.uid) {
+      throw new Error("You can only delete your own comments");
+    }
+    
+    await deleteDoc(docRef);
+    console.log(`Deleted mockup comment ${commentId} from project ${projectId}, mockup ${mockupId}`);
+  } catch (err) {
+    console.error(`Error deleting comment ${commentId} for mockup ${mockupId} in project ${projectId}:`, err);
     throw err;
   }
 };

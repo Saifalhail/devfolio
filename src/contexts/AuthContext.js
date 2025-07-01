@@ -13,7 +13,7 @@ import {
   getAuth
 } from 'firebase/auth';
 // Import Firebase services directly
-import { auth } from '../firebase';
+import { auth } from '../firebase/config';
 import useFirebaseListener from '../hooks/useFirebaseListener';
 
 const AuthContext = createContext();

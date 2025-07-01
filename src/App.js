@@ -177,8 +177,22 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-            <Route path="/forums" element={<ForumsHome />} />
-                <Route path="/forums/:postId" element={<PostDetails />} />
+            <Route 
+              path="/forums" 
+              element={
+                <ProtectedRoute>
+                  <ForumsHome />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/forums/:postId" 
+              element={
+                <ProtectedRoute>
+                  <PostDetails />
+                </ProtectedRoute>
+              } 
+            />
               </Routes>
           </Suspense>
           </Router>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { collection, addDoc, serverTimestamp, doc, updateDoc, increment } from 'firebase/firestore';
@@ -11,19 +11,34 @@ interface CommentBoxProps {
   onCommentAdded: (comment: Comment) => void;
   firestorePath?: string; // Path to the Firestore collection for comments
   postCollectionPath?: string; // Path to the Firestore collection for posts (to update comment count)
+  commentCoordinates?: { x: number, y: number } | null; // Optional coordinates for image comments
 }
 
 const CommentBox = ({ 
   postId, 
   onCommentAdded, 
   firestorePath = 'comments', // Default to 'comments' collection
-  postCollectionPath = 'posts' // Default to 'posts' collection
+  postCollectionPath = 'posts', // Default to 'posts' collection
+  commentCoordinates = null
 }: CommentBoxProps) => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
   const isRTL = i18n.language === 'ar';
   
   const [content, setContent] = useState('');
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Focus the textarea when commentCoordinates changes
+  useEffect(() => {
+    if (commentCoordinates && textAreaRef.current) {
+      textAreaRef.current.focus();
+      
+      // If coordinates exist, add a placeholder text indicating the comment is for a specific location
+      if (content === '') {
+        setContent(`${t('forums.commentingAt')} (${commentCoordinates.x.toFixed(0)}%, ${commentCoordinates.y.toFixed(0)}%): `);
+      }
+    }
+  }, [commentCoordinates]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -56,6 +71,13 @@ const CommentBox = ({
         createdAt: serverTimestamp(),
         likes: 0,
         likedBy: [],
+        // Include coordinates if they exist
+        ...(commentCoordinates && {
+          coordinates: {
+            x: commentCoordinates.x,
+            y: commentCoordinates.y
+          }
+        })
       };
       
       const commentRef = await addDoc(collection(db, firestorePath), newComment);
@@ -102,9 +124,11 @@ const CommentBox = ({
           <UserName>{currentUser?.displayName || 'Anonymous'}</UserName>
         </UserInfo>
         <TextArea
+          ref={textAreaRef}
+          className="comment-text-area"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder={t('forums.commentPlaceholder')}
+          placeholder={commentCoordinates ? t('forums.commentOnImagePlaceholder') : t('forums.commentPlaceholder')}
           disabled={loading}
           rows={4}
           aria-label={t('forums.commentInputLabel')}
