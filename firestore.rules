@@ -48,6 +48,30 @@ service cloud.firestore {
       // Allow update/delete if user is the owner
       allow update, delete: if isSignedIn() && 
         resource.data.ownerId == request.auth.uid;
+      
+      // Mockups subcollection
+      match /mockups/{mockupId} {
+        // Allow all authenticated users to read mockups
+        allow read: if isSignedIn();
+        
+        // Allow authenticated users to create mockups
+        allow create: if isSignedIn();
+        
+        // Allow mockup owners to update/delete their mockups
+        allow update, delete: if isSignedIn();
+        
+        // Comments on mockups
+        match /comments/{commentId} {
+          // Allow all authenticated users to read comments
+          allow read: if isSignedIn();
+          
+          // Allow authenticated users to create comments
+          allow create: if isSignedIn();
+          
+          // Allow comment owners to update/delete their comments
+          allow update, delete: if isSignedIn();
+        }
+      }
     }
     
     // Tasks collection

@@ -9,7 +9,7 @@ import { HeaderStyles, SectionTitle } from './ForumStyles';
 import { Mockup, MockupComment } from './types';
 import { useMockupUI } from './MockupUIContext';
 import MockupModal from './MockupModal';
-import { getAllPosts, Post, createPost, uploadImage } from '../../../firebase/services/forums';
+import { getAllPosts, Post, createPost, uploadImage, getMockupComments } from '../../../firebase/services/forums';
 
 // Transform a forum post with image into a mockup
 const postToMockup = (post: Post): Mockup => ({
@@ -41,6 +41,7 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [mockups, setMockups] = useState<Mockup[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [commentCounts, setCommentCounts] = useState<{[key: string]: number}>({});
   
   // Fetch forum posts and filter for ones with images (mockups)
   useEffect(() => {
@@ -85,6 +86,20 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
         // Set the mockups from real posts only
         console.log(`Setting ${postsWithImages.length} real mockups`);
         setMockups(postsWithImages);
+        
+        // Fetch comment counts for each mockup
+        const counts: {[key: string]: number} = {};
+        for (const mockup of postsWithImages) {
+          try {
+            const comments = await getMockupComments(projectId, mockup.id);
+            counts[mockup.id] = comments.length;
+            console.log(`Mockup ${mockup.id} has ${comments.length} comments`);
+          } catch (error) {
+            console.error(`Error fetching comments for mockup ${mockup.id}:`, error);
+            counts[mockup.id] = 0;
+          }
+        }
+        setCommentCounts(counts);
       } catch (error) {
         console.error('Error fetching mockup posts:', error);
         setMockups([]); // Set empty array on error
@@ -111,11 +126,22 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
     setIsLoading(true);
     setRefreshTrigger(prev => prev + 1);
     
-    // Also refresh after a delay to ensure Firebase sync
+    // Multiple refreshes to ensure Firebase sync
     setTimeout(() => {
-      console.log('🔄 Secondary refresh after delay...');
+      console.log('🔄 First refresh after delay...');
       setRefreshTrigger(prev => prev + 1);
-    }, 2000);
+    }, 1000);
+    
+    setTimeout(() => {
+      console.log('🔄 Second refresh after delay...');
+      setRefreshTrigger(prev => prev + 1);
+    }, 3000);
+    
+    // Final refresh to make sure we got everything
+    setTimeout(() => {
+      console.log('🔄 Final refresh after delay...');
+      setRefreshTrigger(prev => prev + 1);
+    }, 5000);
   };
   
   return (
@@ -163,7 +189,7 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
                   </MockupDate>
                   <MockupStats>
                     <MockupStat>
-                      <FaComment color="white" /> {mockup.commentCount || 0}
+                      <FaComment color="white" /> {commentCounts[mockup.id] || 0}
                     </MockupStat>
                   </MockupStats>
                 </MockupMeta>
@@ -289,6 +315,9 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
       console.log('📄 Description:', description.trim());
       console.log('🖼️ Image file:', selectedFile?.name, selectedFile?.size, selectedFile?.type);
       
+      // Show initial progress
+      showToast('📤 Uploading mockup...', 'info');
+      
       // Create the post data
       const postData: Post = {
         title: title.trim(),
@@ -306,13 +335,6 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
       
       // Create the post using the forums service
       console.log('🚀 CALLING FIREBASE createPost SERVICE...');
-      console.log('createPost function:', createPost);
-      console.log('typeof createPost:', typeof createPost);
-      console.log('Arguments:', {
-        projectId: 'default',
-        postData,
-        selectedFile: selectedFile ? `${selectedFile.name} (${selectedFile.size} bytes)` : null
-      });
       
       const postId = await createPost('default', postData, selectedFile);
       
@@ -320,19 +342,48 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
       console.log('✅ Post created successfully - should appear in Firebase and UI');
       
       // Show success message
-      showToast('✅ Mockup added successfully! It will appear in the list shortly.', 'success');
+      showToast('✅ Mockup uploaded successfully! It will appear in the gallery shortly.', 'success');
       
       // Close modal after successful submission
       onClose();
     } catch (err) {
       console.error('❌ Error creating mockup post:', err);
-      console.error('Error details:', {
-        message: err instanceof Error ? err.message : 'Unknown error',
-        stack: err instanceof Error ? err.stack : 'No stack trace'
-      });
-      const errorMessage = `Failed to upload mockup: ${err instanceof Error ? err.message : 'Unknown error'}`;
-      setError(errorMessage);
-      showToast(`❌ ${errorMessage}`, 'error');
+      
+      // Handle specific Firebase errors
+      let userFriendlyMessage = 'Failed to upload mockup. Please try again.';
+      
+      if (err instanceof Error) {
+        const errorMessage = err.message.toLowerCase();
+        
+        if (errorMessage.includes('longer than') && errorMessage.includes('bytes')) {
+          userFriendlyMessage = 'Image too large for storage. Please try with a smaller image (under 1MB).';
+        } else if (errorMessage.includes('permission') || errorMessage.includes('unauthorized')) {
+          userFriendlyMessage = 'Permission denied. Please make sure you are logged in.';
+        } else if (errorMessage.includes('network') || errorMessage.includes('offline')) {
+          userFriendlyMessage = 'Network error. Please check your internet connection.';
+        } else if (errorMessage.includes('cors') || errorMessage.includes('blocked by cors')) {
+          userFriendlyMessage = 'Upload failed due to browser security. Retrying with compression...';
+        } else if (errorMessage.includes('storage') || errorMessage.includes('upload')) {
+          userFriendlyMessage = 'Failed to upload image. Please try again with a smaller file.';
+        } else if (errorMessage.includes('firestore') || errorMessage.includes('database')) {
+          userFriendlyMessage = 'Database error. Please try again later.';
+        } else if (errorMessage.includes('auth')) {
+          userFriendlyMessage = 'Authentication error. Please login again.';
+        } else if (errorMessage.includes('timeout')) {
+          userFriendlyMessage = 'Upload took too long. Retrying with compression...';
+        } else if (errorMessage.includes('smaller image file')) {
+          userFriendlyMessage = 'Image file is too large. Please choose a smaller image (under 1MB).';
+        }
+        
+        console.error('Detailed error:', {
+          message: err.message,
+          code: (err as any).code,
+          stack: err.stack
+        });
+      }
+      
+      setError(userFriendlyMessage);
+      showToast(`❌ ${userFriendlyMessage}`, 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -414,7 +465,14 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
               type="submit"
               disabled={isSubmitting || !selectedFile}
             >
-              {isSubmitting ? t('mockups.form.uploading') : t('mockups.form.submit')}
+              {isSubmitting ? (
+                <>
+                  <UploadSpinner />
+                  {t('mockups.form.uploading')}
+                </>
+              ) : (
+                t('mockups.form.submit')
+              )}
             </SubmitButton>
           </ButtonGroup>
         </ModalForm>
@@ -468,10 +526,12 @@ const AddMockupButton = styled.button.attrs({ className: 'btn-outline-accent' })
 const MockupGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-rows: minmax(280px, auto);
   gap: 1rem;
   overflow-y: auto;
   flex: 1;
   padding-right: 0.5rem;
+  align-items: start;
   
   /* Custom scrollbar */
   &::-webkit-scrollbar {
@@ -502,7 +562,8 @@ const MockupCard = styled.div.attrs<{ $isSelected?: boolean }>(props => ({
   position: relative;
   box-shadow: ${props => props.$isSelected ? '0 4px 12px rgba(66, 165, 245, 0.3)' : '0 4px 8px rgba(0, 0, 0, 0.2)'};
   overflow: hidden;
-  aspect-ratio: 1;
+  min-height: 280px;
+  height: auto;
   display: flex;
   flex-direction: column;
   
@@ -536,16 +597,20 @@ const MockupCard = styled.div.attrs<{ $isSelected?: boolean }>(props => ({
 const MockupImage = styled.div<{ $imageUrl?: string }>`
   width: 100%;
   height: 60%;
-  background-image: ${props => props.$imageUrl ? `url(${props.$imageUrl})` : 'linear-gradient(135deg, rgba(130, 161, 191, 0.3), rgba(35, 38, 85, 0.5))'};
+  background-image: ${props => props.$imageUrl && props.$imageUrl.trim() !== '' ? `url("${props.$imageUrl}")` : 'linear-gradient(135deg, rgba(130, 161, 191, 0.3), rgba(35, 38, 85, 0.5))'};
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   border-radius: 12px 12px 0 0;
   position: relative;
+  min-height: 140px;
   
-  ${props => !props.$imageUrl && `
+  ${props => (!props.$imageUrl || props.$imageUrl.trim() === '') && `
     display: flex;
     align-items: center;
     justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 2rem;
     
     &:before {
       content: '🖼️';
@@ -553,6 +618,18 @@ const MockupImage = styled.div<{ $imageUrl?: string }>`
       opacity: 0.5;
     }
   `}
+  
+  /* Handle image loading errors */
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: ${props => props.$imageUrl && props.$imageUrl.trim() !== '' ? 'transparent' : 'linear-gradient(135deg, rgba(130, 161, 191, 0.2), rgba(35, 38, 85, 0.3))'};
+    display: ${props => props.$imageUrl && props.$imageUrl.trim() !== '' ? 'none' : 'block'};
+  }
 `;
 
 const MockupInfo = styled.div`
@@ -667,12 +744,18 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 `;
 
 const ModalContent = styled.div`
@@ -787,7 +870,7 @@ const FormTextarea = styled.textarea`
 
 const ButtonGroup = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 1rem;
   margin-top: 2rem;
 `;
@@ -814,15 +897,25 @@ const UploadButton = styled.button<{ disabled?: boolean }>`
 const CancelButton = styled.button`
   background: rgba(255, 255, 255, 0.1);
   color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
+  font-size: 1rem;
   transition: all 0.2s ease;
+  min-width: 120px;
   
   &:hover {
     background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
   }
 `;
 
@@ -830,27 +923,33 @@ const SubmitButton = styled.button`
   background: linear-gradient(135deg, #faaa93, #82a1bf);
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
+  font-size: 1rem;
   transition: all 0.2s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   
-  &:hover {
-    transform: translateY(-2px);
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
   }
   
-  &:active {
-    transform: translateY(1px);
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
   
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-    box-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -905,6 +1004,20 @@ const ChangeImageButton = styled.button`
     opacity: 0.6;
     cursor: not-allowed;
   }
-`
+`;
+
+const UploadSpinner = styled.div`
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+`;
 
 export default MockupGallery;

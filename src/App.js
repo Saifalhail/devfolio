@@ -12,6 +12,7 @@ import { setDocumentDirection } from './utils/rtl';
 import HomePage from './components/Home/HomePage';
 import Dashboard from './components/Dashboard/Dashboard';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ToastProvider } from './contexts/ToastContext';
 
 // Lazy-loaded pages
 const ForumsHome = lazy(() => import('./components/Dashboard/Forums/ForumsHome'));
@@ -165,9 +166,15 @@ function App() {
         <GlobalStyles />
         <GlobalAnimationStyles />
         <AuthProvider>
-          <Router>
-            <Suspense fallback={<div style={{ color: '#513a52', textAlign: 'center', marginTop: '2rem' }}>Loading...</div>}>
-            <Routes>
+          <ToastProvider>
+            <Router 
+              future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true
+              }}
+            >
+              <Suspense fallback={<div style={{ color: '#513a52', textAlign: 'center', marginTop: '2rem' }}>Loading...</div>}>
+              <Routes>
               <Route path="/" element={<HomePage />} />
               <Route 
                 path="/dashboard/*" 
@@ -194,8 +201,9 @@ function App() {
               } 
             />
               </Routes>
-          </Suspense>
-          </Router>
+            </Suspense>
+            </Router>
+          </ToastProvider>
         </AuthProvider>
       </ThemeProviderWrapper>
     </ErrorBoundary>

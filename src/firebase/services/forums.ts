@@ -14,14 +14,93 @@ import {
   CollectionReference,
   DocumentData
 } from 'firebase/firestore';
-import { ref, uploadBytes, uploadBytesResumable, getDownloadURL, getStorage } from 'firebase/storage';
-import { firestore, auth } from '../config';
-import app from '../config';
+import { ref, uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { firestore, auth, storage } from '../config';
 import { v4 as uuidv4 } from 'uuid';
 import { onAuthStateChanged } from 'firebase/auth';
 
-// Initialize storage
-const storage = getStorage(app);
+/**
+ * Compress an image file to ensure it fits within Firestore's size limits
+ * @param file The image file to compress
+ * @param maxSizeKB Maximum size in KB (default 400KB to stay well under 1MB Firestore limit)
+ * @returns Promise<string> Base64 encoded compressed image
+ */
+const compressImageToBase64 = async (file: File, maxSizeKB: number = 400): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      // Calculate new dimensions to reduce file size - be more aggressive
+      let { width, height } = img;
+      const maxDimension = 800; // Reduced from 1200 to 800 for smaller file sizes
+      
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = (height * maxDimension) / width;
+          width = maxDimension;
+        } else {
+          width = (width * maxDimension) / height;
+          height = maxDimension;
+        }
+      }
+      
+      canvas.width = width;
+      canvas.height = height;
+      
+      // Draw and compress
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Try different quality levels until we get under the size limit
+        let quality = 0.6; // Start with lower quality
+        let base64 = '';
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        const tryCompress = () => {
+          attempts++;
+          base64 = canvas.toDataURL('image/jpeg', quality);
+          
+          // Calculate actual base64 size in KB
+          const base64SizeKB = (base64.length * 3) / 4 / 1024;
+          
+          console.log(`📐 Compression attempt ${attempts}: ${Math.round(width)}x${Math.round(height)}, Quality: ${quality.toFixed(2)}, Size: ${Math.round(base64SizeKB)}KB (Target: ${maxSizeKB}KB)`);
+          
+          if (base64SizeKB > maxSizeKB && quality > 0.05 && attempts < maxAttempts) {
+            // If still too large, reduce quality more aggressively
+            quality = quality > 0.3 ? quality - 0.1 : quality - 0.05;
+            
+            // If quality gets too low, try reducing dimensions further
+            if (quality <= 0.1 && (width > 400 || height > 400)) {
+              const scaleFactor = 0.8;
+              width = Math.floor(width * scaleFactor);
+              height = Math.floor(height * scaleFactor);
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(img, 0, 0, width, height);
+              quality = 0.5; // Reset quality when reducing dimensions
+              console.log(`🔄 Reducing dimensions to ${width}x${height}`);
+            }
+            
+            tryCompress();
+          } else {
+            console.log(`✅ Final compressed image: ${Math.round(base64SizeKB)}KB`);
+            resolve(base64);
+          }
+        };
+        
+        tryCompress();
+      } else {
+        reject(new Error('Canvas context not available'));
+      }
+    };
+    
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = URL.createObjectURL(file);
+  });
+};
 
 /**
  * Helper function to wait for auth to be ready
@@ -99,32 +178,63 @@ const mockupCommentsCollection = (projectId: string, mockupId: string): Collecti
 export const uploadImage = async (file: File, onProgress?: (progress: number) => void): Promise<string> => {
   if (!file) throw new Error('No file provided');
   
-  const fileRef = ref(storage, `forumImages/${uuidv4()}_${file.name}`);
-  
-  if (onProgress) {
-    // Use uploadBytesResumable for progress tracking
-    const uploadTask = uploadBytesResumable(fileRef, file);
-    
-    // Set up progress tracking
-    uploadTask.on('state_changed', 
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        onProgress(progress);
-      },
-      (error) => {
-        console.error('Upload error:', error);
-        throw error;
-      }
-    );
-    
-    // Wait for upload to complete
-    await uploadTask;
-  } else {
-    // Simple upload without progress tracking
-    await uploadBytes(fileRef, file);
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    throw new Error('File must be an image');
   }
   
-  return await getDownloadURL(fileRef);
+  // Validate file size (max 10MB)
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  if (file.size > maxSize) {
+    throw new Error('Image size must be less than 10MB');
+  }
+  
+  const fileRef = ref(storage, `forumImages/${uuidv4()}_${file.name}`);
+  
+  try {
+    if (onProgress) {
+      // Use uploadBytesResumable for progress tracking
+      const uploadTask = uploadBytesResumable(fileRef, file);
+      
+      // Set up progress tracking
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          onProgress(progress);
+        },
+        (error) => {
+          console.error('Upload progress error:', error);
+          throw new Error(`Upload failed: ${error.message || 'Unknown error'}`);
+        }
+      );
+      
+      // Wait for upload to complete
+      await uploadTask;
+    } else {
+      // Simple upload without progress tracking
+      await uploadBytes(fileRef, file);
+    }
+    
+    // Get the download URL
+    const downloadURL = await getDownloadURL(fileRef);
+    console.log('✅ Image uploaded successfully, download URL:', downloadURL);
+    return downloadURL;
+  } catch (error) {
+    console.error('❌ Image upload failed:', error);
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      if (error.message.includes('permission')) {
+        throw new Error('Permission denied to upload image. Please check your login status.');
+      } else if (error.message.includes('network')) {
+        throw new Error('Network error during image upload. Please check your internet connection.');
+      } else if (error.message.includes('storage')) {
+        throw new Error('Storage service error. Please try again later.');
+      }
+    }
+    
+    throw new Error(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 };
 
 /**
@@ -157,7 +267,30 @@ export const createPost = async (projectId: string = 'default', post: Post, imag
   
   let imageURL = post.imageURL || '';
   if (image) {
-    imageURL = await uploadImage(image);
+    console.log('🖼️ Uploading image to Firebase Storage...');
+    try {
+      // Add timeout for image upload (20 seconds)
+      const uploadPromise = uploadImage(image);
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Upload timed out after 20 seconds')), 20000);
+      });
+      
+      imageURL = await Promise.race([uploadPromise, timeoutPromise]);
+      console.log('✅ Image uploaded, URL:', imageURL);
+    } catch (error) {
+      console.error('⚠️ Storage upload failed, using compressed base64 fallback:', error);
+      
+      try {
+        // Fallback: Convert image to compressed base64 for development
+        console.log('🔄 Compressing image for Firestore storage...');
+        // Use smaller target to ensure it fits in Firestore (1MB limit)
+        imageURL = await compressImageToBase64(image, 300); // Target 300KB, becomes ~400KB after base64
+        console.log('✅ Using compressed base64 image for development');
+      } catch (compressionError) {
+        console.error('❌ Image compression failed:', compressionError);
+        throw new Error('Failed to process image. Please try with a smaller image file.');
+      }
+    }
   }
 
   // Create a post object that exactly matches the Firestore structure we observed

@@ -231,6 +231,75 @@ service cloud.firestore {
 firebase deploy --only firestore:rules
 ```
 
+## Firebase Storage CORS Configuration
+
+When developing locally, you may encounter CORS (Cross-Origin Resource Sharing) errors when trying to upload images to Firebase Storage. This is because Firebase Storage doesn't allow requests from `localhost` by default.
+
+### Symptoms of CORS Issues
+
+- Error messages like: "Access to XMLHttpRequest at 'https://firebasestorage.googleapis.com/...' from origin 'http://localhost:3000' has been blocked by CORS policy"
+- Image uploads fail and fall back to base64 encoding
+- Console shows "Upload timed out" errors
+
+### Solution: Deploy CORS Configuration
+
+1. **Install Google Cloud SDK** (if not already installed):
+   - Download from: https://cloud.google.com/sdk/docs/install
+   - Follow the installation instructions for your platform
+
+2. **Authenticate with Google Cloud**:
+   ```bash
+   gcloud auth login
+   ```
+
+3. **Deploy CORS configuration**:
+   ```bash
+   ./deploy-cors.sh
+   ```
+
+   Or manually run:
+   ```bash
+   gcloud storage buckets update gs://devfolio-84079.appspot.com --cors-file=cors.json
+   ```
+
+### CORS Configuration Details
+
+The `cors.json` file allows the following origins:
+- `http://localhost:3000` (local development)
+- `http://127.0.0.1:3000` (alternative local address)
+- `https://devfolio-84079.web.app` (Firebase Hosting)
+- `https://devfolio-84079.firebaseapp.com` (Firebase Hosting alternative)
+
+### Fallback: Base64 Image Storage
+
+If CORS configuration cannot be deployed, the application automatically falls back to storing compressed base64 images directly in Firestore. This works for development but has limitations:
+- Images are compressed to stay under Firestore's 1MB field limit
+- Reduced image quality compared to Firebase Storage URLs
+- Not recommended for production use
+
+## Firestore Security Rules for Mockup Comments
+
+If you encounter "Missing or insufficient permissions" errors when adding comments to mockups, you need to deploy updated Firestore security rules.
+
+### Deploy Security Rules
+
+Run the following script to deploy updated rules:
+```bash
+./deploy-rules.sh
+```
+
+Or manually deploy:
+```bash
+firebase deploy --only firestore:rules
+```
+
+### Required Rules
+
+The `firestore.rules` file includes permissions for:
+- `projects/{projectId}/mockups/{mockupId}/comments` - For mockup comments
+- Authenticated users can read, create, update, and delete comments
+- All authenticated users have access to mockup features
+
 ## Upgrading Node.js Runtime
 
 Firebase has indicated that Node.js 18 will be decommissioned on 2025-10-31. Consider upgrading to a newer runtime version in your `functions/package.json` file:

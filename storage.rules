@@ -39,6 +39,14 @@ service firebase.storage {
       allow write: if false;
     }
     
+    // Forum images - writable by authenticated users, readable by anyone
+    match /forumImages/{imageId} {
+      allow read: if true;
+      allow write: if isSignedIn() && 
+        request.resource.size < 10 * 1024 * 1024 && // Max 10MB
+        request.resource.contentType.matches('image/.*'); // Only images
+    }
+    
     // Default deny all
     match /{allPaths=**} {
       allow read, write: if false;

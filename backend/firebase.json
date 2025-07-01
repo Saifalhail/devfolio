@@ -8,5 +8,8 @@
       "firebase-debug.*.log"
     ],
     "predeploy": []
+  },
+  "storage": {
+    "rules": "../storage.rules"
   }
 }

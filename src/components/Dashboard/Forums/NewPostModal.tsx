@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { createPost, uploadImage } from '../../../firebase/services/forums';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useToast } from '../../../contexts/ToastContext';
 import { Post } from '../../../firebase/services/forums';
 import { FaTimes, FaPlus, FaHashtag, FaTag, FaImage, FaUpload } from 'react-icons/fa';
 import { FiSend } from 'react-icons/fi';
@@ -22,6 +23,7 @@ interface NewPostModalProps {
 const NewPostModal = ({ onClose, onSubmit, modalTitle }: NewPostModalProps) => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
+  const { showToast } = useToast();
   const isRTL = i18n.language === 'ar';
   
   const [title, setTitle] = useState('');
@@ -126,10 +128,13 @@ const NewPostModal = ({ onClose, onSubmit, modalTitle }: NewPostModalProps) => {
       };
       
       onSubmit(completePost);
+      showToast('✅ Post created successfully!', 'success');
       onClose();
     } catch (err) {
       console.error('Error creating post:', err);
-      setError(t('forums.errorCreatingPost'));
+      const errorMessage = t('forums.errorCreatingPost') || 'Failed to create post';
+      setError(errorMessage);
+      showToast(`❌ ${errorMessage}`, 'error');
       setLoading(false);
     }
   };
@@ -232,7 +237,17 @@ const NewPostModal = ({ onClose, onSubmit, modalTitle }: NewPostModalProps) => {
               aria-label="Submit post"
               className="btn-outline-accent rounded-lg gap-2"
             >
-              <FiSend aria-label="Publish post" /> {loading ? 'Posting...' : 'Publish'}
+              {loading ? (
+                <>
+                  <LoadingSpinner />
+                  Posting...
+                </>
+              ) : (
+                <>
+                  <FiSend aria-label="Publish post" />
+                  Publish
+                </>
+              )}
             </SubmitButton>
           </ButtonGroup>
         </Form>
@@ -755,6 +770,19 @@ const ErrorMessage = styled.div`
   color: #ff6b6b;
   margin-bottom: 1rem;
   font-size: 0.9rem;
+`;
+
+const LoadingSpinner = styled.div`
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 `;
 
 export default NewPostModal;

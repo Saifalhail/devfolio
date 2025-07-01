@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import Toast from '../components/Common/Toast';
 
 const ToastContext = createContext();
 
@@ -22,15 +23,21 @@ export function ToastProvider({ children }) {
     }
   }, [removeToast]);
 
+  const showToast = useCallback((message, type = 'info') => {
+    addToast(message, { type });
+  }, [addToast]);
+
   const value = {
     toasts,
     addToast,
     removeToast,
+    showToast,
   };
 
   return (
     <ToastContext.Provider value={value}>
       {children}
+      <Toast toasts={toasts} onRemove={removeToast} />
     </ToastContext.Provider>
   );
 }

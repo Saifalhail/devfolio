@@ -568,7 +568,16 @@
     "searchPlaceholder": "Search discussions...",
     "searchMessages": "Search messages...",
     "allTopics": "All Topics",
-    "filter": "Filter"
+    "filter": "Filter",
+    "addComment": "Add a comment...",
+    "typeMessage": "Type a message...",
+    "mustBeLoggedIn": "You must be logged in to comment",
+    "errorSendingMessage": "Failed to send message",
+    "newPost": "New Post",
+    "titleRequired": "Title is required",
+    "contentRequired": "Content is required",
+    "imageUploadError": "Failed to upload image",
+    "errorCreatingPost": "Failed to create post"
   },
 
   "seo": {

@@ -5,6 +5,7 @@ import styled, { keyframes, css } from 'styled-components';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useMockupUI } from './MockupUIContext';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '../../../contexts/ToastContext';
 import { FaComment, FaFlag, FaHeart, FaTimes, FaDownload, FaCheck, FaTimes as FaX } from 'react-icons/fa';
 import { IconType } from 'react-icons';
 import { formatDistanceToNow } from 'date-fns';
@@ -91,8 +92,10 @@ const FloatingComment: React.FC<FloatingCommentProps> = ({ comment, isActive, on
         <CommentBubble $isRTL={isRTL}>
           <CommentHeader>
             <UserInfo>
-              <UserName>{comment.user.displayName || 'Anonymous'}</UserName>
-              <CommentTime>{new Date(comment.createdAt as any).toLocaleString()}</CommentTime>
+              <UserName>{comment.userName || 'Anonymous'}</UserName>
+              <CommentTime>
+                {formatCommentDate(comment.createdAt)}
+              </CommentTime>
             </UserInfo>
             <CloseCommentButton 
               onClick={(e) => {
@@ -116,10 +119,31 @@ const FloatingComment: React.FC<FloatingCommentProps> = ({ comment, isActive, on
   );
 };
 
+// Helper function to safely format dates from various Firestore formats
+const formatCommentDate = (createdAt: any): string => {
+  if (!createdAt) return 'Just now';
+  
+  try {
+    if (typeof createdAt.toDate === 'function') {
+      return createdAt.toDate().toLocaleDateString();
+    }
+    
+    if (createdAt.seconds) {
+      return new Date(createdAt.seconds * 1000).toLocaleDateString();
+    }
+    
+    return new Date(createdAt).toLocaleDateString();
+  } catch (error) {
+    console.warn('Error formatting date:', error);
+    return 'Just now';
+  }
+};
+
 const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
   const { t, i18n } = useTranslation();
   const { selectedMockup, clearSelectedMockup } = useMockupUI();
   const { currentUser } = useAuth();
+  const { showToast } = useToast();
   const [newCommentCoords, setNewCommentCoords] = useState<{x: number, y: number} | null>(null);
   const [existingComments, setExistingComments] = useState<CommentWithCoordinates[]>([]);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
@@ -298,6 +322,9 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
       // Update feedback status since user just added feedback
       setHasFeedback(true);
 
+      // Show success message
+      showToast('✅ Comment added successfully!', 'success');
+
       // Clear form
       setCommentText('');
       setIsCommentFormVisible(false);
@@ -313,7 +340,9 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
 
     } catch (error) {
       console.error('Error adding comment:', error);
-      setCommentError(error instanceof Error ? error.message : 'Failed to add comment');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add comment';
+      setCommentError(errorMessage);
+      showToast(`❌ ${errorMessage}`, 'error');
     } finally {
       setIsSubmittingComment(false);
     }
@@ -430,7 +459,7 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
                 <CommentBadge>{existingComments.length}</CommentBadge>
               )}
             </ActionButton>
-            <ActionButton onClick={() => window.open(selectedMockup?.imageUrl || selectedMockup?.imageURL, '_blank')}>
+            <ActionButton onClick={() => window.open(selectedMockup?.imageURL, '_blank')}>
               <FaDownload />
               <span>{t('mockups.download')}</span>
             </ActionButton>
@@ -439,7 +468,7 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
         
         <MockupImageContainer>
           <MockupImage
-            style={{ backgroundImage: `url(${selectedMockup?.imageUrl || selectedMockup?.imageURL})` }}
+            style={{ backgroundImage: `url(${selectedMockup?.imageURL})` }}
             className="mockup-image"
             tabIndex={0}
             role="img"
@@ -554,7 +583,7 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
                   <CommentPopoverHeader>
                     <CommentAuthor>{comment.userName || 'Anonymous'}</CommentAuthor>
                     <CommentDate>
-                      {new Date(comment.createdAt as any).toLocaleDateString()}
+                      {formatCommentDate(comment.createdAt)}
                     </CommentDate>
                     <ClosePopoverButton 
                       onClick={() => setActivePinId(null)}
@@ -597,7 +626,7 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
         {/* Comment form only shows when comments are visible */}
         {showComments && newCommentCoords && isCommentFormVisible && (
           <CommentForm 
-            ref={commentFormRef}
+            ref={commentFormRef as any}
             style={calculateCommentFormPosition(newCommentCoords)}
             className="comment-form"
             onClick={(e) => e.stopPropagation()}
@@ -660,13 +689,14 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContainer = styled.div`
-  background: linear-gradient(135deg, #1a1d3a 0%, #1e1237 100%);
+  background: linear-gradient(135deg, rgba(26, 29, 58, 0.95) 0%, rgba(30, 18, 55, 0.95) 100%);
+  backdrop-filter: blur(10px);
   border-radius: 16px;
-  width: min(92vw, 1200px);
-  height: min(88vh, 800px);
-  max-height: 88vh;
+  width: min(85vw, 900px);
+  height: min(80vh, 700px);
+  max-height: 80vh;
   overflow: hidden;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 100px rgba(205, 62, 253, 0.1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 100px rgba(205, 62, 253, 0.15);
   position: relative;
   border: 1px solid rgba(205, 62, 253, 0.3);
   animation: ${slideUp} 0.3s ease;
@@ -674,17 +704,16 @@ const ModalContainer = styled.div`
   flex-direction: column;
   
   @media (max-width: 1024px) {
-    width: 95vw;
-    height: 90vh;
-    max-height: 90vh;
+    width: 90vw;
+    height: 85vh;
+    max-height: 85vh;
   }
   
   @media (max-width: 768px) {
-    width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
-    border-radius: 0;
-    margin: 0;
+    width: 95vw;
+    height: 90vh;
+    max-height: 90vh;
+    border-radius: 12px;
   }
   
   @media (max-width: 480px) {
@@ -695,13 +724,13 @@ const ModalContainer = styled.div`
   }
   
   @media (max-height: 700px) {
-    height: 95vh;
-    max-height: 95vh;
+    height: 90vh;
+    max-height: 90vh;
   }
   
   @media (max-height: 600px) {
-    height: 100vh;
-    max-height: 100vh;
+    height: 95vh;
+    max-height: 95vh;
   }
 `;
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { addDoc, serverTimestamp, collection } from 'firebase/firestore';
 import { firestore } from '../../../firebase/config';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useToast } from '../../../contexts/ToastContext';
 import { FaComment, FaPaperPlane } from 'react-icons/fa';
 
 interface ChatInputProps {
@@ -13,6 +14,7 @@ interface ChatInputProps {
 const ChatInput: React.FC<ChatInputProps> = ({ projectId = 'default' }) => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
+  const { showToast } = useToast();
   const isRTL = i18n.language === 'ar';
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -50,9 +52,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ projectId = 'default' }) => {
       // Clear the input
       setMessage('');
       setError(null);
+      
+      // Show success message
+      showToast('✅ Message sent successfully!', 'success');
     } catch (err: any) {
       console.error('Error sending message:', err);
-      setError(t('forums.errorSendingMessage'));
+      const errorMessage = t('forums.errorSendingMessage') || 'Failed to send message';
+      setError(errorMessage);
+      showToast(`❌ ${errorMessage}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -103,7 +110,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ projectId = 'default' }) => {
                   autoComplete="off"
                 />
                 <SendButton type="submit" disabled={loading || !message.trim()}>
-                  <FaPaperPlane />
+                  {loading ? <LoadingSpinner /> : <FaPaperPlane />}
                 </SendButton>
               </InputWrapper>
             )}
@@ -233,6 +240,19 @@ const CommentIcon = styled.div`
 const CommentPlaceholder = styled.span`
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.6);
+`;
+
+const LoadingSpinner = styled.div`
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 `;
 
 export default ChatInput;

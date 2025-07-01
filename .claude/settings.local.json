@@ -9,7 +9,15 @@
       "Bash(pkill:*)",
       "Bash(true)",
       "Bash(firebase deploy:*)",
-      "Bash(firebase login:*)"
+      "Bash(firebase login:*)",
+      "Bash(chmod:*)",
+      "Bash(timeout 60s firebase deploy --only storage --force)",
+      "Bash(firebase projects:list:*)",
+      "Bash(firebase use:*)",
+      "Bash(rg:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 30s npm start)",
+      "Bash(timeout 30s npm run lint)"
     ],
     "deny": []
   }
