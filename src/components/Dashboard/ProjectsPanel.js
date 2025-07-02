@@ -19,7 +19,16 @@ import {
   FaSort,
   FaArrowLeft,
   FaArrowRight,
-  FaUserAlt
+  FaUserAlt,
+  FaLightbulb,
+  FaChevronDown,
+  FaChevronUp,
+  FaCode,
+  FaMoneyBillWave,
+  FaExclamationTriangle,
+  FaTrophy,
+  FaArrowCircleRight,
+  FaChevronRight
 } from 'react-icons/fa';
 import StarryBackground from '../Common/StarryBackground';
 import { 
@@ -113,6 +122,815 @@ import {
 // Import ProjectWizard directly to fix the default export issue
 import ProjectWizard from './ProjectWizard.jsx';
 
+// Styled components moved outside to prevent dynamic creation warnings
+const GradientTitleText = styled.span`
+  ${mixins.gradientText}
+  font-size: ${typography.fontSizes.xxl};
+  font-weight: ${typography.fontWeights.semiBold};
+  
+  @media (max-width: 768px) {
+    font-size: ${typography.fontSizes.xl};
+  }
+`;
+
+const StyledIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(
+    135deg,
+    ${colors.accent.secondary} 0%,
+    ${colors.accent.primary} 100%
+  );
+  border-radius: ${borderRadius.md};
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: ${shadows.md};
+  flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+`;
+
+const ActionButtonWrapper = styled.div`
+  display: flex;
+  gap: ${spacing.md};
+  
+  @media (max-width: 768px) {
+    gap: ${spacing.sm};
+  }
+`;
+
+const FilterSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.md};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    gap: ${spacing.sm};
+  }
+`;
+
+const AddButtonWrapper = styled.div`
+  display: flex;
+  gap: ${spacing.md};
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    gap: ${spacing.sm};
+  }
+`;
+
+const ProjectCount = styled.span`
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.normal};
+  white-space: nowrap;
+`;
+
+const ViewToggleContainer = styled.div`
+  display: flex;
+  gap: ${spacing.sm};
+  background: rgba(74, 108, 247, 0.1);
+  padding: 4px;
+  border-radius: ${borderRadius.md};
+  border: 1px solid rgba(74, 108, 247, 0.2);
+`;
+
+const ControlsGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.lg};
+  flex-wrap: wrap;
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    gap: ${spacing.md};
+    width: 100%;
+    justify-content: space-between;
+  }
+`;
+
+const ViewToggle = styled.div`
+  display: flex;
+  gap: ${spacing.xs};
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: ${borderRadius.md};
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const ToggleButton = styled.button`
+  padding: 8px 12px;
+  background: ${props => props.active ? 'rgba(74, 108, 247, 0.2)' : 'transparent'};
+  color: ${props => props.active ? colors.accent.primary : colors.text.secondary};
+  border: none;
+  border-radius: ${borderRadius.sm};
+  cursor: pointer;
+  transition: ${transitions.fast};
+  font-size: ${typography.fontSizes.sm};
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  
+  &:hover {
+    background: ${props => props.active ? 'rgba(74, 108, 247, 0.3)' : 'rgba(255, 255, 255, 0.05)'};
+    color: ${props => props.active ? colors.accent.primary : colors.text.primary};
+  }
+  
+  svg {
+    font-size: 1rem;
+  }
+`;
+
+const FilterContainerWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.md};
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    gap: ${spacing.sm};
+  }
+`;
+
+const FilterIcon = styled.div`
+  color: ${colors.text.secondary};
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const Select = styled.select`
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: ${colors.text.primary};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: ${borderRadius.md};
+  font-size: ${typography.fontSizes.sm};
+  cursor: pointer;
+  transition: ${transitions.fast};
+  min-width: 120px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: ${colors.accent.primary};
+    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+  }
+  
+  option {
+    background: ${colors.background.secondary};
+    color: ${colors.text.primary};
+  }
+  
+  @media (max-width: 768px) {
+    min-width: 100px;
+    font-size: ${typography.fontSizes.xs};
+  }
+`;
+
+const ProjectsContainer = styled.div`
+  display: grid;
+  grid-template-columns: ${props => props.$isGrid 
+    ? 'repeat(auto-fill, minmax(320px, 1fr))' 
+    : '1fr'};
+  gap: ${spacing.lg};
+  animation: fadeIn 0.3s ease-in-out;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: ${spacing.md};
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const ProjectDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.sm};
+`;
+
+const DetailRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  color: ${colors.text.secondary};
+  font-size: ${typography.fontSizes.sm};
+`;
+
+const LoadingContainer = styled.div`
+  text-align: center;
+  padding: ${spacing.xxl};
+`;
+
+const ProjectFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: ${spacing.md};
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const MoodMeter = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+`;
+
+const MoodLabel = styled.span`
+  font-size: ${typography.fontSizes.xs};
+  color: ${colors.text.secondary};
+`;
+
+const MoodValue = styled.div`
+  font-size: ${typography.fontSizes.lg};
+`;
+
+const ActionButtonsGroup = styled.div`
+  display: flex;
+  gap: ${spacing.xs};
+`;
+
+// Custom white icon button for projects page
+const WhiteIconButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  svg {
+    font-size: 1rem;
+    color: #ffffff;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+// Custom white action button for text + icon buttons
+const WhiteActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${spacing.xs};
+  padding: ${spacing.sm} ${spacing.md};
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: ${borderRadius.md};
+  color: #ffffff;
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  svg {
+    font-size: 1rem;
+    color: #ffffff;
+  }
+`;
+
+// Custom white pagination button
+const WhitePaginationButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 ${spacing.sm};
+  background: ${props => props.active ? 'rgba(255, 255, 255, 0.15)' : 'transparent'};
+  border: 1px solid ${props => props.active ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.3)'};
+  border-radius: ${borderRadius.sm};
+  color: #ffffff;
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${props => props.active ? typography.fontWeights.medium : typography.fontWeights.normal};
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  opacity: ${props => props.disabled ? 0.5 : 1};
+  transition: all 0.2s ease;
+  
+  &:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  svg {
+    font-size: 1rem;
+    color: #ffffff;
+  }
+`;
+
+const EmptyStateIllustration = styled.div`
+  width: 200px;
+  height: 200px;
+  margin: 0 auto ${spacing.xl};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+  }
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: ${spacing.xxl};
+  
+  h3 {
+    color: ${colors.text.primary};
+    font-size: ${typography.fontSizes.xl};
+    margin-bottom: ${spacing.sm};
+  }
+  
+  p {
+    color: ${colors.text.secondary};
+    font-size: ${typography.fontSizes.md};
+    margin-bottom: ${spacing.xl};
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  @media (max-width: 768px) {
+    padding: ${spacing.xl};
+    
+    h3 {
+      font-size: ${typography.fontSizes.lg};
+    }
+    
+    p {
+      font-size: ${typography.fontSizes.sm};
+    }
+  }
+`;
+
+const ErrorMessageAlert = styled.div`
+  background: rgba(255, 59, 48, 0.1);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  color: ${colors.status.error};
+  padding: ${spacing.md};
+  border-radius: ${borderRadius.md};
+  margin-bottom: ${spacing.lg};
+  text-align: center;
+`;
+
+const Button = styled.button`
+  padding: 12px 24px;
+  background: linear-gradient(135deg, ${colors.accent.primary}, ${colors.accent.secondary});
+  color: white;
+  border: none;
+  border-radius: ${borderRadius.md};
+  font-size: ${typography.fontSizes.md};
+  font-weight: ${typography.fontWeights.medium};
+  cursor: pointer;
+  transition: ${transitions.fast};
+  display: inline-flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${shadows.lg};
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: ${shadows.md};
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  svg {
+    font-size: 1.2rem;
+  }
+`;
+
+const ActionIconButton = styled.button`
+  padding: 8px;
+  background: transparent;
+  color: ${colors.text.secondary};
+  border: none;
+  border-radius: ${borderRadius.sm};
+  cursor: pointer;
+  transition: ${transitions.fast};
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: ${colors.text.primary};
+  }
+`;
+
+const CustomFilterTabs = styled.div`
+  display: flex;
+  gap: ${spacing.xs};
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: ${borderRadius.lg};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    padding: 2px;
+  }
+`;
+
+const StatusFilterTab = styled.button`
+  position: relative;
+  padding: 8px 16px;
+  background: ${props => props.active ? 'rgba(74, 108, 247, 0.2)' : 'transparent'};
+  color: ${props => {
+    if (props.active) {
+      if (props.status === 'inProgress') return colors.status.warning;
+      if (props.status === 'done') return colors.status.success;
+      return colors.accent.primary;
+    }
+    return colors.text.secondary;
+  }};
+  border: none;
+  border-radius: ${borderRadius.md};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  white-space: nowrap;
+  
+  &:hover {
+    background: ${props => props.active ? 'rgba(74, 108, 247, 0.3)' : 'rgba(255, 255, 255, 0.05)'};
+    color: ${props => {
+      if (props.status === 'inProgress') return colors.status.warning;
+      if (props.status === 'done') return colors.status.success;
+      return props.active ? colors.accent.primary : colors.text.primary;
+    }};
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  svg {
+    font-size: 1rem;
+  }
+  
+  /* Indicator dot for active state */
+  ${props => props.active && `
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: ${
+        props.status === 'inProgress' ? colors.status.warning :
+        props.status === 'done' ? colors.status.success :
+        colors.accent.primary
+      };
+    }
+  `}
+  
+  @media (max-width: 768px) {
+    padding: 6px 12px;
+    font-size: ${typography.fontSizes.xs};
+    
+    svg {
+      font-size: 0.875rem;
+    }
+  }
+`;
+
+const StatusIndicator = styled.div`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${props => {
+    switch (props.status) {
+      case 'active':
+        return colors.status.success;
+      case 'inProgress':
+        return colors.status.warning;
+      case 'done':
+        return colors.status.info;
+      case 'onHold':
+        return colors.status.error;
+      default:
+        return colors.text.secondary;
+    }
+  }};
+  display: inline-block;
+  margin-left: ${spacing.xs};
+  position: relative;
+  
+  /* Pulse animation for active projects */
+  ${props => props.status === 'active' && `
+    animation: pulse 2s infinite;
+    
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 6px rgba(76, 175, 80, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+      }
+    }
+  `}
+`;
+
+const StatusTooltip = styled.span`
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: ${colors.background.tertiary};
+  color: ${colors.text.primary};
+  padding: 4px 8px;
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.xs};
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  margin-bottom: 4px;
+  
+  ${StatusIndicator}:hover & {
+    opacity: 1;
+  }
+`;
+
+const ProjectCardSkeleton = styled(Card)`
+  ${mixins.card(false)}
+  padding: ${spacing.lg};
+  pointer-events: none;
+  
+  ${props => !props.isGridView && css`
+    display: flex;
+    flex-direction: column;
+  `}
+`;
+
+const SkeletonHeader = styled(ProjectHeader)`
+  align-items: center;
+`;
+
+const SkeletonBody = styled(ProjectDetails)`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.sm};
+`;
+
+const CustomEmptyState = styled(EmptyState)`
+  max-width: 500px;
+  margin: 3rem auto;
+  text-align: center;
+  
+  h3 {
+    margin-top: ${spacing.md};
+    margin-bottom: ${spacing.sm};
+    font-size: ${typography.fontSizes.xl};
+    color: ${colors.text.primary};
+  }
+  
+  p {
+    margin-bottom: ${spacing.md};
+    color: ${colors.text.secondary};
+  }
+  
+  button {
+    margin-top: ${spacing.md};
+  }
+  
+  /* RTL Support */
+  &.rtl-content {
+    direction: rtl;
+    text-align: center;
+    
+    h3, p {
+      text-align: center;
+    }
+    
+    button svg {
+      margin-left: 0;
+      margin-right: ${spacing.xs};
+    }
+  }
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    margin: 2rem auto;
+    padding: ${spacing.md};
+    
+    h3 {
+      font-size: ${typography.fontSizes.lg};
+    }
+  }
+`;
+
+const AIInsightsButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  background: linear-gradient(135deg, ${colors.accent.primary}20, ${colors.accent.secondary}20);
+  color: ${colors.accent.primary};
+  border: 1px solid ${colors.accent.primary}40;
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.xs} ${spacing.sm};
+  font-size: ${typography.fontSizes.sm};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: ${spacing.sm};
+  
+  &:hover {
+    background: linear-gradient(135deg, ${colors.accent.primary}30, ${colors.accent.secondary}30);
+    transform: translateY(-1px);
+    box-shadow: ${shadows.sm};
+  }
+  
+  svg {
+    font-size: 1rem;
+  }
+`;
+
+const InsightsModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${spacing.lg};
+  overflow: auto;
+`;
+
+const InsightsContent = styled.div`
+  background: ${colors.background.primary};
+  border-radius: ${borderRadius.lg};
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: ${shadows.xl};
+  position: relative;
+`;
+
+const InsightsHeader = styled.div`
+  padding: ${spacing.lg};
+  border-bottom: 1px solid ${colors.background.secondary};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: ${spacing.sm};
+    color: ${colors.text.primary};
+    font-size: ${typography.fontSizes.xl};
+    margin: 0;
+  }
+`;
+
+const CloseButton = styled.button`
+  background: transparent;
+  border: none;
+  color: ${colors.text.secondary};
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: ${spacing.xs};
+  
+  &:hover {
+    color: ${colors.text.primary};
+  }
+`;
+
+const InsightsBody = styled.div`
+  padding: ${spacing.lg};
+`;
+
+const InsightSection = styled.div`
+  margin-bottom: ${spacing.lg};
+  
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: ${spacing.sm};
+    color: ${colors.accent.primary};
+    font-size: ${typography.fontSizes.lg};
+    margin-bottom: ${spacing.md};
+  }
+`;
+
+const InsightCard = styled.div`
+  background: ${colors.background.secondary};
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.md};
+  margin-bottom: ${spacing.sm};
+`;
+
+const TechBadge = styled.span`
+  display: inline-block;
+  background: ${colors.accent.primary}20;
+  color: ${colors.accent.primary};
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.sm};
+  margin: ${spacing.xs};
+`;
+
+const FeasibilityScore = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  font-size: ${typography.fontSizes.xl};
+  font-weight: bold;
+  color: ${props => props.score >= 7 ? colors.success : props.score >= 5 ? colors.warning : colors.error};
+`;
+
+const NextStepItem = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: ${spacing.sm};
+  margin-bottom: ${spacing.sm};
+  
+  span {
+    flex: 1;
+  }
+`;
+
 const ProjectsPanel = () => {
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
@@ -120,12 +938,14 @@ const ProjectsPanel = () => {
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [isGridView, setIsGridView] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
-  const [sortBy, setSortBy] = useState('deadline');
+  const [sortBy, setSortBy] = useState('name');
   // Search functionality removed as requested
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedProjectInsights, setSelectedProjectInsights] = useState(null);
+  const [isInsightsModalOpen, setIsInsightsModalOpen] = useState(false);
   const [activePage, setActivePage] = useState(1);
   const [itemsPerPage] = useState(9);
   const [totalPages, setTotalPages] = useState(1);
@@ -153,24 +973,31 @@ const ProjectsPanel = () => {
     const fetchProjects = async () => {
       try {
         const projectsRef = collection(db, 'projects');
-        let projectQuery = query(projectsRef, where('userId', '==', currentUser.uid));
-
-        // Apply sorting
-        if (sortBy === 'deadline') {
-          projectQuery = query(projectQuery, orderBy('deadline', 'asc'));
-        } else if (sortBy === 'name') {
-          projectQuery = query(projectQuery, orderBy('name', 'asc'));
-        } else if (sortBy === 'status') {
-          projectQuery = query(projectQuery, orderBy('statusPriority', 'asc'));
-        }
+        // Simple query without orderBy to avoid index requirements
+        const projectQuery = query(projectsRef, where('userId', '==', currentUser.uid));
 
         unsubscribe = onSnapshot(projectQuery, (querySnapshot) => {
+          console.log('Projects snapshot received:', querySnapshot.size, 'projects');
           let projectsList = querySnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
             statusPriority: getStatusPriority(doc.data().status)
           }));
           
+          // Apply client-side sorting
+          if (sortBy === 'deadline') {
+            projectsList.sort((a, b) => {
+              const dateA = a.deadline?.toDate ? new Date(a.deadline.toDate()) : new Date('9999-12-31');
+              const dateB = b.deadline?.toDate ? new Date(b.deadline.toDate()) : new Date('9999-12-31');
+              return dateA - dateB;
+            });
+          } else if (sortBy === 'name') {
+            projectsList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+          } else if (sortBy === 'status') {
+            projectsList.sort((a, b) => a.statusPriority - b.statusPriority);
+          }
+          
+          console.log('Projects list:', projectsList);
           setProjects(projectsList);
           setError(null); // Clear any previous errors
           setIsLoading(false);
@@ -299,40 +1126,27 @@ const ProjectsPanel = () => {
     setError(null);
   }, []);
   
-  // Handle form submission
-  const handleAddProject = useCallback(async (projectData) => {
-    setIsSubmitting(true);
-    setError(null);
-    
-    try {
-      const projectsRef = collection(db, 'projects');
-      await addDoc(projectsRef, {
-        ...projectData,
-        userId: currentUser.uid,
-        createdAt: serverTimestamp()
-      });
-      
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error('Error adding project:', error);
-      setError(t('projects.addError', 'Error adding project. Please try again.'));
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [currentUser]);
-
-  // Styled component for gradient title text
-const GradientTitleText = styled.span`
-  ${mixins.gradientText}
-  font-size: ${typography.fontSizes.xxl};
-  font-weight: ${typography.fontWeights.semiBold};
+  // Open AI insights modal
+  const openInsightsModal = useCallback((project) => {
+    setSelectedProjectInsights(project);
+    setIsInsightsModalOpen(true);
+  }, []);
   
-  @media (max-width: 768px) {
-    font-size: ${typography.fontSizes.xl};
-  }
-`;
+  // Close AI insights modal
+  const closeInsightsModal = useCallback(() => {
+    setSelectedProjectInsights(null);
+    setIsInsightsModalOpen(false);
+  }, []);
+  
+  // Handle form submission - Project is already created by ProjectWizard
+  const handleAddProject = useCallback(async (projectData) => {
+    console.log('Project added successfully:', projectData);
+    // Just close the modal - the project is already created
+    setIsModalOpen(false);
+    setError(null);
+  }, []);
 
-// Detect RTL direction
+  // Detect RTL direction
   const isRTL = i18n.language === 'ar';
   
   return (
@@ -353,14 +1167,10 @@ const GradientTitleText = styled.span`
         </PanelTitle>
         
         <ActionButtonWrapper>
-          <ActionButton glow onClick={openAddProjectModal}>
-            <IconContainer 
-              icon={FaPlus} 
-              size="1em" 
-              margin={isRTL ? `0 0 0 ${spacing.xs}` : `0 ${spacing.xs} 0 0`} 
-            />
+          <WhiteActionButton onClick={openAddProjectModal}>
+            <FaPlus />
             {t('projects.addProject', 'Add New Project')}
-          </ActionButton>
+          </WhiteActionButton>
         </ActionButtonWrapper>
       </PanelHeader>
       
@@ -447,7 +1257,7 @@ const GradientTitleText = styled.span`
         </ActionsRow>
       
       {isLoading ? (
-        <ProjectsContainer isGridView={isGridView} aria-hidden="true">
+        <ProjectsContainer $isGrid={isGridView} aria-hidden="true">
           {Array.from({ length: 4 }).map((_, idx) => (
             <ProjectCardSkeleton key={idx} isGridView={isGridView}>
               <SkeletonHeader>
@@ -475,12 +1285,9 @@ const GradientTitleText = styled.span`
               </EmptyStateIllustration>
               <h3>{t('projects.noMatchingProjects', 'No matching projects')}</h3>
               <p>{t('projects.noMatchingMessage', 'Try adjusting your filters')}</p>
-              <GradientButton 
-                onClick={() => setFilterStatus('all')}
-                className={isRTL ? 'rtl-button' : ''}
-              >
+              <WhiteActionButton onClick={() => setFilterStatus('all')}>
                 {t('projects.clearFilters', 'Clear Filters')}
-              </GradientButton>
+              </WhiteActionButton>
             </>
           ) : (
             <>
@@ -499,19 +1306,22 @@ const GradientTitleText = styled.span`
         </CustomEmptyState>
       ) : (
         <>
-          <ProjectsContainer isGrid={isGridView}>
+          <ProjectsContainer $isGrid={isGridView}>
             {currentPageItems.map(project => (
               <ProjectCard key={project.id} isGrid={isGridView}>
                 <ProjectCardInner>
                   <ProjectHeader>
-                    <ProjectName>{project.name}</ProjectName>
+                    <div>
+                      <ProjectName>{project.name}</ProjectName>
+                      <ProjectType>{project.type} • {project.industry}</ProjectType>
+                    </div>
                     <ActionButtonsGroup>
-                      <ActionIcon title={t('projects.editProject', 'Edit Project')}>
+                      <WhiteIconButton title={t('projects.editProject', 'Edit Project')}>
                         <FaPencilAlt />
-                      </ActionIcon>
-                      <ActionIcon title={t('projects.moreOptions', 'More Options')}>
+                      </WhiteIconButton>
+                      <WhiteIconButton title={t('projects.moreOptions', 'More Options')}>
                         <FaEllipsisV />
-                      </ActionIcon>
+                      </WhiteIconButton>
                     </ActionButtonsGroup>
                   </ProjectHeader>
                   
@@ -529,7 +1339,7 @@ const GradientTitleText = styled.span`
                         <DetailContent>
                           <DetailLabel>{t('projects.deadline', 'Deadline')}</DetailLabel>
                           <DetailValue>
-                            {project.deadline ? new Date(project.deadline.toDate()).toLocaleDateString() : '—'}
+                            {project.deadline && project.deadline.toDate ? new Date(project.deadline.toDate()).toLocaleDateString() : '—'}
                           </DetailValue>
                         </DetailContent>
                       </DetailItem>
@@ -566,6 +1376,13 @@ const GradientTitleText = styled.span`
                     <ProjectDescription>
                       {project.description || t('projects.noDescription', 'No description provided.')}
                     </ProjectDescription>
+                    
+                    {project.aiInsights && (
+                      <AIInsightsButton onClick={() => openInsightsModal(project)}>
+                        <FaLightbulb />
+                        {t('projects.viewAIInsights', 'View AI Insights')}
+                      </AIInsightsButton>
+                    )}
                   </ProjectDetails>
                 </ProjectCardInner>
               </ProjectCard>
@@ -581,32 +1398,32 @@ const GradientTitleText = styled.span`
               </PaginationText>
               
               <PaginationControls className={isRTL ? 'rtl-pagination' : ''}>
-                <PaginationButton 
+                <WhitePaginationButton 
                   onClick={() => handlePageChange(Math.max(1, activePage - 1))}
                   disabled={activePage === 1}
                   aria-label={t('pagination.previous', 'Previous page')}
                 >
                   {isRTL ? <FaArrowRight /> : <FaArrowLeft />}
-                </PaginationButton>
+                </WhitePaginationButton>
                 
                 {[...Array(totalPages)].map((_, index) => (
-                  <PaginationButton
+                  <WhitePaginationButton
                     key={index + 1}
                     active={activePage === index + 1}
                     onClick={() => handlePageChange(index + 1)}
                     aria-label={t('pagination.page', 'Page {{number}}', { number: index + 1 })}
                   >
                     {index + 1}
-                  </PaginationButton>
+                  </WhitePaginationButton>
                 ))}
                 
-                <PaginationButton 
+                <WhitePaginationButton 
                   onClick={() => handlePageChange(Math.min(totalPages, activePage + 1))}
                   disabled={activePage === totalPages}
                   aria-label={t('pagination.next', 'Next page')}
                 >
                   {isRTL ? <FaArrowLeft /> : <FaArrowRight />}
-                </PaginationButton>
+                </WhitePaginationButton>
               </PaginationControls>
             </Pagination>
           )}
@@ -625,29 +1442,136 @@ const GradientTitleText = styled.span`
           onProjectAdded={handleAddProject}
         />
       )}
+      
+      {/* AI Insights Modal */}
+      {isInsightsModalOpen && selectedProjectInsights && (
+        <InsightsModal onClick={closeInsightsModal}>
+          <InsightsContent onClick={(e) => e.stopPropagation()}>
+            <InsightsHeader>
+              <h2>
+                <FaLightbulb />
+                {t('projects.aiInsights.title', 'AI Project Insights')}
+              </h2>
+              <CloseButton onClick={closeInsightsModal}>&times;</CloseButton>
+            </InsightsHeader>
+            
+            <InsightsBody>
+              {selectedProjectInsights.aiInsights && (
+                <>
+                  {/* Executive Summary */}
+                  {selectedProjectInsights.aiInsights.executiveSummary && (
+                    <InsightSection>
+                      <h3>{t('projects.aiInsights.executiveSummary', 'Executive Summary')}</h3>
+                      <InsightCard>
+                        <p>{selectedProjectInsights.aiInsights.executiveSummary}</p>
+                      </InsightCard>
+                    </InsightSection>
+                  )}
+                  
+                  {/* Project Feasibility */}
+                  {selectedProjectInsights.aiInsights.projectFeasibility && (
+                    <InsightSection>
+                      <h3>
+                        <FaTrophy />
+                        {t('projects.aiInsights.feasibility', 'Project Feasibility')}
+                      </h3>
+                      <InsightCard>
+                        <FeasibilityScore score={parseInt(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
+                          {t('projects.aiInsights.score', 'Score')}: {selectedProjectInsights.aiInsights.projectFeasibility.score}/10
+                        </FeasibilityScore>
+                        <p>{selectedProjectInsights.aiInsights.projectFeasibility.assessment}</p>
+                        {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations && (
+                          <ul>
+                            {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations.map((item, index) => (
+                              <li key={index}>{item}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </InsightCard>
+                    </InsightSection>
+                  )}
+                  
+                  {/* Technical Recommendations */}
+                  {selectedProjectInsights.aiInsights.technicalRecommendations && (
+                    <InsightSection>
+                      <h3>
+                        <FaCode />
+                        {t('projects.aiInsights.technicalRecommendations', 'Technical Recommendations')}
+                      </h3>
+                      <InsightCard>
+                        {selectedProjectInsights.aiInsights.technicalRecommendations.suggestedTechStack && (
+                          <div>
+                            <h4>{t('projects.aiInsights.suggestedStack', 'Suggested Tech Stack')}</h4>
+                            {Object.entries(selectedProjectInsights.aiInsights.technicalRecommendations.suggestedTechStack).map(([category, techs]) => (
+                              <div key={category}>
+                                <h5>{category.charAt(0).toUpperCase() + category.slice(1)}:</h5>
+                                {techs.map((tech, index) => (
+                                  <TechBadge key={index}>{tech}</TechBadge>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {selectedProjectInsights.aiInsights.technicalRecommendations.architecturePattern && (
+                          <p><strong>{t('projects.aiInsights.architecture', 'Architecture')}:</strong> {selectedProjectInsights.aiInsights.technicalRecommendations.architecturePattern}</p>
+                        )}
+                      </InsightCard>
+                    </InsightSection>
+                  )}
+                  
+                  {/* Timeline & Budget */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing.md }}>
+                    {selectedProjectInsights.aiInsights.timelineEstimate && (
+                      <InsightSection>
+                        <h3>
+                          <FaClock />
+                          {t('projects.aiInsights.timeline', 'Timeline')}
+                        </h3>
+                        <InsightCard>
+                          <p><strong>{t('projects.aiInsights.duration', 'Duration')}:</strong> {selectedProjectInsights.aiInsights.timelineEstimate.totalDuration}</p>
+                        </InsightCard>
+                      </InsightSection>
+                    )}
+                    
+                    {selectedProjectInsights.aiInsights.budgetAnalysis && (
+                      <InsightSection>
+                        <h3>
+                          <FaMoneyBillWave />
+                          {t('projects.aiInsights.budget', 'Budget')}
+                        </h3>
+                        <InsightCard>
+                          <p><strong>{t('projects.aiInsights.estimate', 'Estimate')}:</strong> {selectedProjectInsights.aiInsights.budgetAnalysis.estimatedCost}</p>
+                        </InsightCard>
+                      </InsightSection>
+                    )}
+                  </div>
+                  
+                  {/* Next Steps */}
+                  {selectedProjectInsights.aiInsights.nextSteps && selectedProjectInsights.aiInsights.nextSteps.length > 0 && (
+                    <InsightSection>
+                      <h3>
+                        <FaArrowCircleRight />
+                        {t('projects.aiInsights.nextSteps', 'Next Steps')}
+                      </h3>
+                      <InsightCard>
+                        {selectedProjectInsights.aiInsights.nextSteps.map((step, index) => (
+                          <NextStepItem key={index}>
+                            <FaChevronRight style={{ marginTop: '2px', color: colors.accent.primary }} />
+                            <span>{step}</span>
+                          </NextStepItem>
+                        ))}
+                      </InsightCard>
+                    </InsightSection>
+                  )}
+                </>
+              )}
+            </InsightsBody>
+          </InsightsContent>
+        </InsightsModal>
+      )}
     </PanelContainer>
   );
 };
-
-// Styled component for IconContainer
-const StyledIconWrapper = styled.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: ${props => props.color || 'inherit'};
-  font-size: ${props => props.size || '1em'};
-  background: ${props => props.background || 'transparent'};
-  padding: ${props => props.padding || '0'};
-  margin: ${props => props.margin || '0'};
-  border-radius: ${props => props.round ? '50%' : '0'};
-  cursor: ${props => props.onClick && !props.disabled ? 'pointer' : 'default'};
-  opacity: ${props => props.disabled ? '0.5' : '1'};
-  transition: ${transitions.medium};
-  
-  &:hover {
-    opacity: ${props => props.onClick && !props.disabled ? '0.8' : '1'};
-  }
-`;
 
 // Custom IconContainer component for ProjectsPanel
 const IconContainer = ({ icon: Icon, color, size, background, round, padding, margin, onClick, disabled, className, ...props }) => {
@@ -669,612 +1593,6 @@ const IconContainer = ({ icon: Icon, color, size, background, round, padding, ma
   );
 };
 
-// ActionButtonWrapper for consistent button styling
-const ActionButtonWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  
-  /* RTL Support */
-  ${props => props.isRTL && css`
-    flex-direction: row-reverse;
-  `}
-  
-  @media (max-width: ${breakpoints.md}) {
-    width: 100%;
-    justify-content: flex-end;
-  }
-`;
-
-// Additional Styled Components
-
-const FilterSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.md};
-  flex-grow: 0;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: ${spacing.sm};
-    width: 100%;
-  }
-`;
-
-const AddButtonWrapper = styled.div`
-  margin-left: auto;
-  margin-right: ${props => props.isRTL ? 'auto' : '0'};
-  
-  @media (max-width: 768px) {
-    margin-top: ${spacing.md};
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-  }
-`;
-
-const ProjectCount = styled.span`
-  font-size: 0.9rem;
-  color: ${colors.text.secondary};
-  font-weight: 500;
-  margin-left: ${spacing.xs};
-  white-space: nowrap;
-`;
-
-const ViewToggleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.sm};
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    flex-direction: row-reverse;
-  }
-`;
-
-const ControlsGroup = styled.div`
-  ${mixins.flexBetween}
-  flex-wrap: wrap;
-  gap: ${spacing.md};
-
-  @media (max-width: 768px) {
-    justify-content: flex-start;
-    align-items: flex-start;
-    width: 100%;
-    margin-top: ${spacing.md};
-  }
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    flex-direction: row-reverse;
-  }
-`;
-
-const ViewToggle = styled.div`
-  display: flex;
-  gap: ${spacing.sm};
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    flex-direction: row-reverse;
-  }
-`;
-
-const ToggleButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  position: relative;
-  transition: ${transitions.medium};
-  border: none;
-  cursor: pointer;
-  background: transparent;
-  padding: 0;
-  box-shadow: none;
-  border-radius: 0;
-  color: ${props => props.active ? colors.accent.primary : colors.text.secondary};
-  
-  /* Remove any potential background or decoration */
-  &::before, &::after {
-    display: none;
-  }
-  
-  svg {
-    font-size: 1.25rem;
-  }
-  
-  &:hover {
-    transform: scale(1.15);
-    background: transparent;
-    color: ${colors.accent.primary};
-  }
-  
-  /* Add tooltip */
-  &:after {
-    content: '${props => props.tooltip || (props.active ? "Active" : "")}'; 
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: ${colors.background.dark};
-    color: ${colors.text.primary};
-    padding: ${spacing.xs} ${spacing.sm};
-    border-radius: ${borderRadius.sm};
-    font-size: ${typography.fontSizes.xs};
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease;
-    box-shadow: ${shadows.md};
-    z-index: 10;
-    pointer-events: none;
-    display: block;
-  }
-  
-  &:hover:after {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
-  }
-`;
-
-const FilterContainerWrapper = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: transparent;
-  padding: 0;
-  border: none;
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    flex-direction: row-reverse;
-  }
-`;
-
-const SortContainer = styled(FilterContainerWrapper)`
-  /* Additional styles specific to sort container if needed */
-`;
-
-const FilterIcon = styled.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: ${colors.accent.primary};
-  background: transparent;
-  width: 32px;
-  height: 32px;
-  transition: ${transitions.medium};
-  
-  svg {
-    font-size: 1.25rem;
-  }
-  
-  &:hover {
-    transform: scale(1.15);
-  }
-`;
-
-const SortIcon = styled(FilterIcon)`
-  /* Additional styles specific to sort icon if needed */
-`;
-
-const Select = styled.select`
-  background: transparent;
-  color: ${colors.text.primary};
-  border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: ${spacing.xs} ${spacing.sm};
-  appearance: none;
-  cursor: pointer;
-  transition: ${transitions.medium};
-  font-size: ${typography.fontSizes.sm};
-  min-width: 120px;
-  font-weight: ${typography.fontWeights.medium};
-  
-  &:focus {
-    outline: none;
-    border-bottom-color: ${colors.accent.primary};
-  }
-  
-  &:hover {
-    border-bottom-color: ${colors.accent.primary};
-  }
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    padding: ${spacing.xs} ${spacing.sm};
-  }
-  
-  @media (max-width: 768px) {
-    min-width: 120px;
-  }
-  
-  option {
-    background: ${colors.background.secondary};
-    color: ${colors.text.secondary};
-  }
-`;
-
-const ProjectsContainer = styled.div`
-  display: ${props => props.isGridView ? 'grid' : 'flex'};
-  ${props => props.isGridView 
-    ? css`
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: ${spacing.lg};
-      @media (max-width: 1200px) {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      }
-    ` 
-    : css`
-      flex-direction: column;
-      gap: ${spacing.md};
-    `
-  }
-  margin-top: ${spacing.lg};
-`;
-
-const ProjectCardSkeleton = styled(Card)`
-  ${mixins.card(false)}
-  padding: ${spacing.lg};
-  pointer-events: none;
-  
-  ${props => !props.isGridView && css`
-    display: flex;
-    flex-direction: column;
-  `}
-`;
-
-const ProjectDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing.md};
-  margin-bottom: ${spacing.md};
-`;
-
-const DetailRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${spacing.lg};
-  
-  @media (max-width: ${breakpoints.sm}) {
-    flex-direction: column;
-    gap: ${spacing.sm};
-  }
-`;
-
-const LoadingContainer = styled.div`
-  margin-top: ${spacing.lg};
-`;
-
-const ProjectFooter = styled.div`
-  ${mixins.flexBetween}
-  margin-top: auto;
-  padding-top: ${spacing.md};
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    flex-direction: row-reverse;
-  }
-`;
-
-const MoodMeter = styled.div`
-  ${mixins.flexCenter}
-  gap: ${spacing.xs};
-`;
-
-const MoodLabel = styled.span`
-  color: ${colors.text.secondary}; /* Brighter text for better contrast */
-  font-size: ${typography.fontSizes.sm};
-  font-weight: ${typography.fontWeights.medium};
-`;
-
-const MoodValue = styled.div`
-  font-size: ${typography.fontSizes.md};
-`;
-
-const ActionButtonsGroup = styled.div`
-  display: flex;
-  gap: ${spacing.sm};
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    flex-direction: row-reverse;
-  }
-`;
-
-const ProjectActionButton = styled(ActionButton)`
-  font-size: ${typography.fontSizes.xs};
-  padding: ${spacing.xs} ${spacing.sm};
-  color: ${colors.text.primary}; /* Ensure white text for better contrast */
-  font-weight: ${typography.fontWeights.medium};
-  background: ${colors.gradients.accent};
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: ${shadows.md};
-  }
-`;
-
-const SkeletonHeader = styled(ProjectHeader)`
-  align-items: center;
-`;
-
-const SkeletonBody = styled(ProjectDetails)`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing.sm};
-`;
-
-const EmptyStateIllustration = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: ${spacing.lg};
-  
-  svg {
-    width: 120px;
-    height: 120px;
-  }
-  
-  @media (max-width: 768px) {
-    svg {
-      width: 100px;
-      height: 100px;
-    }
-  }
-`;
-
-const EmptyState = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: ${spacing.xl};
-  background-color: ${colors.background.card};
-  border-radius: ${borderRadius.md};
-  box-shadow: ${shadows.sm};
-`;
-
-const CustomEmptyState = styled(EmptyState)`
-  max-width: 500px;
-  margin: 3rem auto;
-  text-align: center;
-  
-  h3 {
-    margin-top: ${spacing.md};
-    margin-bottom: ${spacing.sm};
-    font-size: ${typography.fontSizes.xl};
-    color: ${colors.text.primary};
-  }
-  
-  p {
-    margin-bottom: ${spacing.md};
-    color: ${colors.text.secondary};
-  }
-  
-  button {
-    margin-top: ${spacing.md};
-  }
-  
-  /* RTL Support */
-  &.rtl-content {
-    direction: rtl;
-    text-align: center;
-    
-    h3, p {
-      text-align: center;
-    }
-    
-    button svg {
-      margin-left: 0;
-      margin-right: ${spacing.xs};
-    }
-  }
-  
-  /* Mobile Responsiveness */
-  @media (max-width: 768px) {
-    margin: 2rem auto;
-    padding: ${spacing.md};
-    
-    h3 {
-      font-size: ${typography.fontSizes.lg};
-    }
-  }
-`;
-
-const ErrorMessageAlert = styled.div`
-  background: rgba(244, 67, 54, 0.1);
-  color: ${colors.status.error};
-  padding: ${spacing.md};
-  border-radius: ${borderRadius.md};
-  margin-bottom: ${spacing.md};
-  border-left: 4px solid ${colors.status.error};
-  font-size: ${typography.fontSizes.sm};
-  animation: ${fadeIn} 0.3s ease-out;
-`;
-
-const Button = styled.button`
-  padding: ${spacing.md} ${spacing.lg};
-  border-radius: ${borderRadius.md};
-  font-weight: ${typography.fontWeights.medium};
-  font-size: ${typography.fontSizes.sm};
-  cursor: pointer;
-  transition: ${transitions.medium};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 120px;
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-`;
-
-const SubmitButton = styled(Button)`
-  background: ${colors.gradients.button};
-  color: ${colors.text.primary};
-  border: none;
-  box-shadow: ${shadows.sm};
-  
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: ${shadows.md};
-  }
-  
-  &:active:not(:disabled) {
-    transform: translateY(-1px);
-  }
-`;
-
-const CancelButton = styled(Button)`
-  background: transparent;
-  color: ${colors.text.secondary};
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  
-  &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.05);
-    color: ${colors.text.primary};
-  }
-`;
-
-
-const ActionIconButton = styled.button`
-  ${mixins.flexCenter}
-  background: transparent;
-  color: ${colors.text.secondary};
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: ${borderRadius.round};
-  cursor: pointer;
-  transition: ${transitions.medium};
-  
-  svg {
-    font-size: 1.25rem;
-  }
-  
-  &:hover {
-    background: transparent;
-    color: ${colors.accent.primary};
-    transform: scale(1.15);
-  }
-`;
-
-// Custom filter tabs container - completely clean implementation
-const CustomFilterTabs = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${spacing.sm};
-  margin-right: ${spacing.lg};
-  
-  /* RTL Support */
-  [dir="rtl"] & {
-    margin-right: 0;
-    margin-left: ${spacing.lg};
-  }
-  
-  @media (max-width: 768px) {
-    margin-right: 0;
-    margin-left: 0;
-    margin-bottom: ${spacing.md};
-    width: 100%;
-    justify-content: space-around;
-  }
-`;
-
-// Status filter tab with tooltip - completely clean implementation
-const StatusFilterTab = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  position: relative;
-  transition: ${transitions.medium};
-  border: none;
-  cursor: pointer;
-  background: transparent;
-  padding: 0;
-  box-shadow: none;
-  border-radius: 0;
-  
-  /* Remove any potential background or decoration */
-  &::before, &::after {
-    display: none;
-  }
-  
-  color: ${props => {
-    if (props.active) {
-      switch(props.status) {
-        case 'inProgress': return '#4a6cf7'; // blue for in-progress
-        case 'done': return '#27ae60'; // green for done
-        case 'awaitingFeedback': return '#e74c3c'; // red for feedback
-        default: return '#666'; // gray for neutral
-      }
-    } else {
-      return colors.text.secondary;
-    }
-  }};
-  
-  svg {
-    font-size: 1.25rem;
-  }
-  
-  &:hover {
-    transform: scale(1.15);
-    background: transparent;
-    color: ${props => {
-      switch(props.status) {
-        case 'inProgress': return '#4a6cf7';
-        case 'done': return '#27ae60';
-        case 'awaitingFeedback': return '#e74c3c';
-        default: return colors.accent.primary;
-      }
-    }};
-  }
-  
-  /* Tooltip implementation */
-  &:after {
-    content: '${props => props.tooltip}';
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    background: ${colors.background.dark};
-    color: ${colors.text.primary};
-    padding: ${spacing.xs} ${spacing.sm};
-    border-radius: ${borderRadius.sm};
-    font-size: ${typography.fontSizes.xs};
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease;
-    box-shadow: ${shadows.md};
-    z-index: 10;
-    pointer-events: none;
-    display: block;
-  }
-  
-  &:hover:after {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
-  }
-`;
-
 // Helper function to get status background colors
 const getStatusBackground = (status) => {
   switch(status) {
@@ -1284,77 +1602,5 @@ const getStatusBackground = (status) => {
     default: return 'linear-gradient(90deg, #9E9E9E, #616161)';
   }
 };
-
-// Status indicator with tooltip
-const StatusIndicator = styled.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  position: relative;
-  transition: ${transitions.medium};
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  color: ${props => {
-    switch(props.status) {
-      case 'inProgress': return '#4a6cf7'; // blue for in-progress
-      case 'done': return '#27ae60'; // green for done
-      case 'awaitingFeedback': return '#e74c3c'; // red for feedback
-      case 'edit': return '#FFC107'; // yellow for edit
-      case 'delete': return '#e74c3c'; // red for delete
-      case 'view': return '#4a6cf7'; // blue for view
-      default: return '#666'; // gray for neutral
-    }
-  }};
-
-  svg {
-    font-size: 1.25rem;
-  }
-
-  &:hover {
-    transform: scale(1.15);
-  }
-
-  span {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-`;
-
-const StatusTooltip = styled.span`
-  position: absolute;
-  top: -40px;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
-  background: ${colors.background.dark};
-  color: ${colors.text.primary};
-  padding: ${spacing.xs} ${spacing.sm};
-  border-radius: ${borderRadius.sm};
-  font-size: ${typography.fontSizes.xs};
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  box-shadow: ${shadows.md};
-  z-index: 10;
-  pointer-events: none;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: ${colors.background.dark} transparent transparent transparent;
-  }
-`;
-
-// Using LoadingSkeleton from Common directory
 
 export default React.memo(ProjectsPanel);

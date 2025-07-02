@@ -129,28 +129,41 @@ export const StatusFilterTab = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${props => props.active ? colors.accent.primary : 'transparent'};
-  color: ${props => props.active ? colors.text.onAccent : colors.text.secondary};
-  border: none;
+  background-color: ${props => props.active 
+    ? 'linear-gradient(135deg, rgba(131, 56, 236, 0.8) 0%, rgba(106, 31, 208, 0.8) 100%)' 
+    : 'transparent'};
+  background: ${props => props.active 
+    ? 'linear-gradient(135deg, #8338ec 0%, #6a1fd0 100%)' 
+    : 'rgba(50, 50, 80, 0.5)'};
+  color: ${props => props.active ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
+  border: ${props => props.active ? 'none' : '1px solid rgba(255, 255, 255, 0.1)'};
   border-radius: ${borderRadius.sm};
   padding: ${spacing.xs} ${spacing.sm};
   font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
   cursor: pointer;
   transition: ${transitions.medium};
   position: relative;
+  font-weight: ${props => props.active ? '600' : '400'};
   
   &:hover {
-    background-color: ${props => props.active ? colors.accent.primary : colors.background.hover};
+    background: ${props => props.active 
+      ? 'linear-gradient(135deg, #9a4ffd 0%, #7b2cbf 100%)' 
+      : 'rgba(60, 60, 100, 0.7)'};
+    color: #ffffff;
+    border-color: ${props => props.active ? 'transparent' : 'rgba(255, 255, 255, 0.2)'};
+    transform: translateY(-1px);
   }
   
   svg {
     font-size: 1rem;
+    color: ${props => props.active ? '#ffffff' : 'currentColor'};
   }
 `;
 
 export const CustomFilterTabs = styled.div`
   display: flex;
-  background-color: ${colors.background.subtle};
+  background-color: rgba(40, 40, 60, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: ${borderRadius.md};
   padding: ${spacing.xs};
   gap: ${spacing.xs};
@@ -483,9 +496,14 @@ export const ActionButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${props => props.primary ? colors.accent.primary : 'transparent'};
-  color: ${props => props.primary ? colors.text.onAccent : colors.text.primary};
-  border: ${props => props.primary ? 'none' : `1px solid ${colors.border.default}`};
+  gap: ${spacing.xs};
+  background: ${props => props.glow 
+    ? 'linear-gradient(135deg, #8338ec 0%, #6a1fd0 100%)' 
+    : props.primary 
+      ? colors.accent.primary 
+      : 'rgba(50, 50, 80, 0.8)'};
+  color: ${props => (props.glow || props.primary) ? '#ffffff' : colors.text.primary};
+  border: ${props => (props.glow || props.primary) ? 'none' : `1px solid rgba(255, 255, 255, 0.2)`};
   border-radius: ${borderRadius.md};
   padding: ${spacing.sm} ${spacing.md};
   font-size: ${typography.fontSizes.sm};
@@ -493,14 +511,48 @@ export const ActionButton = styled.button`
   cursor: pointer;
   transition: ${transitions.medium};
   flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  position: relative;
+  overflow: hidden;
+  
+  ${props => props.glow && css`
+    box-shadow: 0 4px 15px rgba(131, 56, 236, 0.3);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      transform: scale(0);
+      transition: transform 0.5s ease;
+    }
+    
+    &:hover::after {
+      transform: scale(1);
+    }
+  `}
   
   &:hover {
-    background-color: ${props => props.primary ? colors.accent.primaryDark : colors.background.hover};
+    background: ${props => props.glow 
+      ? 'linear-gradient(135deg, #9a4ffd 0%, #7b2cbf 100%)' 
+      : props.primary 
+        ? colors.accent.primaryDark 
+        : 'rgba(60, 60, 100, 0.9)'};
+    transform: translateY(-2px);
+    box-shadow: ${props => props.glow 
+      ? '0 6px 20px rgba(131, 56, 236, 0.4)' 
+      : '0 4px 10px rgba(0, 0, 0, 0.2)'};
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
   
   svg {
-    margin-${props => props.isRTL ? 'left' : 'right'}: ${spacing.xs};
     font-size: 1rem;
+    color: ${props => (props.glow || props.primary) ? '#ffffff' : 'currentColor'};
   }
   
   @media ${breakpoints.down.md} {

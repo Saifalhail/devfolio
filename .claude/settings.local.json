@@ -19,7 +19,9 @@
       "Bash(timeout 30s npm start)",
       "Bash(timeout 30s npm run lint)",
       "Bash(diff:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(awk:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }

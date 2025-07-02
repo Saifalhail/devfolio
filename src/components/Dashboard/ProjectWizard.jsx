@@ -56,6 +56,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   const [error, setError] = useState(null);
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
   const [projectId, setProjectId] = useState('');
+  const [aiInsights, setAiInsights] = useState(null);
   
   // Initialize form data
   const [formData, setFormData] = useState({
@@ -389,7 +390,12 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         uploadedFiles: [], // Will be populated after file upload
         
         // Default values
-        status: 'inProgress'
+        status: 'inProgress',
+        
+        // Additional fields for ProjectsPanel display
+        description: formData.additionalNotes || `${formData.type} project for ${formData.industry} industry`,
+        client: formData.name, // Using project name as client name for now
+        deadline: null // Can be set later
       };
       
       // Create the project in Firebase
@@ -398,19 +404,37 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       
       // Upload files if any
       const uploadedFileData = [];
+      const failedUploads = [];
+      
       if (formData.uploadedFiles && formData.uploadedFiles.length > 0) {
+        showToast(t('projects.wizard.uploadingFiles', 'Uploading files...'), 'info');
+        
         for (const file of formData.uploadedFiles) {
           try {
             const fileData = await uploadProjectFile(projectId, file, (progress) => {
-              console.log(`Uploading ${file.name}: ${progress}%`);
+              const progressText = progress > 0 
+                ? `${file.name}: ${Math.round(progress)}%`
+                : `${file.name}: Preparing upload...`;
+              console.log(progressText);
             });
             uploadedFileData.push(fileData);
           } catch (uploadError) {
             console.error(`Error uploading file ${file.name}:`, uploadError);
+            failedUploads.push(file.name);
+            // Continue with other files even if one fails
           }
         }
         
-        // Update project with uploaded file data
+        // Show upload results
+        if (failedUploads.length > 0) {
+          const failedFiles = failedUploads.join(', ');
+          showToast(
+            t('projects.wizard.someFilesFailedUpload', `Failed to upload: ${failedFiles}. The project was created but some files could not be uploaded.`),
+            'warning'
+          );
+        }
+        
+        // Update project with successfully uploaded files
         if (uploadedFileData.length > 0) {
           await updateProject(projectId, { uploadedFiles: uploadedFileData });
         }
@@ -418,11 +442,18 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       
       // Generate AI summary (optional - can be done asynchronously)
       try {
-        const summary = await generateProjectSummary(projectData);
-        await updateProject(projectId, { summary });
+        showToast(t('projects.wizard.generatingInsights', 'Generating AI insights...'), 'info');
+        const insights = await generateProjectSummary(projectData);
+        setAiInsights(insights);
+        await updateProject(projectId, { 
+          summary: insights.executiveSummary,
+          aiInsights: insights 
+        });
+        showToast(t('projects.wizard.insightsReady', 'AI insights generated successfully!'), 'success');
       } catch (summaryError) {
         console.error('Error generating summary:', summaryError);
         // Continue without summary - it's not critical
+        showToast(t('projects.wizard.insightsError', 'AI insights could not be generated, but your project was created successfully.'), 'warning');
       }
       
       // Call the onProjectAdded callback
@@ -464,7 +495,6 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     return (
       <ProgressBar isRTL={isRTL}>
         {/* Decorative elements */}
-        <ProgressBarDecoration isRTL={isRTL} />
         <ProgressBarCorner isRTL={isRTL} />
         
         {/* Step indicators */}
@@ -646,6 +676,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
           projectId={projectId}
           onReturnToDashboard={handleReturnToDashboard}
           isRTL={isRTL}
+          aiInsights={aiInsights}
         />
       );
     }
@@ -1644,11 +1675,10 @@ const ModalButton = styled.button`
   font-family: ${typography.fontFamily};
   font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.md} * 1.05)` : typography.fontSizes.md};
   cursor: pointer;
-  transition: all ${transitions.fast};
+  transition: all 0.2s ease;
   border: none;
   min-width: 120px;
   position: relative;
-  overflow: hidden;
   margin: 0;
   flex: 1;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
@@ -1681,51 +1711,32 @@ const ModalButton = styled.button`
     max-width: 48%;
   }
   
-  /* Add shine effect */
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: ${props => props.isRTL ? 'auto' : '-100%'};
-    right: ${props => props.isRTL ? '-100%' : 'auto'};
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: ${transitions.medium};
-  }
-  
-  &:hover:before {
-    left: ${props => props.isRTL ? 'auto' : '100%'};
-    right: ${props => props.isRTL ? '100%' : 'auto'};
-    transition: 0.8s;
-  }
-  
   ${props => props.primary && `
-    background: linear-gradient(135deg, ${colors.accent.primary}, ${colors.accent.secondary});
+    background: ${colors.accent.primary};
     color: white;
     
     &:hover {
-      box-shadow: ${shadows.md};
-      transform: translateY(-2px);
+      background: ${colors.accent.secondary};
+      transform: translateY(-1px);
     }
     
     &:active {
-      transform: translateY(-1px);
-      box-shadow: ${shadows.sm};
+      transform: translateY(0);
     }
   `}
   
   ${props => props.secondary && `
     background: rgba(255, 255, 255, 0.1);
     color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     
     &:hover {
       background: rgba(255, 255, 255, 0.15);
-      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.3);
     }
     
     &:active {
-      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.1);
     }
   `}
 `;
@@ -1738,96 +1749,38 @@ const ProgressBar = styled.div`
   position: relative;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   width: 100%;
-  overflow-x: auto;
-  padding: ${spacing.sm} 0;
+  padding: ${spacing.lg};
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: ${borderRadius.lg};
+  border: 1px solid rgba(255, 255, 255, 0.1);
   
   @media (max-width: ${breakpoints.sm}) {
     margin: 0 0 ${spacing.lg} 0;
+    padding: ${spacing.md};
     justify-content: space-around;
   }
   
   @media (max-width: ${breakpoints.xs}) {
     margin: 0 0 ${spacing.md} 0;
-    padding: ${spacing.xs} 0;
-  }
-  padding: ${spacing.xl} ${spacing.lg};
-  background: linear-gradient(to right, rgba(20, 20, 50, 0.6), rgba(40, 40, 90, 0.6));
-  border-radius: ${borderRadius.xl};
-  box-shadow: 
-    inset 0 0 30px rgba(0, 0, 0, 0.3),
-    0 10px 20px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(74, 108, 247, 0.2);
-  overflow: hidden;
-  
-  /* Animated background glow */
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    padding: ${spacing.sm};
   }
   
-  /* Base container with animated gradient */
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(74, 108, 247, 0.3), transparent);
-  }
-  
-  /* Timeline line in the middle */
+  /* Simple timeline line */
   &:after {
     content: '';
     position: absolute;
     top: 50%;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.15);
+    left: ${spacing.xl};
+    right: ${spacing.xl};
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
     transform: translateY(-50%);
     z-index: 0;
-    box-shadow: 0 0 10px rgba(74, 108, 247, 0.2);
   }
 `;
 
-/* Additional decorative elements for ProgressBar */
-const ProgressBarDecoration = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 1;
-  
-  /* Top light effect */
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  }
-  
-  /* Left corner decoration */
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, rgba(74, 108, 247, 0.2) 0%, transparent 80%);
-    border-radius: 0 0 100% 0;
-  }
-`;
+/* Removed decorative elements for better performance */
 
-/* Right corner decoration for ProgressBar */
 const ProgressBarCorner = styled.div`
   position: absolute;
   bottom: 0;

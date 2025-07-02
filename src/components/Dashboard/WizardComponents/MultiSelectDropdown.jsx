@@ -183,11 +183,11 @@ const DropdownHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: ${spacing.xs} ${spacing.sm};
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(50, 50, 80, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: ${borderRadius.md};
   cursor: pointer;
-  transition: all ${transitions.fast};
+  transition: all 0.2s ease;
   min-height: 42px;
   
   &:hover {
@@ -263,11 +263,11 @@ const DropdownContent = styled.div`
   left: ${props => props.isRTL ? 'auto' : '0'};
   right: ${props => props.isRTL ? '0' : 'auto'};
   margin-top: ${spacing.xs};
-  background: rgba(30, 30, 40, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(40, 40, 70, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: ${borderRadius.md};
   box-shadow: ${shadows.lg};
-  z-index: 10;
+  z-index: 100000;
   max-height: 250px;
   overflow-y: auto;
   display: flex;
@@ -290,7 +290,7 @@ const SearchContainer = styled.div`
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
-  background: rgba(30, 30, 40, 0.95);
+  background: rgba(40, 40, 70, 0.98);
   z-index: 1;
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
 `;
@@ -336,13 +336,16 @@ const OptionItem = styled.div`
   flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
   padding: ${spacing.xs} ${spacing.sm};
   cursor: pointer;
-  transition: background-color ${transitions.default};
+  transition: all 0.15s ease;
   text-align: ${props => props.isRTL ? 'right' : 'left'};
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
   font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
+  background-color: ${props => props.isSelected ? 'rgba(131, 56, 236, 0.2)' : 'transparent'};
+  color: ${props => props.isSelected ? '#a56eff' : 'inherit'};
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: ${props => props.isSelected ? 'rgba(131, 56, 236, 0.3)' : 'rgba(255, 255, 255, 0.08)'};
+    transform: translateX(${props => props.isRTL ? '-2px' : '2px'});
   }
   
   @media (max-width: 768px) {

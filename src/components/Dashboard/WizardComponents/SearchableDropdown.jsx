@@ -168,8 +168,8 @@ const DropdownHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: ${spacing.md};
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(50, 50, 80, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: ${borderRadius.md};
   cursor: pointer;
   transition: all ${transitions.fast};
@@ -211,8 +211,8 @@ const DropdownHeader = styled.div`
   }
   
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(60, 60, 100, 0.9);
+    border-color: rgba(255, 255, 255, 0.3);
     
     &:before {
       width: 100%;
@@ -258,11 +258,11 @@ const DropdownList = styled.ul`
   margin: 0;
   padding: 0;
   list-style: none;
-  background: rgba(26, 26, 46, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(40, 40, 70, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: ${borderRadius.md};
   box-shadow: ${shadows.lg};
-  z-index: 10;
+  z-index: 100000;
   opacity: ${props => props.isOpen ? 1 : 0};
   visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
   transform: ${props => props.isOpen ? 'translateY(0)' : 'translateY(-10px)'};

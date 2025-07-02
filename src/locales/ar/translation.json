@@ -259,6 +259,8 @@
       "submit": "إرسال",
       "submitError": "خطأ في إنشاء المشروع. يرجى المحاولة مرة أخرى.",
       "submitSuccess": "تم إنشاء المشروع بنجاح!",
+      "uploadingFiles": "جاري رفع الملفات...",
+      "someFilesFailedUpload": "فشل رفع: {{failedFiles}}. تم إنشاء المشروع ولكن لم يتم رفع بعض الملفات.",
       "step1Label": "الخطوة 1",
       "edit": "تعديل",
       "step": "الخطوة",

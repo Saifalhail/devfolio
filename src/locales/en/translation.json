@@ -856,6 +856,8 @@
       },
       "submitError": "Error creating project. Please try again.",
       "submitSuccess": "Project created successfully!",
+      "uploadingFiles": "Uploading files...",
+      "someFilesFailedUpload": "Failed to upload: {{failedFiles}}. The project was created but some files could not be uploaded.",
       "successScreen": {
         "title": "Project Created Successfully!",
         "subtitle": "Your project has been created and is ready to start",

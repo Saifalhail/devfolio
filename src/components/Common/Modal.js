@@ -246,7 +246,7 @@ const Overlay = styled.div`
 `;
 
 const Container = styled.div`
-  background: rgba(15, 15, 40, 0.95); /* Much darker background */
+  background: rgba(30, 30, 50, 0.98); /* Lighter background for better visibility */
   color: ${props => {
     switch(props.theme) {
       case 'light': return '#f0f0f0';
@@ -254,7 +254,7 @@ const Container = styled.div`
     }
   }};
   border-radius: ${borderRadius.lg};
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
   width: 90%;
   max-width: ${props => {
     switch(props.size) {
@@ -597,8 +597,8 @@ const Content = styled.div`
     width: 100%;
     padding: ${spacing.sm};
     margin-bottom: ${spacing.xs};
-    background: rgba(20, 20, 50, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(40, 40, 70, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: ${borderRadius.md};
     color: ${colors.text.primary};
     font-size: ${typography.fontSizes.md};
@@ -626,7 +626,7 @@ const Content = styled.div`
           default: return 'rgba(131, 56, 236, 0.3)';
         }
       }};
-      background: rgba(25, 25, 60, 0.6);
+      background: rgba(50, 50, 90, 0.8);
     }
     
     &::placeholder {

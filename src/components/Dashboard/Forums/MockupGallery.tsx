@@ -885,7 +885,7 @@ const FormLabel = styled.label`
   font-weight: 500;
 `;
 
-const FormInput = styled.input`
+const FormInput = styled.input<{ $isRTL?: boolean }>`
   width: 100%;
   padding: 0.75rem;
   background: rgba(255, 255, 255, 0.1);
@@ -894,6 +894,8 @@ const FormInput = styled.input`
   color: white;
   font-size: 1rem;
   transition: all 0.2s ease;
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   
   &:focus {
     outline: none;
