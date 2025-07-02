@@ -565,6 +565,11 @@
     "iconAlt": "Client testimonial icon"
   },
   "forums": {
+    "title": "Community Forums",
+    "realTimeChat": "Real-time Chat",
+    "mockups": "Design Mockups",
+    "noMessages": "No messages yet",
+    "startConversation": "Start a conversation",
     "searchPlaceholder": "Search discussions...",
     "searchMessages": "Search messages...",
     "allTopics": "All Topics",

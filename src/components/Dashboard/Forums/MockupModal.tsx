@@ -442,11 +442,11 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
   return (
     <ModalOverlay onClick={() => setActivePinId(null)}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
-        <CloseButton onClick={handleClose} aria-label={t('common.close')}>
+        <CloseButton onClick={handleClose} aria-label={t('common.close')} $isRTL={isRTL}>
           <FaTimes />
         </CloseButton>
         
-        <ModalHeader>
+        <ModalHeader $isRTL={isRTL}>
           <h2>{selectedMockup?.title ? selectedMockup.title.charAt(0).toUpperCase() + selectedMockup.title.slice(1) : 'Untitled Design'}</h2>
           <ModalActions>
             <ActionButton 
@@ -532,15 +532,15 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
                 position: 'absolute',
                 left: `${comment.coordinates?.x}px`,
                 top: `${comment.coordinates?.y}px`,
-                width: '26px',
-                height: '26px',
+                width: window.innerWidth <= 768 ? '44px' : '26px', // Minimum 44px touch target on mobile
+                height: window.innerWidth <= 768 ? '44px' : '26px',
                 background: 'rgba(205, 62, 253, 0.95)',
                 borderRadius: '50%',
                 zIndex: 100,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '12px',
+                fontSize: window.innerWidth <= 768 ? '14px' : '12px',
                 fontWeight: 'bold',
                 color: 'white',
                 border: '2px solid white',
@@ -582,7 +582,7 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
                 >
                   <CommentPopoverHeader>
                     <CommentAuthor>{comment.userName || 'Anonymous'}</CommentAuthor>
-                    <CommentDate>
+                    <CommentDate $isRTL={isRTL}>
                       {formatCommentDate(comment.createdAt)}
                     </CommentDate>
                     <ClosePopoverButton 
@@ -649,11 +649,11 @@ const MockupModal: React.FC<MockupModalProps> = ({ projectId = 'default' }) => {
               $isRTL={isRTL}
               disabled={isSubmittingComment}
             />
-            <CommentFormActions>
+            <CommentFormActions $isRTL={isRTL}>
               <SubmitButton type="submit" disabled={!commentText.trim() || isSubmittingComment}>
                 {isSubmittingComment ? t('mockups.posting') || 'Posting...' : t('mockups.post')}
               </SubmitButton>
-              <CancelButton type="button" onClick={cancelAddComment} disabled={isSubmittingComment}>
+              <CancelButton type="button" onClick={cancelAddComment} disabled={isSubmittingComment} $isRTL={isRTL}>
                 {t('common.cancel')}
               </CancelButton>
             </CommentFormActions>
@@ -959,11 +959,13 @@ const CommentTextArea = styled.textarea<{ $isRTL: boolean }>`
   }
 `;
 
-const CommentFormActions = styled.div`
+const CommentFormActions = styled.div<{ $isRTL?: boolean }>`
   display: flex;
-  justify-content: flex-end;
+  ${props => props.$isRTL ? 'justify-content: flex-start;' : 'justify-content: flex-end;'}
+  ${props => props.$isRTL ? 'flex-direction: row-reverse;' : ''}
   margin-top: 8px;
   gap: 10px;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
 `;
 
 const CommentFormButton = styled.button`
@@ -1004,7 +1006,7 @@ const SubmitButton = styled(CommentFormButton)`
   }
 `;
 
-const CancelButton = styled.button`
+const CancelButton = styled.button<{ $isRTL?: boolean }>`
   padding: 6px 15px;
   background: transparent;
   color: white;
@@ -1013,7 +1015,7 @@ const CancelButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
-  margin-left: 8px;
+  ${props => props.$isRTL ? 'margin-right: 8px;' : 'margin-left: 8px;'}
   
   &:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -1025,10 +1027,10 @@ const CancelButton = styled.button`
   }
 `;
 
-const CloseButton = styled.button`
+const CloseButton = styled.button<{ $isRTL?: boolean }>`
   position: absolute;
   top: 20px;
-  right: 20px;
+  ${props => props.$isRTL ? 'left: 20px;' : 'right: 20px;'}
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.9);
@@ -1060,14 +1062,14 @@ const CloseButton = styled.button`
   
   @media (max-width: 768px) {
     top: 15px;
-    right: 15px;
+    ${props => props.$isRTL ? 'left: 15px;' : 'right: 15px;'}
     width: 36px;
     height: 36px;
   }
   
   @media (max-width: 480px) {
     top: 12px;
-    right: 12px;
+    ${props => props.$isRTL ? 'left: 12px;' : 'right: 12px;'}
     width: 32px;
     height: 32px;
     font-size: 1rem;
@@ -1075,19 +1077,20 @@ const CloseButton = styled.button`
   
   @media (max-width: 360px) {
     top: 10px;
-    right: 10px;
+    ${props => props.$isRTL ? 'left: 10px;' : 'right: 10px;'}
     width: 28px;
     height: 28px;
     font-size: 0.9rem;
   }
 `;
 
-const ModalHeader = styled.header`
+const ModalHeader = styled.header<{ $isRTL?: boolean }>`
   padding: 1.25rem 1.75rem;
-  padding-right: 4rem;
+  ${props => props.$isRTL ? 'padding-left: 4rem;' : 'padding-right: 4rem;'}
   display: flex;
   justify-content: space-between;
   align-items: center;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   background: linear-gradient(135deg, rgba(30, 18, 60, 0.98) 0%, rgba(41, 23, 70, 0.98) 100%);
   border-bottom: 1px solid rgba(205, 62, 253, 0.2);
   flex-shrink: 0;
@@ -1115,7 +1118,7 @@ const ModalHeader = styled.header`
 
   @media (max-width: 768px) {
     padding: 1rem 1.25rem;
-    padding-right: 3.5rem;
+    ${props => props.$isRTL ? 'padding-left: 3.5rem;' : 'padding-right: 3.5rem;'}
     
     h2 {
       font-size: 1.2rem;
@@ -1125,7 +1128,7 @@ const ModalHeader = styled.header`
   
   @media (max-width: 480px) {
     padding: 0.875rem 1rem;
-    padding-right: 3rem;
+    ${props => props.$isRTL ? 'padding-left: 3rem;' : 'padding-right: 3rem;'}
     
     h2 {
       font-size: 1rem;
@@ -1135,7 +1138,7 @@ const ModalHeader = styled.header`
   
   @media (max-width: 360px) {
     padding: 0.75rem 0.875rem;
-    padding-right: 2.75rem;
+    ${props => props.$isRTL ? 'padding-left: 2.75rem;' : 'padding-right: 2.75rem;'}
     
     h2 {
       font-size: 0.9rem;
@@ -1624,10 +1627,10 @@ const CommentAuthor = styled.div`
   flex: 1;
 `;
 
-const CommentDate = styled.div`
+const CommentDate = styled.div<{ $isRTL?: boolean }>`
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.6);
-  margin-right: 12px;
+  ${props => props.$isRTL ? 'margin-left: 12px;' : 'margin-right: 12px;'}
   margin-top: 2px;
 `;
 

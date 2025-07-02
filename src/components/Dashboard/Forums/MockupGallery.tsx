@@ -145,10 +145,10 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
   };
   
   return (
-    <MockupContainer dir={isRTL ? 'rtl' : 'ltr'}>
+    <MockupContainer $isRTL={isRTL}>
       <SectionHeader>
-        <MockupHeader>
-          <SectionTitle>{t('mockups.title')}</SectionTitle>
+        <MockupHeader $isRTL={isRTL}>
+          <SectionTitle $isRTL={isRTL}>{t('forums.mockups')}</SectionTitle>
           <AddMockupButton onClick={handleAddMockupClick} aria-label={t('mockups.addNew')}>
             <FiPlus />
           </AddMockupButton>
@@ -166,7 +166,7 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
           <EmptyStateSubtext>{t('mockups.empty.subtitle')}</EmptyStateSubtext>
         </EmptyState>
       ) : (
-        <MockupGrid>
+        <MockupGrid $isRTL={isRTL}>
           {mockups.map(mockup => (
             <MockupCard 
               key={mockup.id} 
@@ -174,7 +174,7 @@ const MockupGallery: React.FC<MockupProps> = ({ onAddMockup, projectId = DEFAULT
               $isSelected={selectedMockup?.id === mockup.id}
             >
               <MockupImage $imageUrl={mockup.imageURL} />
-              <MockupInfo>
+              <MockupInfo $isRTL={isRTL}>
                 <div>
                   <MockupTitle>{mockup.title}</MockupTitle>
                   <MockupDescription>
@@ -390,9 +390,9 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
   };
   
   return (
-    <ModalOverlay onClick={isSubmitting ? undefined : onClose} dir={isRTL ? 'rtl' : 'ltr'}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
-        <ModalHeader>
+    <ModalOverlay onClick={isSubmitting ? undefined : onClose}>
+      <ModalContent onClick={(e) => e.stopPropagation()} $isRTL={isRTL}>
+        <ModalHeader $isRTL={isRTL}>
           <h2>{t('mockups.addNew.title')}</h2>
           {!isSubmitting && (
             <CloseButton onClick={onClose} aria-label={t('common.close')}>
@@ -413,6 +413,7 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
               placeholder={t('mockups.form.titlePlaceholder')}
               required
               disabled={isSubmitting}
+              $isRTL={isRTL}
             />
           </FormGroup>
           
@@ -424,6 +425,7 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
               placeholder={t('mockups.form.descriptionPlaceholder')}
               required
               disabled={isSubmitting}
+              $isRTL={isRTL}
             />
           </FormGroup>
           
@@ -481,26 +483,37 @@ const AddMockupModal: React.FC<AddMockupModalProps> = ({ onClose }) => {
   );
 };
 
-const MockupContainer = styled.div`
+const MockupContainer = styled.div<{ $isRTL?: boolean }>`
   padding: 1rem;
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+  }
 `;
 
 const SectionHeader = styled.div`
   ${HeaderStyles.wrapper}
 `;
 
-const MockupHeader = styled.div`
+const MockupHeader = styled.div<{ $isRTL?: boolean }>`
   ${HeaderStyles.header}
   padding: 0 0.5rem;
   margin-bottom: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
+    padding: 0 0.25rem;
+  }
 `;
 
 const AddMockupButton = styled.button.attrs({ className: 'btn-outline-accent' })`
@@ -523,15 +536,27 @@ const AddMockupButton = styled.button.attrs({ className: 'btn-outline-accent' })
   }
 `;
 
-const MockupGrid = styled.div`
+const MockupGrid = styled.div<{ $isRTL?: boolean }>`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   grid-auto-rows: minmax(280px, auto);
   gap: 1rem;
   overflow-y: auto;
   flex: 1;
-  padding-right: 0.5rem;
+  padding-right: ${props => props.$isRTL ? '0' : '0.5rem'};
+  padding-left: ${props => props.$isRTL ? '0.5rem' : '0'};
   align-items: start;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-auto-rows: minmax(240px, auto);
+    gap: 0.75rem;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    grid-auto-rows: minmax(200px, auto);
+  }
   
   /* Custom scrollbar */
   &::-webkit-scrollbar {
@@ -632,13 +657,19 @@ const MockupImage = styled.div<{ $imageUrl?: string }>`
   }
 `;
 
-const MockupInfo = styled.div`
+const MockupInfo = styled.div<{ $isRTL?: boolean }>`
   padding: 0.75rem;
   color: white;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
+  
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
 `;
 
 const MockupTitle = styled.h3`
@@ -648,6 +679,10 @@ const MockupTitle = styled.h3`
   background: linear-gradient(135deg, #cd3efd, #7b2cbf);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const MockupDescription = styled.p`
@@ -655,6 +690,11 @@ const MockupDescription = styled.p`
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.4;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
 `;
 
 const MockupMeta = styled.div`
@@ -663,6 +703,10 @@ const MockupMeta = styled.div`
   align-items: center;
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.6);
+  
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const MockupDate = styled.span`
@@ -758,7 +802,7 @@ const ModalOverlay = styled.div`
   }
 `;
 
-const ModalContent = styled.div`
+const ModalContent = styled.div<{ $isRTL?: boolean }>`
   background: rgba(35, 38, 85, 0.9);
   border-radius: 12px;
   width: 90%;
@@ -768,6 +812,14 @@ const ModalContent = styled.div`
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   animation: modalFadeIn 0.3s ease-out;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    width: 95%;
+    max-width: none;
+    max-height: 95vh;
+    margin: 1rem;
+  }
   
   @keyframes modalFadeIn {
     from { opacity: 0; transform: translateY(-20px); }
@@ -775,12 +827,17 @@ const ModalContent = styled.div`
   }
 `;
 
-const ModalHeader = styled.div`
+const ModalHeader = styled.div<{ $isRTL?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
   
   h2 {
     margin: 0;
@@ -788,6 +845,10 @@ const ModalHeader = styled.div`
     background: linear-gradient(135deg, #cd3efd, #7b2cbf);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    
+    @media (max-width: 768px) {
+      font-size: 1.25rem;
+    }
   }
 `;
 
@@ -845,7 +906,7 @@ const FormInput = styled.input`
   }
 `;
 
-const FormTextarea = styled.textarea`
+const FormTextarea = styled.textarea<{ $isRTL?: boolean }>`
   width: 100%;
   padding: 0.75rem;
   background: rgba(255, 255, 255, 0.1);
@@ -856,6 +917,14 @@ const FormTextarea = styled.textarea`
   min-height: 100px;
   resize: vertical;
   transition: all 0.2s ease;
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    min-height: 80px;
+  }
   
   &:focus {
     outline: none;

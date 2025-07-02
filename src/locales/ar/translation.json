@@ -854,6 +854,64 @@
     "subtitle": "ما يقوله عملائي عن عملي",
     "iconAlt": "أيقونة شهادة العميل"
   },
+  "forums": {
+    "title": "منتديات المجتمع",
+    "realTimeChat": "الدردشة المباشرة",
+    "mockups": "النماذج التصميمية",
+    "noMessages": "لا توجد رسائل بعد",
+    "startConversation": "ابدأ محادثة",
+    "searchPlaceholder": "البحث في المناقشات...",
+    "searchMessages": "البحث في الرسائل...",
+    "allTopics": "جميع المواضيع",
+    "filter": "تصفية",
+    "addComment": "أضف تعليقاً...",
+    "typeMessage": "اكتب رسالة...",
+    "mustBeLoggedIn": "يجب تسجيل الدخول للتعليق",
+    "errorSendingMessage": "فشل إرسال الرسالة",
+    "newPost": "منشور جديد",
+    "titleRequired": "العنوان مطلوب",
+    "contentRequired": "المحتوى مطلوب",
+    "imageUploadError": "فشل رفع الصورة",
+    "errorCreatingPost": "فشل إنشاء المنشور"
+  },
+  "mockups": {
+    "title": "النماذج التصميمية",
+    "showComments": "إظهار التعليقات",
+    "hideComments": "إخفاء التعليقات",
+    "download": "تحميل",
+    "expandComment": "توسيع التعليق {{number}}",
+    "collapseComment": "طي التعليق",
+    "addFeedback": "أضف ملاحظاتك هنا...",
+    "post": "نشر",
+    "posting": "جاري النشر...",
+    "viewMockup": "عرض النموذج",
+    "close": "إغلاق",
+    "addNew": "إضافة نموذج",
+    "empty": {
+      "title": "لا توجد نماذج بعد",
+      "subtitle": "ارفع أول نموذج تصميمي لك"
+    },
+    "addNew.title": "إضافة نموذج جديد",
+    "form": {
+      "title": "العنوان",
+      "titlePlaceholder": "أدخل عنوان النموذج",
+      "description": "الوصف",
+      "descriptionPlaceholder": "اوصف نموذجك التصميمي",
+      "uploadImage": "رفع صورة",
+      "chooseFile": "اختر ملف",
+      "changeImage": "تغيير الصورة",
+      "preview": "معاينة",
+      "uploading": "جاري الرفع...",
+      "submit": "إضافة النموذج"
+    },
+    "status": {
+      "createdBy": "تم الإنشاء بواسطة:",
+      "viewed": "تمت المشاهدة:",
+      "feedbackGiven": "تم إعطاء الملاحظات:",
+      "yes": "نعم",
+      "no": "لا"
+    }
+  },
   "maintenanceGuide": "دليل صيانة التطبيق",
   "downloadPDF": "تحميل PDF",
   "tips": {

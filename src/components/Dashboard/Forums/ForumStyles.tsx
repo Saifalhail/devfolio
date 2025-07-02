@@ -39,7 +39,7 @@ export const HeaderStyles = {
 };
 
 // Create a shared SectionTitle component for perfect alignment
-export const SectionTitle = styled.h2`
+export const SectionTitle = styled.h2<{ $isRTL?: boolean }>`
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
@@ -49,14 +49,23 @@ export const SectionTitle = styled.h2`
   position: relative;
   padding-bottom: 0.5rem;
   
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+  }
+  
   &:after {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 0;
+    ${props => props.$isRTL ? 'right: 0;' : 'left: 0;'}
     width: 50px;
     height: 3px;
     background: linear-gradient(135deg, #cd3efd, #7b2cbf);
     border-radius: 3px;
+    
+    @media (max-width: 768px) {
+      width: 40px;
+      height: 2px;
+    }
   }
 `;

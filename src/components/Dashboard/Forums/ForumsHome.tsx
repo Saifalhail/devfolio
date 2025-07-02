@@ -28,16 +28,16 @@ const ForumsContentComponent = () => {
   return (
     <ForumsWrapper>
       <ForumsCard>
-        <ForumsContentWrapper>
+        <ForumsContentWrapper $isRTL={isRTL}>
           <ForumsLayout>
             <LeftColumn>
               <SectionHeader>
-                <DiscussionHeader>
-                  <SectionTitle>Real-time Chat</SectionTitle>
+                <DiscussionHeader $isRTL={isRTL}>
+                  <SectionTitle $isRTL={isRTL}>{t('forums.realTimeChat')}</SectionTitle>
                 </DiscussionHeader>
                 <SearchSection>
-                  <SearchBar>
-                    <SearchIcon>
+                  <SearchBar $isRTL={isRTL}>
+                    <SearchIcon $isRTL={isRTL}>
                       <FaSearch />
                     </SearchIcon>
                     <SearchInput 
@@ -45,6 +45,7 @@ const ForumsContentComponent = () => {
                       placeholder={t('forums.searchMessages')} 
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
+                      $isRTL={isRTL}
                     />
                   </SearchBar>
                 </SearchSection>
@@ -81,6 +82,10 @@ const ForumsWrapper = styled.div`
   padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+  }
 `;
 
 const ForumsCard = styled.div`
@@ -93,16 +98,26 @@ const ForumsCard = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  
+  @media (max-width: 768px) {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 
-const ForumsContentWrapper = styled.div`
+const ForumsContentWrapper = styled.div<{ $isRTL?: boolean }>`
   padding: 1.5rem;
   height: 100%;
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow: hidden;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 `;
 
 const ForumsLayout = styled.div`
@@ -111,8 +126,14 @@ const ForumsLayout = styled.div`
   gap: 1.5rem;
   height: 100%;
   
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 `;
 
@@ -122,6 +143,19 @@ const LeftColumn = styled.div`
   height: calc(100vh - 150px);
   min-height: 600px;
   max-height: 800px;
+  
+  @media (max-width: 992px) {
+    order: 2;
+    height: calc(100vh - 200px);
+    min-height: 400px;
+    max-height: 600px;
+  }
+  
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 300px;
+    max-height: 500px;
+  }
 `;
 
 const RightColumn = styled.div`
@@ -131,6 +165,18 @@ const RightColumn = styled.div`
   min-height: 600px;
   max-height: 800px;
   overflow: hidden;
+  
+  @media (max-width: 992px) {
+    order: 1;
+    height: auto;
+    min-height: 300px;
+    max-height: 400px;
+  }
+  
+  @media (max-width: 768px) {
+    min-height: 250px;
+    max-height: 350px;
+  }
 `;
 
 
@@ -138,12 +184,22 @@ const RightColumn = styled.div`
 const SectionHeader = styled.div`
   margin-bottom: 1rem;
   flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 0.75rem;
+  }
 `;
 
-const DiscussionHeader = styled.div`
+const DiscussionHeader = styled.div<{ $isRTL?: boolean }>`
   ${HeaderStyles.header}
   padding: 0 0.5rem;
   margin-bottom: 1.5rem;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
+    padding: 0 0.25rem;
+  }
 `;
 
 const NewPostButton = styled.button`
@@ -486,9 +542,13 @@ const SearchSection = styled.div`
   display: flex;
   margin-bottom: 1rem;
   width: 100%;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 0.75rem;
+  }
 `;
 
-const SearchBar = styled.div`
+const SearchBar = styled.div<{ $isRTL?: boolean }>`
   display: flex;
   align-items: center;
   background: rgba(35, 38, 85, 0.2);
@@ -496,23 +556,40 @@ const SearchBar = styled.div`
   border-radius: 20px;
   padding: 0.5rem 1rem;
   flex-grow: 1;
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.8rem;
+    border-radius: 16px;
+  }
 `;
 
-const SearchIcon = styled.div`
-  margin-right: 0.5rem;
+const SearchIcon = styled.div<{ $isRTL?: boolean }>`
+  margin-right: ${props => props.$isRTL ? '0' : '0.5rem'};
+  margin-left: ${props => props.$isRTL ? '0.5rem' : '0'};
   color: rgba(255, 255, 255, 0.5);
+  
+  @media (max-width: 768px) {
+    margin-right: ${props => props.$isRTL ? '0' : '0.4rem'};
+    margin-left: ${props => props.$isRTL ? '0.4rem' : '0'};
+  }
 `;
 
-const SearchInput = styled.input`
+const SearchInput = styled.input<{ $isRTL?: boolean }>`
   background: transparent;
   border: none;
   color: white;
   font-size: 0.9rem;
   width: 100%;
   outline: none;
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   
   &::placeholder {
     color: rgba(255, 255, 255, 0.5);
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
   }
 `;
 
