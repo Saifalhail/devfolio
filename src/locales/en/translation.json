@@ -557,7 +557,15 @@
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "tryAgain": "Try Again"
+  },
+  "app": {
+    "loadingTitle": "Loading DevFolio",
+    "errorTitle": "Something went wrong",
+    "errorMessage": "We're sorry, but there was an error initializing the application.",
+    "errorDetails": "This might be due to Firebase configuration issues or network problems.",
+    "errorDetailsTitle": "Error details:"
   },
   "testimonials": {
     "title": "Client Testimonials",

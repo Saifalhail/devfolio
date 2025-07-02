@@ -6,12 +6,12 @@ This guide helps you set up Firebase Storage for the DevFolio project to enable 
 
 If you're experiencing CORS errors when uploading mockups, you need to deploy the storage security rules.
 
-### Option 1: Automatic Deployment
+### Option 1: Firebase CLI Deployment
 
-Run the deployment script:
+Deploy storage rules using Firebase CLI:
 
 ```bash
-./deploy-storage-rules.sh
+firebase deploy --only storage
 ```
 
 ### Option 2: Manual Firebase Console Setup
@@ -22,12 +22,6 @@ Run the deployment script:
 4. Replace the existing rules with the content from `storage.rules`
 5. Click **Publish**
 
-### Option 3: Firebase CLI Manual Deploy
-
-```bash
-cd backend
-firebase deploy --only storage
-```
 
 ## Current Storage Rules
 

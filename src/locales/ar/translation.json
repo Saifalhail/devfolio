@@ -114,7 +114,19 @@
     "confirm": "تأكيد",
     "close": "إغلاق",
     "back": "رجوع",
-    "next": "التالي"
+    "next": "التالي",
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجاح",
+    "tryAgain": "حاول مجدداً",
+    "edit": "تعديل"
+  },
+  "app": {
+    "loadingTitle": "جاري تحميل DevFolio",
+    "errorTitle": "حدث خطأ ما",
+    "errorMessage": "نأسف، ولكن حدث خطأ أثناء تهيئة التطبيق.",
+    "errorDetails": "قد يكون هذا بسبب مشاكل في إعدادات Firebase أو مشاكل في الشبكة.",
+    "errorDetailsTitle": "تفاصيل الخطأ:"
   },
   "validation": {
     "required": "هذا الحقل مطلوب",

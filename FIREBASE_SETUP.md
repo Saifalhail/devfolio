@@ -254,11 +254,6 @@ When developing locally, you may encounter CORS (Cross-Origin Resource Sharing) 
 
 3. **Deploy CORS configuration**:
    ```bash
-   ./deploy-cors.sh
-   ```
-
-   Or manually run:
-   ```bash
    gcloud storage buckets update gs://devfolio-84079.appspot.com --cors-file=cors.json
    ```
 
@@ -283,12 +278,7 @@ If you encounter "Missing or insufficient permissions" errors when adding commen
 
 ### Deploy Security Rules
 
-Run the following script to deploy updated rules:
-```bash
-./deploy-rules.sh
-```
-
-Or manually deploy:
+Deploy the security rules using Firebase CLI:
 ```bash
 firebase deploy --only firestore:rules
 ```

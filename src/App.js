@@ -7,6 +7,7 @@ import { GlobalAnimationStyles } from './styles/animations';
 import './i18n'; // Import i18n initialization
 import i18n from './i18n';
 import { setDocumentDirection } from './utils/rtl';
+import { useTranslation } from 'react-i18next';
 
 // Import components
 import HomePage from './components/Home/HomePage';
@@ -38,13 +39,13 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div style={{ padding: '20px', maxWidth: '800px', margin: '40px auto', fontFamily: 'Arial, sans-serif' }}>
-          <h1 style={{ color: '#513a52' }}>Something went wrong</h1>
+          <h1 style={{ color: '#513a52' }}>{i18n.t('app.errorTitle', 'Something went wrong')}</h1>
           <div style={{ background: '#feefc4', padding: '15px', borderRadius: '5px', marginBottom: '15px' }}>
-            <p>We're sorry, but there was an error initializing the application.</p>
-            <p>This might be due to Firebase configuration issues or network problems.</p>
+            <p>{i18n.t('app.errorMessage', "We're sorry, but there was an error initializing the application.")}</p>
+            <p>{i18n.t('app.errorDetails', 'This might be due to Firebase configuration issues or network problems.')}</p>
           </div>
           <div style={{ background: '#f8f8f8', padding: '15px', borderRadius: '5px', marginBottom: '15px' }}>
-            <h3>Error details:</h3>
+            <h3>{i18n.t('app.errorDetailsTitle', 'Error details:')}</h3>
             <pre style={{ background: '#eee', padding: '10px', overflow: 'auto' }}>
               {this.state.error && (this.state.error.toString())}
             </pre>
@@ -53,7 +54,7 @@ class ErrorBoundary extends React.Component {
             onClick={() => window.location.reload()} 
             style={{ background: '#82a1bf', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '4px', cursor: 'pointer' }}
           >
-            Try Again
+            {i18n.t('common.tryAgain', 'Try Again')}
           </button>
         </div>
       );
@@ -78,6 +79,7 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   // Add state to track if the app has loaded
   const [isLoaded, setIsLoaded] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setDocumentDirection(i18n.language);
@@ -138,7 +140,7 @@ function App() {
               marginBottom: '10px',
               fontFamily: '"Nunito", sans-serif',
               fontWeight: 600
-            }}>Loading DevFolio</h2>
+            }}>{t('app.loadingTitle')}</h2>
             <p style={{ 
               color: '#666', 
               fontSize: '14px',
@@ -173,7 +175,7 @@ function App() {
                 v7_relativeSplatPath: true
               }}
             >
-              <Suspense fallback={<div style={{ color: '#513a52', textAlign: 'center', marginTop: '2rem' }}>Loading...</div>}>
+              <Suspense fallback={<div style={{ color: '#513a52', textAlign: 'center', marginTop: '2rem' }}>{t('common.loading')}</div>}>
               <Routes>
               <Route path="/" element={<HomePage />} />
               <Route 
