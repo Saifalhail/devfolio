@@ -141,13 +141,13 @@ const DragDropUploader = ({
     <Container isRTL={isRTL}>
       {/* Drag and drop area */}
       <DropZone
-        isDragging={isDragging}
+        $isDragging={isDragging}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current.click()}
-        isRTL={isRTL}
+        $isRTL={isRTL}
       >
         <UploadIcon>
           <FaUpload size={24} />
@@ -211,9 +211,9 @@ const DropZone = styled.div`
   justify-content: center;
   width: 100%;
   min-height: 150px;
-  border: 2px dashed ${props => props.isDragging ? colors.accent.primary : 'rgba(255, 255, 255, 0.1)'};
+  border: 2px dashed ${props => props.$isDragging ? colors.accent.primary : 'rgba(255, 255, 255, 0.1)'};
   border-radius: 8px;
-  background-color: ${props => props.isDragging ? 'rgba(205, 62, 253, 0.05)' : colors.background.secondary};
+  background-color: ${props => props.$isDragging ? 'rgba(205, 62, 253, 0.05)' : colors.background.secondary};
   padding: 24px;
   margin-bottom: 16px;
   cursor: pointer;

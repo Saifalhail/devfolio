@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, Fragment } from 'react';
 import { collection, query, getDocs, onSnapshot, orderBy, addDoc, serverTimestamp, doc, updateDoc, increment } from 'firebase/firestore';
-import { db } from '../../../firebase';
+import { firestore as db } from '../../../firebase/config';
 import styled, { keyframes, css } from 'styled-components';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useMockupUI } from './MockupUIContext';

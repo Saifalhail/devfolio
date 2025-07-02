@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../../../firebase';
+import { firestore as db } from '../../../firebase/config';
 import { useAuth } from '../../../contexts/AuthContext';
 import Button from '../../Common/Button';
 import { FormLabel, FormTextarea, InputGroup } from '../../Common/FormComponents';

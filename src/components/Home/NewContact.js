@@ -3,7 +3,7 @@ import styled, { keyframes, css } from 'styled-components';
 import { mixins } from '../../styles/GlobalTheme';
 import { useTranslation } from 'react-i18next';
 import { httpsCallable } from 'firebase/functions';
-import { functions } from '../../firebase';
+import { functions } from '../../firebase/config';
 import { logFirebaseFunctionError } from '../../utils/errorHandling';
 import {
   FormLabel,

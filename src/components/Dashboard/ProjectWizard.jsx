@@ -18,6 +18,8 @@ import {
 } from 'react-icons/fa';
 import Modal from '../Common/Modal';
 import { colors, spacing, borderRadius, shadows, transitions, typography, breakpoints } from '../../styles/GlobalTheme';
+import { createProject, updateProject, uploadProjectFile, generateProjectSummary } from '../../firebase/services/projects';
+import { useToast } from '../../contexts/ToastContext';
 
 // Import all wizard components from the barrel file
 import { 
@@ -46,6 +48,7 @@ import {
 const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
+  const { showToast } = useToast();
   
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1);
@@ -152,8 +155,6 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     
     // Validation for step 1
     if (currentStep === 1) {
-      // Temporarily commented out for testing purposes
-      /*
       if (!formData.name.trim()) {
         setError(t('projects.wizard.errors.nameRequired', 'Project name is required'));
         return false;
@@ -183,13 +184,10 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         setError(t('projects.wizard.errors.timelineRequired', 'Project timeline is required'));
         return false;
       }
-      */
     }
     
     // Validation for step 2
     if (currentStep === 2) {
-      // Temporarily commented out for testing purposes
-      /*
       if (formData.targetUserGroups.length === 0) {
         setError(t('projects.wizard.errors.targetUserGroupsRequired', 'At least one target user group is required'));
         return false;
@@ -209,13 +207,10 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         setError(t('projects.wizard.errors.specificLocationRequired', 'Specific location details are required'));
         return false;
       }
-      */
     }
     
     // Validation for step 3
     if (currentStep === 3) {
-      // Temporarily commented out for testing purposes
-      /*
       if (formData.authFeatures.length === 0) {
         setError(t('projects.wizard.errors.authFeaturesRequired', 'At least one authentication feature is required'));
         return false;
@@ -235,7 +230,6 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         setError(t('projects.wizard.errors.otherFeatureTextRequired', 'Please specify the other feature'));
         return false;
       }
-      */
     }
     
     // Validation for step 4
@@ -358,7 +352,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
     setError(null);
 
     try {
-      // Compile project data from all steps
+      // Prepare project data without files
       const projectData = {
         // Step 1 - Project Basics
         name: formData.name,
@@ -392,33 +386,64 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
         // Step 6 - Additional Details & Attachments
         additionalNotes: formData.additionalNotes,
         relevantLinks: formData.relevantLinks,
-        uploadedFiles: formData.uploadedFiles,
+        uploadedFiles: [], // Will be populated after file upload
         
         // Default values
-        status: 'inProgress',
-        createdAt: new Date()
+        status: 'inProgress'
       };
       
-      // Simulate API call with timeout
-      setTimeout(() => {
-        // Generate a mock project ID
-        const mockProjectId = Math.floor(100000 + Math.random() * 900000).toString();
-        setProjectId(mockProjectId);
-        
-        // Call the onProjectAdded callback with the form data
-        if (onProjectAdded) {
-          onProjectAdded({...projectData, id: mockProjectId});
+      // Create the project in Firebase
+      const projectId = await createProject(projectData);
+      setProjectId(projectId);
+      
+      // Upload files if any
+      const uploadedFileData = [];
+      if (formData.uploadedFiles && formData.uploadedFiles.length > 0) {
+        for (const file of formData.uploadedFiles) {
+          try {
+            const fileData = await uploadProjectFile(projectId, file, (progress) => {
+              console.log(`Uploading ${file.name}: ${progress}%`);
+            });
+            uploadedFileData.push(fileData);
+          } catch (uploadError) {
+            console.error(`Error uploading file ${file.name}:`, uploadError);
+          }
         }
         
-        // Set success state
-        setIsSubmitSuccess(true);
-        setIsSubmitting(false);
-        
-        // Don't close the modal yet - we'll show the success screen
-      }, 1500);
+        // Update project with uploaded file data
+        if (uploadedFileData.length > 0) {
+          await updateProject(projectId, { uploadedFiles: uploadedFileData });
+        }
+      }
+      
+      // Generate AI summary (optional - can be done asynchronously)
+      try {
+        const summary = await generateProjectSummary(projectData);
+        await updateProject(projectId, { summary });
+      } catch (summaryError) {
+        console.error('Error generating summary:', summaryError);
+        // Continue without summary - it's not critical
+      }
+      
+      // Call the onProjectAdded callback
+      if (onProjectAdded) {
+        onProjectAdded({
+          ...projectData,
+          id: projectId,
+          uploadedFiles: uploadedFileData
+        });
+      }
+      
+      // Set success state
+      setIsSubmitSuccess(true);
+      setIsSubmitting(false);
+      showToast(t('projects.wizard.submitSuccess', 'Project created successfully!'), 'success');
+      
     } catch (err) {
       console.error('Error creating project:', err);
-      setError(t('projects.wizard.submitError', 'Error creating project. Please try again.'));
+      const errorMessage = err.message || t('projects.wizard.submitError', 'Error creating project. Please try again.');
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
       setIsSubmitting(false);
     }
   };
@@ -689,7 +714,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
               </FormSubtext>
               <SearchableDropdown
                 options={industryOptions.map(industry => ({
-                  id: industry.value,
+                  id: industry.id,
                   label: industry.label
                 }))}
                 selectedValue={formData.industry}
@@ -820,6 +845,22 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 options={authFeatureOptions}
                 selectedValues={formData.authFeatures}
                 onChange={(values) => handleChange('authFeatures', values)}
+                isRTL={isRTL}
+              />
+            </FormGroup>
+            
+            {/* Data Storage & Management */}
+            <FormGroup isRTL={isRTL} marginBottom={spacing.md}>
+              <FormLabel isRTL={isRTL}>
+                {t('projects.wizard.step3.dataStorageFeatures', 'Data Storage & Management')}
+              </FormLabel>
+              <FormSubtext isRTL={isRTL}>
+                {t('projects.wizard.step3.dataStorageFeaturesToolTip', 'Select the data storage and management features your application needs')}
+              </FormSubtext>
+              <CheckboxCardSelector
+                options={dataStorageOptions}
+                selectedValues={formData.dataStorageFeatures}
+                onChange={(values) => handleChange('dataStorageFeatures', values)}
                 isRTL={isRTL}
               />
             </FormGroup>
@@ -1074,7 +1115,7 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
                 <SummaryItem isRTL={isRTL}>
                   <SummaryLabel isRTL={isRTL}>{t('projects.wizard.step1.projectIndustry', 'Industry')}:</SummaryLabel>
                   <SummaryValue isRTL={isRTL}>
-                    {formData.industry === 'other' ? formData.customIndustry : industryOptions.find(ind => ind.value === formData.industry)?.label || formData.industry}
+                    {formData.industry === 'other' ? formData.customIndustry : industryOptions.find(ind => ind.id === formData.industry)?.label || formData.industry}
                   </SummaryValue>
                 </SummaryItem>
                 

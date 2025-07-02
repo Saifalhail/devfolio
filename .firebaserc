@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "devfolio-84079"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

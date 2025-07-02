@@ -10,7 +10,7 @@ import {
   FaUserCog
 } from 'react-icons/fa';
 import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { firestore as db } from '../../firebase/config';
 import { useAuth } from '../../contexts/AuthContext';
 
 // Task status options

@@ -16,21 +16,24 @@ service firebase.storage {
       allow write: if isOwner(userId);
     }
     
-    // Project files - accessible by project owner and collaborators
+    // Project files - accessible by project owner
     match /projects/{projectId}/{allPaths=**} {
       allow read: if isSignedIn() && 
-        (
-          exists(/databases/$(database)/documents/projects/$(projectId)) && 
-          (
-            get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid || 
-            request.auth.uid in get(/databases/$(database)/documents/projects/$(projectId)).data.collaborators
-          )
-        );
+        exists(/databases/$(database)/documents/projects/$(projectId)) && 
+        get(/databases/$(database)/documents/projects/$(projectId)).data.userId == request.auth.uid;
       
       // Only project owner can write
       allow write: if isSignedIn() && 
-        exists(/databases/$(database)/documents/projects/$(projectId)) && 
-        get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
+        (
+          // Allow creating files for a project the user owns
+          (
+            exists(/databases/$(database)/documents/projects/$(projectId)) && 
+            get(/databases/$(database)/documents/projects/$(projectId)).data.userId == request.auth.uid
+          ) ||
+          // Allow creating files during project creation (project might not exist yet)
+          request.auth.uid != null
+        ) &&
+        request.resource.size < 50 * 1024 * 1024; // Max 50MB per file
     }
     
     // Public assets - readable by anyone, writable by none

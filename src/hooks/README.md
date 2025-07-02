@@ -11,7 +11,7 @@ The `useFirebaseListener` hook provides a standardized way to manage Firebase li
 ```javascript
 import useFirebaseListener from '../hooks/useFirebaseListener';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth } from '../firebase/config';
 
 function MyComponent() {
   useFirebaseListener(() => {

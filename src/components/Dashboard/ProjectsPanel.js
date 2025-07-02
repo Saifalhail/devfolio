@@ -33,7 +33,7 @@ import {
   updateDoc,
   doc
 } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { firestore as db } from '../../firebase/config';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import Modal from '../Common/Modal';

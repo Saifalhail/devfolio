@@ -4,7 +4,7 @@ import SkeletonLoader from '../Common/SkeletonLoader';
 import { FaRegStickyNote, FaMicrophone, FaPaperPlane, FaStop, FaTrash } from 'react-icons/fa';
 import { collection, addDoc, onSnapshot, query, where, orderBy, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { db, storage } from '../../firebase';
+import { firestore as db, storage } from '../../firebase/config';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import useFirebaseListener from '../../hooks/useFirebaseListener';

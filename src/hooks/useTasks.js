@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase';
+import { firestore as db } from '../firebase/config';
 
 const STORAGE_KEY = 'tasks';
 

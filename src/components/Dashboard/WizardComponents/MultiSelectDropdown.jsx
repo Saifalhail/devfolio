@@ -103,7 +103,7 @@ const MultiSelectDropdown = ({
         {selectedOptions.length > 0 ? (
           <SelectedTagsContainer isRTL={isRTL}>
             {selectedOptions.map(option => (
-              <SelectedTag key={option.value} isRTL={isRTL}>
+              <SelectedTag key={option.id} isRTL={isRTL}>
                 {option.label}
                 <RemoveTagButton 
                   onClick={(e) => removeSelectedOption(option.id, e)}
@@ -140,8 +140,8 @@ const MultiSelectDropdown = ({
           <OptionsList isRTL={isRTL}>
             {filteredOptions.map(option => (
               <OptionItem
-                key={option.value}
-                onClick={() => handleOptionClick(option)}
+                key={option.id}
+                onClick={() => handleOptionClick(option.id)}
                 isSelected={selectedValues.includes(option.id)}
                 isRTL={isRTL}
               >

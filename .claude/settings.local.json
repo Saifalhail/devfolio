@@ -18,7 +18,8 @@
       "Bash(npm run build:*)",
       "Bash(timeout 30s npm start)",
       "Bash(timeout 30s npm run lint)",
-      "Bash(diff:*)"
+      "Bash(diff:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }
