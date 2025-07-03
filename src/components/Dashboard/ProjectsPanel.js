@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { fadeIn, slideUp } from '../../styles/animations';
 import { 
   FaClock, 
@@ -28,7 +28,16 @@ import {
   FaExclamationTriangle,
   FaTrophy,
   FaArrowCircleRight,
-  FaChevronRight
+  FaChevronRight,
+  FaServer,
+  FaBolt,
+  FaRocket,
+  FaMapMarked,
+  FaUserShield,
+  FaTools,
+  FaLink,
+  FaChartBar,
+  FaUsersCog
 } from 'react-icons/fa';
 import StarryBackground from '../Common/StarryBackground';
 import { 
@@ -121,6 +130,22 @@ import {
 
 // Import ProjectWizard directly to fix the default export issue
 import ProjectWizard from './ProjectWizard.jsx';
+
+// Define animations
+const pulse = keyframes`
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+`;
 
 // Styled components moved outside to prevent dynamic creation warnings
 const GradientTitleText = styled.span`
@@ -380,74 +405,120 @@ const ActionButtonsGroup = styled.div`
   gap: ${spacing.xs};
 `;
 
-// Custom white icon button for projects page
+// Modern icon button with accent colors
 const WhiteIconButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 36px;
   height: 36px;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(205, 62, 253, 0.3);
+  border: 1px solid rgba(205, 62, 253, 0.5);
   border-radius: 50%;
-  color: #ffffff;
+  color: ${colors.text.primary}; /* Always white */
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(205, 62, 253, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
   
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-1px);
+    background: rgba(205, 62, 253, 0.2);
+    border-color: ${colors.accent.primary};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(205, 62, 253, 0.3);
+    
+    &::before {
+      width: 100%;
+      height: 100%;
+    }
   }
   
   &:active {
     transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(205, 62, 253, 0.2);
   }
   
   svg {
     font-size: 1rem;
-    color: #ffffff;
+    color: ${colors.text.primary}; /* Always white */
+    position: relative;
+    z-index: 1;
   }
   
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
   }
 `;
 
-// Custom white action button for text + icon buttons
+// Modern action button with gradient accent
 const WhiteActionButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: ${spacing.xs};
-  padding: ${spacing.sm} ${spacing.md};
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: ${spacing.sm} ${spacing.lg};
+  background: ${colors.gradients.accent};
+  border: none;
   border-radius: ${borderRadius.md};
-  color: #ffffff;
+  color: ${colors.text.primary};
   font-size: ${typography.fontSizes.sm};
   font-weight: ${typography.fontWeights.medium};
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
   
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-1px);
+    background: ${colors.gradients.hover};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(205, 62, 253, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
   }
   
   &:active {
     transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(205, 62, 253, 0.2);
   }
   
   svg {
     font-size: 1rem;
-    color: #ffffff;
+    color: ${colors.text.primary}; /* Always white */
   }
 `;
 
-// Custom white pagination button
+// Modern pagination button with accent colors
 const WhitePaginationButton = styled.button`
   display: flex;
   align-items: center;
@@ -455,24 +526,36 @@ const WhitePaginationButton = styled.button`
   min-width: 36px;
   height: 36px;
   padding: 0 ${spacing.sm};
-  background: ${props => props.active ? 'rgba(255, 255, 255, 0.15)' : 'transparent'};
-  border: 1px solid ${props => props.active ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.3)'};
-  border-radius: ${borderRadius.sm};
-  color: #ffffff;
+  background: ${props => props.active 
+    ? colors.gradients.accent 
+    : 'rgba(205, 62, 253, 0.2)'};
+  border: 1px solid ${props => props.active 
+    ? 'transparent' 
+    : 'rgba(205, 62, 253, 0.4)'};
+  border-radius: ${borderRadius.md};
+  color: ${colors.text.primary}; /* Always white */
   font-size: ${typography.fontSizes.sm};
   font-weight: ${props => props.active ? typography.fontWeights.medium : typography.fontWeights.normal};
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   opacity: ${props => props.disabled ? 0.5 : 1};
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   &:not(:disabled):hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: ${props => props.active 
+      ? colors.gradients.hover 
+      : 'rgba(205, 62, 253, 0.15)'};
+    border-color: ${props => props.active ? 'transparent' : colors.accent.primary};
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(205, 62, 253, 0.2);
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
   
   svg {
     font-size: 1rem;
-    color: #ffffff;
+    color: ${colors.text.primary}; /* Always white */
   }
 `;
 
@@ -586,11 +669,13 @@ const ActionIconButton = styled.button`
 const CustomFilterTabs = styled.div`
   display: flex;
   gap: ${spacing.xs};
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(205, 62, 253, 0.05);
   padding: 4px;
   border-radius: ${borderRadius.lg};
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(205, 62, 253, 0.2);
   direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(205, 62, 253, 0.1);
   
   @media (max-width: 768px) {
     padding: 2px;
@@ -600,34 +685,34 @@ const CustomFilterTabs = styled.div`
 const StatusFilterTab = styled.button`
   position: relative;
   padding: 8px 16px;
-  background: ${props => props.active ? 'rgba(74, 108, 247, 0.2)' : 'transparent'};
-  color: ${props => {
-    if (props.active) {
-      if (props.status === 'inProgress') return colors.status.warning;
-      if (props.status === 'done') return colors.status.success;
-      return colors.accent.primary;
-    }
-    return colors.text.secondary;
-  }};
-  border: none;
+  background: ${props => props.active 
+    ? colors.gradients.accent
+    : 'rgba(205, 62, 253, 0.2)'};
+  color: ${colors.text.primary}; /* Always white */
+  border: 1px solid ${props => props.active 
+    ? 'transparent' 
+    : 'rgba(205, 62, 253, 0.4)'};
   border-radius: ${borderRadius.md};
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: ${typography.fontSizes.sm};
-  font-weight: ${typography.fontWeights.medium};
+  font-weight: ${props => props.active ? typography.fontWeights.semiBold : typography.fontWeights.medium};
   display: flex;
   align-items: center;
   gap: ${spacing.xs};
   white-space: nowrap;
+  overflow: hidden;
   
   &:hover {
-    background: ${props => props.active ? 'rgba(74, 108, 247, 0.3)' : 'rgba(255, 255, 255, 0.05)'};
-    color: ${props => {
-      if (props.status === 'inProgress') return colors.status.warning;
-      if (props.status === 'done') return colors.status.success;
-      return props.active ? colors.accent.primary : colors.text.primary;
-    }};
-    transform: translateY(-1px);
+    background: ${props => props.active 
+      ? colors.gradients.hover
+      : 'rgba(205, 62, 253, 0.3)'};
+    color: ${colors.text.primary};
+    border-color: ${props => props.active ? 'transparent' : colors.accent.primary};
+    transform: translateY(-2px);
+    box-shadow: ${props => props.active 
+      ? '0 4px 12px rgba(205, 62, 253, 0.4)' 
+      : '0 2px 8px rgba(205, 62, 253, 0.2)'};
   }
   
   &:active {
@@ -636,26 +721,8 @@ const StatusFilterTab = styled.button`
   
   svg {
     font-size: 1rem;
+    color: ${colors.text.primary}; /* Always white icons */
   }
-  
-  /* Indicator dot for active state */
-  ${props => props.active && `
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: ${
-        props.status === 'inProgress' ? colors.status.warning :
-        props.status === 'done' ? colors.status.success :
-        colors.accent.primary
-      };
-    }
-  `}
   
   @media (max-width: 768px) {
     padding: 6px 12px;
@@ -668,16 +735,38 @@ const StatusFilterTab = styled.button`
 `;
 
 const StatusIndicator = styled.div`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  padding: 4px 8px;
+  border-radius: ${borderRadius.sm};
+  font-size: 0.875rem;
+  position: relative;
   background: ${props => {
+    switch (props.status) {
+      case 'active':
+        return `${colors.status.success}20`;
+      case 'inProgress':
+        return `${colors.status.warning}20`;
+      case 'done':
+        return `${colors.status.success}20`;
+      case 'awaitingFeedback':
+        return `${colors.status.info}20`;
+      case 'onHold':
+        return `${colors.status.error}20`;
+      default:
+        return `${colors.text.secondary}20`;
+    }
+  }};
+  color: ${props => {
     switch (props.status) {
       case 'active':
         return colors.status.success;
       case 'inProgress':
         return colors.status.warning;
       case 'done':
+        return colors.status.success;
+      case 'awaitingFeedback':
         return colors.status.info;
       case 'onHold':
         return colors.status.error;
@@ -685,26 +774,10 @@ const StatusIndicator = styled.div`
         return colors.text.secondary;
     }
   }};
-  display: inline-block;
-  margin-left: ${spacing.xs};
-  position: relative;
   
-  /* Pulse animation for active projects */
-  ${props => props.status === 'active' && `
-    animation: pulse 2s infinite;
-    
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
-      }
-      70% {
-        box-shadow: 0 0 0 6px rgba(76, 175, 80, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
-      }
-    }
-  `}
+  svg {
+    font-size: 0.875rem;
+  }
 `;
 
 const StatusTooltip = styled.span`
@@ -714,17 +787,29 @@ const StatusTooltip = styled.span`
   transform: translateX(-50%);
   background: ${colors.background.tertiary};
   color: ${colors.text.primary};
-  padding: 4px 8px;
+  padding: 6px 12px;
   border-radius: ${borderRadius.sm};
   font-size: ${typography.fontSizes.xs};
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+  box-shadow: ${shadows.sm};
+  z-index: 10;
   
   ${StatusIndicator}:hover & {
     opacity: 1;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: ${colors.background.tertiary};
   }
 `;
 
@@ -799,25 +884,59 @@ const CustomEmptyState = styled(EmptyState)`
 const AIInsightsButton = styled.button`
   display: flex;
   align-items: center;
-  gap: ${spacing.xs};
-  background: linear-gradient(135deg, ${colors.accent.primary}20, ${colors.accent.secondary}20);
-  color: ${colors.accent.primary};
-  border: 1px solid ${colors.accent.primary}40;
+  gap: ${spacing.sm};
+  background: ${props => props.disabled 
+    ? 'rgba(255, 255, 255, 0.05)' 
+    : colors.gradients.accent};
+  color: ${props => props.disabled 
+    ? colors.text.muted 
+    : colors.text.primary};
+  border: 1px solid ${props => props.disabled 
+    ? 'rgba(255, 255, 255, 0.1)' 
+    : 'transparent'};
   border-radius: ${borderRadius.md};
-  padding: ${spacing.xs} ${spacing.sm};
+  padding: ${spacing.sm} ${spacing.lg};
   font-size: ${typography.fontSizes.sm};
-  cursor: pointer;
+  font-weight: ${typography.fontWeights.medium};
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   transition: all 0.3s ease;
-  margin-top: ${spacing.sm};
+  margin-top: ${spacing.md};
+  width: 100%;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
   
-  &:hover {
-    background: linear-gradient(135deg, ${colors.accent.primary}30, ${colors.accent.secondary}30);
-    transform: translateY(-1px);
-    box-shadow: ${shadows.sm};
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  &:hover:not(:disabled) {
+    background: ${colors.gradients.hover};
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(205, 62, 253, 0.4);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
   }
   
   svg {
-    font-size: 1rem;
+    font-size: 1.125rem;
   }
 `;
 
@@ -827,97 +946,242 @@ const InsightsModal = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: ${spacing.lg};
-  overflow: auto;
+  animation: ${fadeIn} 0.2s ease;
 `;
 
 const InsightsContent = styled.div`
-  background: ${colors.background.primary};
+  background: ${colors.background.secondary};
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(205, 62, 253, 0.2);
   border-radius: ${borderRadius.lg};
   max-width: 800px;
-  width: 100%;
-  max-height: 90vh;
-  overflow: auto;
-  box-shadow: ${shadows.xl};
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   position: relative;
+  animation: ${slideUp} 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  
+  @media (max-width: 768px) {
+    width: 95%;
+    max-height: 90vh;
+    border-radius: ${borderRadius.md};
+  }
 `;
 
 const InsightsHeader = styled.div`
-  padding: ${spacing.lg};
-  border-bottom: 1px solid ${colors.background.secondary};
+  padding: ${spacing.xl};
+  background: linear-gradient(135deg, rgba(205, 62, 253, 0.1) 0%, rgba(130, 161, 191, 0.1) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+  
+  /* Removed glowing background effect for cleaner design */
   
   h2 {
     display: flex;
     align-items: center;
     gap: ${spacing.sm};
     color: ${colors.text.primary};
-    font-size: ${typography.fontSizes.xl};
+    font-size: 1.75rem;
+    font-weight: 700;
     margin: 0;
+    position: relative;
+    z-index: 1;
+    
+    svg {
+      color: ${colors.accent.primary};
+    }
   }
 `;
 
 const CloseButton = styled.button`
-  background: transparent;
-  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: ${colors.text.secondary};
   font-size: 1.5rem;
   cursor: pointer;
-  padding: ${spacing.xs};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
   
   &:hover {
+    background: rgba(255, 255, 255, 0.2);
     color: ${colors.text.primary};
+    transform: rotate(90deg);
+    box-shadow: ${shadows.sm};
   }
 `;
 
 const InsightsBody = styled.div`
   padding: ${spacing.lg};
+  overflow-y: auto;
+  flex: 1;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(205, 62, 253, 0.3);
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(205, 62, 253, 0.5);
+    }
+  }
 `;
 
 const InsightSection = styled.div`
-  margin-bottom: ${spacing.lg};
+  margin-bottom: ${spacing.xl};
+  animation: ${fadeIn} 0.5s ease;
   
   h3 {
     display: flex;
     align-items: center;
     gap: ${spacing.sm};
     color: ${colors.accent.primary};
-    font-size: ${typography.fontSizes.lg};
+    font-size: 1.25rem;
+    font-weight: 600;
     margin-bottom: ${spacing.md};
+    position: relative;
+    
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(205, 62, 253, 0.3) 0%, transparent 100%);
+      margin-left: ${spacing.md};
+    }
+    
+    svg {
+      /* Removed drop-shadow for cleaner design */
+    }
   }
 `;
 
 const InsightCard = styled.div`
-  background: ${colors.background.secondary};
-  border-radius: ${borderRadius.md};
-  padding: ${spacing.md};
-  margin-bottom: ${spacing.sm};
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: ${spacing.lg};
+  margin-bottom: ${spacing.md};
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(205, 62, 253, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(205, 62, 253, 0.2);
+    border-color: rgba(205, 62, 253, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  h4 {
+    color: ${colors.accent.secondary};
+    font-size: 1rem;
+    margin-bottom: ${spacing.sm};
+  }
+  
+  p {
+    color: ${colors.text.secondary};
+    line-height: 1.6;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    
+    li {
+      position: relative;
+      padding-left: ${spacing.lg};
+      margin-bottom: ${spacing.sm};
+      color: ${colors.text.secondary};
+      
+      &::before {
+        content: '▸';
+        position: absolute;
+        left: 0;
+        color: ${colors.accent.primary};
+      }
+    }
+  }
 `;
 
 const TechBadge = styled.span`
   display: inline-block;
-  background: ${colors.accent.primary}20;
-  color: ${colors.accent.primary};
-  padding: ${spacing.xs} ${spacing.sm};
-  border-radius: ${borderRadius.sm};
+  background: linear-gradient(135deg, rgba(205, 62, 253, 0.2) 0%, rgba(130, 161, 191, 0.2) 100%);
+  border: 1px solid rgba(205, 62, 253, 0.3);
+  color: ${colors.text.primary};
+  padding: ${spacing.xs} ${spacing.md};
+  border-radius: 20px;
   font-size: ${typography.fontSizes.sm};
+  font-weight: 500;
   margin: ${spacing.xs};
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba(205, 62, 253, 0.3) 0%, rgba(130, 161, 191, 0.3) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(205, 62, 253, 0.3);
+  }
 `;
 
 const FeasibilityScore = styled.div`
   display: flex;
   align-items: center;
-  gap: ${spacing.sm};
-  font-size: ${typography.fontSizes.xl};
+  gap: ${spacing.md};
+  font-size: 2rem;
   font-weight: bold;
-  color: ${props => props.score >= 7 ? colors.success : props.score >= 5 ? colors.warning : colors.error};
+  color: ${props => props.score >= 7 ? colors.status.success : props.score >= 5 ? colors.status.warning : colors.status.error};
+  
+  &::after {
+    content: '/10';
+    font-size: 1.2rem;
+    opacity: 0.7;
+  }
 `;
 
 const NextStepItem = styled.div`
@@ -929,6 +1193,619 @@ const NextStepItem = styled.div`
   span {
     flex: 1;
   }
+`;
+
+const AIBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, ${colors.accent.primary}30, ${colors.accent.secondary}30);
+  color: ${colors.accent.primary};
+  padding: 2px 8px;
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.xs};
+  font-weight: ${typography.fontWeights.medium};
+  margin-left: ${spacing.sm};
+  vertical-align: middle;
+  
+  svg {
+    font-size: 0.75rem;
+  }
+`;
+
+const AIMetricsRow = styled.div`
+  display: flex;
+  gap: ${spacing.md};
+  margin-top: ${spacing.md};
+  padding-top: ${spacing.md};
+  border-top: 1px solid rgba(205, 62, 253, 0.1);
+  flex-wrap: wrap;
+`;
+
+const AIMetric = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.xs};
+  font-size: ${typography.fontSizes.sm};
+  color: ${colors.text.primary};
+  background: rgba(205, 62, 253, 0.1);
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  border: 1px solid rgba(205, 62, 253, 0.2);
+  
+  svg {
+    font-size: 1rem;
+  }
+  
+  span {
+    font-weight: ${typography.fontWeights.medium};
+  }
+`;
+
+const TabNavigation = styled.div`
+  display: flex;
+  gap: ${spacing.sm};
+  margin-bottom: ${spacing.lg};
+  padding: ${spacing.xs};
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  justify-content: center;
+  
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    justify-content: flex-start;
+    
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(205, 62, 253, 0.3);
+      border-radius: 2px;
+    }
+  }
+`;
+
+const TabButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: ${spacing.sm};
+  padding: ${spacing.sm} ${spacing.lg};
+  background: ${props => props.active 
+    ? colors.gradients.accent 
+    : 'transparent'};
+  border: 1px solid ${props => props.active 
+    ? 'transparent' 
+    : 'rgba(255, 255, 255, 0.1)'};
+  border-radius: ${borderRadius.md};
+  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
+  font-weight: ${props => props.active ? typography.fontWeights.semiBold : typography.fontWeights.medium};
+  font-size: ${typography.fontSizes.sm};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  
+  svg {
+    font-size: 1rem;
+  }
+  
+  &:hover {
+    background: ${props => props.active 
+      ? colors.gradients.hover
+      : 'rgba(255, 255, 255, 0.05)'};
+    color: ${colors.text.primary};
+    border-color: ${props => props.active ? 'transparent' : 'rgba(205, 62, 253, 0.3)'};
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+
+const DetailGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${spacing.md};
+  margin-bottom: ${spacing.lg};
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const IntegrationGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.lg};
+`;
+
+const IntegrationCategory = styled.div`
+  h4 {
+    color: ${colors.text.primary};
+    font-size: ${typography.fontSizes.md};
+    margin-bottom: ${spacing.sm};
+  }
+`;
+
+const IntegrationBadge = styled.span`
+  display: inline-block;
+  padding: ${spacing.xs} ${spacing.sm};
+  margin: ${spacing.xs};
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  
+  ${props => props.type === 'required' && `
+    background: ${colors.status.error}20;
+    color: ${colors.status.error};
+    border: 1px solid ${colors.status.error}40;
+  `}
+  
+  ${props => props.type === 'recommended' && `
+    background: ${colors.status.warning}20;
+    color: ${colors.status.warning};
+    border: 1px solid ${colors.status.warning}40;
+  `}
+  
+  ${props => props.type === 'future' && `
+    background: ${colors.status.info}20;
+    color: ${colors.status.info};
+    border: 1px solid ${colors.status.info}40;
+  `}
+`;
+
+const RoadmapPhase = styled.div`
+  background: ${colors.background.secondary};
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.lg};
+  margin-bottom: ${spacing.md};
+`;
+
+const PhaseHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${spacing.md};
+  
+  h4 {
+    color: ${colors.accent.primary};
+    font-size: ${typography.fontSizes.lg};
+    margin: 0;
+  }
+`;
+
+const PhaseDuration = styled.span`
+  background: ${colors.accent.primary}20;
+  color: ${colors.accent.primary};
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+`;
+
+const PhaseContent = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${spacing.lg};
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const PhaseSection = styled.div`
+  h5 {
+    color: ${colors.text.primary};
+    font-size: ${typography.fontSizes.md};
+    margin-bottom: ${spacing.sm};
+  }
+  
+  ul {
+    margin: 0;
+    padding-left: ${spacing.lg};
+    color: ${colors.text.secondary};
+    
+    li {
+      margin-bottom: ${spacing.xs};
+    }
+  }
+`;
+
+// Visual Data Representation Components
+const ProgressBar = styled.div`
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  margin: ${spacing.sm} 0;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: ${props => props.progress}%;
+    background: linear-gradient(90deg, 
+      ${props => props.type === 'success' ? colors.status.success : 
+                  props.type === 'warning' ? colors.status.warning : 
+                  props.type === 'error' ? colors.status.error : 
+                  colors.accent.primary} 0%,
+      ${props => props.type === 'success' ? '#66BB6A' : 
+                  props.type === 'warning' ? '#FFCA28' : 
+                  props.type === 'error' ? '#EF5350' : 
+                  colors.accent.secondary} 100%);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+    box-shadow: 0 0 10px ${props => 
+      props.type === 'success' ? 'rgba(76, 175, 80, 0.5)' : 
+      props.type === 'warning' ? 'rgba(255, 193, 7, 0.5)' : 
+      props.type === 'error' ? 'rgba(244, 67, 54, 0.5)' : 
+      'rgba(205, 62, 253, 0.5)'};
+  }
+`;
+
+const CircularProgress = styled.div`
+  width: 120px;
+  height: 120px;
+  position: relative;
+  margin: ${spacing.lg} auto;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  
+  circle {
+    fill: none;
+    stroke-width: 8;
+    
+    &:first-child {
+      stroke: rgba(255, 255, 255, 0.1);
+    }
+    
+    &:last-child {
+      stroke: ${props => props.score >= 7 ? colors.status.success : 
+                         props.score >= 5 ? colors.status.warning : 
+                         colors.status.error};
+      stroke-dasharray: ${props => 2 * Math.PI * 52};
+      stroke-dashoffset: ${props => 2 * Math.PI * 52 * (1 - props.score / 10)};
+      transition: stroke-dashoffset 1s ease;
+      /* Removed drop-shadow for cleaner design */
+    }
+  }
+`;
+
+const ScoreText = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  
+  .score {
+    font-size: 2rem;
+    font-weight: bold;
+    color: ${props => props.score >= 7 ? colors.status.success : 
+                      props.score >= 5 ? colors.status.warning : 
+                      colors.status.error};
+  }
+  
+  .label {
+    font-size: ${typography.fontSizes.sm};
+    color: ${colors.text.secondary};
+  }
+`;
+
+const MetricCard = styled.div`
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: ${spacing.lg};
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(205, 62, 253, 0.2);
+    border-color: rgba(205, 62, 253, 0.3);
+  }
+  
+  .icon {
+    font-size: 2.5rem;
+    margin-bottom: ${spacing.sm};
+    color: ${colors.accent.primary};
+  }
+  
+  .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: ${colors.text.primary};
+    margin-bottom: ${spacing.xs};
+  }
+  
+  .label {
+    font-size: ${typography.fontSizes.sm};
+    color: ${colors.text.secondary};
+  }
+`;
+
+const MetricsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: ${spacing.lg};
+  margin: ${spacing.xl} 0;
+`;
+
+const TimelineVisualization = styled.div`
+  position: relative;
+  padding: ${spacing.lg} 0;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, 
+      rgba(205, 62, 253, 0.3) 0%, 
+      rgba(130, 161, 191, 0.3) 100%);
+  }
+`;
+
+const TimelineItem = styled.div`
+  position: relative;
+  padding-left: 60px;
+  margin-bottom: ${spacing.xl};
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    background: ${colors.accent.primary};
+    border-radius: 50%;
+    box-shadow: ${shadows.sm};
+    z-index: 1;
+  }
+  
+  .phase {
+    font-weight: bold;
+    color: ${colors.text.primary};
+    margin-bottom: ${spacing.xs};
+  }
+  
+  .duration {
+    font-size: ${typography.fontSizes.sm};
+    color: ${colors.accent.secondary};
+    margin-bottom: ${spacing.sm};
+  }
+  
+  .tasks {
+    font-size: ${typography.fontSizes.sm};
+    color: ${colors.text.secondary};
+  }
+`;
+
+const BudgetBreakdown = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing.md};
+`;
+
+const BudgetItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: ${spacing.sm} 0;
+  
+  .label {
+    display: flex;
+    align-items: center;
+    gap: ${spacing.sm};
+    color: ${colors.text.secondary};
+    
+    svg {
+      color: ${colors.accent.primary};
+    }
+  }
+  
+  .value {
+    font-weight: bold;
+    color: ${colors.text.primary};
+  }
+`;
+
+// Additional styled components for new sections
+const StepNumber = styled.div`
+  width: 30px;
+  height: 30px;
+  background: ${colors.accent.gradient};
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${colors.text.onAccent};
+  font-weight: bold;
+  font-size: ${typography.fontSizes.sm};
+  flex-shrink: 0;
+`;
+
+const RiskCard = styled(InsightCard)`
+  border-left: 4px solid ${props => 
+    props.impact === 'High' ? colors.status.error : 
+    props.impact === 'Medium' ? colors.status.warning : 
+    colors.status.info};
+`;
+
+const RiskHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${spacing.sm};
+`;
+
+const RiskTitle = styled.h4`
+  color: ${colors.text.primary};
+  margin: 0;
+`;
+
+const RiskImpact = styled.span`
+  padding: ${spacing.xs} ${spacing.sm};
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  background: ${props => 
+    props.impact === 'High' ? `${colors.status.error}20` : 
+    props.impact === 'Medium' ? `${colors.status.warning}20` : 
+    `${colors.status.info}20`};
+  color: ${props => 
+    props.impact === 'High' ? colors.status.error : 
+    props.impact === 'Medium' ? colors.status.warning : 
+    colors.status.info};
+`;
+
+const RiskMitigation = styled.p`
+  color: ${colors.text.secondary};
+  margin: 0;
+`;
+
+const SecurityGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: ${spacing.lg};
+`;
+
+const SecurityCategory = styled.div`
+  h4 {
+    color: ${colors.accent.secondary};
+    margin-bottom: ${spacing.sm};
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    
+    li {
+      position: relative;
+      padding-left: ${spacing.lg};
+      margin-bottom: ${spacing.xs};
+      color: ${colors.text.secondary};
+      
+      &::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: ${colors.status.success};
+      }
+    }
+  }
+`;
+
+const TeamCategory = styled.div`
+  h4 {
+    color: ${colors.text.primary};
+    font-size: ${typography.fontSizes.md};
+    margin-bottom: ${spacing.sm};
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    
+    li {
+      padding: ${spacing.xs} 0;
+      color: ${colors.text.secondary};
+    }
+  }
+`;
+
+const HoursGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: ${spacing.md};
+  margin-top: ${spacing.md};
+`;
+
+const HourItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: ${spacing.sm};
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: ${borderRadius.sm};
+  
+  span:first-child {
+    color: ${colors.text.secondary};
+  }
+  
+  span:last-child {
+    color: ${colors.accent.primary};
+    font-weight: ${typography.fontWeights.medium};
+  }
+`;
+
+const BudgetTotal = styled.div`
+  text-align: center;
+  margin-bottom: ${spacing.lg};
+  
+  h4 {
+    color: ${colors.text.secondary};
+    font-size: ${typography.fontSizes.md};
+    margin-bottom: ${spacing.sm};
+  }
+`;
+
+const BudgetAmount = styled.div`
+  font-size: ${typography.fontSizes.xxl};
+  font-weight: ${typography.fontWeights.bold};
+  color: ${colors.accent.primary};
+`;
+
+
+
+const TeamGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${spacing.lg};
+  margin-bottom: ${spacing.lg};
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const TeamBadge = styled.span`
+  display: inline-block;
+  padding: ${spacing.xs} ${spacing.sm};
+  margin: ${spacing.xs};
+  border-radius: ${borderRadius.sm};
+  font-size: ${typography.fontSizes.sm};
+  font-weight: ${typography.fontWeights.medium};
+  
+  ${props => props.type === 'immediate' && `
+    background: ${colors.accent.primary}20;
+    color: ${colors.accent.primary};
+    border: 1px solid ${colors.accent.primary}40;
+  `}
+  
+  ${props => props.type === 'future' && `
+    background: ${colors.text.secondary}20;
+    color: ${colors.text.secondary};
+    border: 1px solid ${colors.text.secondary}40;
+  `}
 `;
 
 const ProjectsPanel = () => {
@@ -949,6 +1826,7 @@ const ProjectsPanel = () => {
   const [activePage, setActivePage] = useState(1);
   const [itemsPerPage] = useState(9);
   const [totalPages, setTotalPages] = useState(1);
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Get status priority for sorting
   const getStatusPriority = (status) => {
@@ -1130,6 +2008,7 @@ const ProjectsPanel = () => {
   const openInsightsModal = useCallback((project) => {
     setSelectedProjectInsights(project);
     setIsInsightsModalOpen(true);
+    setActiveTab('overview'); // Reset to overview tab
   }, []);
   
   // Close AI insights modal
@@ -1308,30 +2187,41 @@ const ProjectsPanel = () => {
         <>
           <ProjectsContainer $isGrid={isGridView}>
             {currentPageItems.map(project => (
-              <ProjectCard key={project.id} isGrid={isGridView}>
+              <ProjectCard 
+                key={project.id} 
+                $isGrid={isGridView} 
+                onClick={() => openInsightsModal(project)}
+                style={{ cursor: 'pointer' }}
+              >
                 <ProjectCardInner>
                   <ProjectHeader>
-                    <div>
-                      <ProjectName>{project.name}</ProjectName>
+                    <div style={{ flex: 1 }}>
+                      <ProjectName>
+                        {project.name}
+                      </ProjectName>
                       <ProjectType>{project.type} • {project.industry}</ProjectType>
                     </div>
-                    <ActionButtonsGroup>
-                      <WhiteIconButton title={t('projects.editProject', 'Edit Project')}>
-                        <FaPencilAlt />
-                      </WhiteIconButton>
-                      <WhiteIconButton title={t('projects.moreOptions', 'More Options')}>
-                        <FaEllipsisV />
-                      </WhiteIconButton>
-                    </ActionButtonsGroup>
+                    <StatusIndicator 
+                      status={project.status} 
+                      title={getStatusLabel(project.status)}
+                      aria-label={getStatusLabel(project.status)}
+                    >
+                      {getStatusIcon(project.status)}
+                      <span>{getStatusLabel(project.status)}</span>
+                    </StatusIndicator>
                   </ProjectHeader>
                   
                   <ProjectDetails>
-                    <DetailRow>
+                    <ProjectDescription>
+                      {project.description || t('projects.noDescription', 'No description provided.')}
+                    </ProjectDescription>
+                    
+                    <DetailRow style={{ marginTop: '1rem' }}>
                       <DetailItem>
                         <DetailIcon><FaUserAlt /></DetailIcon>
                         <DetailContent>
                           <DetailLabel>{t('projects.client', 'Client')}</DetailLabel>
-                          <DetailValue>{project.client || '—'}</DetailValue>
+                          <DetailValue>{project.client || t('projects.noClientSet', 'Not specified')}</DetailValue>
                         </DetailContent>
                       </DetailItem>
                       <DetailItem>
@@ -1339,49 +2229,27 @@ const ProjectsPanel = () => {
                         <DetailContent>
                           <DetailLabel>{t('projects.deadline', 'Deadline')}</DetailLabel>
                           <DetailValue>
-                            {project.deadline && project.deadline.toDate ? new Date(project.deadline.toDate()).toLocaleDateString() : '—'}
+                            {project.deadline && project.deadline.toDate ? new Date(project.deadline.toDate()).toLocaleDateString() : t('projects.noDeadlineSet', 'No deadline set')}
                           </DetailValue>
                         </DetailContent>
                       </DetailItem>
                     </DetailRow>
                     
-                    <DetailRow>
-                      <DetailItem>
-                        <DetailIcon><FaTags /></DetailIcon>
-                        <DetailContent>
-                          <DetailLabel>{t('projects.status', 'Status')}</DetailLabel>
-                          <StatusIndicator 
-                            status={project.status} 
-                            title={getStatusLabel(project.status)}
-                            aria-label={getStatusLabel(project.status)}
-                          >
-                            {getStatusIcon(project.status)}
-                            <StatusTooltip>{getStatusLabel(project.status)}</StatusTooltip>
-                          </StatusIndicator>
-                        </DetailContent>
-                      </DetailItem>
-                      {project.mood && (
-                        <DetailItem>
-                          <DetailIcon>
-                            {getMoodEmoji(project.mood)}
-                          </DetailIcon>
-                          <DetailContent>
-                            <DetailLabel>{t('projects.clientMood', 'Client Mood')}</DetailLabel>
-                            <DetailValue>{getMoodLabel(project.mood)}</DetailValue>
-                          </DetailContent>
-                        </DetailItem>
-                      )}
-                    </DetailRow>
-                    
-                    <ProjectDescription>
-                      {project.description || t('projects.noDescription', 'No description provided.')}
-                    </ProjectDescription>
-                    
                     {project.aiInsights && (
-                      <AIInsightsButton onClick={() => openInsightsModal(project)}>
-                        <FaLightbulb />
-                        {t('projects.viewAIInsights', 'View AI Insights')}
-                      </AIInsightsButton>
+                      <AIMetricsRow>
+                        <AIMetric>
+                          <FaTrophy style={{ color: colors.accent.primary }} />
+                          <span>{t('projects.feasibilityScore', 'Feasibility')}: {project.aiInsights.projectFeasibility?.score ? `${project.aiInsights.projectFeasibility.score}/10` : t('projects.notAvailable', 'Not available')}</span>
+                        </AIMetric>
+                        <AIMetric>
+                          <FaMoneyBillWave style={{ color: colors.accent.secondary }} />
+                          <span>{project.aiInsights.budgetAnalysis?.estimatedCost || 'TBD'}</span>
+                        </AIMetric>
+                        <AIMetric>
+                          <FaClock style={{ color: colors.accent.primary }} />
+                          <span>{project.aiInsights.timelineEstimate?.totalDuration || 'TBD'}</span>
+                        </AIMetric>
+                      </AIMetricsRow>
                     )}
                   </ProjectDetails>
                 </ProjectCardInner>
@@ -1449,26 +2317,78 @@ const ProjectsPanel = () => {
           <InsightsContent onClick={(e) => e.stopPropagation()}>
             <InsightsHeader>
               <h2>
-                <FaLightbulb />
-                {t('projects.aiInsights.title', 'AI Project Insights')}
+                {t('projects.summary.title', 'Project Summary')}
               </h2>
               <CloseButton onClick={closeInsightsModal}>&times;</CloseButton>
             </InsightsHeader>
             
             <InsightsBody>
-              {selectedProjectInsights.aiInsights && (
-                <>
-                  {/* Executive Summary */}
-                  {selectedProjectInsights.aiInsights.executiveSummary && (
-                    <InsightSection>
-                      <h3>{t('projects.aiInsights.executiveSummary', 'Executive Summary')}</h3>
-                      <InsightCard>
-                        <p>{selectedProjectInsights.aiInsights.executiveSummary}</p>
-                      </InsightCard>
-                    </InsightSection>
+              {/* Project Basic Info */}
+              <InsightSection>
+                <h3>{t('projects.summary.projectInfo', 'Project Information')}</h3>
+                <InsightCard>
+                  <h4>{selectedProjectInsights.name}</h4>
+                  <p><strong>{t('projects.type', 'Type')}:</strong> {selectedProjectInsights.type}</p>
+                  <p><strong>{t('projects.industry', 'Industry')}:</strong> {selectedProjectInsights.industry}</p>
+                  <p><strong>{t('projects.client', 'Client')}:</strong> {selectedProjectInsights.client || t('projects.noClientSet', 'Not specified')}</p>
+                  <p><strong>{t('projects.deadline', 'Deadline')}:</strong> {selectedProjectInsights.deadline && selectedProjectInsights.deadline.toDate ? new Date(selectedProjectInsights.deadline.toDate()).toLocaleDateString() : t('projects.noDeadlineSet', 'No deadline set')}</p>
+                  {selectedProjectInsights.description && (
+                    <>
+                      <h4 style={{ marginTop: '1rem' }}>{t('projects.description', 'Description')}</h4>
+                      <p>{selectedProjectInsights.description}</p>
+                    </>
                   )}
+                </InsightCard>
+              </InsightSection>
+              
+              {selectedProjectInsights.aiInsights ? (
+                <>
+                  {/* Tab Navigation - Simplified */}
+                  <TabNavigation>
+                    <TabButton 
+                      active={activeTab === 'overview'} 
+                      onClick={() => setActiveTab('overview')}
+                    >
+                      <FaLightbulb />
+                      {t('projects.summary.tabs.overview', 'Overview')}
+                    </TabButton>
+                    <TabButton 
+                      active={activeTab === 'technical'} 
+                      onClick={() => setActiveTab('technical')}
+                    >
+                      <FaCode />
+                      {t('projects.summary.tabs.technical', 'Technical')}
+                    </TabButton>
+                    <TabButton 
+                      active={activeTab === 'timeline'} 
+                      onClick={() => setActiveTab('timeline')}
+                    >
+                      <FaCalendarAlt />
+                      {t('projects.summary.tabs.timeline', 'Timeline')}
+                    </TabButton>
+                    <TabButton 
+                      active={activeTab === 'next'} 
+                      onClick={() => setActiveTab('next')}
+                    >
+                      <FaArrowCircleRight />
+                      {t('projects.summary.tabs.nextSteps', 'Next Steps')}
+                    </TabButton>
+                  </TabNavigation>
+
+                  {/* Tab Content */}
+                  {activeTab === 'overview' && (
+                    <>
+                      {/* Executive Summary */}
+                      {selectedProjectInsights.aiInsights.executiveSummary && (
+                        <InsightSection>
+                          <h3>{t('projects.aiInsights.executiveSummary', 'Executive Summary')}</h3>
+                          <InsightCard>
+                            <p>{selectedProjectInsights.aiInsights.executiveSummary}</p>
+                          </InsightCard>
+                        </InsightSection>
+                      )}
                   
-                  {/* Project Feasibility */}
+                  {/* Project Feasibility with Visual Score */}
                   {selectedProjectInsights.aiInsights.projectFeasibility && (
                     <InsightSection>
                       <h3>
@@ -1476,9 +2396,16 @@ const ProjectsPanel = () => {
                         {t('projects.aiInsights.feasibility', 'Project Feasibility')}
                       </h3>
                       <InsightCard>
-                        <FeasibilityScore score={parseInt(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
-                          {t('projects.aiInsights.score', 'Score')}: {selectedProjectInsights.aiInsights.projectFeasibility.score}/10
-                        </FeasibilityScore>
+                        <CircularProgress score={parseFloat(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
+                          <svg viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="52" />
+                            <circle cx="60" cy="60" r="52" />
+                          </svg>
+                          <ScoreText score={parseFloat(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
+                            <div className="score">{selectedProjectInsights.aiInsights.projectFeasibility.score}</div>
+                            <div className="label">{t('projects.aiInsights.outOf10', 'out of 10')}</div>
+                          </ScoreText>
+                        </CircularProgress>
                         <p>{selectedProjectInsights.aiInsights.projectFeasibility.assessment}</p>
                         {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations && (
                           <ul>
@@ -1546,23 +2473,741 @@ const ProjectsPanel = () => {
                     )}
                   </div>
                   
-                  {/* Next Steps */}
-                  {selectedProjectInsights.aiInsights.nextSteps && selectedProjectInsights.aiInsights.nextSteps.length > 0 && (
+                      {/* Competitive Analysis */}
+                      {selectedProjectInsights.aiInsights.competitiveAnalysis && (
+                        <InsightSection>
+                          <h3>
+                            <FaChartBar />
+                            {t('projects.aiInsights.competitiveAnalysis', 'Market Analysis')}
+                          </h3>
+                          <InsightCard>
+                            <p>{selectedProjectInsights.aiInsights.competitiveAnalysis.marketInsights}</p>
+                            {selectedProjectInsights.aiInsights.competitiveAnalysis.differentiationOpportunities && (
+                              <>
+                                <h4>{t('projects.aiInsights.differentiation', 'Differentiation Opportunities')}</h4>
+                                <ul>
+                                  {selectedProjectInsights.aiInsights.competitiveAnalysis.differentiationOpportunities.map((opp, index) => (
+                                    <li key={index}>{opp}</li>
+                                  ))}
+                                </ul>
+                              </>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                    </>
+                  )}
+
+                  {activeTab === 'technical' && (
+                    <>
+                      {/* Technical Specifications */}
+                      {selectedProjectInsights.aiInsights.technicalSpecification && (
+                        <InsightSection>
+                          <h3>
+                            <FaServer />
+                            {t('projects.aiInsights.technicalSpec', 'Technical Specification')}
+                          </h3>
+                          <InsightCard>
+                            <DetailGrid>
+                              <DetailItem>
+                                <strong>{t('projects.aiInsights.architecture', 'Architecture')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.technicalSpecification.architecture}</span>
+                              </DetailItem>
+                              <DetailItem>
+                                <strong>{t('projects.aiInsights.apiDesign', 'API Design')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.technicalSpecification.apiDesign}</span>
+                              </DetailItem>
+                              <DetailItem>
+                                <strong>{t('projects.aiInsights.deployment', 'Deployment')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.technicalSpecification.deploymentArchitecture}</span>
+                              </DetailItem>
+                            </DetailGrid>
+                            
+                            {selectedProjectInsights.aiInsights.technicalSpecification.databases && (
+                              <>
+                                <h4>{t('projects.aiInsights.databases', 'Database Architecture')}</h4>
+                                <DetailGrid>
+                                  <DetailItem>
+                                    <strong>{t('projects.aiInsights.primary', 'Primary')}:</strong>
+                                    <span>{selectedProjectInsights.aiInsights.technicalSpecification.databases.primary}</span>
+                                  </DetailItem>
+                                  {selectedProjectInsights.aiInsights.technicalSpecification.databases.cache && (
+                                    <DetailItem>
+                                      <strong>{t('projects.aiInsights.cache', 'Cache')}:</strong>
+                                      <span>{selectedProjectInsights.aiInsights.technicalSpecification.databases.cache}</span>
+                                    </DetailItem>
+                                  )}
+                                  {selectedProjectInsights.aiInsights.technicalSpecification.databases.search && (
+                                    <DetailItem>
+                                      <strong>{t('projects.aiInsights.search', 'Search')}:</strong>
+                                      <span>{selectedProjectInsights.aiInsights.technicalSpecification.databases.search}</span>
+                                    </DetailItem>
+                                  )}
+                                </DetailGrid>
+                              </>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+
+                      {/* Scalability Plan */}
+                      {selectedProjectInsights.aiInsights.scalabilityPlan && (
+                        <InsightSection>
+                          <h3>
+                            <FaBolt />
+                            {t('projects.aiInsights.scalability', 'Scalability Plan')}
+                          </h3>
+                          <InsightCard>
+                            <p><strong>{t('projects.aiInsights.userGrowth', 'User Growth Strategy')}:</strong> {selectedProjectInsights.aiInsights.scalabilityPlan.userGrowthStrategy}</p>
+                            <p><strong>{t('projects.aiInsights.dataGrowth', 'Data Growth Strategy')}:</strong> {selectedProjectInsights.aiInsights.scalabilityPlan.dataGrowthStrategy}</p>
+                            
+                            {selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets && (
+                              <>
+                                <h4>{t('projects.aiInsights.performanceTargets', 'Performance Targets')}</h4>
+                                <DetailGrid>
+                                  <DetailItem>
+                                    <strong>{t('projects.aiInsights.responseTime', 'Response Time')}:</strong>
+                                    <span>{selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets.responseTime}</span>
+                                  </DetailItem>
+                                  <DetailItem>
+                                    <strong>{t('projects.aiInsights.uptime', 'Uptime')}:</strong>
+                                    <span>{selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets.uptime}</span>
+                                  </DetailItem>
+                                  {selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets.concurrent_users && (
+                                    <DetailItem>
+                                      <strong>{t('projects.aiInsights.concurrentUsers', 'Concurrent Users')}:</strong>
+                                      <span>{selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets.concurrent_users}</span>
+                                    </DetailItem>
+                                  )}
+                                </DetailGrid>
+                              </>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+
+                      {/* Integration Map */}
+                      {selectedProjectInsights.aiInsights.integrationMap && (
+                        <InsightSection>
+                          <h3>
+                            <FaLink />
+                            {t('projects.aiInsights.integrations', 'Integration Requirements')}
+                          </h3>
+                          <InsightCard>
+                            <IntegrationGrid>
+                              {selectedProjectInsights.aiInsights.integrationMap.required && (
+                                <IntegrationCategory>
+                                  <h4>{t('projects.aiInsights.required', 'Required')}</h4>
+                                  {selectedProjectInsights.aiInsights.integrationMap.required.map((item, index) => (
+                                    <IntegrationBadge key={index} type="required">{item}</IntegrationBadge>
+                                  ))}
+                                </IntegrationCategory>
+                              )}
+                              {selectedProjectInsights.aiInsights.integrationMap.recommended && (
+                                <IntegrationCategory>
+                                  <h4>{t('projects.aiInsights.recommended', 'Recommended')}</h4>
+                                  {selectedProjectInsights.aiInsights.integrationMap.recommended.map((item, index) => (
+                                    <IntegrationBadge key={index} type="recommended">{item}</IntegrationBadge>
+                                  ))}
+                                </IntegrationCategory>
+                              )}
+                              {selectedProjectInsights.aiInsights.integrationMap.future && (
+                                <IntegrationCategory>
+                                  <h4>{t('projects.aiInsights.future', 'Future Considerations')}</h4>
+                                  {selectedProjectInsights.aiInsights.integrationMap.future.map((item, index) => (
+                                    <IntegrationBadge key={index} type="future">{item}</IntegrationBadge>
+                                  ))}
+                                </IntegrationCategory>
+                              )}
+                            </IntegrationGrid>
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                    </>
+                  )}
+
+                  {/* Timeline Tab */}
+                  {activeTab === 'timeline' && (
+                    <>
+                      {/* Timeline Estimate */}
+                      {selectedProjectInsights.aiInsights.timelineEstimate && (
+                        <InsightSection>
+                          <h3>
+                            <FaCalendarAlt />
+                            {t('projects.summary.projectTimeline', 'Project Timeline')}
+                          </h3>
+                          <InsightCard>
+                            <div style={{ textAlign: 'center', marginBottom: spacing.lg }}>
+                              <h4>{t('projects.summary.totalDuration', 'Total Duration')}</h4>
+                              <div style={{ fontSize: '1.5rem', color: colors.accent.primary, fontWeight: 'bold' }}>
+                                {selectedProjectInsights.aiInsights.timelineEstimate.totalDuration}
+                              </div>
+                            </div>
+                            
+                            {selectedProjectInsights.aiInsights.timelineEstimate.phases && (
+                              <TimelineVisualization>
+                                {selectedProjectInsights.aiInsights.timelineEstimate.phases.map((phase, index) => (
+                                  <TimelineItem key={index}>
+                                    <div className="phase">{phase.phase}</div>
+                                    <div className="duration">{phase.duration}</div>
+                                    <div className="tasks">
+                                      {phase.tasks?.slice(0, 2).map((task, taskIndex) => (
+                                        <div key={taskIndex}>• {task}</div>
+                                      ))}
+                                    </div>
+                                  </TimelineItem>
+                                ))}
+                              </TimelineVisualization>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                      
+                      {/* MVP Definition */}
+                      {selectedProjectInsights.aiInsights.mvpDefinition && (
+                        <InsightSection>
+                          <h3>
+                            <FaRocket />
+                            {t('projects.summary.mvp', 'MVP Timeline')}
+                          </h3>
+                          <InsightCard>
+                            <DetailGrid>
+                              <DetailItem>
+                                <strong>{t('projects.summary.mvpTimeline', 'MVP Timeline')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.timeline}</span>
+                              </DetailItem>
+                              <DetailItem>
+                                <strong>{t('projects.summary.mvpCost', 'MVP Cost')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.costEstimate}</span>
+                              </DetailItem>
+                            </DetailGrid>
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                    </>
+                  )}
+
+                  {/* Next Steps Tab */}
+                  {activeTab === 'next' && (
+                    <>
+                      {selectedProjectInsights.aiInsights.nextSteps && selectedProjectInsights.aiInsights.nextSteps.length > 0 && (
+                        <InsightSection>
+                          <h3>
+                            <FaArrowCircleRight />
+                            {t('projects.summary.recommendedSteps', 'Recommended Next Steps')}
+                          </h3>
+                          <InsightCard>
+                            {selectedProjectInsights.aiInsights.nextSteps.map((step, index) => (
+                              <NextStepItem key={index}>
+                                <StepNumber>{index + 1}</StepNumber>
+                                <span>{step}</span>
+                              </NextStepItem>
+                            ))}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                      
+                      {/* Key Considerations */}
+                      {selectedProjectInsights.aiInsights.projectFeasibility?.keyConsiderations && (
+                        <InsightSection>
+                          <h3>
+                            <FaExclamationTriangle />
+                            {t('projects.summary.keyConsiderations', 'Key Considerations')}
+                          </h3>
+                          <InsightCard>
+                            <ul>
+                              {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations.map((consideration, index) => (
+                                <li key={index}>{consideration}</li>
+                              ))}
+                            </ul>
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                    </>
+                  )}
+
+                  {/* Old tab content removed for simplified UI */}
+                  {false && selectedProjectInsights.aiInsights.projectRoadmap && (
                     <InsightSection>
                       <h3>
-                        <FaArrowCircleRight />
-                        {t('projects.aiInsights.nextSteps', 'Next Steps')}
+                        <FaMapMarked />
+                        {t('projects.aiInsights.projectRoadmap', 'Development Roadmap')}
                       </h3>
-                      <InsightCard>
-                        {selectedProjectInsights.aiInsights.nextSteps.map((step, index) => (
-                          <NextStepItem key={index}>
-                            <FaChevronRight style={{ marginTop: '2px', color: colors.accent.primary }} />
-                            <span>{step}</span>
-                          </NextStepItem>
-                        ))}
-                      </InsightCard>
-                    </InsightSection>
+                      {selectedProjectInsights.aiInsights.projectRoadmap.phases.map((phase, index) => (
+                            <RoadmapPhase key={index}>
+                              <PhaseHeader>
+                                <h4>{phase.phase}</h4>
+                                <PhaseDuration>{phase.duration}</PhaseDuration>
+                              </PhaseHeader>
+                              <PhaseContent>
+                                <PhaseSection>
+                                  <h5>{t('projects.aiInsights.tasks', 'Tasks')}</h5>
+                                  <ul>
+                                    {phase.tasks.map((task, taskIndex) => (
+                                      <li key={taskIndex}>{task}</li>
+                                    ))}
+                                  </ul>
+                                </PhaseSection>
+                                <PhaseSection>
+                                  <h5>{t('projects.aiInsights.deliverables', 'Deliverables')}</h5>
+                                  <ul>
+                                    {phase.deliverables.map((deliverable, delIndex) => (
+                                      <li key={delIndex}>{deliverable}</li>
+                                    ))}
+                                  </ul>
+                                </PhaseSection>
+                                {phase.dependencies && phase.dependencies.length > 0 && (
+                                  <PhaseSection>
+                                    <h5>{t('projects.aiInsights.dependencies', 'Dependencies')}</h5>
+                                    <ul>
+                                      {phase.dependencies.map((dep, depIndex) => (
+                                        <li key={depIndex}>{dep}</li>
+                                      ))}
+                                    </ul>
+                                  </PhaseSection>
+                                )}
+                              </PhaseContent>
+                            </RoadmapPhase>
+                          ))}
+                        </InsightSection>
+                      )}
+                    </>
                   )}
+
+                  {false && (
+                    <>
+                      {/* MVP Definition - Hidden */}
+                      {selectedProjectInsights.aiInsights.mvpDefinition && (
+                        <InsightSection>
+                          <h3>
+                            <FaRocket />
+                            {t('projects.aiInsights.mvp', 'MVP Definition')}
+                          </h3>
+                          <InsightCard>
+                            <DetailGrid>
+                              <DetailItem>
+                                <strong>{t('projects.aiInsights.mvpTimeline', 'Timeline')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.timeline}</span>
+                              </DetailItem>
+                              <DetailItem>
+                                <strong>{t('projects.aiInsights.mvpCost', 'Cost Estimate')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.costEstimate}</span>
+                              </DetailItem>
+                            </DetailGrid>
+                            
+                            <h4>{t('projects.aiInsights.mvpFeatures', 'Core MVP Features')}</h4>
+                            <ul>
+                              {selectedProjectInsights.aiInsights.mvpDefinition.coreFeatures.map((feature, index) => (
+                                <li key={index}>{feature}</li>
+                              ))}
+                            </ul>
+                            
+                            {selectedProjectInsights.aiInsights.mvpDefinition.successMetrics && (
+                              <>
+                                <h4>{t('projects.aiInsights.successMetrics', 'Success Metrics')}</h4>
+                                <ul>
+                                  {selectedProjectInsights.aiInsights.mvpDefinition.successMetrics.map((metric, index) => (
+                                    <li key={index}>{metric}</li>
+                                  ))}
+                                </ul>
+                              </>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                    </>
+                  )}
+
+                  {activeTab === 'financial' && (
+                    <>
+                      {/* Budget Analysis */}
+                      {selectedProjectInsights.aiInsights.budgetAnalysis && (
+                        <InsightSection>
+                          <h3>
+                            <FaMoneyBillWave />
+                            {t('projects.aiInsights.budgetBreakdown', 'Budget Breakdown')}
+                          </h3>
+                          <InsightCard>
+                            <BudgetTotal>
+                              <h4>{t('projects.aiInsights.totalEstimate', 'Total Estimate')}</h4>
+                              <BudgetAmount>{selectedProjectInsights.aiInsights.budgetAnalysis.estimatedCost}</BudgetAmount>
+                            </BudgetTotal>
+                            
+                            {selectedProjectInsights.aiInsights.budgetAnalysis.costBreakdown && (
+                              <BudgetBreakdown>
+                                {Object.entries(selectedProjectInsights.aiInsights.budgetAnalysis.costBreakdown).map(([category, cost]) => (
+                                  <BudgetItem key={category}>
+                                    <span>{category.charAt(0).toUpperCase() + category.slice(1)}</span>
+                                    <span>{cost}</span>
+                                  </BudgetItem>
+                                ))}
+                              </BudgetBreakdown>
+                            )}
+                            
+                            {selectedProjectInsights.aiInsights.budgetAnalysis.costOptimizationTips && (
+                              <>
+                                <h4>{t('projects.aiInsights.costOptimization', 'Cost Optimization Tips')}</h4>
+                                <ul>
+                                  {selectedProjectInsights.aiInsights.budgetAnalysis.costOptimizationTips.map((tip, index) => (
+                                    <li key={index}>{tip}</li>
+                                  ))}
+                                </ul>
+                              </>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+
+                      {/* Team Composition */}
+                      {selectedProjectInsights.aiInsights.teamComposition && (
+                        <InsightSection>
+                          <h3>
+                            <FaUsersCog />
+                            {t('projects.aiInsights.teamRequirements', 'Team Requirements')}
+                          </h3>
+                          <InsightCard>
+                            <TeamGrid>
+                              <TeamCategory>
+                                <h4>{t('projects.aiInsights.immediateTeam', 'Immediate Needs')}</h4>
+                                {selectedProjectInsights.aiInsights.teamComposition.immediate.map((role, index) => (
+                                  <TeamBadge key={index} type="immediate">{role}</TeamBadge>
+                                ))}
+                              </TeamCategory>
+                              <TeamCategory>
+                                <h4>{t('projects.aiInsights.futureTeam', 'Future Expansion')}</h4>
+                                {selectedProjectInsights.aiInsights.teamComposition.future.map((role, index) => (
+                                  <TeamBadge key={index} type="future">{role}</TeamBadge>
+                                ))}
+                              </TeamCategory>
+                            </TeamGrid>
+                            
+                            {selectedProjectInsights.aiInsights.teamComposition.estimatedHours && (
+                              <>
+                                <h4>{t('projects.aiInsights.estimatedHours', 'Estimated Hours')}</h4>
+                                <HoursGrid>
+                                  {Object.entries(selectedProjectInsights.aiInsights.teamComposition.estimatedHours).map(([category, hours]) => (
+                                    <HourItem key={category}>
+                                      <span>{category.charAt(0).toUpperCase() + category.slice(1)}</span>
+                                      <span>{hours} hours</span>
+                                    </HourItem>
+                                  ))}
+                                </HoursGrid>
+                              </>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                    </>
+                  )}
+
+                  {activeTab === 'risks' && (
+                    <>
+                      {/* Risk Assessment */}
+                      {selectedProjectInsights.aiInsights.riskAssessment && (
+                        <InsightSection>
+                          <h3>
+                            <FaExclamationTriangle />
+                            {t('projects.aiInsights.riskAssessment', 'Risk Assessment')}
+                          </h3>
+                          {selectedProjectInsights.aiInsights.riskAssessment.potentialRisks.map((risk, index) => (
+                            <RiskCard key={index} impact={risk.impact}>
+                              <RiskHeader>
+                                <RiskTitle>{risk.risk}</RiskTitle>
+                                <RiskImpact impact={risk.impact}>{risk.impact}</RiskImpact>
+                              </RiskHeader>
+                              <RiskMitigation>
+                                <strong>{t('projects.aiInsights.mitigation', 'Mitigation')}:</strong> {risk.mitigation}
+                              </RiskMitigation>
+                            </RiskCard>
+                          ))}
+                        </InsightSection>
+                      )}
+
+                      {/* Security Requirements */}
+                      {selectedProjectInsights.aiInsights.securityRequirements && (
+                        <InsightSection>
+                          <h3>
+                            <FaUserShield />
+                            {t('projects.aiInsights.securityRequirements', 'Security Requirements')}
+                          </h3>
+                          <InsightCard>
+                            <SecurityGrid>
+                              {selectedProjectInsights.aiInsights.securityRequirements.authentication && (
+                                <SecurityCategory>
+                                  <h4>{t('projects.aiInsights.authentication', 'Authentication')}</h4>
+                                  <ul>
+                                    {selectedProjectInsights.aiInsights.securityRequirements.authentication.map((item, index) => (
+                                      <li key={index}>{item}</li>
+                                    ))}
+                                  </ul>
+                                </SecurityCategory>
+                              )}
+                              {selectedProjectInsights.aiInsights.securityRequirements.dataProtection && (
+                                <SecurityCategory>
+                                  <h4>{t('projects.aiInsights.dataProtection', 'Data Protection')}</h4>
+                                  <ul>
+                                    {selectedProjectInsights.aiInsights.securityRequirements.dataProtection.map((item, index) => (
+                                      <li key={index}>{item}</li>
+                                    ))}
+                                  </ul>
+                                </SecurityCategory>
+                              )}
+                              {selectedProjectInsights.aiInsights.securityRequirements.compliance && (
+                                <SecurityCategory>
+                                  <h4>{t('projects.aiInsights.compliance', 'Compliance')}</h4>
+                                  <ul>
+                                    {selectedProjectInsights.aiInsights.securityRequirements.compliance.map((item, index) => (
+                                      <li key={index}>{item}</li>
+                                    ))}
+                                  </ul>
+                                </SecurityCategory>
+                              )}
+                            </SecurityGrid>
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+
+                      {/* Maintenance Strategy */}
+                      {selectedProjectInsights.aiInsights.maintenanceStrategy && (
+                        <InsightSection>
+                          <h3>
+                            <FaTools />
+                            {t('projects.aiInsights.maintenance', 'Maintenance Strategy')}
+                          </h3>
+                          <InsightCard>
+                            <DetailGrid>
+                              <DetailItem>
+                                <strong>{t('projects.aiInsights.updateFrequency', 'Update Frequency')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.maintenanceStrategy.updateFrequency}</span>
+                              </DetailItem>
+                              <DetailItem>
+                                <strong>{t('projects.aiInsights.backupStrategy', 'Backup Strategy')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.maintenanceStrategy.backupStrategy}</span>
+                              </DetailItem>
+                              <DetailItem>
+                                <strong>{t('projects.aiInsights.supportModel', 'Support Model')}:</strong>
+                                <span>{selectedProjectInsights.aiInsights.maintenanceStrategy.supportModel}</span>
+                              </DetailItem>
+                            </DetailGrid>
+                            
+                            {selectedProjectInsights.aiInsights.maintenanceStrategy.monitoringTools && (
+                              <>
+                                <h4>{t('projects.aiInsights.monitoringTools', 'Monitoring Tools')}</h4>
+                                <div>
+                                  {selectedProjectInsights.aiInsights.maintenanceStrategy.monitoringTools.map((tool, index) => (
+                                    <TechBadge key={index}>{tool}</TechBadge>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                    </>
+                  )}
+
+                  {/* Ideas Tab */}
+                  {activeTab === 'ideas' && (
+                    <>
+                      {/* Project Ideas */}
+                      {selectedProjectInsights.aiInsights.projectIdeas && (
+                        <InsightSection>
+                          <h3>
+                            <FaRocket />
+                            {t('projects.aiInsights.projectIdeas', 'Project Ideas & Innovations')}
+                          </h3>
+                          
+                          {/* Innovative Features */}
+                          {selectedProjectInsights.aiInsights.projectIdeas.innovativeFeatures && (
+                            <InsightCard>
+                              <h4>{t('projects.aiInsights.innovativeFeatures', 'Innovative Features')}</h4>
+                              <ul>
+                                {selectedProjectInsights.aiInsights.projectIdeas.innovativeFeatures.map((feature, index) => (
+                                  <li key={index}>{feature}</li>
+                                ))}
+                              </ul>
+                            </InsightCard>
+                          )}
+                          
+                          {/* UX Enhancements */}
+                          {selectedProjectInsights.aiInsights.projectIdeas.userExperienceEnhancements && (
+                            <InsightCard>
+                              <h4>{t('projects.aiInsights.uxEnhancements', 'User Experience Enhancements')}</h4>
+                              <ul>
+                                {selectedProjectInsights.aiInsights.projectIdeas.userExperienceEnhancements.map((enhancement, index) => (
+                                  <li key={index}>{enhancement}</li>
+                                ))}
+                              </ul>
+                            </InsightCard>
+                          )}
+                          
+                          {/* AI Integration Opportunities */}
+                          {selectedProjectInsights.aiInsights.projectIdeas.aiIntegrationOpportunities && (
+                            <InsightCard>
+                              <h4>{t('projects.aiInsights.aiIntegration', 'AI Integration Opportunities')}</h4>
+                              <ul>
+                                {selectedProjectInsights.aiInsights.projectIdeas.aiIntegrationOpportunities.map((opportunity, index) => (
+                                  <li key={index}>{opportunity}</li>
+                                ))}
+                              </ul>
+                            </InsightCard>
+                          )}
+                        </InsightSection>
+                      )}
+                      
+                      {/* Project Thoughts */}
+                      {selectedProjectInsights.aiInsights.projectThoughts && (
+                        <InsightSection>
+                          <h3>
+                            <FaLightbulb />
+                            {t('projects.aiInsights.projectThoughts', 'Strategic Analysis')}
+                          </h3>
+                          <MetricsGrid>
+                            <MetricCard>
+                              <div className="icon"><FaTrophy /></div>
+                              <div className="value">{selectedProjectInsights.aiInsights.projectThoughts.strengths?.length || 0}</div>
+                              <div className="label">{t('projects.aiInsights.strengths', 'Strengths')}</div>
+                            </MetricCard>
+                            <MetricCard>
+                              <div className="icon"><FaExclamationTriangle /></div>
+                              <div className="value">{selectedProjectInsights.aiInsights.projectThoughts.challenges?.length || 0}</div>
+                              <div className="label">{t('projects.aiInsights.challenges', 'Challenges')}</div>
+                            </MetricCard>
+                            <MetricCard>
+                              <div className="icon"><FaRocket /></div>
+                              <div className="value">{selectedProjectInsights.aiInsights.projectThoughts.opportunities?.length || 0}</div>
+                              <div className="label">{t('projects.aiInsights.opportunities', 'Opportunities')}</div>
+                            </MetricCard>
+                          </MetricsGrid>
+                          
+                          {selectedProjectInsights.aiInsights.projectThoughts.recommendations && (
+                            <InsightCard>
+                              <h4>{t('projects.aiInsights.recommendations', 'Strategic Recommendations')}</h4>
+                              <p>{selectedProjectInsights.aiInsights.projectThoughts.recommendations}</p>
+                            </InsightCard>
+                          )}
+                        </InsightSection>
+                      )}
+                    </>
+                  )}
+                  
+                  {/* Metrics Tab */}
+                  {activeTab === 'metrics' && (
+                    <>
+                      {/* Analytics and Metrics */}
+                      {selectedProjectInsights.aiInsights.analyticsAndMetrics && (
+                        <InsightSection>
+                          <h3>
+                            <FaChartBar />
+                            {t('projects.aiInsights.analyticsMetrics', 'Analytics & Metrics')}
+                          </h3>
+                          
+                          {/* KPIs */}
+                          {selectedProjectInsights.aiInsights.analyticsAndMetrics.kpis && (
+                            <InsightCard>
+                              <h4>{t('projects.aiInsights.kpis', 'Key Performance Indicators')}</h4>
+                              <ul>
+                                {selectedProjectInsights.aiInsights.analyticsAndMetrics.kpis.map((kpi, index) => (
+                                  <li key={index}>{kpi}</li>
+                                ))}
+                              </ul>
+                            </InsightCard>
+                          )}
+                          
+                          {/* Analytics Tools */}
+                          {selectedProjectInsights.aiInsights.analyticsAndMetrics.analyticsTools && (
+                            <InsightCard>
+                              <h4>{t('projects.aiInsights.analyticsTools', 'Recommended Analytics Tools')}</h4>
+                              <div>
+                                {selectedProjectInsights.aiInsights.analyticsAndMetrics.analyticsTools.map((tool, index) => (
+                                  <TechBadge key={index}>{tool}</TechBadge>
+                                ))}
+                              </div>
+                            </InsightCard>
+                          )}
+                        </InsightSection>
+                      )}
+                      
+                      {/* Performance Optimization */}
+                      {selectedProjectInsights.aiInsights.performanceOptimization && (
+                        <InsightSection>
+                          <h3>
+                            <FaBolt />
+                            {t('projects.aiInsights.performanceOptimization', 'Performance Optimization')}
+                          </h3>
+                          <InsightCard>
+                            <h4>{t('projects.aiInsights.frontendOptimizations', 'Frontend Optimizations')}</h4>
+                            <ul>
+                              {selectedProjectInsights.aiInsights.performanceOptimization.frontendOptimizations?.map((opt, index) => (
+                                <li key={index}>{opt}</li>
+                              ))}
+                            </ul>
+                          </InsightCard>
+                          <InsightCard>
+                            <h4>{t('projects.aiInsights.backendOptimizations', 'Backend Optimizations')}</h4>
+                            <ul>
+                              {selectedProjectInsights.aiInsights.performanceOptimization.backendOptimizations?.map((opt, index) => (
+                                <li key={index}>{opt}</li>
+                              ))}
+                            </ul>
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                      
+                      {/* Monetization Strategy */}
+                      {selectedProjectInsights.aiInsights.monetizationStrategy && (
+                        <InsightSection>
+                          <h3>
+                            <FaMoneyBillWave />
+                            {t('projects.aiInsights.monetization', 'Monetization Strategy')}
+                          </h3>
+                          <InsightCard>
+                            {selectedProjectInsights.aiInsights.monetizationStrategy.revenueModels && (
+                              <>
+                                <h4>{t('projects.aiInsights.revenueModels', 'Revenue Models')}</h4>
+                                <ul>
+                                  {selectedProjectInsights.aiInsights.monetizationStrategy.revenueModels.map((model, index) => (
+                                    <li key={index}>{model}</li>
+                                  ))}
+                                </ul>
+                              </>
+                            )}
+                            
+                            {selectedProjectInsights.aiInsights.monetizationStrategy.pricingStrategy && (
+                              <>
+                                <h4>{t('projects.aiInsights.pricingStrategy', 'Pricing Strategy')}</h4>
+                                <p>{selectedProjectInsights.aiInsights.monetizationStrategy.pricingStrategy}</p>
+                              </>
+                            )}
+                            
+                            {selectedProjectInsights.aiInsights.monetizationStrategy.projectedRevenue && (
+                              <>
+                                <h4>{t('projects.aiInsights.projectedRevenue', 'Revenue Projections')}</h4>
+                                <BudgetBreakdown>
+                                  <BudgetItem>
+                                    <span className="label">{t('projects.aiInsights.month3', '3 Months')}</span>
+                                    <span className="value">{selectedProjectInsights.aiInsights.monetizationStrategy.projectedRevenue.month3}</span>
+                                  </BudgetItem>
+                                  <BudgetItem>
+                                    <span className="label">{t('projects.aiInsights.month6', '6 Months')}</span>
+                                    <span className="value">{selectedProjectInsights.aiInsights.monetizationStrategy.projectedRevenue.month6}</span>
+                                  </BudgetItem>
+                                  <BudgetItem>
+                                    <span className="label">{t('projects.aiInsights.year1', 'Year 1')}</span>
+                                    <span className="value">{selectedProjectInsights.aiInsights.monetizationStrategy.projectedRevenue.year1}</span>
+                                  </BudgetItem>
+                                </BudgetBreakdown>
+                              </>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+                    </>
+                  )}
+                    </>
+                  )}
+
+                  {/* Next steps moved to dedicated tab */}
                 </>
               )}
             </InsightsBody>

@@ -74,6 +74,145 @@ export interface Project {
   createdAt: Date | Timestamp;
   updatedAt?: Date | Timestamp;
   summary?: string; // AI-generated summary
+  
+  // Comprehensive AI Insights
+  aiInsights?: {
+    // Core insights
+    executiveSummary: string;
+    projectFeasibility: {
+      score: string;
+      assessment: string;
+      keyConsiderations: string[];
+    };
+    
+    // Technical architecture
+    technicalRecommendations: {
+      suggestedTechStack: {
+        frontend: string[];
+        backend: string[];
+        database: string[];
+        hosting: string[];
+      };
+      architecturePattern: string;
+      scalabilityConsiderations: string[];
+    };
+    technicalSpecification?: {
+      architecture: string;
+      databases: {
+        primary: string;
+        cache?: string;
+        search?: string;
+      };
+      apiDesign: string;
+      deploymentArchitecture: string;
+    };
+    
+    // Project planning
+    timelineEstimate: {
+      totalDuration: string;
+      phases: Array<{
+        name: string;
+        duration: string;
+        deliverables: string[];
+      }>;
+      criticalMilestones: string[];
+    };
+    projectRoadmap?: {
+      phases: Array<{
+        phase: string;
+        duration: string;
+        tasks: string[];
+        deliverables: string[];
+        dependencies?: string[];
+      }>;
+    };
+    
+    // Financial analysis
+    budgetAnalysis: {
+      estimatedCost: string;
+      costBreakdown: {
+        development?: string;
+        design?: string;
+        testing?: string;
+        deployment?: string;
+        maintenance?: string;
+      };
+      costOptimizationTips: string[];
+    };
+    
+    // Risk and security
+    riskAssessment: {
+      potentialRisks: Array<{
+        risk: string;
+        impact: string;
+        mitigation: string;
+      }>;
+      securityConsiderations: string[];
+    };
+    securityRequirements?: {
+      authentication: string[];
+      dataProtection: string[];
+      compliance: string[];
+      bestPractices: string[];
+    };
+    
+    // Market analysis
+    competitiveAnalysis: {
+      marketInsights: string;
+      differentiationOpportunities: string[];
+      keyFeaturesComparison: string;
+    };
+    
+    // MVP and scaling
+    mvpDefinition?: {
+      coreFeatures: string[];
+      timeline: string;
+      costEstimate: string;
+      successMetrics: string[];
+    };
+    scalabilityPlan?: {
+      userGrowthStrategy: string;
+      dataGrowthStrategy: string;
+      performanceTargets: {
+        responseTime: string;
+        uptime: string;
+        concurrent_users?: string;
+      };
+    };
+    
+    // Team and maintenance
+    teamComposition?: {
+      immediate: string[];
+      future: string[];
+      estimatedHours: {
+        development: number;
+        design: number;
+        testing: number;
+        management?: number;
+      };
+    };
+    maintenanceStrategy?: {
+      updateFrequency: string;
+      monitoringTools: string[];
+      backupStrategy: string;
+      supportModel: string;
+    };
+    
+    // Integration requirements
+    integrationMap?: {
+      required: string[];
+      recommended: string[];
+      future: string[];
+    };
+    
+    // Next steps
+    nextSteps: string[];
+    
+    // Metadata
+    generatedAt: Date | any;
+    modelUsed: string;
+    confidence?: number;
+  };
 }
 
 // Helper function to wait for auth

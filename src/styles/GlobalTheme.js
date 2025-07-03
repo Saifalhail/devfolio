@@ -272,30 +272,8 @@ export const mixins = {
     `;
   },
   
-  // Decorative element styling
+  // Decorative element styling - removed glowing circles for cleaner design
   decorativeElement: css`
-    &:before {
-      content: '';
-      position: absolute;
-      top: -50px;
-      right: -50px;
-      width: 150px;
-      height: 150px;
-      background: radial-gradient(circle, rgba(205, 62, 253, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-    
-    &:after {
-      content: '';
-      position: absolute;
-      bottom: -50px;
-      left: -50px;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(123, 44, 191, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
+    /* Glowing circles removed to reduce visual clutter */
   `,
 };

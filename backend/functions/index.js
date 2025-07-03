@@ -233,15 +233,15 @@ exports.generateProjectInsights = functions.https.onCall(async (data, context) =
     const model = genAI.getGenerativeModel({ 
       model: "gemini-2.0-flash",
       generationConfig: {
-        temperature: 0.7,
+        temperature: 0.8,
         topK: 40,
         topP: 0.95,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 12000, // Increased for very comprehensive output
       }
     });
 
-    // Create a detailed prompt with all project information
-    const prompt = `You are an expert software project analyst working with a solo software developer. Analyze the following project details and provide comprehensive insights in JSON format.
+    // Create a comprehensive prompt with all project information
+    const prompt = `You are an expert software project analyst and consultant working with a solo software developer. Analyze the following project details and provide COMPREHENSIVE insights in JSON format.
 
 CONTEXT:
 You are analyzing a project for a solo software developer who specializes in:
@@ -258,84 +258,266 @@ IMPORTANT CONSIDERATIONS FOR YOUR ANALYSIS:
 - Suggest phased approaches when appropriate
 - Consider the developer's expertise with React/Firebase ecosystem
 - Factor in time for testing, deployment, and client feedback
+- Provide specific, actionable recommendations
+- Include all technical details needed to start the project
 
 PROJECT DETAILS:
 - Project Name: ${projectData.projectName || 'Unnamed Project'}
-- Industry: ${projectData.industry?.label || 'Not specified'}
+- Industry: ${projectData.industry?.label || projectData.industry || 'Not specified'}
 - Project Type: ${projectData.projectType || 'Not specified'}
 - Description: ${projectData.projectDescription || 'No description provided'}
 - Target Users: ${projectData.targetUsers || 'Not specified'}
-- Geographic Locations: ${projectData.geographicLocations?.map(loc => loc.label).join(', ') || 'Not specified'}
+- Geographic Locations: ${Array.isArray(projectData.geographicLocations) ? projectData.geographicLocations.map(loc => typeof loc === 'object' ? loc.label : loc).join(', ') : projectData.geographicLocations || 'Not specified'}
 - Expected User Scale: ${projectData.expectedUserScale || 'Not specified'}
 - Timeline: ${projectData.projectTimeline || 'Not specified'}
 - Budget Range: ${projectData.budgetRange || 'Not specified'}
 - Key Features: ${projectData.keyFeatures?.join(', ') || 'No features specified'}
+- Platforms: ${projectData.platforms?.join(', ') || 'Not specified'}
+- Tech Stack Preference: ${projectData.techStack || 'Not specified'}
+- Hosting Preference: ${projectData.hosting || 'Not specified'}
 - Design Preferences: ${projectData.designPreferences?.join(', ') || 'No preferences specified'}
 - Authentication Methods: ${projectData.authenticationMethods?.join(', ') || 'Not specified'}
 - Data Storage Features: ${projectData.dataStorageFeatures?.join(', ') || 'Not specified'}
 - Third-party Integrations: ${projectData.thirdPartyIntegrations?.join(', ') || 'None specified'}
+- Existing Resources: ${projectData.existingResources?.join(', ') || 'None'}
+- Existing Materials: ${projectData.existingMaterials?.join(', ') || 'None'}
 - Competitor URLs: ${projectData.competitorUrls?.join(', ') || 'None provided'}
 - Additional Notes: ${projectData.additionalNotes || 'None'}
 
-Please provide a comprehensive analysis in the following JSON format:
+Please provide an EXTREMELY COMPREHENSIVE analysis in the following JSON format. Fill ALL fields with detailed, specific information:
+
 {
-  "executiveSummary": "A 2-3 sentence overview of the project and its viability",
+  "executiveSummary": "A comprehensive 3-4 sentence overview of the project, its market opportunity, technical approach, and expected outcomes",
+  
   "projectFeasibility": {
-    "score": "1-10 score",
-    "assessment": "Brief assessment of technical feasibility",
-    "keyConsiderations": ["List of 3-5 key points to consider"]
+    "score": "1-10 score with decimal precision (e.g., 8.5)",
+    "assessment": "Detailed assessment of technical and business feasibility (2-3 sentences)",
+    "keyConsiderations": ["List of 5-7 specific key points to consider for project success"]
   },
+  
   "technicalRecommendations": {
     "suggestedTechStack": {
-      "frontend": ["List of recommended frontend technologies"],
-      "backend": ["List of recommended backend technologies"],
-      "database": ["Recommended database solutions"],
-      "hosting": ["Recommended hosting platforms"]
+      "frontend": ["List 3-5 specific frontend technologies with versions"],
+      "backend": ["List 3-5 specific backend technologies with versions"],
+      "database": ["List 2-3 database solutions with use cases"],
+      "hosting": ["List 2-3 hosting platforms with specific services"]
     },
-    "architecturePattern": "Recommended architecture pattern (e.g., MVC, microservices, serverless)",
-    "scalabilityConsiderations": ["List of 2-3 scalability considerations"]
+    "architecturePattern": "Detailed architecture recommendation with justification",
+    "scalabilityConsiderations": ["List of 4-5 specific scalability strategies"]
   },
+  
+  "technicalSpecification": {
+    "architecture": "Detailed architecture description (e.g., 'Microservices with API Gateway')",
+    "databases": {
+      "primary": "Primary database choice with reason",
+      "cache": "Caching solution if needed",
+      "search": "Search database if needed"
+    },
+    "apiDesign": "API design approach (REST, GraphQL, etc.) with rationale",
+    "deploymentArchitecture": "Detailed deployment strategy"
+  },
+  
   "timelineEstimate": {
-    "totalDuration": "Estimated total project duration",
+    "totalDuration": "Specific duration (e.g., '16-20 weeks')",
     "phases": [
       {
-        "name": "Phase name",
-        "duration": "Duration estimate",
-        "deliverables": ["List of deliverables"]
+        "name": "Phase 1: Planning & Setup",
+        "duration": "1-2 weeks",
+        "deliverables": ["List 3-4 specific deliverables"]
+      },
+      {
+        "name": "Phase 2: Core Development",
+        "duration": "Duration",
+        "deliverables": ["List specific deliverables"]
+      },
+      {
+        "name": "Phase 3: Testing & Refinement",
+        "duration": "Duration",
+        "deliverables": ["List specific deliverables"]
+      },
+      {
+        "name": "Phase 4: Deployment & Launch",
+        "duration": "Duration",
+        "deliverables": ["List specific deliverables"]
       }
     ],
-    "criticalMilestones": ["List of 3-4 critical milestones"]
+    "criticalMilestones": ["List of 5-6 specific, measurable milestones"]
   },
+  
+  "projectRoadmap": {
+    "phases": [
+      {
+        "phase": "Foundation (Weeks 1-3)",
+        "duration": "3 weeks",
+        "tasks": ["List 5-7 specific tasks"],
+        "deliverables": ["List 3-4 deliverables"],
+        "dependencies": ["List any dependencies"]
+      },
+      {
+        "phase": "MVP Development (Weeks 4-8)",
+        "duration": "5 weeks",
+        "tasks": ["List specific development tasks"],
+        "deliverables": ["List deliverables"],
+        "dependencies": ["List dependencies"]
+      },
+      {
+        "phase": "Enhancement & Polish (Weeks 9-12)",
+        "duration": "4 weeks",
+        "tasks": ["List enhancement tasks"],
+        "deliverables": ["List deliverables"]
+      }
+    ]
+  },
+  
   "budgetAnalysis": {
-    "estimatedCost": "Cost estimate range based on provided budget",
+    "estimatedCost": "Specific range (e.g., '$15,000 - $25,000')",
     "costBreakdown": {
-      "development": "Percentage or amount",
-      "design": "Percentage or amount",
-      "testing": "Percentage or amount",
-      "deployment": "Percentage or amount",
-      "maintenance": "First year maintenance estimate"
+      "development": "60-70% ($12,000-$17,500)",
+      "design": "15-20% ($3,000-$5,000)",
+      "testing": "10% ($1,500-$2,500)",
+      "deployment": "5% ($750-$1,250)",
+      "maintenance": "$500-$1,000/month for first year"
     },
-    "costOptimizationTips": ["List of 2-3 ways to optimize costs"]
+    "costOptimizationTips": ["List 4-5 specific ways to reduce costs without compromising quality"]
   },
+  
+  "mvpDefinition": {
+    "coreFeatures": ["List 5-8 must-have features for MVP"],
+    "timeline": "Specific MVP timeline (e.g., '8-10 weeks')",
+    "costEstimate": "MVP-specific cost estimate",
+    "successMetrics": ["List 4-5 measurable success criteria"]
+  },
+  
   "riskAssessment": {
     "potentialRisks": [
       {
-        "risk": "Risk description",
+        "risk": "Specific risk description",
         "impact": "High/Medium/Low",
-        "mitigation": "Mitigation strategy"
+        "mitigation": "Detailed mitigation strategy"
       }
     ],
-    "securityConsiderations": ["List of 3-4 security considerations"]
+    "securityConsiderations": ["List 5-6 specific security measures needed"]
   },
+  
+  "securityRequirements": {
+    "authentication": ["List 3-4 authentication methods/standards"],
+    "dataProtection": ["List 4-5 data protection measures"],
+    "compliance": ["List relevant compliance requirements"],
+    "bestPractices": ["List 4-5 security best practices"]
+  },
+  
   "competitiveAnalysis": {
-    "marketInsights": "Brief market analysis based on competitors",
-    "differentiationOpportunities": ["List of 3-4 ways to differentiate"],
-    "keyFeaturesComparison": "How the proposed features compare to market"
+    "marketInsights": "Detailed market analysis (2-3 sentences)",
+    "differentiationOpportunities": ["List 5-6 specific ways to stand out"],
+    "keyFeaturesComparison": "Detailed comparison with market standards"
   },
-  "nextSteps": ["Ordered list of 5-7 recommended next steps"]
+  
+  "scalabilityPlan": {
+    "userGrowthStrategy": "Specific strategy for handling user growth",
+    "dataGrowthStrategy": "Strategy for managing data growth",
+    "performanceTargets": {
+      "responseTime": "<200ms for API calls",
+      "uptime": "99.9% availability",
+      "concurrent_users": "Support 10,000+ concurrent users"
+    }
+  },
+  
+  "teamComposition": {
+    "immediate": ["Solo developer", "Part-time UI/UX designer"],
+    "future": ["List 3-4 future team members needed"],
+    "estimatedHours": {
+      "development": 400,
+      "design": 80,
+      "testing": 60,
+      "management": 40
+    }
+  },
+  
+  "maintenanceStrategy": {
+    "updateFrequency": "Bi-weekly releases",
+    "monitoringTools": ["List 3-4 specific monitoring tools"],
+    "backupStrategy": "Automated daily backups with 30-day retention",
+    "supportModel": "Email support with 24-hour response time"
+  },
+  
+  "integrationMap": {
+    "required": ["List 3-5 essential integrations"],
+    "recommended": ["List 3-5 recommended integrations"],
+    "future": ["List 3-5 future integration possibilities"]
+  },
+  
+  "nextSteps": ["List 8-10 specific, actionable next steps in priority order"],
+  
+  "projectIdeas": {
+    "innovativeFeatures": ["List 5-7 creative features that could set this project apart"],
+    "userExperienceEnhancements": ["List 4-6 UX improvements for better engagement"],
+    "gamificationElements": ["List 3-4 gamification ideas if applicable"],
+    "aiIntegrationOpportunities": ["List 3-5 AI/ML features that could add value"]
+  },
+  
+  "marketPositioning": {
+    "targetAudience": "Detailed target audience analysis with demographics",
+    "uniqueSellingProposition": "Clear USP that differentiates from competitors",
+    "marketingChannels": ["List 4-6 recommended marketing channels"],
+    "growthStrategy": "Comprehensive growth strategy for first year"
+  },
+  
+  "monetizationStrategy": {
+    "revenueModels": ["List 3-4 potential revenue models"],
+    "pricingStrategy": "Detailed pricing recommendation with tiers",
+    "projectedRevenue": {
+      "month3": "$X,XXX - $X,XXX",
+      "month6": "$XX,XXX - $XX,XXX",
+      "year1": "$XXX,XXX - $XXX,XXX"
+    },
+    "monetizationTimeline": "When and how to implement monetization"
+  },
+  
+  "userExperienceStrategy": {
+    "designPrinciples": ["List 4-5 core UX principles for the project"],
+    "userJourney": "Detailed user journey from landing to conversion",
+    "accessibilityFeatures": ["List 4-5 accessibility features to implement"],
+    "mobileOptimization": "Specific mobile UX considerations"
+  },
+  
+  "performanceOptimization": {
+    "frontendOptimizations": ["List 4-5 frontend performance techniques"],
+    "backendOptimizations": ["List 4-5 backend optimization strategies"],
+    "cachingStrategy": "Detailed caching approach for scalability",
+    "cdnRecommendations": "CDN setup and configuration advice"
+  },
+  
+  "analyticsAndMetrics": {
+    "kpis": ["List 5-6 key performance indicators to track"],
+    "analyticsTools": ["List 3-4 recommended analytics platforms"],
+    "reportingDashboard": "Dashboard requirements and metrics visualization",
+    "dataInsights": "How to use data for continuous improvement"
+  },
+  
+  "longTermVision": {
+    "year1Goals": ["List 4-5 specific year 1 objectives"],
+    "year2Expansion": "Vision for year 2 growth and features",
+    "exitStrategy": "Potential exit strategies if applicable",
+    "scalabilityRoadmap": "Long-term technical scalability plan"
+  },
+  
+  "projectThoughts": {
+    "strengths": ["List 4-5 project strengths"],
+    "challenges": ["List 3-4 potential challenges"],
+    "opportunities": ["List 4-5 market opportunities"],
+    "recommendations": "Overall strategic recommendations (2-3 sentences)"
+  }
 }
 
-Ensure your response is valid JSON and provides actionable, specific insights based on the project details provided.`;
+IMPORTANT: 
+- Fill EVERY field with specific, detailed information
+- Avoid generic responses - be specific to this project
+- Include technical details that can be immediately acted upon
+- Ensure all arrays have multiple items (not just 1-2)
+- Provide realistic estimates based on the project scope
+- Be creative and innovative in your suggestions
+- Consider the solo developer context for all recommendations
+- Your response must be valid JSON`;
 
     // Generate insights with Gemini
     const result = await model.generateContent(prompt);

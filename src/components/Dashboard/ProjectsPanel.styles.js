@@ -1,90 +1,62 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { fadeIn, slideUp } from '../../styles/animations';
+import { 
+  colors, 
+  spacing, 
+  borderRadius, 
+  shadows, 
+  typography, 
+  transitions,
+  mixins,
+  breakpoints 
+} from '../../styles/GlobalTheme';
 
-// Define fallback values to prevent undefined errors
-const colors = {
-  background: {
-    primary: '#1a1a20',
-    secondary: '#1d1d25',
-    card: '#1c1c24',
-    hover: '#1e1e28',
-    subtle: '#1c1c24'
-  },
-  accent: {
-    primary: '#cd3efd',
-    primaryDark: '#7b2cbf'
-  },
-  text: {
-    primary: '#ffffff',
-    secondary: '#cccccc',
-    muted: '#999999',
-    onAccent: '#ffffff'
-  },
-  status: {
-    success: '#4CAF50',
-    warning: '#FFC107',
-    error: '#F44336',
-    info: '#82a1bf'
-  },
-  border: {
-    default: 'rgba(255, 255, 255, 0.1)',
-    muted: 'rgba(255, 255, 255, 0.05)'
-  }
-};
+// Animation keyframes
+const shimmer = keyframes`
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+`;
 
-const spacing = {
-  xs: '0.25rem',
-  sm: '0.5rem',
-  md: '1rem',
-  lg: '1.5rem',
-  xl: '2rem'
-};
+const float = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+`;
 
-const borderRadius = {
-  sm: '4px',
-  md: '8px',
-  lg: '12px',
-  full: '9999px',
-  round: '50%'
-};
+const pulse = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+`;
 
-const shadows = {
-  medium: '0 4px 10px rgba(0, 0, 0, 0.2)',
-  large: '0 8px 20px rgba(0, 0, 0, 0.25)'
-};
-
-const typography = {
-  fontSizes: {
-    xs: '0.75rem',
-    sm: '0.875rem',
-    md: '1rem',
-    lg: '1.125rem',
-    xl: '1.25rem'
-  },
-  fontWeights: {
-    normal: 400,
-    medium: 500,
-    bold: 700
-  }
-};
-
-const transitions = {
-  medium: '0.3s ease'
-};
-
-const mixins = {
-  flexCenter: css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
+// Additional mixins specific to ProjectsPanel
+const localMixins = {
+  glassmorphism: css`
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  `,
+  glassmorphismDark: css`
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  `,
+  glowEffect: css`
+    box-shadow: 
+      0 0 20px rgba(205, 62, 253, 0.3),
+      0 0 40px rgba(205, 62, 253, 0.1),
+      inset 0 0 20px rgba(205, 62, 253, 0.05);
+  `,
+  shimmerEffect: css`
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: ${shimmer} 2s infinite;
   `
-};
-
-const breakpoints = {
-  down: {
-    sm: '@media (max-width: 576px)',
-    md: '@media (max-width: 768px)'
-  }
 };
 
 export const PanelContainer = styled.div`
@@ -95,6 +67,19 @@ export const PanelContainer = styled.div`
   overflow: hidden;
   animation: ${fadeIn} 0.3s ease-out;
   text-align: ${props => props.dir === 'rtl' ? 'right' : 'left'};
+  background: ${colors.background.primary};
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 300px;
+    background: radial-gradient(ellipse at top, rgba(205, 62, 253, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
 `;
 
 export const HeaderContent = styled.div`
@@ -129,45 +114,53 @@ export const StatusFilterTab = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${props => props.active 
-    ? 'linear-gradient(135deg, rgba(131, 56, 236, 0.8) 0%, rgba(106, 31, 208, 0.8) 100%)' 
-    : 'transparent'};
   background: ${props => props.active 
-    ? 'linear-gradient(135deg, #8338ec 0%, #6a1fd0 100%)' 
-    : 'rgba(50, 50, 80, 0.5)'};
-  color: ${props => props.active ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
-  border: ${props => props.active ? 'none' : '1px solid rgba(255, 255, 255, 0.1)'};
-  border-radius: ${borderRadius.sm};
-  padding: ${spacing.xs} ${spacing.sm};
+    ? colors.gradients.accent
+    : 'transparent'};
+  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
+  border: 1px solid ${props => props.active 
+    ? 'transparent' 
+    : 'rgba(205, 62, 253, 0.3)'};
+  border-radius: ${borderRadius.md};
+  padding: ${spacing.sm} ${spacing.md};
   font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
   cursor: pointer;
   transition: ${transitions.medium};
   position: relative;
-  font-weight: ${props => props.active ? '600' : '400'};
+  font-weight: ${props => props.active ? typography.fontWeights.semiBold : typography.fontWeights.medium};
   
   &:hover {
     background: ${props => props.active 
-      ? 'linear-gradient(135deg, #9a4ffd 0%, #7b2cbf 100%)' 
-      : 'rgba(60, 60, 100, 0.7)'};
-    color: #ffffff;
-    border-color: ${props => props.active ? 'transparent' : 'rgba(255, 255, 255, 0.2)'};
-    transform: translateY(-1px);
+      ? colors.gradients.hover
+      : 'rgba(205, 62, 253, 0.1)'};
+    color: ${colors.text.primary};
+    border-color: ${props => props.active ? 'transparent' : colors.accent.primary};
+    transform: translateY(-2px);
+    box-shadow: ${props => props.active 
+      ? '0 4px 12px rgba(205, 62, 253, 0.4)' 
+      : '0 2px 8px rgba(205, 62, 253, 0.2)'};
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
   
   svg {
     font-size: 1rem;
-    color: ${props => props.active ? '#ffffff' : 'currentColor'};
+    color: ${props => props.active ? colors.text.primary : 'currentColor'};
   }
 `;
 
 export const CustomFilterTabs = styled.div`
   display: flex;
-  background-color: rgba(40, 40, 60, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: ${borderRadius.md};
+  background: rgba(205, 62, 253, 0.05);
+  border: 1px solid rgba(205, 62, 253, 0.2);
+  border-radius: ${borderRadius.lg};
   padding: ${spacing.xs};
   gap: ${spacing.xs};
   flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(205, 62, 253, 0.1);
 `;
 
 export const FilterButton = styled.button`
@@ -219,15 +212,38 @@ export const ProjectsList = styled.div`
 `;
 
 export const ProjectCard = styled.div`
-  background-color: ${colors.background.card};
+  background: linear-gradient(145deg, ${colors.background.card}, ${colors.background.secondary});
+  border: 1px solid transparent;
   border-radius: ${borderRadius.lg};
-  box-shadow: ${shadows.medium};
+  box-shadow: ${shadows.md};
   overflow: hidden;
   transition: ${transitions.medium};
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: ${borderRadius.lg};
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(205, 62, 253, 0.3), rgba(123, 44, 191, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
   
   &:hover {
     transform: translateY(-4px);
-    box-shadow: ${shadows.large};
+    box-shadow: 0 8px 24px rgba(205, 62, 253, 0.2);
+    
+    &::before {
+      opacity: 1;
+    }
   }
 `;
 

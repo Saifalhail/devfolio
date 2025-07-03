@@ -21,7 +21,11 @@
       "Bash(diff:*)",
       "Bash(cat:*)",
       "Bash(awk:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(node:*)",
+      "Bash(for comp in \"RiskCard\" \"RiskHeader\" \"RiskTitle\" \"RiskImpact\" \"RiskMitigation\" \"SecurityGrid\" \"SecurityCategory\" \"StepNumber\")",
+      "Bash(do echo \"=== $comp ===\")",
+      "Bash(done)"
     ],
     "deny": []
   }
