@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { fadeIn, slideUp } from '../../styles/animations';
-import { 
-  FaClock, 
-  FaCheck, 
-  FaPencilAlt, 
+import {
+  FaClock,
+  FaCheck,
+  FaPencilAlt,
   FaPlus,
   FaEllipsisV,
   FaCalendarAlt,
@@ -40,13 +40,13 @@ import {
   FaUsersCog
 } from 'react-icons/fa';
 import StarryBackground from '../Common/StarryBackground';
-import { 
-  collection, 
-  query, 
-  where, 
-  orderBy, 
-  onSnapshot, 
-  addDoc, 
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  addDoc,
   serverTimestamp,
   updateDoc,
   doc
@@ -117,15 +117,15 @@ import {
   DetailValue,
   ProjectDescription
 } from '../../styles/GlobalComponents';
-import { 
-  colors, 
-  spacing, 
-  borderRadius, 
-  shadows, 
-  mixins, 
-  transitions, 
+import {
+  colors,
+  spacing,
+  borderRadius,
+  shadows,
+  mixins,
+  transitions,
   typography,
-  breakpoints 
+  breakpoints
 } from '../../styles/GlobalTheme';
 
 // Import ProjectWizard directly to fix the default export issue
@@ -334,8 +334,8 @@ const Select = styled.select`
 
 const ProjectsContainer = styled.div`
   display: grid;
-  grid-template-columns: ${props => props.$isGrid 
-    ? 'repeat(auto-fill, minmax(320px, 1fr))' 
+  grid-template-columns: ${props => props.$isGrid
+    ? 'repeat(auto-fill, minmax(320px, 1fr))'
     : '1fr'};
   gap: ${spacing.lg};
   animation: fadeIn 0.3s ease-in-out;
@@ -526,11 +526,11 @@ const WhitePaginationButton = styled.button`
   min-width: 36px;
   height: 36px;
   padding: 0 ${spacing.sm};
-  background: ${props => props.active 
-    ? colors.gradients.accent 
+  background: ${props => props.active
+    ? colors.gradients.accent
     : 'rgba(205, 62, 253, 0.2)'};
-  border: 1px solid ${props => props.active 
-    ? 'transparent' 
+  border: 1px solid ${props => props.active
+    ? 'transparent'
     : 'rgba(205, 62, 253, 0.4)'};
   border-radius: ${borderRadius.md};
   color: ${colors.text.primary}; /* Always white */
@@ -541,9 +541,9 @@ const WhitePaginationButton = styled.button`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   &:not(:disabled):hover {
-    background: ${props => props.active 
-      ? colors.gradients.hover 
-      : 'rgba(205, 62, 253, 0.15)'};
+    background: ${props => props.active
+    ? colors.gradients.hover
+    : 'rgba(205, 62, 253, 0.15)'};
     border-color: ${props => props.active ? 'transparent' : colors.accent.primary};
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(205, 62, 253, 0.2);
@@ -685,12 +685,12 @@ const CustomFilterTabs = styled.div`
 const StatusFilterTab = styled.button`
   position: relative;
   padding: 8px 16px;
-  background: ${props => props.active 
+  background: ${props => props.active
     ? colors.gradients.accent
     : 'rgba(205, 62, 253, 0.2)'};
   color: ${colors.text.primary}; /* Always white */
-  border: 1px solid ${props => props.active 
-    ? 'transparent' 
+  border: 1px solid ${props => props.active
+    ? 'transparent'
     : 'rgba(205, 62, 253, 0.4)'};
   border-radius: ${borderRadius.md};
   cursor: pointer;
@@ -704,15 +704,15 @@ const StatusFilterTab = styled.button`
   overflow: hidden;
   
   &:hover {
-    background: ${props => props.active 
-      ? colors.gradients.hover
-      : 'rgba(205, 62, 253, 0.3)'};
+    background: ${props => props.active
+    ? colors.gradients.hover
+    : 'rgba(205, 62, 253, 0.3)'};
     color: ${colors.text.primary};
     border-color: ${props => props.active ? 'transparent' : colors.accent.primary};
     transform: translateY(-2px);
-    box-shadow: ${props => props.active 
-      ? '0 4px 12px rgba(205, 62, 253, 0.4)' 
-      : '0 2px 8px rgba(205, 62, 253, 0.2)'};
+    box-shadow: ${props => props.active
+    ? '0 4px 12px rgba(205, 62, 253, 0.4)'
+    : '0 2px 8px rgba(205, 62, 253, 0.2)'};
   }
   
   &:active {
@@ -885,14 +885,14 @@ const AIInsightsButton = styled.button`
   display: flex;
   align-items: center;
   gap: ${spacing.sm};
-  background: ${props => props.disabled 
-    ? 'rgba(255, 255, 255, 0.05)' 
+  background: ${props => props.disabled
+    ? 'rgba(255, 255, 255, 0.05)'
     : colors.gradients.accent};
-  color: ${props => props.disabled 
-    ? colors.text.muted 
+  color: ${props => props.disabled
+    ? colors.text.muted
     : colors.text.primary};
-  border: 1px solid ${props => props.disabled 
-    ? 'rgba(255, 255, 255, 0.1)' 
+  border: 1px solid ${props => props.disabled
+    ? 'rgba(255, 255, 255, 0.1)'
     : 'transparent'};
   border-radius: ${borderRadius.md};
   padding: ${spacing.sm} ${spacing.lg};
@@ -1277,11 +1277,11 @@ const TabButton = styled.button`
   align-items: center;
   gap: ${spacing.sm};
   padding: ${spacing.sm} ${spacing.lg};
-  background: ${props => props.active 
-    ? colors.gradients.accent 
+  background: ${props => props.active
+    ? colors.gradients.accent
     : 'transparent'};
-  border: 1px solid ${props => props.active 
-    ? 'transparent' 
+  border: 1px solid ${props => props.active
+    ? 'transparent'
     : 'rgba(255, 255, 255, 0.1)'};
   border-radius: ${borderRadius.md};
   color: ${props => props.active ? colors.text.primary : colors.text.secondary};
@@ -1296,9 +1296,9 @@ const TabButton = styled.button`
   }
   
   &:hover {
-    background: ${props => props.active 
-      ? colors.gradients.hover
-      : 'rgba(255, 255, 255, 0.05)'};
+    background: ${props => props.active
+    ? colors.gradients.hover
+    : 'rgba(255, 255, 255, 0.05)'};
     color: ${colors.text.primary};
     border-color: ${props => props.active ? 'transparent' : 'rgba(205, 62, 253, 0.3)'};
   }
@@ -1435,21 +1435,21 @@ const ProgressBar = styled.div`
     height: 100%;
     width: ${props => props.progress}%;
     background: linear-gradient(90deg, 
-      ${props => props.type === 'success' ? colors.status.success : 
-                  props.type === 'warning' ? colors.status.warning : 
-                  props.type === 'error' ? colors.status.error : 
-                  colors.accent.primary} 0%,
-      ${props => props.type === 'success' ? '#66BB6A' : 
-                  props.type === 'warning' ? '#FFCA28' : 
-                  props.type === 'error' ? '#EF5350' : 
-                  colors.accent.secondary} 100%);
+      ${props => props.type === 'success' ? colors.status.success :
+    props.type === 'warning' ? colors.status.warning :
+      props.type === 'error' ? colors.status.error :
+        colors.accent.primary} 0%,
+      ${props => props.type === 'success' ? '#66BB6A' :
+    props.type === 'warning' ? '#FFCA28' :
+      props.type === 'error' ? '#EF5350' :
+        colors.accent.secondary} 100%);
     border-radius: 4px;
     transition: width 0.6s ease;
-    box-shadow: 0 0 10px ${props => 
-      props.type === 'success' ? 'rgba(76, 175, 80, 0.5)' : 
-      props.type === 'warning' ? 'rgba(255, 193, 7, 0.5)' : 
-      props.type === 'error' ? 'rgba(244, 67, 54, 0.5)' : 
-      'rgba(205, 62, 253, 0.5)'};
+    box-shadow: 0 0 10px ${props =>
+    props.type === 'success' ? 'rgba(76, 175, 80, 0.5)' :
+      props.type === 'warning' ? 'rgba(255, 193, 7, 0.5)' :
+        props.type === 'error' ? 'rgba(244, 67, 54, 0.5)' :
+          'rgba(205, 62, 253, 0.5)'};
   }
 `;
 
@@ -1474,9 +1474,9 @@ const CircularProgress = styled.div`
     }
     
     &:last-child {
-      stroke: ${props => props.score >= 7 ? colors.status.success : 
-                         props.score >= 5 ? colors.status.warning : 
-                         colors.status.error};
+      stroke: ${props => props.score >= 7 ? colors.status.success :
+    props.score >= 5 ? colors.status.warning :
+      colors.status.error};
       stroke-dasharray: ${props => 2 * Math.PI * 52};
       stroke-dashoffset: ${props => 2 * Math.PI * 52 * (1 - props.score / 10)};
       transition: stroke-dashoffset 1s ease;
@@ -1495,9 +1495,9 @@ const ScoreText = styled.div`
   .score {
     font-size: 2rem;
     font-weight: bold;
-    color: ${props => props.score >= 7 ? colors.status.success : 
-                      props.score >= 5 ? colors.status.warning : 
-                      colors.status.error};
+    color: ${props => props.score >= 7 ? colors.status.success :
+    props.score >= 5 ? colors.status.warning :
+      colors.status.error};
   }
   
   .label {
@@ -1645,10 +1645,10 @@ const StepNumber = styled.div`
 `;
 
 const RiskCard = styled(InsightCard)`
-  border-left: 4px solid ${props => 
-    props.impact === 'High' ? colors.status.error : 
-    props.impact === 'Medium' ? colors.status.warning : 
-    colors.status.info};
+  border-left: 4px solid ${props =>
+    props.impact === 'High' ? colors.status.error :
+      props.impact === 'Medium' ? colors.status.warning :
+        colors.status.info};
 `;
 
 const RiskHeader = styled.div`
@@ -1668,14 +1668,14 @@ const RiskImpact = styled.span`
   border-radius: ${borderRadius.sm};
   font-size: ${typography.fontSizes.sm};
   font-weight: ${typography.fontWeights.medium};
-  background: ${props => 
-    props.impact === 'High' ? `${colors.status.error}20` : 
-    props.impact === 'Medium' ? `${colors.status.warning}20` : 
-    `${colors.status.info}20`};
-  color: ${props => 
-    props.impact === 'High' ? colors.status.error : 
-    props.impact === 'Medium' ? colors.status.warning : 
-    colors.status.info};
+  background: ${props =>
+    props.impact === 'High' ? `${colors.status.error}20` :
+      props.impact === 'Medium' ? `${colors.status.warning}20` :
+        `${colors.status.info}20`};
+  color: ${props =>
+    props.impact === 'High' ? colors.status.error :
+      props.impact === 'Medium' ? colors.status.warning :
+        colors.status.info};
 `;
 
 const RiskMitigation = styled.p`
@@ -1830,7 +1830,7 @@ const ProjectsPanel = () => {
 
   // Get status priority for sorting
   const getStatusPriority = (status) => {
-    switch(status) {
+    switch (status) {
       case 'inProgress': return 1;
       case 'done': return 2;
       case 'awaitingFeedback': return 3;
@@ -1839,7 +1839,7 @@ const ProjectsPanel = () => {
   };
 
   // Using the existing error state for handling Firebase errors
-  
+
   // Fetch projects from Firestore
   useEffect(() => {
     if (!currentUser) return;
@@ -1861,7 +1861,7 @@ const ProjectsPanel = () => {
             ...doc.data(),
             statusPriority: getStatusPriority(doc.data().status)
           }));
-          
+
           // Apply client-side sorting
           if (sortBy === 'deadline') {
             projectsList.sort((a, b) => {
@@ -1874,7 +1874,7 @@ const ProjectsPanel = () => {
           } else if (sortBy === 'status') {
             projectsList.sort((a, b) => a.statusPriority - b.statusPriority);
           }
-          
+
           console.log('Projects list:', projectsList);
           setProjects(projectsList);
           setError(null); // Clear any previous errors
@@ -1903,32 +1903,32 @@ const ProjectsPanel = () => {
       }
     };
   }, [currentUser, sortBy]);
-  
+
   // Filter projects based on status only
   useEffect(() => {
     let result = [...projects];
-    
+
     // Apply status filter
     if (filterStatus !== 'all') {
       result = result.filter(project => project.status === filterStatus);
     }
-    
+
     setFilteredProjects(result);
-    
+
     // Calculate total pages
     setTotalPages(Math.max(1, Math.ceil(result.length / itemsPerPage)));
-    
+
     // Reset to first page when filters change
     if (activePage > 1) {
       setActivePage(1);
     }
   }, [projects, filterStatus, itemsPerPage, activePage]);
-  
+
   // Get RTL status from i18n - removed duplicate declaration
-  
+
   // Get icon for status
   const getStatusIcon = (status) => {
-    switch(status) {
+    switch (status) {
       case 'inProgress': return <FaClock />;
       case 'done': return <FaCheck />;
       case 'awaitingFeedback': return <FaPencilAlt />;
@@ -1938,7 +1938,7 @@ const ProjectsPanel = () => {
 
   // Get status label
   const getStatusLabel = (status) => {
-    switch(status) {
+    switch (status) {
       case 'inProgress': return t('projects.inProgress', 'In Progress');
       case 'done': return t('projects.done', 'Done');
       case 'awaitingFeedback': return t('projects.awaitingFeedback', 'Awaiting Feedback');
@@ -1948,17 +1948,17 @@ const ProjectsPanel = () => {
 
   // Get mood emoji and translated label
   const getMoodEmoji = (mood) => {
-    switch(mood) {
+    switch (mood) {
       case 'happy': return <FaSmile color="#4CAF50" />;
       case 'neutral': return <FaMeh color="#FFC107" />;
       case 'unhappy': return <FaFrown color="#F44336" />;
       default: return null;
     }
   };
-  
+
   // Get mood label
   const getMoodLabel = (mood) => {
-    switch(mood) {
+    switch (mood) {
       case 'happy': return t('projects.moods.happy', 'Happy');
       case 'neutral': return t('projects.moods.neutral', 'Neutral');
       case 'unhappy': return t('projects.moods.unhappy', 'Unhappy');
@@ -1980,7 +1980,7 @@ const ProjectsPanel = () => {
   const handleSortChange = useCallback((e) => {
     setSortBy(e.target.value);
   }, []);
-  
+
   // Get current page items
   const currentPageItems = useMemo(() => {
     const indexOfLastItem = activePage * itemsPerPage;
@@ -1997,26 +1997,26 @@ const ProjectsPanel = () => {
   const openAddProjectModal = useCallback(() => {
     setIsModalOpen(true);
   }, []);
-  
+
   // Close modal
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setError(null);
   }, []);
-  
+
   // Open AI insights modal
   const openInsightsModal = useCallback((project) => {
     setSelectedProjectInsights(project);
     setIsInsightsModalOpen(true);
     setActiveTab('overview'); // Reset to overview tab
   }, []);
-  
+
   // Close AI insights modal
   const closeInsightsModal = useCallback(() => {
     setSelectedProjectInsights(null);
     setIsInsightsModalOpen(false);
   }, []);
-  
+
   // Handle form submission - Project is already created by ProjectWizard
   const handleAddProject = useCallback(async (projectData) => {
     console.log('Project added successfully:', projectData);
@@ -2027,24 +2027,24 @@ const ProjectsPanel = () => {
 
   // Detect RTL direction
   const isRTL = i18n.language === 'ar';
-  
+
   return (
     <PanelContainer>
       <StarryBackground intensity={0.5} />
-      
+
       <PanelHeader>
         <PanelTitle>
-          <IconContainer 
-            icon={FaThLarge} 
-            color="#8338ec" 
-            size="1.2em" 
-            margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`} 
+          <IconContainer
+            icon={FaThLarge}
+            color="#8338ec"
+            size="1.2em"
+            margin={isRTL ? `0 0 0 ${spacing.sm}` : `0 ${spacing.sm} 0 0`}
           />
           <GradientTitleText>
             {t('projects.yourProjects', 'Your Projects')}
           </GradientTitleText>
         </PanelTitle>
-        
+
         <ActionButtonWrapper>
           <WhiteActionButton onClick={openAddProjectModal}>
             <FaPlus />
@@ -2052,89 +2052,89 @@ const ProjectsPanel = () => {
           </WhiteActionButton>
         </ActionButtonWrapper>
       </PanelHeader>
-      
+
       <ActionsRow isRTL={isRTL}>
         {isRTL ? (
-            <>
-              <FilterSection isRTL={isRTL}>
-                <CustomFilterTabs isRTL={isRTL}>
-                  <StatusFilterTab 
-                    active={filterStatus === 'all'} 
-                    onClick={() => setFilterStatus('all')}
-                    title={t('projects.filters.all', 'All')}
-                    aria-label={t('projects.filters.all', 'All')}
-                  >
-                    <FaListUl />
-                  </StatusFilterTab>
-                  <StatusFilterTab 
-                    active={filterStatus === 'inProgress'} 
-                    onClick={() => setFilterStatus('inProgress')}
-                    status="inProgress"
-                    title={t('projects.inProgress', 'In Progress')}
-                    aria-label={t('projects.inProgress', 'In Progress')}
-                  >
-                    <FaClock />
-                  </StatusFilterTab>
-                  <StatusFilterTab 
-                    active={filterStatus === 'done'} 
-                    onClick={() => setFilterStatus('done')}
-                    status="done"
-                    title={t('projects.done', 'Done')}
-                    aria-label={t('projects.done', 'Done')}
-                  >
-                    <FaCheck />
-                  </StatusFilterTab>
-                </CustomFilterTabs>
-                <ProjectCount isRTL={isRTL}>
-                  {`${filteredProjects.length} ${filteredProjects.length === 1 
-                    ? t('projects.project', 'Project') 
-                    : t('projects.projects', 'Projects')}`}
-                </ProjectCount>
-              </FilterSection>
-            </>
-          ) : (
-            <>
-              <FilterSection>
-                <CustomFilterTabs>
-                  <StatusFilterTab 
-                    active={filterStatus === 'all'} 
-                    onClick={() => setFilterStatus('all')}
-                    title={t('projects.filters.all', 'All')}
-                    aria-label={t('projects.filters.all', 'All')}
-                  >
-                    <FaListUl />
-                  </StatusFilterTab>
-                  <StatusFilterTab 
-                    active={filterStatus === 'inProgress'} 
-                    onClick={() => setFilterStatus('inProgress')}
-                    status="inProgress"
-                    title={t('projects.inProgress', 'In Progress')}
-                    aria-label={t('projects.inProgress', 'In Progress')}
-                  >
-                    <FaClock />
-                  </StatusFilterTab>
-                  <StatusFilterTab 
-                    active={filterStatus === 'done'} 
-                    onClick={() => setFilterStatus('done')}
-                    status="done"
-                    tooltip={t('projects.done', 'Done')}
-                    title={t('projects.done', 'Done')}
-                    aria-label={t('projects.done', 'Done')}
-                  >
-                    <FaCheck />
-                  </StatusFilterTab>
-                </CustomFilterTabs>
-                <ProjectCount>
-                  {`${filteredProjects.length} ${filteredProjects.length === 1 
-                    ? t('projects.project', 'Project') 
-                    : t('projects.projects', 'Projects')}`}
-                </ProjectCount>
-              </FilterSection>
+          <>
+            <FilterSection isRTL={isRTL}>
+              <CustomFilterTabs isRTL={isRTL}>
+                <StatusFilterTab
+                  active={filterStatus === 'all'}
+                  onClick={() => setFilterStatus('all')}
+                  title={t('projects.filters.all', 'All')}
+                  aria-label={t('projects.filters.all', 'All')}
+                >
+                  <FaListUl />
+                </StatusFilterTab>
+                <StatusFilterTab
+                  active={filterStatus === 'inProgress'}
+                  onClick={() => setFilterStatus('inProgress')}
+                  status="inProgress"
+                  title={t('projects.inProgress', 'In Progress')}
+                  aria-label={t('projects.inProgress', 'In Progress')}
+                >
+                  <FaClock />
+                </StatusFilterTab>
+                <StatusFilterTab
+                  active={filterStatus === 'done'}
+                  onClick={() => setFilterStatus('done')}
+                  status="done"
+                  title={t('projects.done', 'Done')}
+                  aria-label={t('projects.done', 'Done')}
+                >
+                  <FaCheck />
+                </StatusFilterTab>
+              </CustomFilterTabs>
+              <ProjectCount isRTL={isRTL}>
+                {`${filteredProjects.length} ${filteredProjects.length === 1
+                  ? t('projects.project', 'Project')
+                  : t('projects.projects', 'Projects')}`}
+              </ProjectCount>
+            </FilterSection>
+          </>
+        ) : (
+          <>
+            <FilterSection>
+              <CustomFilterTabs>
+                <StatusFilterTab
+                  active={filterStatus === 'all'}
+                  onClick={() => setFilterStatus('all')}
+                  title={t('projects.filters.all', 'All')}
+                  aria-label={t('projects.filters.all', 'All')}
+                >
+                  <FaListUl />
+                </StatusFilterTab>
+                <StatusFilterTab
+                  active={filterStatus === 'inProgress'}
+                  onClick={() => setFilterStatus('inProgress')}
+                  status="inProgress"
+                  title={t('projects.inProgress', 'In Progress')}
+                  aria-label={t('projects.inProgress', 'In Progress')}
+                >
+                  <FaClock />
+                </StatusFilterTab>
+                <StatusFilterTab
+                  active={filterStatus === 'done'}
+                  onClick={() => setFilterStatus('done')}
+                  status="done"
+                  tooltip={t('projects.done', 'Done')}
+                  title={t('projects.done', 'Done')}
+                  aria-label={t('projects.done', 'Done')}
+                >
+                  <FaCheck />
+                </StatusFilterTab>
+              </CustomFilterTabs>
+              <ProjectCount>
+                {`${filteredProjects.length} ${filteredProjects.length === 1
+                  ? t('projects.project', 'Project')
+                  : t('projects.projects', 'Projects')}`}
+              </ProjectCount>
+            </FilterSection>
 
-            </>
-          )}
-        </ActionsRow>
-      
+          </>
+        )}
+      </ActionsRow>
+
       {isLoading ? (
         <ProjectsContainer $isGrid={isGridView} aria-hidden="true">
           {Array.from({ length: 4 }).map((_, idx) => (
@@ -2157,9 +2157,9 @@ const ProjectsPanel = () => {
             <>
               <EmptyStateIllustration>
                 <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M60 10C32.4 10 10 32.4 10 60C10 87.6 32.4 110 60 110C87.6 110 110 87.6 110 60C110 32.4 87.6 10 60 10ZM60 100C37.9 100 20 82.1 20 60C20 37.9 37.9 20 60 20C82.1 20 100 37.9 100 60C100 82.1 82.1 100 60 100Z" fill="rgba(255,255,255,0.1)"/>
-                  <path d="M65 40H55V65H65V40Z" fill="rgba(255,255,255,0.2)"/>
-                  <path d="M65 75H55V85H65V75Z" fill="rgba(255,255,255,0.2)"/>
+                  <path d="M60 10C32.4 10 10 32.4 10 60C10 87.6 32.4 110 60 110C87.6 110 110 87.6 110 60C110 32.4 87.6 10 60 10ZM60 100C37.9 100 20 82.1 20 60C20 37.9 37.9 20 60 20C82.1 20 100 37.9 100 60C100 82.1 82.1 100 60 100Z" fill="rgba(255,255,255,0.1)" />
+                  <path d="M65 40H55V65H65V40Z" fill="rgba(255,255,255,0.2)" />
+                  <path d="M65 75H55V85H65V75Z" fill="rgba(255,255,255,0.2)" />
                 </svg>
               </EmptyStateIllustration>
               <h3>{t('projects.noMatchingProjects', 'No matching projects')}</h3>
@@ -2172,10 +2172,10 @@ const ProjectsPanel = () => {
             <>
               <EmptyStateIllustration>
                 <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="20" y="20" width="80" height="80" rx="4" stroke="rgba(255,255,255,0.2)" strokeWidth="2" fill="none"/>
-                  <path d="M35 40H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2"/>
-                  <path d="M35 60H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2"/>
-                  <path d="M35 80H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2"/>
+                  <rect x="20" y="20" width="80" height="80" rx="4" stroke="rgba(255,255,255,0.2)" strokeWidth="2" fill="none" />
+                  <path d="M35 40H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
+                  <path d="M35 60H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
+                  <path d="M35 80H85" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
                 </svg>
               </EmptyStateIllustration>
               <h3>{t('projects.noProjects', 'No projects yet')}</h3>
@@ -2187,9 +2187,9 @@ const ProjectsPanel = () => {
         <>
           <ProjectsContainer $isGrid={isGridView}>
             {currentPageItems.map(project => (
-              <ProjectCard 
-                key={project.id} 
-                $isGrid={isGridView} 
+              <ProjectCard
+                key={project.id}
+                $isGrid={isGridView}
                 onClick={() => openInsightsModal(project)}
                 style={{ cursor: 'pointer' }}
               >
@@ -2201,8 +2201,8 @@ const ProjectsPanel = () => {
                       </ProjectName>
                       <ProjectType>{project.type} • {project.industry}</ProjectType>
                     </div>
-                    <StatusIndicator 
-                      status={project.status} 
+                    <StatusIndicator
+                      status={project.status}
                       title={getStatusLabel(project.status)}
                       aria-label={getStatusLabel(project.status)}
                     >
@@ -2210,12 +2210,12 @@ const ProjectsPanel = () => {
                       <span>{getStatusLabel(project.status)}</span>
                     </StatusIndicator>
                   </ProjectHeader>
-                  
+
                   <ProjectDetails>
                     <ProjectDescription>
                       {project.description || t('projects.noDescription', 'No description provided.')}
                     </ProjectDescription>
-                    
+
                     <DetailRow style={{ marginTop: '1rem' }}>
                       <DetailItem>
                         <DetailIcon><FaUserAlt /></DetailIcon>
@@ -2234,7 +2234,7 @@ const ProjectsPanel = () => {
                         </DetailContent>
                       </DetailItem>
                     </DetailRow>
-                    
+
                     {project.aiInsights && (
                       <AIMetricsRow>
                         <AIMetric>
@@ -2256,7 +2256,7 @@ const ProjectsPanel = () => {
               </ProjectCard>
             ))}
           </ProjectsContainer>
-          
+
           {/* Pagination */}
           {filteredProjects.length > itemsPerPage && (
             <Pagination>
@@ -2264,16 +2264,16 @@ const ProjectsPanel = () => {
                 {t('pagination.showing', 'Showing')} {(activePage - 1) * itemsPerPage + 1}-
                 {Math.min(activePage * itemsPerPage, filteredProjects.length)} {t('pagination.of', 'of')} {filteredProjects.length}
               </PaginationText>
-              
+
               <PaginationControls className={isRTL ? 'rtl-pagination' : ''}>
-                <WhitePaginationButton 
+                <WhitePaginationButton
                   onClick={() => handlePageChange(Math.max(1, activePage - 1))}
                   disabled={activePage === 1}
                   aria-label={t('pagination.previous', 'Previous page')}
                 >
                   {isRTL ? <FaArrowRight /> : <FaArrowLeft />}
                 </WhitePaginationButton>
-                
+
                 {[...Array(totalPages)].map((_, index) => (
                   <WhitePaginationButton
                     key={index + 1}
@@ -2284,8 +2284,8 @@ const ProjectsPanel = () => {
                     {index + 1}
                   </WhitePaginationButton>
                 ))}
-                
-                <WhitePaginationButton 
+
+                <WhitePaginationButton
                   onClick={() => handlePageChange(Math.min(totalPages, activePage + 1))}
                   disabled={activePage === totalPages}
                   aria-label={t('pagination.next', 'Next page')}
@@ -2301,7 +2301,7 @@ const ProjectsPanel = () => {
       {error && isModalOpen && (
         <ErrorMessage role="alert" aria-live="assertive">{t('projects.addError', 'Error adding project. Please try again.')}</ErrorMessage>
       )}
-      
+
       {/* Render ProjectWizard directly */}
       {isModalOpen && (
         <ProjectWizard
@@ -2310,7 +2310,7 @@ const ProjectsPanel = () => {
           onProjectAdded={handleAddProject}
         />
       )}
-      
+
       {/* AI Insights Modal */}
       {isInsightsModalOpen && selectedProjectInsights && (
         <InsightsModal onClick={closeInsightsModal}>
@@ -2321,7 +2321,7 @@ const ProjectsPanel = () => {
               </h2>
               <CloseButton onClick={closeInsightsModal}>&times;</CloseButton>
             </InsightsHeader>
-            
+
             <InsightsBody>
               {/* Project Basic Info */}
               <InsightSection>
@@ -2340,34 +2340,34 @@ const ProjectsPanel = () => {
                   )}
                 </InsightCard>
               </InsightSection>
-              
+
               {selectedProjectInsights.aiInsights ? (
                 <>
                   {/* Tab Navigation - Simplified */}
                   <TabNavigation>
-                    <TabButton 
-                      active={activeTab === 'overview'} 
+                    <TabButton
+                      active={activeTab === 'overview'}
                       onClick={() => setActiveTab('overview')}
                     >
                       <FaLightbulb />
                       {t('projects.summary.tabs.overview', 'Overview')}
                     </TabButton>
-                    <TabButton 
-                      active={activeTab === 'technical'} 
+                    <TabButton
+                      active={activeTab === 'technical'}
                       onClick={() => setActiveTab('technical')}
                     >
                       <FaCode />
                       {t('projects.summary.tabs.technical', 'Technical')}
                     </TabButton>
-                    <TabButton 
-                      active={activeTab === 'timeline'} 
+                    <TabButton
+                      active={activeTab === 'timeline'}
                       onClick={() => setActiveTab('timeline')}
                     >
                       <FaCalendarAlt />
                       {t('projects.summary.tabs.timeline', 'Timeline')}
                     </TabButton>
-                    <TabButton 
-                      active={activeTab === 'next'} 
+                    <TabButton
+                      active={activeTab === 'next'}
                       onClick={() => setActiveTab('next')}
                     >
                       <FaArrowCircleRight />
@@ -2387,92 +2387,92 @@ const ProjectsPanel = () => {
                           </InsightCard>
                         </InsightSection>
                       )}
-                  
-                  {/* Project Feasibility with Visual Score */}
-                  {selectedProjectInsights.aiInsights.projectFeasibility && (
-                    <InsightSection>
-                      <h3>
-                        <FaTrophy />
-                        {t('projects.aiInsights.feasibility', 'Project Feasibility')}
-                      </h3>
-                      <InsightCard>
-                        <CircularProgress score={parseFloat(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
-                          <svg viewBox="0 0 120 120">
-                            <circle cx="60" cy="60" r="52" />
-                            <circle cx="60" cy="60" r="52" />
-                          </svg>
-                          <ScoreText score={parseFloat(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
-                            <div className="score">{selectedProjectInsights.aiInsights.projectFeasibility.score}</div>
-                            <div className="label">{t('projects.aiInsights.outOf10', 'out of 10')}</div>
-                          </ScoreText>
-                        </CircularProgress>
-                        <p>{selectedProjectInsights.aiInsights.projectFeasibility.assessment}</p>
-                        {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations && (
-                          <ul>
-                            {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations.map((item, index) => (
-                              <li key={index}>{item}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </InsightCard>
-                    </InsightSection>
-                  )}
-                  
-                  {/* Technical Recommendations */}
-                  {selectedProjectInsights.aiInsights.technicalRecommendations && (
-                    <InsightSection>
-                      <h3>
-                        <FaCode />
-                        {t('projects.aiInsights.technicalRecommendations', 'Technical Recommendations')}
-                      </h3>
-                      <InsightCard>
-                        {selectedProjectInsights.aiInsights.technicalRecommendations.suggestedTechStack && (
-                          <div>
-                            <h4>{t('projects.aiInsights.suggestedStack', 'Suggested Tech Stack')}</h4>
-                            {Object.entries(selectedProjectInsights.aiInsights.technicalRecommendations.suggestedTechStack).map(([category, techs]) => (
-                              <div key={category}>
-                                <h5>{category.charAt(0).toUpperCase() + category.slice(1)}:</h5>
-                                {techs.map((tech, index) => (
-                                  <TechBadge key={index}>{tech}</TechBadge>
+
+                      {/* Project Feasibility with Visual Score */}
+                      {selectedProjectInsights.aiInsights.projectFeasibility && (
+                        <InsightSection>
+                          <h3>
+                            <FaTrophy />
+                            {t('projects.aiInsights.feasibility', 'Project Feasibility')}
+                          </h3>
+                          <InsightCard>
+                            <CircularProgress score={parseFloat(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
+                              <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" />
+                                <circle cx="60" cy="60" r="52" />
+                              </svg>
+                              <ScoreText score={parseFloat(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
+                                <div className="score">{selectedProjectInsights.aiInsights.projectFeasibility.score}</div>
+                                <div className="label">{t('projects.aiInsights.outOf10', 'out of 10')}</div>
+                              </ScoreText>
+                            </CircularProgress>
+                            <p>{selectedProjectInsights.aiInsights.projectFeasibility.assessment}</p>
+                            {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations && (
+                              <ul>
+                                {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations.map((item, index) => (
+                                  <li key={index}>{item}</li>
+                                ))}
+                              </ul>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+
+                      {/* Technical Recommendations */}
+                      {selectedProjectInsights.aiInsights.technicalRecommendations && (
+                        <InsightSection>
+                          <h3>
+                            <FaCode />
+                            {t('projects.aiInsights.technicalRecommendations', 'Technical Recommendations')}
+                          </h3>
+                          <InsightCard>
+                            {selectedProjectInsights.aiInsights.technicalRecommendations.suggestedTechStack && (
+                              <div>
+                                <h4>{t('projects.aiInsights.suggestedStack', 'Suggested Tech Stack')}</h4>
+                                {Object.entries(selectedProjectInsights.aiInsights.technicalRecommendations.suggestedTechStack).map(([category, techs]) => (
+                                  <div key={category}>
+                                    <h5>{category.charAt(0).toUpperCase() + category.slice(1)}:</h5>
+                                    {techs.map((tech, index) => (
+                                      <TechBadge key={index}>{tech}</TechBadge>
+                                    ))}
+                                  </div>
                                 ))}
                               </div>
-                            ))}
-                          </div>
+                            )}
+                            {selectedProjectInsights.aiInsights.technicalRecommendations.architecturePattern && (
+                              <p><strong>{t('projects.aiInsights.architecture', 'Architecture')}:</strong> {selectedProjectInsights.aiInsights.technicalRecommendations.architecturePattern}</p>
+                            )}
+                          </InsightCard>
+                        </InsightSection>
+                      )}
+
+                      {/* Timeline & Budget */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing.md }}>
+                        {selectedProjectInsights.aiInsights.timelineEstimate && (
+                          <InsightSection>
+                            <h3>
+                              <FaClock />
+                              {t('projects.aiInsights.timeline', 'Timeline')}
+                            </h3>
+                            <InsightCard>
+                              <p><strong>{t('projects.aiInsights.duration', 'Duration')}:</strong> {selectedProjectInsights.aiInsights.timelineEstimate.totalDuration}</p>
+                            </InsightCard>
+                          </InsightSection>
                         )}
-                        {selectedProjectInsights.aiInsights.technicalRecommendations.architecturePattern && (
-                          <p><strong>{t('projects.aiInsights.architecture', 'Architecture')}:</strong> {selectedProjectInsights.aiInsights.technicalRecommendations.architecturePattern}</p>
+
+                        {selectedProjectInsights.aiInsights.budgetAnalysis && (
+                          <InsightSection>
+                            <h3>
+                              <FaMoneyBillWave />
+                              {t('projects.aiInsights.budget', 'Budget')}
+                            </h3>
+                            <InsightCard>
+                              <p><strong>{t('projects.aiInsights.estimate', 'Estimate')}:</strong> {selectedProjectInsights.aiInsights.budgetAnalysis.estimatedCost}</p>
+                            </InsightCard>
+                          </InsightSection>
                         )}
-                      </InsightCard>
-                    </InsightSection>
-                  )}
-                  
-                  {/* Timeline & Budget */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing.md }}>
-                    {selectedProjectInsights.aiInsights.timelineEstimate && (
-                      <InsightSection>
-                        <h3>
-                          <FaClock />
-                          {t('projects.aiInsights.timeline', 'Timeline')}
-                        </h3>
-                        <InsightCard>
-                          <p><strong>{t('projects.aiInsights.duration', 'Duration')}:</strong> {selectedProjectInsights.aiInsights.timelineEstimate.totalDuration}</p>
-                        </InsightCard>
-                      </InsightSection>
-                    )}
-                    
-                    {selectedProjectInsights.aiInsights.budgetAnalysis && (
-                      <InsightSection>
-                        <h3>
-                          <FaMoneyBillWave />
-                          {t('projects.aiInsights.budget', 'Budget')}
-                        </h3>
-                        <InsightCard>
-                          <p><strong>{t('projects.aiInsights.estimate', 'Estimate')}:</strong> {selectedProjectInsights.aiInsights.budgetAnalysis.estimatedCost}</p>
-                        </InsightCard>
-                      </InsightSection>
-                    )}
-                  </div>
-                  
+                      </div>
+
                       {/* Competitive Analysis */}
                       {selectedProjectInsights.aiInsights.competitiveAnalysis && (
                         <InsightSection>
@@ -2522,7 +2522,7 @@ const ProjectsPanel = () => {
                                 <span>{selectedProjectInsights.aiInsights.technicalSpecification.deploymentArchitecture}</span>
                               </DetailItem>
                             </DetailGrid>
-                            
+
                             {selectedProjectInsights.aiInsights.technicalSpecification.databases && (
                               <>
                                 <h4>{t('projects.aiInsights.databases', 'Database Architecture')}</h4>
@@ -2560,7 +2560,7 @@ const ProjectsPanel = () => {
                           <InsightCard>
                             <p><strong>{t('projects.aiInsights.userGrowth', 'User Growth Strategy')}:</strong> {selectedProjectInsights.aiInsights.scalabilityPlan.userGrowthStrategy}</p>
                             <p><strong>{t('projects.aiInsights.dataGrowth', 'Data Growth Strategy')}:</strong> {selectedProjectInsights.aiInsights.scalabilityPlan.dataGrowthStrategy}</p>
-                            
+
                             {selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets && (
                               <>
                                 <h4>{t('projects.aiInsights.performanceTargets', 'Performance Targets')}</h4>
@@ -2643,7 +2643,7 @@ const ProjectsPanel = () => {
                                 {selectedProjectInsights.aiInsights.timelineEstimate.totalDuration}
                               </div>
                             </div>
-                            
+
                             {selectedProjectInsights.aiInsights.timelineEstimate.phases && (
                               <TimelineVisualization>
                                 {selectedProjectInsights.aiInsights.timelineEstimate.phases.map((phase, index) => (
@@ -2662,7 +2662,7 @@ const ProjectsPanel = () => {
                           </InsightCard>
                         </InsightSection>
                       )}
-                      
+
                       {/* MVP Definition */}
                       {selectedProjectInsights.aiInsights.mvpDefinition && (
                         <InsightSection>
@@ -2706,7 +2706,7 @@ const ProjectsPanel = () => {
                           </InsightCard>
                         </InsightSection>
                       )}
-                      
+
                       {/* Key Considerations */}
                       {selectedProjectInsights.aiInsights.projectFeasibility?.keyConsiderations && (
                         <InsightSection>
@@ -2723,17 +2723,15 @@ const ProjectsPanel = () => {
                           </InsightCard>
                         </InsightSection>
                       )}
-                    </>
-                  )}
 
-                  {/* Old tab content removed for simplified UI */}
-                  {false && selectedProjectInsights.aiInsights.projectRoadmap && (
-                    <InsightSection>
-                      <h3>
-                        <FaMapMarked />
-                        {t('projects.aiInsights.projectRoadmap', 'Development Roadmap')}
-                      </h3>
-                      {selectedProjectInsights.aiInsights.projectRoadmap.phases.map((phase, index) => (
+                      {/* Old tab content removed for simplified UI */}
+                      {false && selectedProjectInsights.aiInsights.projectRoadmap && (
+                        <InsightSection>
+                          <h3>
+                            <FaMapMarked />
+                            {t('projects.aiInsights.projectRoadmap', 'Development Roadmap')}
+                          </h3>
+                          {selectedProjectInsights.aiInsights.projectRoadmap.phases.map((phase, index) => (
                             <RoadmapPhase key={index}>
                               <PhaseHeader>
                                 <h4>{phase.phase}</h4>
@@ -2771,49 +2769,49 @@ const ProjectsPanel = () => {
                           ))}
                         </InsightSection>
                       )}
-                    </>
-                  )}
 
-                  {false && (
-                    <>
-                      {/* MVP Definition - Hidden */}
-                      {selectedProjectInsights.aiInsights.mvpDefinition && (
-                        <InsightSection>
-                          <h3>
-                            <FaRocket />
-                            {t('projects.aiInsights.mvp', 'MVP Definition')}
-                          </h3>
-                          <InsightCard>
-                            <DetailGrid>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.mvpTimeline', 'Timeline')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.timeline}</span>
-                              </DetailItem>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.mvpCost', 'Cost Estimate')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.costEstimate}</span>
-                              </DetailItem>
-                            </DetailGrid>
-                            
-                            <h4>{t('projects.aiInsights.mvpFeatures', 'Core MVP Features')}</h4>
-                            <ul>
-                              {selectedProjectInsights.aiInsights.mvpDefinition.coreFeatures.map((feature, index) => (
-                                <li key={index}>{feature}</li>
-                              ))}
-                            </ul>
-                            
-                            {selectedProjectInsights.aiInsights.mvpDefinition.successMetrics && (
-                              <>
-                                <h4>{t('projects.aiInsights.successMetrics', 'Success Metrics')}</h4>
+                      {false && (
+                        <>
+                          {/* MVP Definition - Hidden */}
+                          {selectedProjectInsights.aiInsights.mvpDefinition && (
+                            <InsightSection>
+                              <h3>
+                                <FaRocket />
+                                {t('projects.aiInsights.mvp', 'MVP Definition')}
+                              </h3>
+                              <InsightCard>
+                                <DetailGrid>
+                                  <DetailItem>
+                                    <strong>{t('projects.aiInsights.mvpTimeline', 'Timeline')}:</strong>
+                                    <span>{selectedProjectInsights.aiInsights.mvpDefinition.timeline}</span>
+                                  </DetailItem>
+                                  <DetailItem>
+                                    <strong>{t('projects.aiInsights.mvpCost', 'Cost Estimate')}:</strong>
+                                    <span>{selectedProjectInsights.aiInsights.mvpDefinition.costEstimate}</span>
+                                  </DetailItem>
+                                </DetailGrid>
+
+                                <h4>{t('projects.aiInsights.mvpFeatures', 'Core MVP Features')}</h4>
                                 <ul>
-                                  {selectedProjectInsights.aiInsights.mvpDefinition.successMetrics.map((metric, index) => (
-                                    <li key={index}>{metric}</li>
+                                  {selectedProjectInsights.aiInsights.mvpDefinition.coreFeatures.map((feature, index) => (
+                                    <li key={index}>{feature}</li>
                                   ))}
                                 </ul>
-                              </>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
+
+                                {selectedProjectInsights.aiInsights.mvpDefinition.successMetrics && (
+                                  <>
+                                    <h4>{t('projects.aiInsights.successMetrics', 'Success Metrics')}</h4>
+                                    <ul>
+                                      {selectedProjectInsights.aiInsights.mvpDefinition.successMetrics.map((metric, index) => (
+                                        <li key={index}>{metric}</li>
+                                      ))}
+                                    </ul>
+                                  </>
+                                )}
+                              </InsightCard>
+                            </InsightSection>
+                          )}
+                        </>
                       )}
                     </>
                   )}
@@ -2832,7 +2830,7 @@ const ProjectsPanel = () => {
                               <h4>{t('projects.aiInsights.totalEstimate', 'Total Estimate')}</h4>
                               <BudgetAmount>{selectedProjectInsights.aiInsights.budgetAnalysis.estimatedCost}</BudgetAmount>
                             </BudgetTotal>
-                            
+
                             {selectedProjectInsights.aiInsights.budgetAnalysis.costBreakdown && (
                               <BudgetBreakdown>
                                 {Object.entries(selectedProjectInsights.aiInsights.budgetAnalysis.costBreakdown).map(([category, cost]) => (
@@ -2843,7 +2841,7 @@ const ProjectsPanel = () => {
                                 ))}
                               </BudgetBreakdown>
                             )}
-                            
+
                             {selectedProjectInsights.aiInsights.budgetAnalysis.costOptimizationTips && (
                               <>
                                 <h4>{t('projects.aiInsights.costOptimization', 'Cost Optimization Tips')}</h4>
@@ -2880,7 +2878,7 @@ const ProjectsPanel = () => {
                                 ))}
                               </TeamCategory>
                             </TeamGrid>
-                            
+
                             {selectedProjectInsights.aiInsights.teamComposition.estimatedHours && (
                               <>
                                 <h4>{t('projects.aiInsights.estimatedHours', 'Estimated Hours')}</h4>
@@ -2989,7 +2987,7 @@ const ProjectsPanel = () => {
                                 <span>{selectedProjectInsights.aiInsights.maintenanceStrategy.supportModel}</span>
                               </DetailItem>
                             </DetailGrid>
-                            
+
                             {selectedProjectInsights.aiInsights.maintenanceStrategy.monitoringTools && (
                               <>
                                 <h4>{t('projects.aiInsights.monitoringTools', 'Monitoring Tools')}</h4>
@@ -3016,7 +3014,7 @@ const ProjectsPanel = () => {
                             <FaRocket />
                             {t('projects.aiInsights.projectIdeas', 'Project Ideas & Innovations')}
                           </h3>
-                          
+
                           {/* Innovative Features */}
                           {selectedProjectInsights.aiInsights.projectIdeas.innovativeFeatures && (
                             <InsightCard>
@@ -3028,7 +3026,7 @@ const ProjectsPanel = () => {
                               </ul>
                             </InsightCard>
                           )}
-                          
+
                           {/* UX Enhancements */}
                           {selectedProjectInsights.aiInsights.projectIdeas.userExperienceEnhancements && (
                             <InsightCard>
@@ -3040,7 +3038,7 @@ const ProjectsPanel = () => {
                               </ul>
                             </InsightCard>
                           )}
-                          
+
                           {/* AI Integration Opportunities */}
                           {selectedProjectInsights.aiInsights.projectIdeas.aiIntegrationOpportunities && (
                             <InsightCard>
@@ -3054,7 +3052,7 @@ const ProjectsPanel = () => {
                           )}
                         </InsightSection>
                       )}
-                      
+
                       {/* Project Thoughts */}
                       {selectedProjectInsights.aiInsights.projectThoughts && (
                         <InsightSection>
@@ -3079,7 +3077,7 @@ const ProjectsPanel = () => {
                               <div className="label">{t('projects.aiInsights.opportunities', 'Opportunities')}</div>
                             </MetricCard>
                           </MetricsGrid>
-                          
+
                           {selectedProjectInsights.aiInsights.projectThoughts.recommendations && (
                             <InsightCard>
                               <h4>{t('projects.aiInsights.recommendations', 'Strategic Recommendations')}</h4>
@@ -3090,7 +3088,7 @@ const ProjectsPanel = () => {
                       )}
                     </>
                   )}
-                  
+
                   {/* Metrics Tab */}
                   {activeTab === 'metrics' && (
                     <>
@@ -3101,7 +3099,7 @@ const ProjectsPanel = () => {
                             <FaChartBar />
                             {t('projects.aiInsights.analyticsMetrics', 'Analytics & Metrics')}
                           </h3>
-                          
+
                           {/* KPIs */}
                           {selectedProjectInsights.aiInsights.analyticsAndMetrics.kpis && (
                             <InsightCard>
@@ -3113,7 +3111,7 @@ const ProjectsPanel = () => {
                               </ul>
                             </InsightCard>
                           )}
-                          
+
                           {/* Analytics Tools */}
                           {selectedProjectInsights.aiInsights.analyticsAndMetrics.analyticsTools && (
                             <InsightCard>
@@ -3127,7 +3125,7 @@ const ProjectsPanel = () => {
                           )}
                         </InsightSection>
                       )}
-                      
+
                       {/* Performance Optimization */}
                       {selectedProjectInsights.aiInsights.performanceOptimization && (
                         <InsightSection>
@@ -3153,7 +3151,7 @@ const ProjectsPanel = () => {
                           </InsightCard>
                         </InsightSection>
                       )}
-                      
+
                       {/* Monetization Strategy */}
                       {selectedProjectInsights.aiInsights.monetizationStrategy && (
                         <InsightSection>
@@ -3172,14 +3170,14 @@ const ProjectsPanel = () => {
                                 </ul>
                               </>
                             )}
-                            
+
                             {selectedProjectInsights.aiInsights.monetizationStrategy.pricingStrategy && (
                               <>
                                 <h4>{t('projects.aiInsights.pricingStrategy', 'Pricing Strategy')}</h4>
                                 <p>{selectedProjectInsights.aiInsights.monetizationStrategy.pricingStrategy}</p>
                               </>
                             )}
-                            
+
                             {selectedProjectInsights.aiInsights.monetizationStrategy.projectedRevenue && (
                               <>
                                 <h4>{t('projects.aiInsights.projectedRevenue', 'Revenue Projections')}</h4>
@@ -3204,12 +3202,15 @@ const ProjectsPanel = () => {
                       )}
                     </>
                   )}
-                    </>
-                  )}
-
-                  {/* Next steps moved to dedicated tab */}
                 </>
+              ) : (
+                <InsightSection>
+                  <InsightCard>
+                    <p>{t('projects.noAiInsights', 'AI insights are being generated for this project...')}</p>
+                  </InsightCard>
+                </InsightSection>
               )}
+
             </InsightsBody>
           </InsightsContent>
         </InsightsModal>
@@ -3221,7 +3222,7 @@ const ProjectsPanel = () => {
 // Custom IconContainer component for ProjectsPanel
 const IconContainer = ({ icon: Icon, color, size, background, round, padding, margin, onClick, disabled, className, ...props }) => {
   return (
-    <StyledIconWrapper 
+    <StyledIconWrapper
       color={color}
       size={size}
       background={background}
@@ -3230,7 +3231,7 @@ const IconContainer = ({ icon: Icon, color, size, background, round, padding, ma
       margin={margin}
       onClick={!disabled ? onClick : undefined}
       disabled={disabled}
-      className={className} 
+      className={className}
       {...props}
     >
       <Icon />
@@ -3240,7 +3241,7 @@ const IconContainer = ({ icon: Icon, color, size, background, round, padding, ma
 
 // Helper function to get status background colors
 const getStatusBackground = (status) => {
-  switch(status) {
+  switch (status) {
     case 'inProgress': return 'linear-gradient(90deg, #82a1bf, #5a8bbf)';
     case 'done': return 'linear-gradient(90deg, #4CAF50, #2E7D32)';
     case 'awaitingFeedback': return 'linear-gradient(90deg, #faaa93, #e57373)';

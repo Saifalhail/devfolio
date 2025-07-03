@@ -95,7 +95,7 @@ export const PanelHeader = styled.div`
   align-items: center;
   margin-bottom: ${spacing.lg};
   
-  @media ${breakpoints.down.md} {
+  @media (max-width: ${breakpoints.md}) {
     flex-direction: column;
     align-items: flex-start;
     gap: ${spacing.md};
@@ -199,7 +199,7 @@ export const ProjectsGrid = styled.div`
   gap: ${spacing.lg};
   margin-top: ${spacing.lg};
   
-  @media ${breakpoints.down.sm} {
+  @media (max-width: ${breakpoints.sm}) {
     grid-template-columns: 1fr;
   }
 `;
@@ -441,7 +441,7 @@ export const FilterContainer = styled.div`
   gap: ${spacing.md};
   margin-bottom: ${spacing.lg};
   
-  @media ${breakpoints.down.md} {
+  @media (max-width: ${breakpoints.md}) {
     flex-wrap: wrap;
   }
 `;
@@ -503,7 +503,7 @@ export const Card = styled.div`
     border-color: ${colors.border.muted};
   }
   
-  @media ${breakpoints.down.md} {
+  @media (max-width: ${breakpoints.md}) {
     padding: ${spacing.sm};
   }
 `;
@@ -571,7 +571,7 @@ export const ActionButton = styled.button`
     color: ${props => (props.glow || props.primary) ? '#ffffff' : 'currentColor'};
   }
   
-  @media ${breakpoints.down.md} {
+  @media (max-width: ${breakpoints.md}) {
     padding: ${spacing.xs} ${spacing.sm};
     font-size: ${typography.fontSizes.xs};
   }
