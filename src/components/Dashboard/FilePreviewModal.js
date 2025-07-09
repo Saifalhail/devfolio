@@ -88,8 +88,8 @@ const FilePreviewModal = ({ file, isOpen, onClose }) => {
   
   return (
     <ModalOverlay onClick={onClose}>
-      <ModalContent isRTL={isRTL} onClick={e => e.stopPropagation()}>
-        <ModalHeader fileType={file.type}>
+      <ModalContent $isRTL={isRTL} onClick={e => e.stopPropagation()}>
+        <ModalHeader $fileType={file.type}>
           <h3>
             <FaFileAlt />
             {file.name}
@@ -214,8 +214,8 @@ const ModalOverlay = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  opacity: ${props => props.isOpen ? 1 : 0};
-  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
+  opacity: ${props => props.$isOpen ? 1 : 0};
+  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(5px);
 `;
@@ -230,7 +230,7 @@ const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     width: 100%;
@@ -260,11 +260,11 @@ const ModalHeader = styled.div`
     svg {
       margin-right: 0.75rem;
       color: ${props => {
-        if (props.fileType?.startsWith('image/')) return '#27ae60';
-        if (props.fileType === 'application/pdf') return '#e74c3c';
-        if (props.fileType?.includes('word')) return '#3498db';
-        if (props.fileType?.includes('audio')) return '#9b59b6';
-        if (props.fileType?.includes('video')) return '#f39c12';
+        if (props.$fileType?.startsWith('image/')) return '#27ae60';
+        if (props.$fileType === 'application/pdf') return '#e74c3c';
+        if (props.$fileType?.includes('word')) return '#3498db';
+        if (props.$fileType?.includes('audio')) return '#9b59b6';
+        if (props.$fileType?.includes('video')) return '#f39c12';
         return '#7f8c8d';
       }};
     }

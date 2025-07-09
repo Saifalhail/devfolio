@@ -406,45 +406,45 @@ const LogoContainer = styled.div`
 // Styled components for floating icons
 const FloatingIcon = styled.div`
   position: absolute;
-  top: ${props => props.top || 'auto'};
-  left: ${props => props.left || 'auto'};
-  right: ${props => props.right || 'auto'};
-  bottom: ${props => props.bottom || 'auto'};
+  top: ${props => props.$top || 'auto'};
+  left: ${props => props.$left || 'auto'};
+  right: ${props => props.$right || 'auto'};
+  bottom: ${props => props.$bottom || 'auto'};
   z-index: 1;
-  animation: ${floatAnimation} ${props => props.duration || '6s'} infinite ease-in-out ${props => props.animationDelay || '0s'};
+  animation: ${floatAnimation} ${props => props.$duration || '6s'} infinite ease-in-out ${props => props.$animationDelay || '0s'};
 `;
 
 const PulsingIcon = styled.div`
   position: absolute;
-  top: ${props => props.top || 'auto'};
-  left: ${props => props.left || 'auto'};
-  right: ${props => props.right || 'auto'};
-  bottom: ${props => props.bottom || 'auto'};
+  top: ${props => props.$top || 'auto'};
+  left: ${props => props.$left || 'auto'};
+  right: ${props => props.$right || 'auto'};
+  bottom: ${props => props.$bottom || 'auto'};
   z-index: 1;
   animation: ${iconPulse} 4s infinite ease-in-out;
 `;
 
 const GlowingBadge = styled.div`
   position: absolute;
-  top: ${props => props.top || 'auto'};
-  left: ${props => props.left || 'auto'};
-  right: ${props => props.right || 'auto'};
-  bottom: ${props => props.bottom || 'auto'};
+  top: ${props => props.$top || 'auto'};
+  left: ${props => props.$left || 'auto'};
+  right: ${props => props.$right || 'auto'};
+  bottom: ${props => props.$bottom || 'auto'};
   z-index: 1;
   animation: ${glowEffect} 3s infinite ease-in-out;
 `;
 
 const IconBox = styled.div`
-  width: ${props => props.size || '50px'};
-  height: ${props => props.size || '50px'};
-  background: ${props => props.background || 'rgba(205, 62, 253, 0.15)'}; /* Updated to use purple brand color */
-  border-radius: ${props => props.borderRadius || '12px'};
+  width: ${props => props.$size || '50px'};
+  height: ${props => props.$size || '50px'};
+  background: ${props => props.$background || 'rgba(205, 62, 253, 0.15)'}; /* Updated to use purple brand color */
+  border-radius: ${props => props.$borderRadius || '12px'};
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 5px 15px rgba(205, 62, 253, 0.1); /* Updated shadow color */
   backdrop-filter: blur(8px); /* Increased blur effect */
-  transform: ${props => props.transform || 'none'};
+  transform: ${props => props.$transform || 'none'};
   opacity: 0.7; /* Added consistent opacity */
   filter: blur(1px); /* Added subtle blur to the icons themselves */
 `;
@@ -476,58 +476,58 @@ const Hero = () => {
       <div style={{ position: 'absolute', bottom: '20%', right: isRTL ? 'auto' : '25%', left: isRTL ? '25%' : 'auto', width: '120px', height: '120px', background: 'radial-gradient(circle, rgba(180, 41, 227, 0.05) 0%, rgba(180, 41, 227, 0) 70%)', borderRadius: '50%', filter: 'blur(10px)' }}></div>
 
       {/* Floating decorative elements positioned to not interfere with text */}
-      <FloatingIcon top="65%" left={isRTL ? "auto" : "8%"} right={isRTL ? "8%" : "auto"} animationDelay="0s" duration="6s">
-        <IconBox background="rgba(205, 62, 253, 0.15)" borderRadius="12px">
+      <FloatingIcon $top="65%" $left={isRTL ? "auto" : "8%"} $right={isRTL ? "8%" : "auto"} $animationDelay="0s" $duration="6s">
+        <IconBox $background="rgba(205, 62, 253, 0.15)" $borderRadius="12px">
           <span style={{ fontSize: '24px' }} role="img" aria-label={t('seo.alt.computer')}>💻</span>
         </IconBox>
       </FloatingIcon>
       
-      <FloatingIcon top="40%" left={isRTL ? "10%" : "auto"} right={isRTL ? "auto" : "10%"} animationDelay="1s" duration="7s">
-        <IconBox background="rgba(205, 62, 253, 0.12)" borderRadius="50%" size="45px">
+      <FloatingIcon $top="40%" $left={isRTL ? "10%" : "auto"} $right={isRTL ? "auto" : "10%"} $animationDelay="1s" $duration="7s">
+        <IconBox $background="rgba(205, 62, 253, 0.12)" $borderRadius="50%" $size="45px">
           <span style={{ fontSize: '22px' }} role="img" aria-label={t('seo.alt.rocket')}>🚀</span>
         </IconBox>
       </FloatingIcon>
       
-      <FloatingIcon bottom="25%" left={isRTL ? "auto" : "20%"} right={isRTL ? "20%" : "auto"} animationDelay="0.5s" duration="5s">
-        <IconBox background="rgba(205, 62, 253, 0.18)" borderRadius="10px" size="40px" transform="rotate(45deg)">
+      <FloatingIcon $bottom="25%" $left={isRTL ? "auto" : "20%"} $right={isRTL ? "20%" : "auto"} $animationDelay="0.5s" $duration="5s">
+        <IconBox $background="rgba(205, 62, 253, 0.18)" $borderRadius="10px" $size="40px" $transform="rotate(45deg)">
           <span style={{ fontSize: '20px', transform: 'rotate(-45deg)' }} role="img" aria-label={t('seo.alt.lightning')}>⚡</span>
         </IconBox>
       </FloatingIcon>
       
-      <PulsingIcon bottom="15%" left={isRTL ? "15%" : "auto"} right={isRTL ? "auto" : "15%"}>
-        <IconBox background="rgba(205, 62, 253, 0.15)" borderRadius="15px" size="60px">
+      <PulsingIcon $bottom="15%" $left={isRTL ? "15%" : "auto"} $right={isRTL ? "auto" : "15%"}>
+        <IconBox $background="rgba(205, 62, 253, 0.15)" $borderRadius="15px" $size="60px">
           <span style={{ fontSize: '30px' }} role="img" aria-label={t('seo.alt.sparkles')}>✨</span>
         </IconBox>
       </PulsingIcon>
       
       {/* Code quality badge positioned away from text - visible in both English and Arabic modes */}
-      <FloatingIcon bottom="30%" left={isRTL ? "auto" : "12%"} right={isRTL ? "12%" : "auto"} animationDelay="1.2s" duration="6.5s">
+      <FloatingIcon $bottom="30%" $left={isRTL ? "auto" : "12%"} $right={isRTL ? "12%" : "auto"} $animationDelay="1.2s" $duration="6.5s">
         <IconBox 
-          background="rgba(205, 62, 253, 0.2)" 
-          borderRadius="15px" 
-          size="65px"
+          $background="rgba(205, 62, 253, 0.2)" 
+          $borderRadius="15px" 
+          $size="65px"
         >
           <span style={{ fontSize: '18px' }} role="img" aria-label={t('seo.alt.star')}>⭐️</span>
         </IconBox>
       </FloatingIcon>
       
       {/* Additional background decorative elements */}
-      <FloatingIcon top="20%" left={isRTL ? "auto" : "25%"} right={isRTL ? "25%" : "auto"} animationDelay="2s" duration="8s">
+      <FloatingIcon $top="20%" $left={isRTL ? "auto" : "25%"} $right={isRTL ? "25%" : "auto"} $animationDelay="2s" $duration="8s">
         <IconBox 
-          background="rgba(205, 62, 253, 0.1)" 
-          borderRadius="12px" 
-          size="35px"
-          transform="rotate(15deg)"
+          $background="rgba(205, 62, 253, 0.1)" 
+          $borderRadius="12px" 
+          $size="35px"
+          $transform="rotate(15deg)"
         >
           <span style={{ fontSize: '16px', transform: 'rotate(-15deg)' }} role="img" aria-label={t('seo.alt.magnifier')}>🔍</span>
         </IconBox>
       </FloatingIcon>
       
-      <FloatingIcon top="60%" left={isRTL ? "22%" : "auto"} right={isRTL ? "auto" : "22%"} animationDelay="0.8s" duration="7.2s">
+      <FloatingIcon $top="60%" $left={isRTL ? "22%" : "auto"} $right={isRTL ? "auto" : "22%"} $animationDelay="0.8s" $duration="7.2s">
         <IconBox 
-          background="rgba(205, 62, 253, 0.13)" 
-          borderRadius="50%" 
-          size="40px"
+          $background="rgba(205, 62, 253, 0.13)" 
+          $borderRadius="50%" 
+          $size="40px"
         >
           <span style={{ fontSize: '18px' }} role="img" aria-label={t('seo.alt.crystalBall')}>🔮</span>
         </IconBox>

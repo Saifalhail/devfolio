@@ -1,0 +1,214 @@
+[debug] [2025-07-09T11:51:59.097Z] ----------------------------------------------------------------------
+[debug] [2025-07-09T11:51:59.098Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\salhail\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2025-07-09T11:51:59.099Z] CLI Version:   13.35.1
+[debug] [2025-07-09T11:51:59.099Z] Platform:      win32
+[debug] [2025-07-09T11:51:59.099Z] Node Version:  v18.20.5
+[debug] [2025-07-09T11:51:59.100Z] Time:          Wed Jul 09 2025 14:51:59 GMT+0300 (Arabian Standard Time)
+[debug] [2025-07-09T11:51:59.101Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-07-09T11:51:59.392Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-07-09T11:51:59.393Z] > authorizing via signed-in user (saifalhail@gmail.com)
+[debug] [2025-07-09T11:51:59.393Z] [iam] checking project devfolio-84079 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-07-09T11:51:59.395Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:51:59.395Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:51:59.396Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions [none]
+[debug] [2025-07-09T11:51:59.396Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions x-goog-quota-user=projects/devfolio-84079
+[debug] [2025-07-09T11:51:59.396Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-07-09T11:52:00.846Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions 200
+[debug] [2025-07-09T11:52:00.846Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-07-09T11:52:00.846Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:00.846Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:00.846Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/devfolio-84079/serviceAccounts/devfolio-84079@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-07-09T11:52:00.847Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/devfolio-84079/serviceAccounts/devfolio-84079@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-07-09T11:52:02.328Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/devfolio-84079/serviceAccounts/devfolio-84079@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-07-09T11:52:02.328Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/devfolio-84079/serviceAccounts/devfolio-84079@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'devfolio-84079'...
+[info] 
+[info] i  deploying functions 
+[info] +  functions: Finished running predeploy script. 
+[debug] [2025-07-09T11:52:02.331Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:02.331Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:02.332Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079 [none]
+[debug] [2025-07-09T11:52:02.750Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079 200
+[debug] [2025-07-09T11:52:02.750Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079 {"projectNumber":"311766073175","projectId":"devfolio-84079","lifecycleState":"ACTIVE","name":"devfolio","labels":{"firebase":"enabled","firebase-core":"disabled","generative-language":"enabled"},"createTime":"2025-05-14T07:30:45.184861Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[debug] [2025-07-09T11:52:02.751Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:02.751Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:02.751Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:02.751Z] Checked if tokens are valid: true, expires at: 1752064261264
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[debug] [2025-07-09T11:52:02.752Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:02.752Z] Checked if tokens are valid: true, expires at: 1752064261264
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-07-09T11:52:02.753Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:02.753Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:02.753Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-07-09T11:52:02.753Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/devfolio-84079
+[debug] [2025-07-09T11:52:02.754Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/runtimeconfig.googleapis.com [none]
+[debug] [2025-07-09T11:52:02.754Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/devfolio-84079
+[debug] [2025-07-09T11:52:02.754Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/cloudbuild.googleapis.com [none]
+[debug] [2025-07-09T11:52:02.754Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/cloudbuild.googleapis.com x-goog-quota-user=projects/devfolio-84079
+[debug] [2025-07-09T11:52:02.755Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/artifactregistry.googleapis.com [none]
+[debug] [2025-07-09T11:52:02.755Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/artifactregistry.googleapis.com x-goog-quota-user=projects/devfolio-84079
+[debug] [2025-07-09T11:52:04.395Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/cloudbuild.googleapis.com 200
+[debug] [2025-07-09T11:52:04.395Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/cloudbuild.googleapis.com [omitted]
+[info] +  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2025-07-09T11:52:04.398Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/runtimeconfig.googleapis.com 200
+[debug] [2025-07-09T11:52:04.398Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2025-07-09T11:52:04.418Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/cloudfunctions.googleapis.com 200
+[debug] [2025-07-09T11:52:04.418Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/cloudfunctions.googleapis.com [omitted]
+[info] +  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2025-07-09T11:52:04.446Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/artifactregistry.googleapis.com 200
+[debug] [2025-07-09T11:52:04.446Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/artifactregistry.googleapis.com [omitted]
+[info] +  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2025-07-09T11:52:04.447Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:04.447Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:04.447Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/devfolio-84079/adminSdkConfig [none]
+[debug] [2025-07-09T11:52:05.067Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/devfolio-84079/adminSdkConfig 200
+[debug] [2025-07-09T11:52:05.067Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/devfolio-84079/adminSdkConfig {"projectId":"devfolio-84079","storageBucket":"devfolio-84079.firebasestorage.app"}
+[debug] [2025-07-09T11:52:05.068Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:05.068Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:05.068Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs [none]
+[debug] [2025-07-09T11:52:05.640Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs 200
+[debug] [2025-07-09T11:52:05.640Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs {"configs":[{"name":"projects/devfolio-84079/configs/app"},{"name":"projects/devfolio-84079/configs/email"}]}
+[debug] [2025-07-09T11:52:05.640Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:05.640Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:05.641Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:05.641Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:05.641Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables [none]
+[debug] [2025-07-09T11:52:05.642Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables [none]
+[debug] [2025-07-09T11:52:06.092Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables 200
+[debug] [2025-07-09T11:52:06.093Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables {"variables":[{"name":"projects/devfolio-84079/configs/app/variables/app_id","updateTime":"2025-05-15T09:01:50.058715908Z"},{"name":"projects/devfolio-84079/configs/app/variables/auth_domain","updateTime":"2025-05-15T09:01:51.053747952Z"},{"name":"projects/devfolio-84079/configs/app/variables/measurement_id","updateTime":"2025-05-15T09:01:50.705758909Z"},{"name":"projects/devfolio-84079/configs/app/variables/messaging_sender_id","updateTime":"2025-05-15T09:01:49.611164954Z"},{"name":"projects/devfolio-84079/configs/app/variables/project_id","updateTime":"2025-05-15T09:01:50.538345691Z"},{"name":"projects/devfolio-84079/configs/app/variables/storage_bucket","updateTime":"2025-05-15T09:01:49.829286940Z"},{"name":"projects/devfolio-84079/configs/app/variables/api_key","updateTime":"2025-05-15T09:01:52.518215430Z"}]}
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.093Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.094Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/app_id [none]
+[debug] [2025-07-09T11:52:06.096Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/auth_domain [none]
+[debug] [2025-07-09T11:52:06.097Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/measurement_id [none]
+[debug] [2025-07-09T11:52:06.098Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/messaging_sender_id [none]
+[debug] [2025-07-09T11:52:06.099Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/project_id [none]
+[debug] [2025-07-09T11:52:06.100Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/storage_bucket [none]
+[debug] [2025-07-09T11:52:06.101Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/api_key [none]
+[debug] [2025-07-09T11:52:06.106Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables 200
+[debug] [2025-07-09T11:52:06.106Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables {"variables":[{"name":"projects/devfolio-84079/configs/email/variables/password","updateTime":"2025-05-15T09:07:13.027581025Z"},{"name":"projects/devfolio-84079/configs/email/variables/recipient","updateTime":"2025-05-15T09:07:13.045892979Z"},{"name":"projects/devfolio-84079/configs/email/variables/user","updateTime":"2025-05-15T09:07:13.063064400Z"}]}
+[debug] [2025-07-09T11:52:06.106Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.106Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.106Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.106Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.106Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.106Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:06.106Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables/password [none]
+[debug] [2025-07-09T11:52:06.107Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables/recipient [none]
+[debug] [2025-07-09T11:52:06.108Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables/user [none]
+[debug] [2025-07-09T11:52:06.514Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/api_key 200
+[debug] [2025-07-09T11:52:06.514Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/api_key {"name":"projects/devfolio-84079/configs/app/variables/api_key","updateTime":"2025-05-15T09:01:52.518215430Z","text":"AIzaSyAFC5fTqsPYKHnuWq9IEIX2OEqFt7bQDpQ"}
+[debug] [2025-07-09T11:52:06.527Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables/user 200
+[debug] [2025-07-09T11:52:06.527Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables/user {"name":"projects/devfolio-84079/configs/email/variables/user","updateTime":"2025-05-15T09:07:13.063064400Z","text":"your-email@gmail.com"}
+[debug] [2025-07-09T11:52:06.528Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables/password 200
+[debug] [2025-07-09T11:52:06.528Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables/password {"name":"projects/devfolio-84079/configs/email/variables/password","updateTime":"2025-05-15T09:07:13.027581025Z","text":"your-app-password"}
+[debug] [2025-07-09T11:52:06.530Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/messaging_sender_id 200
+[debug] [2025-07-09T11:52:06.530Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/messaging_sender_id {"name":"projects/devfolio-84079/configs/app/variables/messaging_sender_id","updateTime":"2025-05-15T09:01:49.611164954Z","text":"311766073175"}
+[debug] [2025-07-09T11:52:06.531Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/project_id 200
+[debug] [2025-07-09T11:52:06.531Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/project_id {"name":"projects/devfolio-84079/configs/app/variables/project_id","updateTime":"2025-05-15T09:01:50.538345691Z","text":"devfolio-84079"}
+[debug] [2025-07-09T11:52:06.532Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/storage_bucket 200
+[debug] [2025-07-09T11:52:06.532Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/storage_bucket {"name":"projects/devfolio-84079/configs/app/variables/storage_bucket","updateTime":"2025-05-15T09:01:49.829286940Z","text":"devfolio-84079.firebasestorage.app"}
+[debug] [2025-07-09T11:52:06.547Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/measurement_id 200
+[debug] [2025-07-09T11:52:06.547Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/measurement_id {"name":"projects/devfolio-84079/configs/app/variables/measurement_id","updateTime":"2025-05-15T09:01:50.705758909Z","text":"G-6XSF8W31KN"}
+[debug] [2025-07-09T11:52:06.548Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/auth_domain 200
+[debug] [2025-07-09T11:52:06.548Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/auth_domain {"name":"projects/devfolio-84079/configs/app/variables/auth_domain","updateTime":"2025-05-15T09:01:51.053747952Z","text":"devfolio-84079.firebaseapp.com"}
+[debug] [2025-07-09T11:52:06.549Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables/recipient 200
+[debug] [2025-07-09T11:52:06.549Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/email/variables/recipient {"name":"projects/devfolio-84079/configs/email/variables/recipient","updateTime":"2025-05-15T09:07:13.045892979Z","text":"recipient@example.com"}
+[debug] [2025-07-09T11:52:06.551Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/app_id 200
+[debug] [2025-07-09T11:52:06.551Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/devfolio-84079/configs/app/variables/app_id {"name":"projects/devfolio-84079/configs/app/variables/app_id","updateTime":"2025-05-15T09:01:50.058715908Z","text":"1:311766073175:web:62f4934248f2c7ec494812"}
+[debug] [2025-07-09T11:52:06.553Z] Validating nodejs source
+[warn] !  functions: Runtime Node.js 18 was deprecated on 2025-04-30 and will be decommissioned on 2025-10-31, after which you will not be able to deploy without upgrading. Consider upgrading now to avoid disruption. See https://cloud.google.com/functions/docs/runtime-support for full details on the lifecycle policy 
+[warn] !  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] !  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2025-07-09T11:52:08.488Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions --force",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@sendgrid/mail": "^8.1.5",
+    "dotenv": "^16.5.0",
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^5.1.1",
+    "nodemailer": "^7.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-07-09T11:52:08.488Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2025-07-09T11:52:08.490Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-07-09T11:52:08.505Z] Found firebase-functions binary at 'C:\Users\salhail\Desktop\devfolio\node_modules\.bin\firebase-functions'
+[info] Serving at port 8436
+
+[debug] [2025-07-09T11:52:12.485Z] Got response from /__/functions.yaml {"endpoints":{"submitFormData":{"platform":"gcfv1","labels":{},"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"callableTrigger":{},"entryPoint":"submitFormData"},"generateProjectInsights":{"platform":"gcfv1","labels":{},"availableMemoryMb":1024,"timeoutSeconds":120,"minInstances":null,"maxInstances":10,"ingressSettings":null,"serviceAccountEmail":null,"vpc":null,"callableTrigger":{},"entryPoint":"generateProjectInsights"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2025-07-09T11:52:12.571Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:12.572Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:12.572Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/firebaseextensions.googleapis.com [none]
+[debug] [2025-07-09T11:52:12.572Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/firebaseextensions.googleapis.com x-goog-quota-user=projects/devfolio-84079
+[debug] [2025-07-09T11:52:14.073Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/firebaseextensions.googleapis.com 200
+[debug] [2025-07-09T11:52:14.073Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/devfolio-84079/services/firebaseextensions.googleapis.com [omitted]
+[info] +  extensions: required API firebaseextensions.googleapis.com is enabled 
+[debug] [2025-07-09T11:52:14.074Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-07-09T11:52:14.074Z] > authorizing via signed-in user (saifalhail@gmail.com)
+[debug] [2025-07-09T11:52:14.074Z] [iam] checking project devfolio-84079 for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2025-07-09T11:52:14.074Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:14.075Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:14.075Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions [none]
+[debug] [2025-07-09T11:52:14.075Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions x-goog-quota-user=projects/devfolio-84079
+[debug] [2025-07-09T11:52:14.075Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-07-09T11:52:15.327Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions 200
+[debug] [2025-07-09T11:52:15.327Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/devfolio-84079:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-07-09T11:52:15.327Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:15.327Z] Checked if tokens are valid: true, expires at: 1752064261264
+[debug] [2025-07-09T11:52:15.328Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/devfolio-84079/instances pageSize=100&pageToken=
+[debug] [2025-07-09T11:52:16.996Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/devfolio-84079/instances 200
+[debug] [2025-07-09T11:52:16.996Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/devfolio-84079/instances {}
+[debug] [2025-07-09T11:52:16.998Z] Failed to validate key FIREBASE_API_KEY: Error: Key FIREBASE_API_KEY starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[debug] [2025-07-09T11:52:16.998Z] Failed to validate key FIREBASE_AUTH_DOMAIN: Error: Key FIREBASE_AUTH_DOMAIN starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[debug] [2025-07-09T11:52:16.998Z] Failed to validate key FIREBASE_PROJECT_ID: Error: Key FIREBASE_PROJECT_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[debug] [2025-07-09T11:52:16.998Z] Failed to validate key FIREBASE_STORAGE_BUCKET: Error: Key FIREBASE_STORAGE_BUCKET starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[debug] [2025-07-09T11:52:16.998Z] Failed to validate key FIREBASE_MESSAGING_SENDER_ID: Error: Key FIREBASE_MESSAGING_SENDER_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[debug] [2025-07-09T11:52:16.998Z] Failed to validate key FIREBASE_APP_ID: Error: Key FIREBASE_APP_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[debug] [2025-07-09T11:52:16.998Z] Failed to validate key FIREBASE_MEASUREMENT_ID: Error: Key FIREBASE_MEASUREMENT_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] Error: Failed to load environment variables from .env.:
+[error] - Error Key FIREBASE_API_KEY starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] - Error Key FIREBASE_AUTH_DOMAIN starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] - Error Key FIREBASE_PROJECT_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] - Error Key FIREBASE_STORAGE_BUCKET starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] - Error Key FIREBASE_MESSAGING_SENDER_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] - Error Key FIREBASE_APP_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)
+[error] - Error Key FIREBASE_MEASUREMENT_ID starts with a reserved prefix (X_GOOGLE_ FIREBASE_ EXT_)

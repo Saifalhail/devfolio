@@ -194,7 +194,15 @@ exports.submitFormData = functions.https.onCall(async (data, context) => {
 });
 
 // Generate AI insights for project using Gemini API
-exports.generateProjectInsights = functions.https.onCall(async (data, context) => {
+exports.generateProjectInsights = functions
+  .runWith({
+    // Increase memory and timeout for AI processing
+    memory: '1GB',
+    timeoutSeconds: 120,
+    // Add maxInstances to prevent scaling issues
+    maxInstances: 10
+  })
+  .https.onCall(async (data, context) => {
   console.log("Generating project insights with Gemini API");
   
   // Check if user is authenticated
@@ -560,27 +568,55 @@ IMPORTANT:
 
   } catch (error) {
     console.error("Error generating project insights:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error details:", {
+      message: error.message,
+      code: error.code,
+      statusCode: error.statusCode,
+      details: error.details,
+      name: error.name
+    });
     
     // Handle specific Gemini API errors
-    if (error.message?.includes("API_KEY_INVALID")) {
+    if (error.message?.includes("API_KEY_INVALID") || error.message?.includes("API key not valid")) {
       throw new functions.https.HttpsError(
         "failed-precondition",
         "AI service configuration error. Please contact support."
       );
     }
     
-    if (error.message?.includes("RATE_LIMIT")) {
+    if (error.message?.includes("RATE_LIMIT") || error.message?.includes("quota")) {
       throw new functions.https.HttpsError(
         "resource-exhausted",
         "AI service is temporarily unavailable due to high demand. Please try again later."
       );
     }
+    
+    if (error.message?.includes("PERMISSION_DENIED") || error.message?.includes("403")) {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "AI service access denied. Please check API key permissions."
+      );
+    }
+    
+    // Check for network/CORS issues
+    if (error.name === 'NetworkError' || error.message?.includes('Failed to fetch') || error.message?.includes('CORS')) {
+      throw new functions.https.HttpsError(
+        "unavailable",
+        "Cannot connect to AI service. This may be a deployment issue. Please ensure Cloud Functions are deployed."
+      );
+    }
 
-    // Generic error
+    // Generic error with more details
     throw new functions.https.HttpsError(
       "internal",
-      "Failed to generate project insights. Please try again.",
-      { errorDetails: error.toString() }
+      `Failed to generate project insights: ${error.message || "Unknown error"}`,
+      { 
+        errorDetails: error.toString(),
+        errorMessage: error.message,
+        errorCode: error.code,
+        errorName: error.name
+      }
     );
   }
 });

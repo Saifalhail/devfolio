@@ -98,16 +98,16 @@ const MultiSelectDropdown = ({
   };
 
   return (
-    <DropdownContainer ref={dropdownRef} isRTL={isRTL}>
-      <DropdownHeader onClick={toggleDropdown} isRTL={isRTL}>
+    <DropdownContainer ref={dropdownRef} $isRTL={isRTL}>
+      <DropdownHeader onClick={toggleDropdown} $isRTL={isRTL}>
         {selectedOptions.length > 0 ? (
-          <SelectedTagsContainer isRTL={isRTL}>
+          <SelectedTagsContainer $isRTL={isRTL}>
             {selectedOptions.map(option => (
-              <SelectedTag key={option.id} isRTL={isRTL}>
+              <SelectedTag key={option.id} $isRTL={isRTL}>
                 {option.label}
                 <RemoveTagButton 
                   onClick={(e) => removeSelectedOption(option.id, e)}
-                  isRTL={isRTL}
+                  $isRTL={isRTL}
                 >
                   <FaTimes />
                 </RemoveTagButton>
@@ -115,17 +115,17 @@ const MultiSelectDropdown = ({
             ))}
           </SelectedTagsContainer>
         ) : (
-          <Placeholder isRTL={isRTL}>{placeholder}</Placeholder>
+          <Placeholder $isRTL={isRTL}>{placeholder}</Placeholder>
         )}
-        <DropdownIcon isRTL={isRTL}>
+        <DropdownIcon $isRTL={isRTL}>
           {isOpen ? <FaChevronUp /> : <FaChevronDown />}
         </DropdownIcon>
       </DropdownHeader>
       
       {isOpen && (
-        <DropdownContent isRTL={isRTL}>
-          <SearchContainer isRTL={isRTL}>
-            <SearchIcon isRTL={isRTL}>
+        <DropdownContent $isRTL={isRTL}>
+          <SearchContainer $isRTL={isRTL}>
+            <SearchIcon $isRTL={isRTL}>
               <FaSearch />
             </SearchIcon>
             <SearchInput
@@ -133,36 +133,36 @@ const MultiSelectDropdown = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t('common.search', 'Search...')}
-              isRTL={isRTL}
+              $isRTL={isRTL}
             />
           </SearchContainer>
           
-          <OptionsList isRTL={isRTL}>
+          <OptionsList $isRTL={isRTL}>
             {filteredOptions.map(option => (
               <OptionItem
                 key={option.id}
                 onClick={() => handleOptionClick(option.id)}
-                isSelected={selectedValues.includes(option.id)}
-                isRTL={isRTL}
+                $isSelected={selectedValues.includes(option.id)}
+                $isRTL={isRTL}
               >
                 {option.label}
               </OptionItem>
             ))}
             
             {filteredOptions.length === 0 && (
-              <NoResults isRTL={isRTL}>
+              <NoResults $isRTL={isRTL}>
                 {t('common.noResults', 'No results found')}
               </NoResults>
             )}
           </OptionsList>
           
           {isSpecificSelected && allowCustom && (
-            <CustomInputContainer isRTL={isRTL}>
+            <CustomInputContainer $isRTL={isRTL}>
               <TextInput
                 value={customValue}
                 onChange={handleCustomValueChange}
                 placeholder={t('common.specifyOther', 'Please specify...')}
-                isRTL={isRTL}
+                $isRTL={isRTL}
               />
             </CustomInputContainer>
           )}
@@ -175,7 +175,7 @@ const MultiSelectDropdown = ({
 const DropdownContainer = styled.div`
   position: relative;
   width: 100%;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
 `;
 
 const DropdownHeader = styled.div`
@@ -222,24 +222,24 @@ const SelectedTag = styled.div`
   background-color: rgba(74, 108, 247, 0.2);
   border-radius: ${borderRadius.sm};
   padding: ${spacing.xxs} ${spacing.xs};
-  margin-${props => props.isRTL ? 'left' : 'right'}: ${spacing.xs};
+  margin-${props => props.$isRTL ? 'left' : 'right'}: ${spacing.xs};
   margin-bottom: ${spacing.xs};
-  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
+  font-size: ${props => props.$isRTL ? `calc(${typography.fontSizes.xs} * 1.05)` : typography.fontSizes.xs};
   color: white;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  flex-direction: ${props => props.$isRTL ? 'row-reverse' : 'row'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
 `;
 
 const RemoveTagButton = styled.button`
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.7);
-  margin-${props => props.isRTL ? 'right' : 'left'}: ${spacing.xxs};
+  margin-${props => props.$isRTL ? 'right' : 'left'}: ${spacing.xxs};
   padding: 0;
   cursor: pointer;
   display: flex;
@@ -254,14 +254,14 @@ const RemoveTagButton = styled.button`
 
 const DropdownIcon = styled.div`
   color: rgba(255, 255, 255, 0.5);
-  margin-${props => props.isRTL ? 'left' : 'right'}: ${spacing.xs};
+  margin-${props => props.$isRTL ? 'left' : 'right'}: ${spacing.xs};
 `;
 
 const DropdownContent = styled.div`
   position: absolute;
   top: 100%;
-  left: ${props => props.isRTL ? 'auto' : '0'};
-  right: ${props => props.isRTL ? '0' : 'auto'};
+  left: ${props => props.$isRTL ? 'auto' : '0'};
+  right: ${props => props.$isRTL ? '0' : 'auto'};
   margin-top: ${spacing.xs};
   background: rgba(40, 40, 70, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -272,8 +272,8 @@ const DropdownContent = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   width: 100%;
   min-width: 200px;
   
@@ -284,7 +284,7 @@ const DropdownContent = styled.div`
 
 const SearchContainer = styled.div`
   display: flex;
-  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  flex-direction: ${props => props.$isRTL ? 'row-reverse' : 'row'};
   align-items: center;
   padding: ${spacing.xs};
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -292,12 +292,12 @@ const SearchContainer = styled.div`
   top: 0;
   background: rgba(40, 40, 70, 0.98);
   z-index: 1;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
 `;
 
 const SearchIcon = styled.div`
   color: rgba(255, 255, 255, 0.5);
-  margin-${props => props.isRTL ? 'left' : 'right'}: ${spacing.xs};
+  margin-${props => props.$isRTL ? 'left' : 'right'}: ${spacing.xs};
 `;
 
 const SearchInput = styled.input`
@@ -306,9 +306,9 @@ const SearchInput = styled.input`
   color: white;
   padding: ${spacing.xs};
   width: 100%;
-  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  font-size: ${props => props.$isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   
   &:focus {
     outline: none;
@@ -316,7 +316,7 @@ const SearchInput = styled.input`
   
   &::placeholder {
     color: rgba(255, 255, 255, 0.5);
-    text-align: ${props => props.isRTL ? 'right' : 'left'};
+    text-align: ${props => props.$isRTL ? 'right' : 'left'};
   }
 `;
 
@@ -325,27 +325,27 @@ const OptionsList = styled.div`
   flex-direction: column;
   padding: ${spacing.xs} 0;
   overflow-y: auto;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
 `;
 
 const OptionItem = styled.div`
   display: flex;
   align-items: center;
-  justify-content: ${props => props.isRTL ? 'flex-end' : 'flex-start'};
-  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  justify-content: ${props => props.$isRTL ? 'flex-end' : 'flex-start'};
+  flex-direction: ${props => props.$isRTL ? 'row-reverse' : 'row'};
   padding: ${spacing.xs} ${spacing.sm};
   cursor: pointer;
   transition: all 0.15s ease;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
-  background-color: ${props => props.isSelected ? 'rgba(131, 56, 236, 0.2)' : 'transparent'};
-  color: ${props => props.isSelected ? '#a56eff' : 'inherit'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  font-size: ${props => props.$isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
+  background-color: ${props => props.$isSelected ? 'rgba(131, 56, 236, 0.2)' : 'transparent'};
+  color: ${props => props.$isSelected ? '#a56eff' : 'inherit'};
   
   &:hover {
-    background-color: ${props => props.isSelected ? 'rgba(131, 56, 236, 0.3)' : 'rgba(255, 255, 255, 0.08)'};
-    transform: translateX(${props => props.isRTL ? '-2px' : '2px'});
+    background-color: ${props => props.$isSelected ? 'rgba(131, 56, 236, 0.3)' : 'rgba(255, 255, 255, 0.08)'};
+    transform: translateX(${props => props.$isRTL ? '-2px' : '2px'});
   }
   
   @media (max-width: 768px) {

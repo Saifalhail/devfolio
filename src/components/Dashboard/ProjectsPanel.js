@@ -37,7 +37,8 @@ import {
   FaTools,
   FaLink,
   FaChartBar,
-  FaUsersCog
+  FaUsersCog,
+  FaRobot
 } from 'react-icons/fa';
 import StarryBackground from '../Common/StarryBackground';
 import { 
@@ -526,25 +527,25 @@ const WhitePaginationButton = styled.button`
   min-width: 36px;
   height: 36px;
   padding: 0 ${spacing.sm};
-  background: ${props => props.active 
+  background: ${props => props.$active 
     ? colors.gradients.accent 
     : 'rgba(205, 62, 253, 0.2)'};
-  border: 1px solid ${props => props.active 
+  border: 1px solid ${props => props.$active 
     ? 'transparent' 
     : 'rgba(205, 62, 253, 0.4)'};
   border-radius: ${borderRadius.md};
   color: ${colors.text.primary}; /* Always white */
   font-size: ${typography.fontSizes.sm};
-  font-weight: ${props => props.active ? typography.fontWeights.medium : typography.fontWeights.normal};
+  font-weight: ${props => props.$active ? typography.fontWeights.medium : typography.fontWeights.normal};
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   opacity: ${props => props.disabled ? 0.5 : 1};
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   &:not(:disabled):hover {
-    background: ${props => props.active 
+    background: ${props => props.$active 
       ? colors.gradients.hover 
       : 'rgba(205, 62, 253, 0.15)'};
-    border-color: ${props => props.active ? 'transparent' : colors.accent.primary};
+    border-color: ${props => props.$active ? 'transparent' : colors.accent.primary};
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(205, 62, 253, 0.2);
   }
@@ -963,9 +964,9 @@ const InsightsContent = styled.div`
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(205, 62, 253, 0.2);
   border-radius: ${borderRadius.lg};
-  max-width: 800px;
+  max-width: 900px;
   width: 90%;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   position: relative;
@@ -1036,12 +1037,29 @@ const CloseButton = styled.button`
 `;
 
 const InsightsBody = styled.div`
-  padding: ${spacing.lg};
+  padding: ${spacing.xl} ${spacing.lg};
   overflow-y: auto;
   flex: 1;
+  max-height: calc(85vh - 120px);
   
+  /* Custom scrollbar */
   &::-webkit-scrollbar {
     width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(205, 62, 253, 0.3);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(205, 62, 253, 0.5);
   }
   
   &::-webkit-scrollbar-track {
@@ -1088,11 +1106,11 @@ const InsightSection = styled.div`
 `;
 
 const InsightCard = styled.div`
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  padding: ${spacing.lg};
+  padding: ${spacing.xl};
   margin-bottom: ${spacing.md};
   transition: all 0.3s ease;
   position: relative;
@@ -1105,14 +1123,14 @@ const InsightCard = styled.div`
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(205, 62, 253, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(205, 62, 253, 0.05), transparent);
     transition: left 0.5s ease;
   }
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(205, 62, 253, 0.2);
-    border-color: rgba(205, 62, 253, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(205, 62, 253, 0.1);
+    border-color: rgba(205, 62, 253, 0.2);
     
     &::before {
       left: 100%;
@@ -1277,15 +1295,15 @@ const TabButton = styled.button`
   align-items: center;
   gap: ${spacing.sm};
   padding: ${spacing.sm} ${spacing.lg};
-  background: ${props => props.active 
+  background: ${props => props.$active 
     ? colors.gradients.accent 
     : 'transparent'};
-  border: 1px solid ${props => props.active 
+  border: 1px solid ${props => props.$active 
     ? 'transparent' 
     : 'rgba(255, 255, 255, 0.1)'};
   border-radius: ${borderRadius.md};
-  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
-  font-weight: ${props => props.active ? typography.fontWeights.semiBold : typography.fontWeights.medium};
+  color: ${props => props.$active ? colors.text.primary : colors.text.secondary};
+  font-weight: ${props => props.$active ? typography.fontWeights.semiBold : typography.fontWeights.medium};
   font-size: ${typography.fontSizes.sm};
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1296,11 +1314,11 @@ const TabButton = styled.button`
   }
   
   &:hover {
-    background: ${props => props.active 
+    background: ${props => props.$active 
       ? colors.gradients.hover
       : 'rgba(255, 255, 255, 0.05)'};
     color: ${colors.text.primary};
-    border-color: ${props => props.active ? 'transparent' : 'rgba(205, 62, 253, 0.3)'};
+    border-color: ${props => props.$active ? 'transparent' : 'rgba(205, 62, 253, 0.3)'};
   }
   
   &:active {
@@ -1474,11 +1492,17 @@ const CircularProgress = styled.div`
     }
     
     &:last-child {
-      stroke: ${props => props.score >= 7 ? colors.status.success : 
-                         props.score >= 5 ? colors.status.warning : 
-                         colors.status.error};
+      stroke: ${props => {
+        const score = isNaN(props.$score) ? 0 : props.$score;
+        return score >= 7 ? colors.status.success : 
+               score >= 5 ? colors.status.warning : 
+               colors.status.error;
+      }};
       stroke-dasharray: ${props => 2 * Math.PI * 52};
-      stroke-dashoffset: ${props => 2 * Math.PI * 52 * (1 - props.score / 10)};
+      stroke-dashoffset: ${props => {
+        const score = isNaN(props.$score) ? 0 : props.$score;
+        return 2 * Math.PI * 52 * (1 - score / 10);
+      }};
       transition: stroke-dashoffset 1s ease;
       /* Removed drop-shadow for cleaner design */
     }
@@ -1495,9 +1519,12 @@ const ScoreText = styled.div`
   .score {
     font-size: 2rem;
     font-weight: bold;
-    color: ${props => props.score >= 7 ? colors.status.success : 
-                      props.score >= 5 ? colors.status.warning : 
-                      colors.status.error};
+    color: ${props => {
+      const score = isNaN(props.$score) ? 0 : props.$score;
+      return score >= 7 ? colors.status.success : 
+             score >= 5 ? colors.status.warning : 
+             colors.status.error;
+    }};
   }
   
   .label {
@@ -1826,7 +1853,6 @@ const ProjectsPanel = () => {
   const [activePage, setActivePage] = useState(1);
   const [itemsPerPage] = useState(9);
   const [totalPages, setTotalPages] = useState(1);
-  const [activeTab, setActiveTab] = useState('overview');
 
   // Get status priority for sorting
   const getStatusPriority = (status) => {
@@ -2008,7 +2034,6 @@ const ProjectsPanel = () => {
   const openInsightsModal = useCallback((project) => {
     setSelectedProjectInsights(project);
     setIsInsightsModalOpen(true);
-    setActiveTab('overview'); // Reset to overview tab
   }, []);
   
   // Close AI insights modal
@@ -2053,13 +2078,13 @@ const ProjectsPanel = () => {
         </ActionButtonWrapper>
       </PanelHeader>
       
-      <ActionsRow isRTL={isRTL}>
+      <ActionsRow>
         {isRTL ? (
             <>
-              <FilterSection isRTL={isRTL}>
-                <CustomFilterTabs isRTL={isRTL}>
+              <FilterSection>
+                <CustomFilterTabs $isRTL={isRTL}>
                   <StatusFilterTab 
-                    active={filterStatus === 'all'} 
+                    $active={filterStatus === 'all'} 
                     onClick={() => setFilterStatus('all')}
                     title={t('projects.filters.all', 'All')}
                     aria-label={t('projects.filters.all', 'All')}
@@ -2067,7 +2092,7 @@ const ProjectsPanel = () => {
                     <FaListUl />
                   </StatusFilterTab>
                   <StatusFilterTab 
-                    active={filterStatus === 'inProgress'} 
+                    $active={filterStatus === 'inProgress'} 
                     onClick={() => setFilterStatus('inProgress')}
                     status="inProgress"
                     title={t('projects.inProgress', 'In Progress')}
@@ -2076,7 +2101,7 @@ const ProjectsPanel = () => {
                     <FaClock />
                   </StatusFilterTab>
                   <StatusFilterTab 
-                    active={filterStatus === 'done'} 
+                    $active={filterStatus === 'done'} 
                     onClick={() => setFilterStatus('done')}
                     status="done"
                     title={t('projects.done', 'Done')}
@@ -2085,7 +2110,7 @@ const ProjectsPanel = () => {
                     <FaCheck />
                   </StatusFilterTab>
                 </CustomFilterTabs>
-                <ProjectCount isRTL={isRTL}>
+                <ProjectCount>
                   {`${filteredProjects.length} ${filteredProjects.length === 1 
                     ? t('projects.project', 'Project') 
                     : t('projects.projects', 'Projects')}`}
@@ -2097,7 +2122,7 @@ const ProjectsPanel = () => {
               <FilterSection>
                 <CustomFilterTabs>
                   <StatusFilterTab 
-                    active={filterStatus === 'all'} 
+                    $active={filterStatus === 'all'} 
                     onClick={() => setFilterStatus('all')}
                     title={t('projects.filters.all', 'All')}
                     aria-label={t('projects.filters.all', 'All')}
@@ -2105,7 +2130,7 @@ const ProjectsPanel = () => {
                     <FaListUl />
                   </StatusFilterTab>
                   <StatusFilterTab 
-                    active={filterStatus === 'inProgress'} 
+                    $active={filterStatus === 'inProgress'} 
                     onClick={() => setFilterStatus('inProgress')}
                     status="inProgress"
                     title={t('projects.inProgress', 'In Progress')}
@@ -2114,7 +2139,7 @@ const ProjectsPanel = () => {
                     <FaClock />
                   </StatusFilterTab>
                   <StatusFilterTab 
-                    active={filterStatus === 'done'} 
+                    $active={filterStatus === 'done'} 
                     onClick={() => setFilterStatus('done')}
                     status="done"
                     tooltip={t('projects.done', 'Done')}
@@ -2277,7 +2302,7 @@ const ProjectsPanel = () => {
                 {[...Array(totalPages)].map((_, index) => (
                   <WhitePaginationButton
                     key={index + 1}
-                    active={activePage === index + 1}
+                    $active={activePage === index + 1}
                     onClick={() => handlePageChange(index + 1)}
                     aria-label={t('pagination.page', 'Page {{number}}', { number: index + 1 })}
                   >
@@ -2343,872 +2368,245 @@ const ProjectsPanel = () => {
               
               {selectedProjectInsights.aiInsights ? (
                 <>
-                  {/* Tab Navigation - Simplified */}
-                  <TabNavigation>
-                    <TabButton 
-                      active={activeTab === 'overview'} 
-                      onClick={() => setActiveTab('overview')}
-                    >
-                      <FaLightbulb />
-                      {t('projects.summary.tabs.overview', 'Overview')}
-                    </TabButton>
-                    <TabButton 
-                      active={activeTab === 'technical'} 
-                      onClick={() => setActiveTab('technical')}
-                    >
-                      <FaCode />
-                      {t('projects.summary.tabs.technical', 'Technical')}
-                    </TabButton>
-                    <TabButton 
-                      active={activeTab === 'timeline'} 
-                      onClick={() => setActiveTab('timeline')}
-                    >
-                      <FaCalendarAlt />
-                      {t('projects.summary.tabs.timeline', 'Timeline')}
-                    </TabButton>
-                    <TabButton 
-                      active={activeTab === 'next'} 
-                      onClick={() => setActiveTab('next')}
-                    >
-                      <FaArrowCircleRight />
-                      {t('projects.summary.tabs.nextSteps', 'Next Steps')}
-                    </TabButton>
-                  </TabNavigation>
-
-                  {/* Tab Content */}
-                  {activeTab === 'overview' && (
-                    <>
-                      {/* Executive Summary */}
-                      {selectedProjectInsights.aiInsights.executiveSummary && (
-                        <InsightSection>
-                          <h3>{t('projects.aiInsights.executiveSummary', 'Executive Summary')}</h3>
-                          <InsightCard>
-                            <p>{selectedProjectInsights.aiInsights.executiveSummary}</p>
-                          </InsightCard>
-                        </InsightSection>
-                      )}
+                  {/* All insights displayed on single page */}
                   
-                  {/* Project Feasibility with Visual Score */}
-                  {selectedProjectInsights.aiInsights.projectFeasibility && (
+                  {/* Executive Summary */}
+                  {selectedProjectInsights.aiInsights.executiveSummary && (
                     <InsightSection>
-                      <h3>
-                        <FaTrophy />
-                        {t('projects.aiInsights.feasibility', 'Project Feasibility')}
-                      </h3>
+                      <h3>{t('projects.aiInsights.executiveSummary', 'Executive Summary')}</h3>
                       <InsightCard>
-                        <CircularProgress score={parseFloat(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
-                          <svg viewBox="0 0 120 120">
-                            <circle cx="60" cy="60" r="52" />
-                            <circle cx="60" cy="60" r="52" />
-                          </svg>
-                          <ScoreText score={parseFloat(selectedProjectInsights.aiInsights.projectFeasibility.score)}>
-                            <div className="score">{selectedProjectInsights.aiInsights.projectFeasibility.score}</div>
-                            <div className="label">{t('projects.aiInsights.outOf10', 'out of 10')}</div>
-                          </ScoreText>
-                        </CircularProgress>
-                        <p>{selectedProjectInsights.aiInsights.projectFeasibility.assessment}</p>
-                        {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations && (
-                          <ul>
-                            {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations.map((item, index) => (
-                              <li key={index}>{item}</li>
-                            ))}
-                          </ul>
-                        )}
+                        <p>{selectedProjectInsights.aiInsights.executiveSummary}</p>
                       </InsightCard>
                     </InsightSection>
                   )}
                   
-                  {/* Technical Recommendations */}
+                  {/* Key Metrics Overview */}
+                  <MetricsGrid>
+                    {/* Feasibility Score */}
+                    {selectedProjectInsights.aiInsights.projectFeasibility && (
+                      <MetricCard>
+                        <div className="icon"><FaTrophy /></div>
+                        <div className="value">{selectedProjectInsights.aiInsights.projectFeasibility.score}/10</div>
+                        <div className="label">{t('projects.aiInsights.feasibilityScore', 'Feasibility Score')}</div>
+                      </MetricCard>
+                    )}
+                    
+                    {/* Timeline */}
+                    {selectedProjectInsights.aiInsights.timelineEstimate && (
+                      <MetricCard>
+                        <div className="icon"><FaClock /></div>
+                        <div className="value">{selectedProjectInsights.aiInsights.timelineEstimate.totalDuration}</div>
+                        <div className="label">{t('projects.aiInsights.estimatedTimeline', 'Timeline')}</div>
+                      </MetricCard>
+                    )}
+                    
+                    {/* Budget */}
+                    {selectedProjectInsights.aiInsights.budgetAnalysis && (
+                      <MetricCard>
+                        <div className="icon"><FaMoneyBillWave /></div>
+                        <div className="value">{selectedProjectInsights.aiInsights.budgetAnalysis.estimatedCost}</div>
+                        <div className="label">{t('projects.aiInsights.estimatedBudget', 'Budget')}</div>
+                      </MetricCard>
+                    )}
+                  </MetricsGrid>
+                  
+                  {/* Technical Stack & Architecture */}
                   {selectedProjectInsights.aiInsights.technicalRecommendations && (
                     <InsightSection>
                       <h3>
                         <FaCode />
-                        {t('projects.aiInsights.technicalRecommendations', 'Technical Recommendations')}
+                        {t('projects.aiInsights.technicalOverview', 'Technical Overview')}
                       </h3>
                       <InsightCard>
                         {selectedProjectInsights.aiInsights.technicalRecommendations.suggestedTechStack && (
-                          <div>
-                            <h4>{t('projects.aiInsights.suggestedStack', 'Suggested Tech Stack')}</h4>
-                            {Object.entries(selectedProjectInsights.aiInsights.technicalRecommendations.suggestedTechStack).map(([category, techs]) => (
-                              <div key={category}>
-                                <h5>{category.charAt(0).toUpperCase() + category.slice(1)}:</h5>
-                                {techs.map((tech, index) => (
-                                  <TechBadge key={index}>{tech}</TechBadge>
-                                ))}
-                              </div>
-                            ))}
+                          <div style={{ marginBottom: spacing.md }}>
+                            <h4>{t('projects.aiInsights.techStack', 'Recommended Tech Stack')}</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: spacing.md }}>
+                              {Object.entries(selectedProjectInsights.aiInsights.technicalRecommendations.suggestedTechStack).map(([category, techs]) => (
+                                <div key={category}>
+                                  <h5 style={{ color: colors.accent.primary, marginBottom: spacing.sm }}>
+                                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                                  </h5>
+                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: spacing.xs }}>
+                                    {techs.map((tech, index) => (
+                                      <TechBadge key={index}>{tech}</TechBadge>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
                         {selectedProjectInsights.aiInsights.technicalRecommendations.architecturePattern && (
-                          <p><strong>{t('projects.aiInsights.architecture', 'Architecture')}:</strong> {selectedProjectInsights.aiInsights.technicalRecommendations.architecturePattern}</p>
+                          <div>
+                            <h4>{t('projects.aiInsights.architecture', 'Architecture Pattern')}</h4>
+                            <p>{selectedProjectInsights.aiInsights.technicalRecommendations.architecturePattern}</p>
+                          </div>
                         )}
                       </InsightCard>
                     </InsightSection>
                   )}
                   
-                  {/* Timeline & Budget */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing.md }}>
-                    {selectedProjectInsights.aiInsights.timelineEstimate && (
-                      <InsightSection>
-                        <h3>
-                          <FaClock />
-                          {t('projects.aiInsights.timeline', 'Timeline')}
-                        </h3>
-                        <InsightCard>
-                          <p><strong>{t('projects.aiInsights.duration', 'Duration')}:</strong> {selectedProjectInsights.aiInsights.timelineEstimate.totalDuration}</p>
-                        </InsightCard>
-                      </InsightSection>
-                    )}
-                    
-                    {selectedProjectInsights.aiInsights.budgetAnalysis && (
-                      <InsightSection>
-                        <h3>
-                          <FaMoneyBillWave />
-                          {t('projects.aiInsights.budget', 'Budget')}
-                        </h3>
-                        <InsightCard>
-                          <p><strong>{t('projects.aiInsights.estimate', 'Estimate')}:</strong> {selectedProjectInsights.aiInsights.budgetAnalysis.estimatedCost}</p>
-                        </InsightCard>
-                      </InsightSection>
-                    )}
-                  </div>
-                  
-                      {/* Competitive Analysis */}
-                      {selectedProjectInsights.aiInsights.competitiveAnalysis && (
-                        <InsightSection>
-                          <h3>
-                            <FaChartBar />
-                            {t('projects.aiInsights.competitiveAnalysis', 'Market Analysis')}
-                          </h3>
-                          <InsightCard>
-                            <p>{selectedProjectInsights.aiInsights.competitiveAnalysis.marketInsights}</p>
-                            {selectedProjectInsights.aiInsights.competitiveAnalysis.differentiationOpportunities && (
-                              <>
-                                <h4>{t('projects.aiInsights.differentiation', 'Differentiation Opportunities')}</h4>
-                                <ul>
-                                  {selectedProjectInsights.aiInsights.competitiveAnalysis.differentiationOpportunities.map((opp, index) => (
-                                    <li key={index}>{opp}</li>
-                                  ))}
-                                </ul>
-                              </>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                    </>
-                  )}
-
-                  {activeTab === 'technical' && (
-                    <>
-                      {/* Technical Specifications */}
-                      {selectedProjectInsights.aiInsights.technicalSpecification && (
-                        <InsightSection>
-                          <h3>
-                            <FaServer />
-                            {t('projects.aiInsights.technicalSpec', 'Technical Specification')}
-                          </h3>
-                          <InsightCard>
-                            <DetailGrid>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.architecture', 'Architecture')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.technicalSpecification.architecture}</span>
-                              </DetailItem>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.apiDesign', 'API Design')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.technicalSpecification.apiDesign}</span>
-                              </DetailItem>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.deployment', 'Deployment')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.technicalSpecification.deploymentArchitecture}</span>
-                              </DetailItem>
-                            </DetailGrid>
-                            
-                            {selectedProjectInsights.aiInsights.technicalSpecification.databases && (
-                              <>
-                                <h4>{t('projects.aiInsights.databases', 'Database Architecture')}</h4>
-                                <DetailGrid>
-                                  <DetailItem>
-                                    <strong>{t('projects.aiInsights.primary', 'Primary')}:</strong>
-                                    <span>{selectedProjectInsights.aiInsights.technicalSpecification.databases.primary}</span>
-                                  </DetailItem>
-                                  {selectedProjectInsights.aiInsights.technicalSpecification.databases.cache && (
-                                    <DetailItem>
-                                      <strong>{t('projects.aiInsights.cache', 'Cache')}:</strong>
-                                      <span>{selectedProjectInsights.aiInsights.technicalSpecification.databases.cache}</span>
-                                    </DetailItem>
-                                  )}
-                                  {selectedProjectInsights.aiInsights.technicalSpecification.databases.search && (
-                                    <DetailItem>
-                                      <strong>{t('projects.aiInsights.search', 'Search')}:</strong>
-                                      <span>{selectedProjectInsights.aiInsights.technicalSpecification.databases.search}</span>
-                                    </DetailItem>
-                                  )}
-                                </DetailGrid>
-                              </>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-
-                      {/* Scalability Plan */}
-                      {selectedProjectInsights.aiInsights.scalabilityPlan && (
-                        <InsightSection>
-                          <h3>
-                            <FaBolt />
-                            {t('projects.aiInsights.scalability', 'Scalability Plan')}
-                          </h3>
-                          <InsightCard>
-                            <p><strong>{t('projects.aiInsights.userGrowth', 'User Growth Strategy')}:</strong> {selectedProjectInsights.aiInsights.scalabilityPlan.userGrowthStrategy}</p>
-                            <p><strong>{t('projects.aiInsights.dataGrowth', 'Data Growth Strategy')}:</strong> {selectedProjectInsights.aiInsights.scalabilityPlan.dataGrowthStrategy}</p>
-                            
-                            {selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets && (
-                              <>
-                                <h4>{t('projects.aiInsights.performanceTargets', 'Performance Targets')}</h4>
-                                <DetailGrid>
-                                  <DetailItem>
-                                    <strong>{t('projects.aiInsights.responseTime', 'Response Time')}:</strong>
-                                    <span>{selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets.responseTime}</span>
-                                  </DetailItem>
-                                  <DetailItem>
-                                    <strong>{t('projects.aiInsights.uptime', 'Uptime')}:</strong>
-                                    <span>{selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets.uptime}</span>
-                                  </DetailItem>
-                                  {selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets.concurrent_users && (
-                                    <DetailItem>
-                                      <strong>{t('projects.aiInsights.concurrentUsers', 'Concurrent Users')}:</strong>
-                                      <span>{selectedProjectInsights.aiInsights.scalabilityPlan.performanceTargets.concurrent_users}</span>
-                                    </DetailItem>
-                                  )}
-                                </DetailGrid>
-                              </>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-
-                      {/* Integration Map */}
-                      {selectedProjectInsights.aiInsights.integrationMap && (
-                        <InsightSection>
-                          <h3>
-                            <FaLink />
-                            {t('projects.aiInsights.integrations', 'Integration Requirements')}
-                          </h3>
-                          <InsightCard>
-                            <IntegrationGrid>
-                              {selectedProjectInsights.aiInsights.integrationMap.required && (
-                                <IntegrationCategory>
-                                  <h4>{t('projects.aiInsights.required', 'Required')}</h4>
-                                  {selectedProjectInsights.aiInsights.integrationMap.required.map((item, index) => (
-                                    <IntegrationBadge key={index} type="required">{item}</IntegrationBadge>
-                                  ))}
-                                </IntegrationCategory>
-                              )}
-                              {selectedProjectInsights.aiInsights.integrationMap.recommended && (
-                                <IntegrationCategory>
-                                  <h4>{t('projects.aiInsights.recommended', 'Recommended')}</h4>
-                                  {selectedProjectInsights.aiInsights.integrationMap.recommended.map((item, index) => (
-                                    <IntegrationBadge key={index} type="recommended">{item}</IntegrationBadge>
-                                  ))}
-                                </IntegrationCategory>
-                              )}
-                              {selectedProjectInsights.aiInsights.integrationMap.future && (
-                                <IntegrationCategory>
-                                  <h4>{t('projects.aiInsights.future', 'Future Considerations')}</h4>
-                                  {selectedProjectInsights.aiInsights.integrationMap.future.map((item, index) => (
-                                    <IntegrationBadge key={index} type="future">{item}</IntegrationBadge>
-                                  ))}
-                                </IntegrationCategory>
-                              )}
-                            </IntegrationGrid>
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                    </>
-                  )}
-
-                  {/* Timeline Tab */}
-                  {activeTab === 'timeline' && (
-                    <>
-                      {/* Timeline Estimate */}
-                      {selectedProjectInsights.aiInsights.timelineEstimate && (
-                        <InsightSection>
-                          <h3>
-                            <FaCalendarAlt />
-                            {t('projects.summary.projectTimeline', 'Project Timeline')}
-                          </h3>
-                          <InsightCard>
-                            <div style={{ textAlign: 'center', marginBottom: spacing.lg }}>
-                              <h4>{t('projects.summary.totalDuration', 'Total Duration')}</h4>
-                              <div style={{ fontSize: '1.5rem', color: colors.accent.primary, fontWeight: 'bold' }}>
-                                {selectedProjectInsights.aiInsights.timelineEstimate.totalDuration}
-                              </div>
-                            </div>
-                            
-                            {selectedProjectInsights.aiInsights.timelineEstimate.phases && (
-                              <TimelineVisualization>
-                                {selectedProjectInsights.aiInsights.timelineEstimate.phases.map((phase, index) => (
-                                  <TimelineItem key={index}>
-                                    <div className="phase">{phase.phase}</div>
-                                    <div className="duration">{phase.duration}</div>
-                                    <div className="tasks">
-                                      {phase.tasks?.slice(0, 2).map((task, taskIndex) => (
-                                        <div key={taskIndex}>• {task}</div>
-                                      ))}
-                                    </div>
-                                  </TimelineItem>
-                                ))}
-                              </TimelineVisualization>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                      
-                      {/* MVP Definition */}
-                      {selectedProjectInsights.aiInsights.mvpDefinition && (
-                        <InsightSection>
-                          <h3>
-                            <FaRocket />
-                            {t('projects.summary.mvp', 'MVP Timeline')}
-                          </h3>
-                          <InsightCard>
-                            <DetailGrid>
-                              <DetailItem>
-                                <strong>{t('projects.summary.mvpTimeline', 'MVP Timeline')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.timeline}</span>
-                              </DetailItem>
-                              <DetailItem>
-                                <strong>{t('projects.summary.mvpCost', 'MVP Cost')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.costEstimate}</span>
-                              </DetailItem>
-                            </DetailGrid>
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                    </>
-                  )}
-
-                  {/* Next Steps Tab */}
-                  {activeTab === 'next' && (
-                    <>
-                      {selectedProjectInsights.aiInsights.nextSteps && selectedProjectInsights.aiInsights.nextSteps.length > 0 && (
-                        <InsightSection>
-                          <h3>
-                            <FaArrowCircleRight />
-                            {t('projects.summary.recommendedSteps', 'Recommended Next Steps')}
-                          </h3>
-                          <InsightCard>
-                            {selectedProjectInsights.aiInsights.nextSteps.map((step, index) => (
-                              <NextStepItem key={index}>
-                                <StepNumber>{index + 1}</StepNumber>
-                                <span>{step}</span>
-                              </NextStepItem>
-                            ))}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                      
-                      {/* Key Considerations */}
-                      {selectedProjectInsights.aiInsights.projectFeasibility?.keyConsiderations && (
-                        <InsightSection>
-                          <h3>
-                            <FaExclamationTriangle />
-                            {t('projects.summary.keyConsiderations', 'Key Considerations')}
-                          </h3>
-                          <InsightCard>
-                            <ul>
-                              {selectedProjectInsights.aiInsights.projectFeasibility.keyConsiderations.map((consideration, index) => (
-                                <li key={index}>{consideration}</li>
-                              ))}
-                            </ul>
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                    </>
-                  )}
-
-                  {/* Old tab content removed for simplified UI */}
-                  {false && selectedProjectInsights.aiInsights.projectRoadmap && (
+                  {/* Project Timeline Details */}
+                  {selectedProjectInsights.aiInsights.timelineEstimate?.phases && (
                     <InsightSection>
                       <h3>
-                        <FaMapMarked />
-                        {t('projects.aiInsights.projectRoadmap', 'Development Roadmap')}
+                        <FaCalendarAlt />
+                        {t('projects.aiInsights.projectPhases', 'Project Phases')}
                       </h3>
-                      {selectedProjectInsights.aiInsights.projectRoadmap.phases.map((phase, index) => (
-                            <RoadmapPhase key={index}>
-                              <PhaseHeader>
-                                <h4>{phase.phase}</h4>
-                                <PhaseDuration>{phase.duration}</PhaseDuration>
-                              </PhaseHeader>
-                              <PhaseContent>
-                                <PhaseSection>
-                                  <h5>{t('projects.aiInsights.tasks', 'Tasks')}</h5>
-                                  <ul>
-                                    {phase.tasks.map((task, taskIndex) => (
-                                      <li key={taskIndex}>{task}</li>
-                                    ))}
-                                  </ul>
-                                </PhaseSection>
-                                <PhaseSection>
-                                  <h5>{t('projects.aiInsights.deliverables', 'Deliverables')}</h5>
-                                  <ul>
-                                    {phase.deliverables.map((deliverable, delIndex) => (
-                                      <li key={delIndex}>{deliverable}</li>
-                                    ))}
-                                  </ul>
-                                </PhaseSection>
-                                {phase.dependencies && phase.dependencies.length > 0 && (
-                                  <PhaseSection>
-                                    <h5>{t('projects.aiInsights.dependencies', 'Dependencies')}</h5>
-                                    <ul>
-                                      {phase.dependencies.map((dep, depIndex) => (
-                                        <li key={depIndex}>{dep}</li>
-                                      ))}
-                                    </ul>
-                                  </PhaseSection>
-                                )}
-                              </PhaseContent>
-                            </RoadmapPhase>
+                      <InsightCard>
+                        <TimelineVisualization>
+                          {selectedProjectInsights.aiInsights.timelineEstimate.phases.map((phase, index) => (
+                            <TimelineItem key={index}>
+                              <div className="phase">{phase.phase || phase.name}</div>
+                              <div className="duration">{phase.duration}</div>
+                              {phase.tasks && (
+                                <div className="tasks">
+                                  {phase.tasks.slice(0, 2).map((task, taskIndex) => (
+                                    <div key={taskIndex}>• {task}</div>
+                                  ))}
+                                </div>
+                              )}
+                            </TimelineItem>
                           ))}
-                        </InsightSection>
-                      )}
-                    </>
+                        </TimelineVisualization>
+                      </InsightCard>
+                    </InsightSection>
                   )}
-
-                  {false && (
-                    <>
-                      {/* MVP Definition - Hidden */}
-                      {selectedProjectInsights.aiInsights.mvpDefinition && (
-                        <InsightSection>
-                          <h3>
-                            <FaRocket />
-                            {t('projects.aiInsights.mvp', 'MVP Definition')}
-                          </h3>
-                          <InsightCard>
-                            <DetailGrid>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.mvpTimeline', 'Timeline')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.timeline}</span>
-                              </DetailItem>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.mvpCost', 'Cost Estimate')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.mvpDefinition.costEstimate}</span>
-                              </DetailItem>
-                            </DetailGrid>
-                            
-                            <h4>{t('projects.aiInsights.mvpFeatures', 'Core MVP Features')}</h4>
+                  
+                  {/* Budget Breakdown */}
+                  {selectedProjectInsights.aiInsights.budgetAnalysis?.costBreakdown && (
+                    <InsightSection>
+                      <h3>
+                        <FaMoneyBillWave />
+                        {t('projects.aiInsights.budgetBreakdown', 'Budget Breakdown')}
+                      </h3>
+                      <InsightCard>
+                        <BudgetBreakdown>
+                          {Object.entries(selectedProjectInsights.aiInsights.budgetAnalysis.costBreakdown).map(([category, cost]) => (
+                            <BudgetItem key={category}>
+                              <span className="label">
+                                <FaChevronRight />
+                                {category.charAt(0).toUpperCase() + category.slice(1)}
+                              </span>
+                              <span className="value">{cost}</span>
+                            </BudgetItem>
+                          ))}
+                        </BudgetBreakdown>
+                      </InsightCard>
+                    </InsightSection>
+                  )}
+                  
+                  {/* Next Steps */}
+                  {selectedProjectInsights.aiInsights.nextSteps && selectedProjectInsights.aiInsights.nextSteps.length > 0 && (
+                    <InsightSection>
+                      <h3>
+                        <FaArrowCircleRight />
+                        {t('projects.aiInsights.nextSteps', 'Recommended Next Steps')}
+                      </h3>
+                      <InsightCard>
+                        <div style={{ display: 'grid', gap: spacing.md }}>
+                          {selectedProjectInsights.aiInsights.nextSteps.slice(0, 5).map((step, index) => (
+                            <NextStepItem key={index}>
+                              <StepNumber>{index + 1}</StepNumber>
+                              <span>{step}</span>
+                            </NextStepItem>
+                          ))}
+                        </div>
+                      </InsightCard>
+                    </InsightSection>
+                  )}
+                  
+                  {/* Key Features & MVP */}
+                  {selectedProjectInsights.aiInsights.mvpDefinition && (
+                    <InsightSection>
+                      <h3>
+                        <FaRocket />
+                        {t('projects.aiInsights.mvpDefinition', 'MVP Definition')}
+                      </h3>
+                      <InsightCard>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing.md, marginBottom: spacing.md }}>
+                          <DetailItem>
+                            <strong>{t('projects.aiInsights.mvpTimeline', 'MVP Timeline')}:</strong>
+                            <span>{selectedProjectInsights.aiInsights.mvpDefinition.timeline}</span>
+                          </DetailItem>
+                          <DetailItem>
+                            <strong>{t('projects.aiInsights.mvpCost', 'MVP Cost')}:</strong>
+                            <span>{selectedProjectInsights.aiInsights.mvpDefinition.costEstimate}</span>
+                          </DetailItem>
+                        </div>
+                        {selectedProjectInsights.aiInsights.mvpDefinition.coreFeatures && (
+                          <>
+                            <h4>{t('projects.aiInsights.coreFeatures', 'Core Features')}</h4>
                             <ul>
-                              {selectedProjectInsights.aiInsights.mvpDefinition.coreFeatures.map((feature, index) => (
+                              {selectedProjectInsights.aiInsights.mvpDefinition.coreFeatures.slice(0, 5).map((feature, index) => (
                                 <li key={index}>{feature}</li>
                               ))}
                             </ul>
-                            
-                            {selectedProjectInsights.aiInsights.mvpDefinition.successMetrics && (
-                              <>
-                                <h4>{t('projects.aiInsights.successMetrics', 'Success Metrics')}</h4>
-                                <ul>
-                                  {selectedProjectInsights.aiInsights.mvpDefinition.successMetrics.map((metric, index) => (
-                                    <li key={index}>{metric}</li>
-                                  ))}
-                                </ul>
-                              </>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                    </>
-                  )}
-
-                  {activeTab === 'financial' && (
-                    <>
-                      {/* Budget Analysis */}
-                      {selectedProjectInsights.aiInsights.budgetAnalysis && (
-                        <InsightSection>
-                          <h3>
-                            <FaMoneyBillWave />
-                            {t('projects.aiInsights.budgetBreakdown', 'Budget Breakdown')}
-                          </h3>
-                          <InsightCard>
-                            <BudgetTotal>
-                              <h4>{t('projects.aiInsights.totalEstimate', 'Total Estimate')}</h4>
-                              <BudgetAmount>{selectedProjectInsights.aiInsights.budgetAnalysis.estimatedCost}</BudgetAmount>
-                            </BudgetTotal>
-                            
-                            {selectedProjectInsights.aiInsights.budgetAnalysis.costBreakdown && (
-                              <BudgetBreakdown>
-                                {Object.entries(selectedProjectInsights.aiInsights.budgetAnalysis.costBreakdown).map(([category, cost]) => (
-                                  <BudgetItem key={category}>
-                                    <span>{category.charAt(0).toUpperCase() + category.slice(1)}</span>
-                                    <span>{cost}</span>
-                                  </BudgetItem>
-                                ))}
-                              </BudgetBreakdown>
-                            )}
-                            
-                            {selectedProjectInsights.aiInsights.budgetAnalysis.costOptimizationTips && (
-                              <>
-                                <h4>{t('projects.aiInsights.costOptimization', 'Cost Optimization Tips')}</h4>
-                                <ul>
-                                  {selectedProjectInsights.aiInsights.budgetAnalysis.costOptimizationTips.map((tip, index) => (
-                                    <li key={index}>{tip}</li>
-                                  ))}
-                                </ul>
-                              </>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-
-                      {/* Team Composition */}
-                      {selectedProjectInsights.aiInsights.teamComposition && (
-                        <InsightSection>
-                          <h3>
-                            <FaUsersCog />
-                            {t('projects.aiInsights.teamRequirements', 'Team Requirements')}
-                          </h3>
-                          <InsightCard>
-                            <TeamGrid>
-                              <TeamCategory>
-                                <h4>{t('projects.aiInsights.immediateTeam', 'Immediate Needs')}</h4>
-                                {selectedProjectInsights.aiInsights.teamComposition.immediate.map((role, index) => (
-                                  <TeamBadge key={index} type="immediate">{role}</TeamBadge>
-                                ))}
-                              </TeamCategory>
-                              <TeamCategory>
-                                <h4>{t('projects.aiInsights.futureTeam', 'Future Expansion')}</h4>
-                                {selectedProjectInsights.aiInsights.teamComposition.future.map((role, index) => (
-                                  <TeamBadge key={index} type="future">{role}</TeamBadge>
-                                ))}
-                              </TeamCategory>
-                            </TeamGrid>
-                            
-                            {selectedProjectInsights.aiInsights.teamComposition.estimatedHours && (
-                              <>
-                                <h4>{t('projects.aiInsights.estimatedHours', 'Estimated Hours')}</h4>
-                                <HoursGrid>
-                                  {Object.entries(selectedProjectInsights.aiInsights.teamComposition.estimatedHours).map(([category, hours]) => (
-                                    <HourItem key={category}>
-                                      <span>{category.charAt(0).toUpperCase() + category.slice(1)}</span>
-                                      <span>{hours} hours</span>
-                                    </HourItem>
-                                  ))}
-                                </HoursGrid>
-                              </>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                    </>
-                  )}
-
-                  {activeTab === 'risks' && (
-                    <>
-                      {/* Risk Assessment */}
-                      {selectedProjectInsights.aiInsights.riskAssessment && (
-                        <InsightSection>
-                          <h3>
-                            <FaExclamationTriangle />
-                            {t('projects.aiInsights.riskAssessment', 'Risk Assessment')}
-                          </h3>
-                          {selectedProjectInsights.aiInsights.riskAssessment.potentialRisks.map((risk, index) => (
-                            <RiskCard key={index} impact={risk.impact}>
-                              <RiskHeader>
-                                <RiskTitle>{risk.risk}</RiskTitle>
-                                <RiskImpact impact={risk.impact}>{risk.impact}</RiskImpact>
-                              </RiskHeader>
-                              <RiskMitigation>
-                                <strong>{t('projects.aiInsights.mitigation', 'Mitigation')}:</strong> {risk.mitigation}
-                              </RiskMitigation>
-                            </RiskCard>
-                          ))}
-                        </InsightSection>
-                      )}
-
-                      {/* Security Requirements */}
-                      {selectedProjectInsights.aiInsights.securityRequirements && (
-                        <InsightSection>
-                          <h3>
-                            <FaUserShield />
-                            {t('projects.aiInsights.securityRequirements', 'Security Requirements')}
-                          </h3>
-                          <InsightCard>
-                            <SecurityGrid>
-                              {selectedProjectInsights.aiInsights.securityRequirements.authentication && (
-                                <SecurityCategory>
-                                  <h4>{t('projects.aiInsights.authentication', 'Authentication')}</h4>
-                                  <ul>
-                                    {selectedProjectInsights.aiInsights.securityRequirements.authentication.map((item, index) => (
-                                      <li key={index}>{item}</li>
-                                    ))}
-                                  </ul>
-                                </SecurityCategory>
-                              )}
-                              {selectedProjectInsights.aiInsights.securityRequirements.dataProtection && (
-                                <SecurityCategory>
-                                  <h4>{t('projects.aiInsights.dataProtection', 'Data Protection')}</h4>
-                                  <ul>
-                                    {selectedProjectInsights.aiInsights.securityRequirements.dataProtection.map((item, index) => (
-                                      <li key={index}>{item}</li>
-                                    ))}
-                                  </ul>
-                                </SecurityCategory>
-                              )}
-                              {selectedProjectInsights.aiInsights.securityRequirements.compliance && (
-                                <SecurityCategory>
-                                  <h4>{t('projects.aiInsights.compliance', 'Compliance')}</h4>
-                                  <ul>
-                                    {selectedProjectInsights.aiInsights.securityRequirements.compliance.map((item, index) => (
-                                      <li key={index}>{item}</li>
-                                    ))}
-                                  </ul>
-                                </SecurityCategory>
-                              )}
-                            </SecurityGrid>
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-
-                      {/* Maintenance Strategy */}
-                      {selectedProjectInsights.aiInsights.maintenanceStrategy && (
-                        <InsightSection>
-                          <h3>
-                            <FaTools />
-                            {t('projects.aiInsights.maintenance', 'Maintenance Strategy')}
-                          </h3>
-                          <InsightCard>
-                            <DetailGrid>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.updateFrequency', 'Update Frequency')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.maintenanceStrategy.updateFrequency}</span>
-                              </DetailItem>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.backupStrategy', 'Backup Strategy')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.maintenanceStrategy.backupStrategy}</span>
-                              </DetailItem>
-                              <DetailItem>
-                                <strong>{t('projects.aiInsights.supportModel', 'Support Model')}:</strong>
-                                <span>{selectedProjectInsights.aiInsights.maintenanceStrategy.supportModel}</span>
-                              </DetailItem>
-                            </DetailGrid>
-                            
-                            {selectedProjectInsights.aiInsights.maintenanceStrategy.monitoringTools && (
-                              <>
-                                <h4>{t('projects.aiInsights.monitoringTools', 'Monitoring Tools')}</h4>
-                                <div>
-                                  {selectedProjectInsights.aiInsights.maintenanceStrategy.monitoringTools.map((tool, index) => (
-                                    <TechBadge key={index}>{tool}</TechBadge>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                    </>
-                  )}
-
-                  {/* Ideas Tab */}
-                  {activeTab === 'ideas' && (
-                    <>
-                      {/* Project Ideas */}
-                      {selectedProjectInsights.aiInsights.projectIdeas && (
-                        <InsightSection>
-                          <h3>
-                            <FaRocket />
-                            {t('projects.aiInsights.projectIdeas', 'Project Ideas & Innovations')}
-                          </h3>
-                          
-                          {/* Innovative Features */}
-                          {selectedProjectInsights.aiInsights.projectIdeas.innovativeFeatures && (
-                            <InsightCard>
-                              <h4>{t('projects.aiInsights.innovativeFeatures', 'Innovative Features')}</h4>
-                              <ul>
-                                {selectedProjectInsights.aiInsights.projectIdeas.innovativeFeatures.map((feature, index) => (
-                                  <li key={index}>{feature}</li>
-                                ))}
-                              </ul>
-                            </InsightCard>
-                          )}
-                          
-                          {/* UX Enhancements */}
-                          {selectedProjectInsights.aiInsights.projectIdeas.userExperienceEnhancements && (
-                            <InsightCard>
-                              <h4>{t('projects.aiInsights.uxEnhancements', 'User Experience Enhancements')}</h4>
-                              <ul>
-                                {selectedProjectInsights.aiInsights.projectIdeas.userExperienceEnhancements.map((enhancement, index) => (
-                                  <li key={index}>{enhancement}</li>
-                                ))}
-                              </ul>
-                            </InsightCard>
-                          )}
-                          
-                          {/* AI Integration Opportunities */}
-                          {selectedProjectInsights.aiInsights.projectIdeas.aiIntegrationOpportunities && (
-                            <InsightCard>
-                              <h4>{t('projects.aiInsights.aiIntegration', 'AI Integration Opportunities')}</h4>
-                              <ul>
-                                {selectedProjectInsights.aiInsights.projectIdeas.aiIntegrationOpportunities.map((opportunity, index) => (
-                                  <li key={index}>{opportunity}</li>
-                                ))}
-                              </ul>
-                            </InsightCard>
-                          )}
-                        </InsightSection>
-                      )}
-                      
-                      {/* Project Thoughts */}
-                      {selectedProjectInsights.aiInsights.projectThoughts && (
-                        <InsightSection>
-                          <h3>
-                            <FaLightbulb />
-                            {t('projects.aiInsights.projectThoughts', 'Strategic Analysis')}
-                          </h3>
-                          <MetricsGrid>
-                            <MetricCard>
-                              <div className="icon"><FaTrophy /></div>
-                              <div className="value">{selectedProjectInsights.aiInsights.projectThoughts.strengths?.length || 0}</div>
-                              <div className="label">{t('projects.aiInsights.strengths', 'Strengths')}</div>
-                            </MetricCard>
-                            <MetricCard>
-                              <div className="icon"><FaExclamationTriangle /></div>
-                              <div className="value">{selectedProjectInsights.aiInsights.projectThoughts.challenges?.length || 0}</div>
-                              <div className="label">{t('projects.aiInsights.challenges', 'Challenges')}</div>
-                            </MetricCard>
-                            <MetricCard>
-                              <div className="icon"><FaRocket /></div>
-                              <div className="value">{selectedProjectInsights.aiInsights.projectThoughts.opportunities?.length || 0}</div>
-                              <div className="label">{t('projects.aiInsights.opportunities', 'Opportunities')}</div>
-                            </MetricCard>
-                          </MetricsGrid>
-                          
-                          {selectedProjectInsights.aiInsights.projectThoughts.recommendations && (
-                            <InsightCard>
-                              <h4>{t('projects.aiInsights.recommendations', 'Strategic Recommendations')}</h4>
-                              <p>{selectedProjectInsights.aiInsights.projectThoughts.recommendations}</p>
-                            </InsightCard>
-                          )}
-                        </InsightSection>
-                      )}
-                    </>
+                          </>
+                        )}
+                      </InsightCard>
+                    </InsightSection>
                   )}
                   
-                  {/* Metrics Tab */}
-                  {activeTab === 'metrics' && (
-                    <>
-                      {/* Analytics and Metrics */}
-                      {selectedProjectInsights.aiInsights.analyticsAndMetrics && (
-                        <InsightSection>
-                          <h3>
-                            <FaChartBar />
-                            {t('projects.aiInsights.analyticsMetrics', 'Analytics & Metrics')}
-                          </h3>
-                          
-                          {/* KPIs */}
-                          {selectedProjectInsights.aiInsights.analyticsAndMetrics.kpis && (
-                            <InsightCard>
-                              <h4>{t('projects.aiInsights.kpis', 'Key Performance Indicators')}</h4>
-                              <ul>
-                                {selectedProjectInsights.aiInsights.analyticsAndMetrics.kpis.map((kpi, index) => (
-                                  <li key={index}>{kpi}</li>
-                                ))}
-                              </ul>
-                            </InsightCard>
-                          )}
-                          
-                          {/* Analytics Tools */}
-                          {selectedProjectInsights.aiInsights.analyticsAndMetrics.analyticsTools && (
-                            <InsightCard>
-                              <h4>{t('projects.aiInsights.analyticsTools', 'Recommended Analytics Tools')}</h4>
-                              <div>
-                                {selectedProjectInsights.aiInsights.analyticsAndMetrics.analyticsTools.map((tool, index) => (
-                                  <TechBadge key={index}>{tool}</TechBadge>
-                                ))}
-                              </div>
-                            </InsightCard>
-                          )}
-                        </InsightSection>
-                      )}
-                      
-                      {/* Performance Optimization */}
-                      {selectedProjectInsights.aiInsights.performanceOptimization && (
-                        <InsightSection>
-                          <h3>
-                            <FaBolt />
-                            {t('projects.aiInsights.performanceOptimization', 'Performance Optimization')}
-                          </h3>
-                          <InsightCard>
-                            <h4>{t('projects.aiInsights.frontendOptimizations', 'Frontend Optimizations')}</h4>
+                  {/* Risk Assessment */}
+                  {selectedProjectInsights.aiInsights.riskAssessment?.potentialRisks && (
+                    <InsightSection>
+                      <h3>
+                        <FaExclamationTriangle />
+                        {t('projects.aiInsights.keyRisks', 'Key Risks & Mitigation')}
+                      </h3>
+                      <div style={{ display: 'grid', gap: spacing.md }}>
+                        {selectedProjectInsights.aiInsights.riskAssessment.potentialRisks.slice(0, 3).map((risk, index) => (
+                          <RiskCard key={index} impact={risk.impact}>
+                            <RiskHeader>
+                              <RiskTitle>{risk.risk}</RiskTitle>
+                              <RiskImpact impact={risk.impact}>{risk.impact}</RiskImpact>
+                            </RiskHeader>
+                            <RiskMitigation>
+                              <strong>{t('projects.aiInsights.mitigation', 'Mitigation')}:</strong> {risk.mitigation}
+                            </RiskMitigation>
+                          </RiskCard>
+                        ))}
+                      </div>
+                    </InsightSection>
+                  )}
+                  
+                  {/* Competitive Analysis */}
+                  {selectedProjectInsights.aiInsights.competitiveAnalysis && (
+                    <InsightSection>
+                      <h3>
+                        <FaChartBar />
+                        {t('projects.aiInsights.marketInsights', 'Market Insights')}
+                      </h3>
+                      <InsightCard>
+                        <p>{selectedProjectInsights.aiInsights.competitiveAnalysis.marketInsights}</p>
+                        {selectedProjectInsights.aiInsights.competitiveAnalysis.differentiationOpportunities && (
+                          <>
+                            <h4>{t('projects.aiInsights.differentiation', 'Differentiation Opportunities')}</h4>
                             <ul>
-                              {selectedProjectInsights.aiInsights.performanceOptimization.frontendOptimizations?.map((opt, index) => (
-                                <li key={index}>{opt}</li>
+                              {selectedProjectInsights.aiInsights.competitiveAnalysis.differentiationOpportunities.slice(0, 4).map((opp, index) => (
+                                <li key={index}>{opp}</li>
                               ))}
                             </ul>
-                          </InsightCard>
-                          <InsightCard>
-                            <h4>{t('projects.aiInsights.backendOptimizations', 'Backend Optimizations')}</h4>
-                            <ul>
-                              {selectedProjectInsights.aiInsights.performanceOptimization.backendOptimizations?.map((opt, index) => (
-                                <li key={index}>{opt}</li>
-                              ))}
-                            </ul>
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                      
-                      {/* Monetization Strategy */}
-                      {selectedProjectInsights.aiInsights.monetizationStrategy && (
-                        <InsightSection>
-                          <h3>
-                            <FaMoneyBillWave />
-                            {t('projects.aiInsights.monetization', 'Monetization Strategy')}
-                          </h3>
-                          <InsightCard>
-                            {selectedProjectInsights.aiInsights.monetizationStrategy.revenueModels && (
-                              <>
-                                <h4>{t('projects.aiInsights.revenueModels', 'Revenue Models')}</h4>
-                                <ul>
-                                  {selectedProjectInsights.aiInsights.monetizationStrategy.revenueModels.map((model, index) => (
-                                    <li key={index}>{model}</li>
-                                  ))}
-                                </ul>
-                              </>
-                            )}
-                            
-                            {selectedProjectInsights.aiInsights.monetizationStrategy.pricingStrategy && (
-                              <>
-                                <h4>{t('projects.aiInsights.pricingStrategy', 'Pricing Strategy')}</h4>
-                                <p>{selectedProjectInsights.aiInsights.monetizationStrategy.pricingStrategy}</p>
-                              </>
-                            )}
-                            
-                            {selectedProjectInsights.aiInsights.monetizationStrategy.projectedRevenue && (
-                              <>
-                                <h4>{t('projects.aiInsights.projectedRevenue', 'Revenue Projections')}</h4>
-                                <BudgetBreakdown>
-                                  <BudgetItem>
-                                    <span className="label">{t('projects.aiInsights.month3', '3 Months')}</span>
-                                    <span className="value">{selectedProjectInsights.aiInsights.monetizationStrategy.projectedRevenue.month3}</span>
-                                  </BudgetItem>
-                                  <BudgetItem>
-                                    <span className="label">{t('projects.aiInsights.month6', '6 Months')}</span>
-                                    <span className="value">{selectedProjectInsights.aiInsights.monetizationStrategy.projectedRevenue.month6}</span>
-                                  </BudgetItem>
-                                  <BudgetItem>
-                                    <span className="label">{t('projects.aiInsights.year1', 'Year 1')}</span>
-                                    <span className="value">{selectedProjectInsights.aiInsights.monetizationStrategy.projectedRevenue.year1}</span>
-                                  </BudgetItem>
-                                </BudgetBreakdown>
-                              </>
-                            )}
-                          </InsightCard>
-                        </InsightSection>
-                      )}
-                    </>
+                          </>
+                        )}
+                      </InsightCard>
+                    </InsightSection>
                   )}
-                    </>
-                  )}
-
-                  {/* Next steps moved to dedicated tab */}
+                  
+                  {/* End of single-page content */}
                 </>
+              ) : (
+                <EmptyStateContainer>
+                  <EmptyStateIcon>
+                    <FaRobot />
+                  </EmptyStateIcon>
+                  <EmptyStateTitle>{t('projects.noAIInsights', 'AI Analysis Not Available')}</EmptyStateTitle>
+                  <EmptyStateText>
+                    {t('projects.noAIInsightsDesc', 'AI insights are being generated for this project. Please check back later.')}
+                  </EmptyStateText>
+                </EmptyStateContainer>
               )}
             </InsightsBody>
           </InsightsContent>

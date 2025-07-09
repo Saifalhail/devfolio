@@ -6,6 +6,15 @@ import { FaTimes } from 'react-icons/fa';
 import { colors, spacing, borderRadius, shadows, zIndex, mixins, typography, transitions } from '../../styles/GlobalTheme';
 import { fadeIn, slideUp, slideDown, pulse } from '../../styles/animations';
 
+// Styled component for icon container
+const IconContainer = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: ${props => props.$isRTL ? '0' : spacing.sm};
+  margin-left: ${props => props.$isRTL ? spacing.sm : '0'};
+`;
+
 /**
  * Enhanced reusable modal component with advanced animations, RTL support, and theme-based styling.
  * Supports various sizes, themes, and entrance/exit animations.
@@ -125,39 +134,30 @@ const Modal = ({
     if (!title) return null;
 
     return (
-      <Header theme={theme} className="modal-header" isRTL={isRTL}>
-        {icon && <IconContainer className="header-icon" isRTL={isRTL}>{icon}</IconContainer>}
+      <Header $theme={theme} className="modal-header" $isRTL={isRTL}>
+        {icon && <IconContainer className="header-icon" $isRTL={isRTL}>{icon}</IconContainer>}
         <span className="header-title">{title}</span>
       </Header>
     );
   };
-  
-  // Styled component for icon container
-  const IconContainer = styled.span`
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: ${props => props.isRTL ? '0' : spacing.sm};
-    margin-left: ${props => props.isRTL ? spacing.sm : '0'};
-  `;
 
   // Use createPortal to render the modal outside the normal DOM hierarchy
   return createPortal(
     <ModalWrapper className={className}>
       <Overlay 
         onClick={handleOverlayClick} 
-        isRTL={isRTL}
-        animationState={animationState}
+        $isRTL={isRTL}
+        $animationState={animationState}
       >
         <Container 
           ref={containerRef} 
-          size={size} 
-          theme={theme} 
-          centered={centered}
-          animation={animation}
-          animationState={animationState}
-          isRTL={isRTL}
-          fullScreenOnMobile={fullScreenOnMobile}
+          $size={size} 
+          $theme={theme} 
+          $centered={centered}
+          $animation={animation}
+          $animationState={animationState}
+          $isRTL={isRTL}
+          $fullScreenOnMobile={fullScreenOnMobile}
           style={customStyles}
           className={className}
           tabIndex={-1}
@@ -168,8 +168,8 @@ const Modal = ({
           {!hideCloseButton && (
             <CloseButton 
               onClick={handleClose} 
-              isRTL={isRTL} 
-              theme={theme}
+              $isRTL={isRTL} 
+              $theme={theme}
               className="modal-close-button"
               aria-label={t('close', 'Close')}
             >
@@ -179,9 +179,9 @@ const Modal = ({
           
           {renderHeader()}
           
-          <Content theme={theme}>{children}</Content>
+          <Content $theme={theme}>{children}</Content>
           
-          {footer && <Footer theme={theme}>{footer}</Footer>}
+          {footer && <Footer $theme={theme}>{footer}</Footer>}
         </Container>
       </Overlay>
     </ModalWrapper>,
@@ -230,15 +230,15 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   overflow: hidden;
   backdrop-filter: blur(5px);
   pointer-events: auto;
   
   ${props => {
-    if (props.animationState === 'opening') {
+    if (props.$animationState === 'opening') {
       return css`animation: ${fadeIn} 0.3s ease forwards;`;
-    } else if (props.animationState === 'closing') {
+    } else if (props.$animationState === 'closing') {
       return css`animation: ${fadeOut} 0.3s ease forwards;`;
     }
     return '';
@@ -248,7 +248,7 @@ const Overlay = styled.div`
 const Container = styled.div`
   background: rgba(30, 30, 50, 0.98); /* Lighter background for better visibility */
   color: ${props => {
-    switch(props.theme) {
+    switch(props.$theme) {
       case 'light': return '#f0f0f0';
       default: return colors.text.primary;
     }
@@ -257,7 +257,7 @@ const Container = styled.div`
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
   width: 90%;
   max-width: ${props => {
-    switch(props.size) {
+    switch(props.$size) {
       case 'sm': return '400px';
       case 'md': return '550px';
       case 'lg': return '750px';
@@ -291,7 +291,7 @@ const Container = styled.div`
     bottom: 0;
     z-index: -2;
     background: ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return 'linear-gradient(135deg, rgba(131, 56, 236, 0.08) 0%, rgba(106, 31, 208, 0.02) 100%)';
         case 'doing': return 'linear-gradient(135deg, rgba(255, 177, 0, 0.08) 0%, rgba(247, 184, 1, 0.02) 100%)';
         case 'done': return 'linear-gradient(135deg, rgba(0, 194, 122, 0.08) 0%, rgba(0, 179, 113, 0.02) 100%)';
@@ -334,7 +334,7 @@ const Container = styled.div`
   
   /* Add glow effect based on theme */
   ${props => {
-    switch(props.theme) {
+    switch(props.$theme) {
       case 'todo':
         return css`
           box-shadow: 0 0 20px rgba(106, 31, 208, 0.25);
@@ -426,10 +426,10 @@ const Container = styled.div`
   }
   
   @media (max-width: 480px) {
-    width: ${props => props.fullScreenOnMobile ? '100%' : '95%'};
-    height: ${props => props.fullScreenOnMobile ? '100%' : 'auto'};
-    max-height: ${props => props.fullScreenOnMobile ? '100vh' : '90vh'};
-    border-radius: ${props => props.fullScreenOnMobile ? '0' : borderRadius.md};
+    width: ${props => props.$fullScreenOnMobile ? '100%' : '95%'};
+    height: ${props => props.$fullScreenOnMobile ? '100%' : 'auto'};
+    max-height: ${props => props.$fullScreenOnMobile ? '100vh' : '90vh'};
+    border-radius: ${props => props.$fullScreenOnMobile ? '0' : borderRadius.md};
     padding: ${spacing.sm};
   }
   
@@ -474,15 +474,15 @@ const Container = styled.div`
   }
   
   ${props => {
-    if (props.animationState === 'opening') {
-      switch(props.animation) {
+    if (props.$animationState === 'opening') {
+      switch(props.$animation) {
         case 'fade': return css`animation: ${fadeIn} 0.3s ease forwards;`;
         case 'zoom': return css`animation: ${zoomIn} 0.3s ease forwards;`;
         case 'none': return css``;
         default: return css`animation: ${slideDown} 0.3s ease forwards;`;
       }
-    } else if (props.animationState === 'closing') {
-      switch(props.animation) {
+    } else if (props.$animationState === 'closing') {
+      switch(props.$animation) {
         case 'fade': return css`animation: ${fadeOut} 0.3s ease forwards;`;
         case 'zoom': return css`animation: ${zoomOut} 0.3s ease forwards;`;
         case 'none': return css``;
@@ -501,8 +501,8 @@ const Container = styled.div`
 const CloseButton = styled.button`
   position: absolute;
   top: ${spacing.md};
-  right: ${props => props.isRTL ? 'auto' : spacing.md};
-  left: ${props => props.isRTL ? spacing.md : 'auto'};
+  right: ${props => props.$isRTL ? 'auto' : spacing.md};
+  left: ${props => props.$isRTL ? spacing.md : 'auto'};
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -527,7 +527,7 @@ const CloseButton = styled.button`
   svg {
     font-size: 1.25rem;
     color: ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return '#8338ec';
         case 'doing': return '#ffb100';
         case 'done': return '#00c27a';
@@ -545,7 +545,7 @@ const CloseButton = styled.button`
     
     svg {
       color: ${props => {
-        switch(props.theme) {
+        switch(props.$theme) {
           case 'todo': return '#a56eff';
           case 'doing': return '#ffc940';
           case 'done': return '#4cdfaa';
@@ -559,7 +559,7 @@ const CloseButton = styled.button`
   &:focus {
     outline: none;
     box-shadow: 0 0 0 2px ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return 'rgba(131, 56, 236, 0.5)';
         case 'doing': return 'rgba(255, 177, 0, 0.5)';
         case 'done': return 'rgba(0, 194, 122, 0.5)';
@@ -572,8 +572,8 @@ const CloseButton = styled.button`
   /* Mobile responsiveness */
   @media (max-width: 768px) {
     top: ${spacing.sm};
-    right: ${props => props.isRTL ? 'auto' : spacing.sm};
-    left: ${props => props.isRTL ? spacing.sm : 'auto'};
+    right: ${props => props.$isRTL ? 'auto' : spacing.sm};
+    left: ${props => props.$isRTL ? spacing.sm : 'auto'};
   }
   
 
@@ -604,12 +604,12 @@ const Content = styled.div`
     font-size: ${typography.fontSizes.md};
     transition: all 0.2s ease;
     height: auto;
-    min-height: ${props => props.type === 'textarea' ? '100px' : 'auto'};
+    min-height: ${props => props.$type === 'textarea' ? '100px' : 'auto'};
     
     &:focus {
       outline: none;
       border-color: ${props => {
-        switch(props.theme) {
+        switch(props.$theme) {
           case 'todo': return '#8338ec';
           case 'doing': return '#ffb100';
           case 'done': return '#00c27a';
@@ -618,7 +618,7 @@ const Content = styled.div`
         }
       }};
       box-shadow: 0 0 0 1px ${props => {
-        switch(props.theme) {
+        switch(props.$theme) {
           case 'todo': return 'rgba(131, 56, 236, 0.3)';
           case 'doing': return 'rgba(255, 177, 0, 0.3)';
           case 'done': return 'rgba(0, 194, 122, 0.3)';
@@ -655,7 +655,7 @@ const Content = styled.div`
     
     /* Add subtle gradient effect to labels */
     background: ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return 'linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(131, 56, 236, 0.8))';
         case 'doing': return 'linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(255, 177, 0, 0.8))';
         case 'done': return 'linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(0, 194, 122, 0.8))';
@@ -755,17 +755,17 @@ const Header = styled.h1`
   font-size: 2rem; /* Significantly larger size */
   font-weight: ${typography.fontWeights.bold};
   padding-bottom: ${spacing.md};
-  padding-right: ${props => props.isRTL ? '0' : '50px'}; /* Add padding to prevent overlap with close button */
-  padding-left: ${props => props.isRTL ? '50px' : '0'}; /* Add padding for RTL layout */
+  padding-right: ${props => props.$isRTL ? '0' : '50px'}; /* Add padding to prevent overlap with close button */
+  padding-left: ${props => props.$isRTL ? '50px' : '0'}; /* Add padding for RTL layout */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   z-index: 1;
   letter-spacing: 0.5px;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   display: flex;
   align-items: center;
   line-height: 1.2;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
   
   @media (max-width: 768px) {
     font-size: 1.5rem;
@@ -774,7 +774,7 @@ const Header = styled.h1`
   }
   
   ${props => {
-    switch(props.theme) {
+    switch(props.$theme) {
       case 'todo':
         return `
           background: linear-gradient(90deg, #fff, #8338ec);
@@ -825,7 +825,7 @@ const Header = styled.h1`
     position: relative;
     top: 2px; /* Align icon with text */
     color: ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return '#8338ec';
         case 'doing': return '#ffb100';
         case 'done': return '#00c27a';
@@ -848,7 +848,7 @@ const Header = styled.h1`
     width: 120px; /* Wider underline */
     height: 2px;
     background: ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return 'linear-gradient(90deg, #8338ec, rgba(131, 56, 236, 0.1))';
         case 'doing': return 'linear-gradient(90deg, #ffb100, rgba(255, 177, 0, 0.1))';
         case 'done': return 'linear-gradient(90deg, #00c27a, rgba(0, 194, 122, 0.1))';
@@ -868,11 +868,11 @@ const Header = styled.h1`
   
   /* RTL Support handled directly with props instead of CSS selectors */
   &:after {
-    left: ${props => props.isRTL ? 'auto' : '0'};
-    right: ${props => props.isRTL ? '0' : 'auto'};
+    left: ${props => props.$isRTL ? 'auto' : '0'};
+    right: ${props => props.$isRTL ? '0' : 'auto'};
     background: ${props => {
-      const direction = props.isRTL ? '270deg' : '90deg';
-      switch(props.theme) {
+      const direction = props.$isRTL ? '270deg' : '90deg';
+      switch(props.$theme) {
         case 'todo': return `linear-gradient(${direction}, #8338ec, rgba(131, 56, 236, 0.1))`;
         case 'doing': return `linear-gradient(${direction}, #ffb100, rgba(255, 177, 0, 0.1))`;
         case 'done': return `linear-gradient(${direction}, #00c27a, rgba(0, 194, 122, 0.1))`;
@@ -903,7 +903,7 @@ const Footer = styled.div`
     height: 1px;
     background: linear-gradient(90deg, 
       ${props => {
-        switch(props.theme) {
+        switch(props.$theme) {
           case 'todo': return 'rgba(131, 56, 236, 0.8), rgba(131, 56, 236, 0.05)';
           case 'doing': return 'rgba(255, 177, 0, 0.8), rgba(255, 177, 0, 0.05)';
           case 'done': return 'rgba(0, 194, 122, 0.8), rgba(0, 194, 122, 0.05)';
@@ -924,7 +924,7 @@ const Footer = styled.div`
     width: 100%;
     height: 100%;
     background: ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return 'radial-gradient(circle at 50% 0%, rgba(131, 56, 236, 0.08), transparent 70%)';
         case 'doing': return 'radial-gradient(circle at 50% 0%, rgba(255, 177, 0, 0.08), transparent 70%)';
         case 'done': return 'radial-gradient(circle at 50% 0%, rgba(0, 194, 122, 0.08), transparent 70%)';
@@ -948,7 +948,7 @@ const Footer = styled.div`
     &::after {
       background: linear-gradient(270deg, 
         ${props => {
-          switch(props.theme) {
+          switch(props.$theme) {
             case 'todo': return 'rgba(131, 56, 236, 0.5), transparent';
             case 'doing': return 'rgba(255, 177, 0, 0.5), transparent';
             case 'done': return 'rgba(0, 194, 122, 0.5), transparent';
@@ -994,9 +994,9 @@ const ModalButton = styled.button`
   overflow: hidden;
   
   /* Primary button styling */
-  ${props => props.primary && `
+  ${props => props.$primary && `
     background: ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return 'linear-gradient(135deg, #8338ec, #6a1fd0)';
         case 'doing': return 'linear-gradient(135deg, #ffb100, #f7b801)';
         case 'done': return 'linear-gradient(135deg, #00c27a, #00b371)';
@@ -1007,7 +1007,7 @@ const ModalButton = styled.button`
     color: white;
     border: none;
     box-shadow: 0 4px 10px ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return 'rgba(131, 56, 236, 0.3)';
         case 'doing': return 'rgba(255, 177, 0, 0.3)';
         case 'done': return 'rgba(0, 194, 122, 0.3)';
@@ -1019,7 +1019,7 @@ const ModalButton = styled.button`
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 15px ${props => {
-        switch(props.theme) {
+        switch(props.$theme) {
           case 'todo': return 'rgba(131, 56, 236, 0.4)';
           case 'doing': return 'rgba(255, 177, 0, 0.4)';
           case 'done': return 'rgba(0, 194, 122, 0.4)';
@@ -1032,7 +1032,7 @@ const ModalButton = styled.button`
     &:active {
       transform: translateY(0);
       box-shadow: 0 2px 5px ${props => {
-        switch(props.theme) {
+        switch(props.$theme) {
           case 'todo': return 'rgba(131, 56, 236, 0.2)';
           case 'doing': return 'rgba(255, 177, 0, 0.2)';
           case 'done': return 'rgba(0, 194, 122, 0.2)';
@@ -1061,10 +1061,10 @@ const ModalButton = styled.button`
   `}
   
   /* Secondary button styling */
-  ${props => !props.primary && `
+  ${props => !props.$primary && `
     background: transparent;
     color: ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return '#8338ec';
         case 'doing': return '#ffb100';
         case 'done': return '#00c27a';
@@ -1074,7 +1074,7 @@ const ModalButton = styled.button`
       }
     }};
     border: 1px solid ${props => {
-      switch(props.theme) {
+      switch(props.$theme) {
         case 'todo': return 'rgba(131, 56, 236, 0.3)';
         case 'doing': return 'rgba(255, 177, 0, 0.3)';
         case 'done': return 'rgba(0, 194, 122, 0.3)';
@@ -1102,18 +1102,18 @@ const ModalButton = styled.button`
   /* Icon styling */
   svg {
     font-size: 1rem;
-    margin-right: ${props => props.iconOnly ? '0' : spacing.xs};
+    margin-right: ${props => props.$iconOnly ? '0' : spacing.xs};
     margin-left: 0;
     
     [dir="rtl"] & {
       margin-right: 0;
-      margin-left: ${props => props.iconOnly ? '0' : spacing.xs};
+      margin-left: ${props => props.$iconOnly ? '0' : spacing.xs};
     }
   }
   
   /* Icon-only button */
-  ${({ iconOnly }) =>
-    iconOnly &&
+  ${({ $iconOnly }) =>
+    $iconOnly &&
     css`
       min-width: auto;
       width: 36px;

@@ -86,7 +86,7 @@ const SearchableDropdown = ({
   return (
     <DropdownContainer ref={dropdownRef}>
       <DropdownHeader
-        isOpen={isOpen}
+        $isOpen={isOpen}
         onClick={toggleDropdown}
       >
         <SelectedValue>
@@ -102,7 +102,7 @@ const SearchableDropdown = ({
       </DropdownHeader>
 
       {isOpen && (
-        <DropdownList isOpen={isOpen}>
+        <DropdownList $isOpen={isOpen}>
           <SearchContainer>
             <SearchInput
               type="text"
@@ -110,7 +110,7 @@ const SearchableDropdown = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               autoFocus
-              isRTL={isRTL}
+              $isRTL={isRTL}
             />
           </SearchContainer>
 
@@ -119,7 +119,7 @@ const SearchableDropdown = ({
               filteredOptions.map(option => (
                 <DropdownItem
                   key={option.id}
-                  isSelected={option.id === selectedValue}
+                  $isSelected={option.id === selectedValue}
                   onClick={() => handleSelect(option)}
                 >
                   {option.label}
@@ -131,7 +131,7 @@ const SearchableDropdown = ({
 
             {allowCustom && (
               <DropdownItem
-                isSelected={isOtherSelected}
+                $isSelected={isOtherSelected}
                 onClick={() => handleSelect({ id: 'other', label: t('common.other', 'Other') })}
               >
                 {t('common.other', 'Other')}
@@ -192,7 +192,7 @@ const DropdownHeader = styled.div`
     position: absolute;
     top: 0;
     left: 0;
-    width: ${props => props.isOpen ? '100%' : '0'};
+    width: ${props => props.$isOpen ? '100%' : '0'};
     height: 2px;
     background: linear-gradient(90deg, #4a6cf7, #6a1fd0);
     transition: width ${transitions.medium};
@@ -224,7 +224,7 @@ const DropdownHeader = styled.div`
     }
   }
   
-  ${props => props.isOpen && `
+  ${props => props.$isOpen && `
     border-color: ${colors.accent.primary};
     box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
   `}
@@ -263,9 +263,9 @@ const DropdownList = styled.ul`
   border-radius: ${borderRadius.md};
   box-shadow: ${shadows.lg};
   z-index: 100000;
-  opacity: ${props => props.isOpen ? 1 : 0};
-  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
-  transform: ${props => props.isOpen ? 'translateY(0)' : 'translateY(-10px)'};
+  opacity: ${props => props.$isOpen ? 1 : 0};
+  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
+  transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-10px)'};
   transition: all ${transitions.fast};
   
   @media (max-width: 768px) {
@@ -341,7 +341,7 @@ const SearchInput = styled.input`
   }
   
   /* RTL Support */
-  ${props => props.isRTL ? `
+  ${props => props.$isRTL ? `
     padding: ${spacing.md} calc(${spacing.xl} + ${spacing.md}) ${spacing.md} ${spacing.md};
     text-align: right;
   ` : ''}
@@ -381,7 +381,7 @@ const DropdownItem = styled.li`
     }
   }
   
-  ${props => props.isSelected && `
+  ${props => props.$isSelected && `
     background: rgba(74, 108, 247, 0.2);
     color: ${colors.accent.primary};
     

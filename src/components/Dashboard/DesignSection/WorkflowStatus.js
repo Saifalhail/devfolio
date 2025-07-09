@@ -75,13 +75,13 @@ const WorkflowStatus = ({ currentStep, onStepChange }) => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'completed':
-        return <StatusIndicator status="completed">✅</StatusIndicator>;
+        return <StatusIndicator $status="completed">✅</StatusIndicator>;
       case 'inProgress':
-        return <StatusIndicator status="inProgress">🟡</StatusIndicator>;
+        return <StatusIndicator $status="inProgress">🟡</StatusIndicator>;
       case 'pending':
-        return <StatusIndicator status="pending">⚪️</StatusIndicator>;
+        return <StatusIndicator $status="pending">⚪️</StatusIndicator>;
       default:
-        return <StatusIndicator status="pending">⚪️</StatusIndicator>;
+        return <StatusIndicator $status="pending">⚪️</StatusIndicator>;
     }
   };
 
@@ -92,13 +92,13 @@ const WorkflowStatus = ({ currentStep, onStepChange }) => {
         {workflowSteps.map((step) => (
           <WorkflowStep 
             key={step.id} 
-            active={currentStep === step.id}
-            status={step.status}
+            $active={currentStep === step.id}
+            $status={step.status}
             onClick={() => onStepChange(step.id)}
           >
             <StepHeader>
               {getStatusIcon(step.status)}
-              <IconWrapper status={step.status}>{step.icon}</IconWrapper>
+              <IconWrapper $status={step.status}>{step.icon}</IconWrapper>
               <StepLabel>{step.label}</StepLabel>
             </StepHeader>
             <StepDescription>{step.description}</StepDescription>
@@ -161,7 +161,7 @@ const WorkflowSteps = styled.div`
 `;
 
 const WorkflowStep = styled.div`
-  background: ${props => props.active ? 'rgba(96, 49, 168, 0.6)' : 'rgba(35, 38, 85, 0.6)'};
+  background: ${props => props.$active ? 'rgba(96, 49, 168, 0.6)' : 'rgba(35, 38, 85, 0.6)'};
   border-radius: 10px;
   padding: 1rem;
   cursor: pointer;
@@ -196,7 +196,7 @@ const IconWrapper = styled.div`
   height: 28px;
   border-radius: 50%;
   background: ${props => {
-    switch(props.status) {
+    switch(props.$status) {
       case 'completed': return 'linear-gradient(45deg, #27ae60, #2ecc71)';
       case 'inProgress': return 'linear-gradient(45deg, #f39c12, #f1c40f)';
       default: return 'rgba(255, 255, 255, 0.1)';
@@ -214,7 +214,7 @@ const StatusIndicator = styled.div`
   justify-content: center;
   width: 24px;
   height: 24px;
-  animation: ${props => props.status === 'inProgress' ? 'pulse 1.5s infinite' : 'none'};
+  animation: ${props => props.$status === 'inProgress' ? 'pulse 1.5s infinite' : 'none'};
   
   @keyframes pulse {
     0% { transform: scale(1); }

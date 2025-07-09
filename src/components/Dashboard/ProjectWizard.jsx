@@ -409,18 +409,50 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       if (formData.uploadedFiles && formData.uploadedFiles.length > 0) {
         showToast(t('projects.wizard.uploadingFiles', 'Uploading files...'), 'info');
         
-        for (const file of formData.uploadedFiles) {
+        for (const fileWrapper of formData.uploadedFiles) {
           try {
-            const fileData = await uploadProjectFile(projectId, file, (progress) => {
+            // Debug logging to understand file structure
+            console.log('File wrapper:', fileWrapper);
+            console.log('File wrapper type:', typeof fileWrapper);
+            console.log('File wrapper keys:', Object.keys(fileWrapper));
+            
+            // Extract the actual file object from the wrapper
+            // DragDropUploader wraps files with {id, name, size, type, file}
+            const actualFile = fileWrapper.file || fileWrapper;
+            const fileName = fileWrapper.name || actualFile.name || 'unknown';
+            
+            // More debug logging
+            console.log('Actual file:', actualFile);
+            console.log('Is File instance:', actualFile instanceof File);
+            console.log('Is Blob instance:', actualFile instanceof Blob);
+            
+            // Ensure we have a valid File/Blob object
+            if (!(actualFile instanceof File) && !(actualFile instanceof Blob)) {
+              console.error('Invalid file object in wrapper:', fileWrapper);
+              console.error('Actual file object:', actualFile);
+              failedUploads.push(fileName);
+              continue;
+            }
+            
+            // Debug logging
+            console.log('Processing file upload:', {
+              fileName: fileName,
+              fileSize: actualFile.size,
+              fileType: actualFile.type,
+              isFile: actualFile instanceof File,
+              isBlob: actualFile instanceof Blob
+            });
+            
+            const fileData = await uploadProjectFile(projectId, actualFile, (progress) => {
               const progressText = progress > 0 
-                ? `${file.name}: ${Math.round(progress)}%`
-                : `${file.name}: Preparing upload...`;
+                ? `${fileName}: ${Math.round(progress)}%`
+                : `${fileName}: Preparing upload...`;
               console.log(progressText);
             });
             uploadedFileData.push(fileData);
           } catch (uploadError) {
-            console.error(`Error uploading file ${file.name}:`, uploadError);
-            failedUploads.push(file.name);
+            console.error(`Error uploading file ${fileWrapper.name || 'unknown'}:`, uploadError);
+            failedUploads.push(fileWrapper.name || 'unknown');
             // Continue with other files even if one fails
           }
         }
@@ -472,10 +504,34 @@ const ProjectWizard = ({ isOpen, onClose, onProjectAdded }) => {
       
     } catch (err) {
       console.error('Error creating project:', err);
-      const errorMessage = err.message || t('projects.wizard.submitError', 'Error creating project. Please try again.');
+      let errorMessage = t('projects.wizard.submitError', 'Error creating project. Please try again.');
+      
+      // Provide more specific error messages
+      if (err.code === 'permission-denied' || err.code === 'PERMISSION_DENIED' || err.message?.includes('permission')) {
+        errorMessage = t('projects.wizard.permissionDenied', 'You do not have permission to create projects. Please ensure you are logged in.');
+      } else if (err.code === 'unauthenticated' || err.code === 'UNAUTHENTICATED') {
+        errorMessage = t('projects.wizard.unauthenticated', 'You must be logged in to create projects.');
+      } else if (err.message && err.message.includes('Network')) {
+        errorMessage = t('projects.wizard.networkError', 'Network error. Please check your internet connection and try again.');
+      } else if (err.message && err.message.includes('CORS')) {
+        errorMessage = t('projects.wizard.corsError', 'Service configuration issue. Project was created but some features may be limited.');
+      } else if (err.message && err.message.includes('Cloud Functions')) {
+        errorMessage = t('projects.wizard.functionsError', 'AI insights service is unavailable. Your project was created successfully but without AI analysis.');
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
       setError(errorMessage);
       showToast(errorMessage, 'error');
       setIsSubmitting(false);
+      
+      // Log detailed error for debugging
+      console.error('Project creation error details:', {
+        code: err.code,
+        message: err.message,
+        details: err.details,
+        stack: err.stack
+      });
     }
   };
   

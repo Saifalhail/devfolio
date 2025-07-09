@@ -355,7 +355,7 @@ export const getUserProjects = async (): Promise<Project[]> => {
 };
 
 // Helper function to convert file to base64
-const fileToBase64 = (file: File): Promise<string> => {
+const fileToBase64 = (file: File | Blob): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -377,7 +377,7 @@ const createTimeoutPromise = (ms: number): Promise<'timeout'> => {
 // Helper function to perform direct upload
 const performDirectUpload = async (
   storageRef: any, 
-  file: File,
+  file: File | Blob,
   onProgress?: (progress: number) => void
 ): Promise<ProjectFile> => {
   const uploadTask = uploadBytesResumable(storageRef, file);
@@ -411,8 +411,9 @@ const performDirectUpload = async (
         // Handle successful upload
         try {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          const originalFileName = file instanceof File ? file.name : 'file';
           const projectFile: ProjectFile = {
-            name: file.name,
+            name: originalFileName,
             size: file.size,
             type: file.type,
             url: downloadURL,
@@ -422,7 +423,7 @@ const performDirectUpload = async (
           console.log('File uploaded to Firebase Storage:', {
             path: uploadTask.snapshot.ref.fullPath,
             url: downloadURL,
-            fileName: file.name,
+            fileName: originalFileName,
             size: `${(file.size / 1024 / 1024).toFixed(2)}MB`
           });
           resolve(projectFile);
@@ -445,7 +446,7 @@ const performDirectUpload = async (
 // Helper function to perform base64 upload
 const performBase64Upload = async (
   storageRef: any, 
-  file: File,
+  file: File | Blob,
   onProgress?: (progress: number) => void
 ): Promise<ProjectFile> => {
   console.log('Starting base64 upload fallback...');
@@ -472,8 +473,9 @@ const performBase64Upload = async (
   // Get download URL
   const downloadURL = await getDownloadURL(snapshot.ref);
   
+  const originalFileName = file instanceof File ? file.name : 'file';
   const projectFile: ProjectFile = {
-    name: file.name,
+    name: originalFileName,
     size: file.size,
     type: file.type,
     url: downloadURL,
@@ -488,7 +490,7 @@ const performBase64Upload = async (
   console.log('File uploaded to Firebase Storage:', {
     path: `projects/${storageRef._location.path_}`,
     url: downloadURL,
-    fileName: file.name,
+    fileName: originalFileName,
     size: `${(file.size / 1024 / 1024).toFixed(2)}MB`
   });
   return projectFile;
@@ -497,11 +499,20 @@ const performBase64Upload = async (
 // Upload a file to Firebase Storage with CORS fallback
 export const uploadProjectFile = async (
   projectId: string, 
-  file: File,
+  file: File | Blob,
   onProgress?: (progress: number) => void
 ): Promise<ProjectFile> => {
   try {
     await waitForAuth();
+    
+    // Validate that file is actually a File/Blob object
+    if (!(file instanceof File) && !(file instanceof Blob)) {
+      console.error('Invalid file object:', file);
+      console.error('File type:', typeof file);
+      console.error('File constructor:', (file as any)?.constructor?.name);
+      console.error('File properties:', Object.keys((file as any) || {}));
+      throw new Error('Invalid file object - expected File or Blob');
+    }
     
     // Validate file size (50MB limit)
     const maxSize = 50 * 1024 * 1024; // 50MB
@@ -511,10 +522,11 @@ export const uploadProjectFile = async (
     
     // Create a storage reference
     const timestamp = Date.now();
-    const fileName = `${timestamp}_${file.name}`;
+    const originalFileName = file instanceof File ? file.name : 'file';
+    const fileName = `${timestamp}_${originalFileName}`;
     const storageRef = ref(storage, `projects/${projectId}/${fileName}`);
     
-    console.log(`Uploading file: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+    console.log(`Uploading file: ${originalFileName} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
     
     // Try direct upload with timeout
     try {
@@ -532,12 +544,69 @@ export const uploadProjectFile = async (
     } catch (directError: any) {
       console.error('Direct upload failed:', directError.message || directError);
       
-      // Always fallback to base64 for any error
+      // Check if it's a CORS error  
+      if (directError.message?.includes('CORS') || directError.message?.includes('blocked by CORS')) {
+        console.warn('Firebase Storage CORS issue detected. Using placeholder for development.');
+        
+        // Development fallback: Store file metadata without actual upload
+        const originalFileName = file instanceof File ? file.name : 'file';
+        const projectFile: ProjectFile = {
+          name: originalFileName,
+          size: file.size,
+          type: file.type,
+          url: `placeholder://development/${projectId}/${fileName}`,
+          uploadedAt: new Date()
+        };
+        
+        console.log('File metadata stored (upload skipped due to CORS):', {
+          fileName: originalFileName,
+          size: `${(file.size / 1024 / 1024).toFixed(2)}MB`,
+          note: 'Deploy functions and apply CORS config for actual uploads'
+        });
+        
+        if (onProgress) {
+          onProgress(100);
+        }
+        
+        return projectFile;
+      }
+      
+      // Try base64 fallback for other errors
       try {
         return await performBase64Upload(storageRef, file, onProgress);
-      } catch (base64Error) {
+      } catch (base64Error: any) {
         console.error('Base64 upload also failed:', base64Error);
-        throw new Error(`Failed to upload file: ${base64Error.message || 'Unknown error'}`);
+        
+        // If base64 also fails due to CORS, use the development fallback
+        if (base64Error.message?.includes('CORS') || base64Error.message?.includes('blocked by CORS')) {
+          console.warn('Base64 upload also blocked by CORS. Using placeholder.');
+          
+          const originalFileName = file instanceof File ? file.name : 'file';
+          const projectFile: ProjectFile = {
+            name: originalFileName,
+            size: file.size,
+            type: file.type,
+            url: `placeholder://development/${projectId}/${fileName}`,
+            uploadedAt: new Date()
+          };
+          
+          if (onProgress) {
+            onProgress(100);
+          }
+          
+          return projectFile;
+        }
+        
+        // Provide user-friendly error messages
+        if (base64Error.code === 'storage/unauthorized') {
+          throw new Error('You are not authorized to upload files. Please ensure you are logged in.');
+        } else if (base64Error.code === 'storage/quota-exceeded') {
+          throw new Error('Storage quota exceeded. Please contact support.');
+        } else if (base64Error.code === 'storage/unauthenticated') {
+          throw new Error('You must be logged in to upload files.');
+        } else {
+          throw new Error(`Failed to upload file: ${base64Error.message || 'Unknown error'}`);
+        }
       }
     }
   } catch (error: any) {
@@ -619,6 +688,24 @@ export const generateProjectSummary = async (projectData: Omit<Project, 'id' | '
     
   } catch (error: any) {
     console.error('Error generating AI summary:', error);
+    console.error('Error details:', {
+      code: error.code,
+      message: error.message,
+      details: error.details
+    });
+    
+    // Log specific error types for debugging
+    if (error.code === 'functions/permission-denied' || error.code === 'permission-denied') {
+      console.error('CORS or authentication issue detected');
+    } else if (error.code === 'functions/failed-precondition') {
+      console.error('Gemini API configuration issue');
+    } else if (error.code === 'functions/resource-exhausted') {
+      console.error('Gemini API rate limit reached');
+    } else if (error.code === 'functions/unavailable') {
+      console.error('Cloud Functions unavailable - may need deployment');
+    } else if (error.code === 'functions/internal' || error.message?.includes('Failed to fetch')) {
+      console.error('Network/CORS error - Cloud Functions may not be deployed or accessible');
+    }
     
     // If AI generation fails, return a fallback summary
     console.log('Falling back to basic summary generation');

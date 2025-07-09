@@ -440,7 +440,7 @@ const CustomActionButton = styled.button`
   gap: 0.75rem;
   padding: 0.75rem 1.5rem;
   width: 180px;
-  background: ${props => props.primary ? 'linear-gradient(90deg, #cd3efd, #7b2cbf)' : 'rgba(35, 38, 85, 0.6)'};
+  background: ${props => props.$primary ? 'linear-gradient(90deg, #cd3efd, #7b2cbf)' : 'rgba(35, 38, 85, 0.6)'};
   color: white;
   border: none;
   border-radius: 10px;
@@ -448,7 +448,7 @@ const CustomActionButton = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: ${props => props.primary ? '0 8px 20px rgba(123, 44, 191, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'};
+  box-shadow: ${props => props.$primary ? '0 8px 20px rgba(123, 44, 191, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'};
   position: relative;
   overflow: hidden;
   

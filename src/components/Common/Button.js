@@ -25,21 +25,33 @@ const Button = ({
   leftIcon,
   rightIcon,
   type = 'button',
+  margin,
+  marginTop,
+  marginBottom,
+  marginLeft,
+  marginRight,
+  danger,
   ...props
 }) => {
   return (
     <StyledButton
-      variant={variant}
-      size={size}
-      fullWidth={fullWidth}
-      active={active}
+      $variant={variant}
+      $size={size}
+      $fullWidth={fullWidth}
+      $active={active}
+      $danger={danger}
+      $margin={margin}
+      $marginTop={marginTop}
+      $marginBottom={marginBottom}
+      $marginLeft={marginLeft}
+      $marginRight={marginRight}
       disabled={disabled}
       type={type}
       {...props}
     >
-      {leftIcon && <IconWrapper position="left">{leftIcon}</IconWrapper>}
+      {leftIcon && <IconWrapper $position="left">{leftIcon}</IconWrapper>}
       {children && <span>{children}</span>}
-      {rightIcon && <IconWrapper position="right">{rightIcon}</IconWrapper>}
+      {rightIcon && <IconWrapper $position="right">{rightIcon}</IconWrapper>}
     </StyledButton>
   );
 };
@@ -140,29 +152,29 @@ const variantStyles = {
     }
   `,
   filter: css`
-    background-color: ${props => props.active ? '#513a52' : '#f7f9fc'};
-    color: ${props => props.active ? 'white' : '#513a52'};
+    background-color: ${props => props.$active ? '#513a52' : '#f7f9fc'};
+    color: ${props => props.$active ? 'white' : '#513a52'};
     border: none;
     
     &:hover:not(:disabled) {
-      background-color: ${props => props.active ? '#3d2c3d' : '#edf1f7'};
+      background-color: ${props => props.$active ? '#3d2c3d' : '#edf1f7'};
     }
   `,
   tag: css`
-    background-color: ${props => props.active ? '#513a52' : '#f7f9fc'};
-    color: ${props => props.active ? 'white' : '#513a52'};
+    background-color: ${props => props.$active ? '#513a52' : '#f7f9fc'};
+    color: ${props => props.$active ? 'white' : '#513a52'};
     border: none;
     border-radius: 20px;
     
     &:hover:not(:disabled) {
-      background-color: ${props => props.active ? '#3d2c3d' : '#edf1f7'};
+      background-color: ${props => props.$active ? '#3d2c3d' : '#edf1f7'};
     }
   `,
   action: css`
-    background-color: ${props => props.active ? '#513a52' : '#f7f9fc'};
+    background-color: ${props => props.$active ? '#513a52' : '#f7f9fc'};
     color: ${props => {
-      if (props.danger) return '#e74c3c';
-      if (props.active) return 'white';
+      if (props.$danger) return '#e74c3c';
+      if (props.$active) return 'white';
       return '#513a52';
     }};
     border: none;
@@ -172,8 +184,8 @@ const variantStyles = {
     
     &:hover:not(:disabled) {
       background-color: ${props => {
-        if (props.danger) return 'rgba(231, 76, 60, 0.15)';
-        if (props.active) return '#3d2c3d';
+        if (props.$danger) return 'rgba(231, 76, 60, 0.15)';
+        if (props.$active) return '#3d2c3d';
         return '#edf1f7';
       }};
       transform: translateY(-2px);
@@ -181,7 +193,7 @@ const variantStyles = {
   `,
   icon: css`
     background: none;
-    color: ${props => props.danger ? '#e74c3c' : '#513a52'};
+    color: ${props => props.$danger ? '#e74c3c' : '#513a52'};
     border: none;
     padding: 0;
     width: auto;
@@ -193,7 +205,7 @@ const variantStyles = {
     font-size: 1.2rem;
     
     &:hover:not(:disabled) {
-      color: ${props => props.danger ? '#c0392b' : '#3d2c3d'};
+      color: ${props => props.$danger ? '#c0392b' : '#3d2c3d'};
       transform: translateY(-1px);
     }
     
@@ -206,15 +218,15 @@ const variantStyles = {
 // Button sizes
 const sizeStyles = {
   small: css`
-    padding: ${props => props.variant === 'action' ? '0' : '0.5rem 0.75rem'};
+    padding: ${props => props.$variant === 'action' ? '0' : '0.5rem 0.75rem'};
     font-size: 0.8rem;
   `,
   medium: css`
-    padding: ${props => props.variant === 'action' ? '0' : '0.75rem 1.25rem'};
+    padding: ${props => props.$variant === 'action' ? '0' : '0.75rem 1.25rem'};
     font-size: 0.9rem;
   `,
   large: css`
-    padding: ${props => props.variant === 'action' ? '0' : '0.9rem 1.5rem'};
+    padding: ${props => props.$variant === 'action' ? '0' : '0.9rem 1.5rem'};
     font-size: 1rem;
   `
 };
@@ -228,15 +240,22 @@ const StyledButton = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  width: ${props => props.fullWidth ? '100%' : 'auto'};
+  width: ${props => props.$fullWidth ? '100%' : 'auto'};
   box-shadow: ${props => 
-    props.variant === 'text' || props.variant === 'outline' 
+    props.$variant === 'text' || props.$variant === 'outline' 
       ? 'none' 
       : '0 4px 6px rgba(0, 0, 0, 0.1)'
   };
   
-  ${props => variantStyles[props.variant]}
-  ${props => sizeStyles[props.size]}
+  ${props => variantStyles[props.$variant]}
+  ${props => sizeStyles[props.$size]}
+  
+  /* Apply margin props if provided */
+  ${props => props.$margin && `margin: ${props.$margin};`}
+  ${props => props.$marginTop && `margin-top: ${props.$marginTop};`}
+  ${props => props.$marginBottom && `margin-bottom: ${props.$marginBottom};`}
+  ${props => props.$marginLeft && `margin-left: ${props.$marginLeft};`}
+  ${props => props.$marginRight && `margin-right: ${props.$marginRight};`}
   
   &:disabled {
     opacity: 0.6;
@@ -256,12 +275,12 @@ const IconWrapper = styled.span`
   justify-content: center;
   font-size: 1em;
 
-  ${props => props.position === 'left' && css`
+  ${props => props.$position === 'left' && css`
     margin-right: ${props.children ? '0.25rem' : '0'};
     ${rtl`margin-left: ${props.children ? '0.25rem' : '0'}; margin-right: 0;`}
   `}
 
-  ${props => props.position === 'right' && css`
+  ${props => props.$position === 'right' && css`
     margin-left: ${props.children ? '0.25rem' : '0'};
     ${rtl`margin-right: ${props.children ? '0.25rem' : '0'}; margin-left: 0;`}
   `}

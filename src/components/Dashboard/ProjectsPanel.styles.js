@@ -86,7 +86,7 @@ export const HeaderContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  flex-direction: ${props => props.$isRTL ? 'row-reverse' : 'row'};
 `;
 
 export const PanelHeader = styled.div`
@@ -95,7 +95,7 @@ export const PanelHeader = styled.div`
   align-items: center;
   margin-bottom: ${spacing.lg};
   
-  @media ${breakpoints.down.md} {
+  @media (max-width: ${breakpoints.md}) {
     flex-direction: column;
     align-items: flex-start;
     gap: ${spacing.md};
@@ -103,40 +103,40 @@ export const PanelHeader = styled.div`
 `;
 
 export const PanelTitle = styled.h2`
-  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.xl} * 1.05)` : typography.fontSizes.xl};
+  font-size: ${props => props.$isRTL ? `calc(${typography.fontSizes.xl} * 1.05)` : typography.fontSizes.xl};
   font-weight: ${typography.fontWeights.bold};
   color: ${colors.text.primary};
   margin: 0;
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
 `;
 
 export const StatusFilterTab = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${props => props.active 
+  background: ${props => props.$active 
     ? colors.gradients.accent
     : 'transparent'};
-  color: ${props => props.active ? colors.text.primary : colors.text.secondary};
-  border: 1px solid ${props => props.active 
+  color: ${props => props.$active ? colors.text.primary : colors.text.secondary};
+  border: 1px solid ${props => props.$active 
     ? 'transparent' 
     : 'rgba(205, 62, 253, 0.3)'};
   border-radius: ${borderRadius.md};
   padding: ${spacing.sm} ${spacing.md};
-  font-size: ${props => props.isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
+  font-size: ${props => props.$isRTL ? `calc(${typography.fontSizes.sm} * 1.05)` : typography.fontSizes.sm};
   cursor: pointer;
   transition: ${transitions.medium};
   position: relative;
-  font-weight: ${props => props.active ? typography.fontWeights.semiBold : typography.fontWeights.medium};
+  font-weight: ${props => props.$active ? typography.fontWeights.semiBold : typography.fontWeights.medium};
   
   &:hover {
-    background: ${props => props.active 
+    background: ${props => props.$active 
       ? colors.gradients.hover
       : 'rgba(205, 62, 253, 0.1)'};
     color: ${colors.text.primary};
-    border-color: ${props => props.active ? 'transparent' : colors.accent.primary};
+    border-color: ${props => props.$active ? 'transparent' : colors.accent.primary};
     transform: translateY(-2px);
-    box-shadow: ${props => props.active 
+    box-shadow: ${props => props.$active 
       ? '0 4px 12px rgba(205, 62, 253, 0.4)' 
       : '0 2px 8px rgba(205, 62, 253, 0.2)'};
   }
@@ -147,7 +147,7 @@ export const StatusFilterTab = styled.button`
   
   svg {
     font-size: 1rem;
-    color: ${props => props.active ? colors.text.primary : 'currentColor'};
+    color: ${props => props.$active ? colors.text.primary : 'currentColor'};
   }
 `;
 
@@ -158,7 +158,7 @@ export const CustomFilterTabs = styled.div`
   border-radius: ${borderRadius.lg};
   padding: ${spacing.xs};
   gap: ${spacing.xs};
-  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  flex-direction: ${props => props.$isRTL ? 'row-reverse' : 'row'};
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 8px rgba(205, 62, 253, 0.1);
 `;
@@ -190,7 +190,7 @@ export const DashboardHeader = styled.div`
   flex-direction: column;
   gap: ${spacing.md};
   margin-bottom: ${spacing.lg};
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
 `;
 
 export const ProjectsGrid = styled.div`
@@ -199,7 +199,7 @@ export const ProjectsGrid = styled.div`
   gap: ${spacing.lg};
   margin-top: ${spacing.lg};
   
-  @media ${breakpoints.down.sm} {
+  @media (max-width: ${breakpoints.sm}) {
     grid-template-columns: 1fr;
   }
 `;
@@ -294,17 +294,17 @@ export const StatusBadge = styled.span`
   border-radius: ${borderRadius.full};
   
   ${props => {
-    if (props.status === 'completed') {
+    if (props.$status === 'completed') {
       return css`
         background-color: rgba(46, 204, 113, 0.1);
         color: ${colors.status.success};
       `;
-    } else if (props.status === 'in-progress') {
+    } else if (props.$status === 'in-progress') {
       return css`
         background-color: rgba(52, 152, 219, 0.1);
         color: ${colors.status.info};
       `;
-    } else if (props.status === 'pending') {
+    } else if (props.$status === 'pending') {
       return css`
         background-color: rgba(241, 196, 15, 0.1);
         color: ${colors.status.warning};
@@ -334,11 +334,11 @@ export const MoodIcon = styled.div`
   border-radius: ${borderRadius.round};
   
   ${props => {
-    if (props.mood === 'happy') {
+    if (props.$mood === 'happy') {
       return css`
         color: ${colors.status.success};
       `;
-    } else if (props.mood === 'neutral') {
+    } else if (props.$mood === 'neutral') {
       return css`
         color: ${colors.status.warning};
       `;
@@ -441,7 +441,7 @@ export const FilterContainer = styled.div`
   gap: ${spacing.md};
   margin-bottom: ${spacing.lg};
   
-  @media ${breakpoints.down.md} {
+  @media (max-width: ${breakpoints.md}) {
     flex-wrap: wrap;
   }
 `;
@@ -494,8 +494,8 @@ export const Card = styled.div`
   margin-bottom: ${spacing.md};
   overflow: hidden;
   position: relative;
-  direction: ${props => props.isRTL ? 'rtl' : 'ltr'};
-  text-align: ${props => props.isRTL ? 'right' : 'left'};
+  direction: ${props => props.$isRTL ? 'rtl' : 'ltr'};
+  text-align: ${props => props.$isRTL ? 'right' : 'left'};
   
   &:hover {
     transform: translateY(-2px);
@@ -503,7 +503,7 @@ export const Card = styled.div`
     border-color: ${colors.border.muted};
   }
   
-  @media ${breakpoints.down.md} {
+  @media (max-width: ${breakpoints.md}) {
     padding: ${spacing.sm};
   }
 `;
@@ -513,24 +513,24 @@ export const ActionButton = styled.button`
   align-items: center;
   justify-content: center;
   gap: ${spacing.xs};
-  background: ${props => props.glow 
+  background: ${props => props.$glow 
     ? 'linear-gradient(135deg, #8338ec 0%, #6a1fd0 100%)' 
-    : props.primary 
+    : props.$primary 
       ? colors.accent.primary 
       : 'rgba(50, 50, 80, 0.8)'};
-  color: ${props => (props.glow || props.primary) ? '#ffffff' : colors.text.primary};
-  border: ${props => (props.glow || props.primary) ? 'none' : `1px solid rgba(255, 255, 255, 0.2)`};
+  color: ${props => (props.$glow || props.$primary) ? '#ffffff' : colors.text.primary};
+  border: ${props => (props.$glow || props.$primary) ? 'none' : `1px solid rgba(255, 255, 255, 0.2)`};
   border-radius: ${borderRadius.md};
   padding: ${spacing.sm} ${spacing.md};
   font-size: ${typography.fontSizes.sm};
   font-weight: ${typography.fontWeights.medium};
   cursor: pointer;
   transition: ${transitions.medium};
-  flex-direction: ${props => props.isRTL ? 'row-reverse' : 'row'};
+  flex-direction: ${props => props.$isRTL ? 'row-reverse' : 'row'};
   position: relative;
   overflow: hidden;
   
-  ${props => props.glow && css`
+  ${props => props.$glow && css`
     box-shadow: 0 4px 15px rgba(131, 56, 236, 0.3);
     
     &::after {
@@ -551,13 +551,13 @@ export const ActionButton = styled.button`
   `}
   
   &:hover {
-    background: ${props => props.glow 
+    background: ${props => props.$glow 
       ? 'linear-gradient(135deg, #9a4ffd 0%, #7b2cbf 100%)' 
-      : props.primary 
+      : props.$primary 
         ? colors.accent.primaryDark 
         : 'rgba(60, 60, 100, 0.9)'};
     transform: translateY(-2px);
-    box-shadow: ${props => props.glow 
+    box-shadow: ${props => props.$glow 
       ? '0 6px 20px rgba(131, 56, 236, 0.4)' 
       : '0 4px 10px rgba(0, 0, 0, 0.2)'};
   }
@@ -568,10 +568,10 @@ export const ActionButton = styled.button`
   
   svg {
     font-size: 1rem;
-    color: ${props => (props.glow || props.primary) ? '#ffffff' : 'currentColor'};
+    color: ${props => (props.$glow || props.$primary) ? '#ffffff' : 'currentColor'};
   }
   
-  @media ${breakpoints.down.md} {
+  @media (max-width: ${breakpoints.md}) {
     padding: ${spacing.xs} ${spacing.sm};
     font-size: ${typography.fontSizes.xs};
   }
